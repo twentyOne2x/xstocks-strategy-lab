@@ -1,0 +1,139 @@
+# xStocks Strategy Lab
+
+Fresh repo created on 2026-03-31 during the xStocks hackathon window.
+
+`xStocks Strategy Lab` is an xStocks-first product with two connected modes:
+1. `Autopilot`: research, compare, and activate guarded xStocks basket strategies.
+2. `Directional Vault`: use Euler as the long/short engine for leveraged long or synthetic short xStocks positions.
+
+The product is designed so:
+1. xStocks stay the core asset universe and live truth source,
+2. Euler stays central for long/short strategies,
+3. the frontend stays no-wallet-first,
+4. the live proof path can fall back to Autopilot if exact xStocks-on-Euler market availability is still unverified by demo freeze.
+
+## Product Thesis
+
+Most hackathon apps will either:
+1. show tokenized stocks in a generic trading UI, or
+2. wrap finance in vague AI language.
+
+This repo is building something sharper:
+1. an xStocks-aware strategy lab for basket research and comparison,
+2. a directional xStocks mode powered by Euler for long/short expression,
+3. one product shell that can explain both in under two minutes.
+
+## Modes
+
+### Autopilot
+
+Use xStocks public data and a pinned research dataset to:
+1. compare basket candidates,
+2. show why one strategy won,
+3. activate a guarded strategy through a smart account.
+
+### Directional Vault
+
+Use Euler primitives to:
+1. preview leveraged long or synthetic short structures around one xStock,
+2. show health factor and liquidation distance clearly,
+3. keep xStocks multiplier and route state visible alongside position risk.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A["Frontend (apps/web)"] --> B["API (apps/api)"]
+    B --> C["xStocks adapters (packages/xstocks)"]
+    B --> D["Policy compiler (packages/policy)"]
+    B --> E["Euler integration (packages/euler)"]
+    F["Research runner (packages/research + apps/worker)"] --> B
+    F --> G["Pinned research dataset"]
+    C --> H["Official xStocks public APIs"]
+    E --> I["Euler app / EVC / market data"]
+    B --> J["Postgres / job state"]
+    A --> K["Wallet / smart account"]
+    B --> L["1inch / execution adapter"]
+```
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant W as Web
+    participant A as API
+    participant R as Research
+    participant X as xStocks APIs
+    participant E as Euler
+    participant S as Smart Account
+
+    U->>W: Choose starter basket or long/short mode
+    W->>A: Request comparison / preview
+    A->>R: Run or load research results
+    R->>X: Load live xStocks truth
+    R->>E: Load directional market / risk inputs
+    R-->>A: Return ranked candidates + replay data
+    A-->>W: Return recommendation and preview
+    U->>W: Connect wallet and activate
+    W->>S: Create or attach smart account
+    W->>A: Save activated strategy / position config
+```
+
+More detail:
+1. [ARCHITECTURE.md](/Users/user/PycharmProjects/xstocks-strategy-lab/ARCHITECTURE.md)
+2. [docs/ROADMAP.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ROADMAP.md)
+3. [docs/DIAGRAMS.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/DIAGRAMS.md)
+
+## Monorepo Layout
+
+```text
+apps/
+  web/       Next.js frontend on Vercel
+  api/       Railway API service
+  worker/    Railway background jobs
+
+packages/
+  shared/    shared types and schemas
+  xstocks/   official xStocks API adapters
+  research/  autoresearch-style evaluation loop
+  euler/     Euler market, preview, and execution helpers
+  policy/    strategy and activation-policy compilation
+```
+
+## What We Are Doing Now
+
+### Phase 1: foundation
+
+1. lock the repo shape and docs,
+2. scaffold the frontend shell with no-wallet-first onboarding,
+3. wire xStocks live-state adapters,
+4. define the research artifact schemas.
+
+### Phase 2: product proof
+
+1. build starter baskets and comparison view,
+2. build `$1,000 replay` and explanation surfaces,
+3. build smart-account activation flow,
+4. build Euler directional preview with health-factor and liquidation-distance panels.
+
+### Phase 3: live proof
+
+1. confirm exact demo asset and chain,
+2. confirm exact xStocks + Euler market path if available,
+3. wire one truthful execution or dry-run path,
+4. cut the two-minute demo.
+
+## Current Scope Rules
+
+1. one fresh hackathon repo only,
+2. one frontend app only,
+3. xStocks-only asset universe,
+4. Ethereum mainnet default,
+5. Euler stays central for long/short,
+6. Autopilot stays the shared substrate and fallback live path.
+
+## Status
+
+Current repo status:
+1. scaffolded,
+2. documented,
+3. ready for implementation.

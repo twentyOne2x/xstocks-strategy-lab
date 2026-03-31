@@ -1,0 +1,15 @@
+{
+  "name": "xstocks-strategy-lab",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "check": "turbo run check"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
+}
