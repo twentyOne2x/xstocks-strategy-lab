@@ -13,6 +13,7 @@ Define the initial repo architecture for `xStocks Strategy Lab` so implementatio
 3. research and evaluation stay offchain.
 4. the frontend stays no-wallet-first.
 5. the repo should support one honest fallback live path if exact xStocks-on-Euler market availability is still unverified.
+6. live proof should follow publicly verified rails, not hoped-for ones.
 
 ## Runtime Split
 
@@ -36,10 +37,11 @@ Target host:
 
 Responsibilities:
 1. aggregate xStocks live state,
-2. expose recommendation and preview payloads,
-3. store strategy and position state,
-4. persist activation records,
-5. expose activity and receipt data.
+2. aggregate verified venue and lending state,
+3. expose recommendation and preview payloads,
+4. store strategy and position state,
+5. persist activation records,
+6. expose activity and receipt data.
 
 Target host:
 1. Railway
@@ -86,8 +88,10 @@ Owns:
 Owns:
 1. market-availability lookup,
 2. directional preview math and summary formatting,
-3. live borrow/position integration helpers,
-4. EVC-aligned transaction prep when implemented.
+3. Euler-first long/short abstractions,
+4. live borrow/position integration helpers,
+5. EVC-aligned transaction prep when implemented,
+6. truthful adaptation to other verified lending rails when Euler market proof is still incomplete.
 
 ### `packages/policy`
 
@@ -110,10 +114,32 @@ Owns:
 ### Directional mode
 
 1. frontend requests long/short preview,
-2. API loads xStocks live state and Euler market inputs,
-3. research/euler packages produce preview artifacts,
+2. API loads xStocks live state and directional market inputs,
+3. research/euler packages produce Euler-first preview artifacts with any currently verified live-lending overlays,
 4. API returns health-factor and liquidation-distance summary,
 5. frontend renders directional detail and activation review.
+
+## Current Verified Live Rails
+
+As of 2026-03-31, the repo should assume:
+1. xChange is live on Ethereum and Ink,
+2. the currently verified Ethereum execution surfaces are Cow Swap and 1inch,
+3. the currently verified xStocks lending path is SPYx collateral against AUSD on Morpho.
+
+This should influence implementation order:
+1. design the execution abstraction so Cow Swap and 1inch fit cleanly,
+2. design the directional preview so Morpho `SPYx/AUSD` can serve as a truthful live-proof path,
+3. keep Euler-specific abstractions central without claiming a verified live market path that has not yet been proven.
+
+## Mentor-Reported Secondary Rail
+
+The repo should also keep one secondary execution path in view:
+1. `Ink -> Spread Finance -> Cow Swap-backed xChange terminal`
+
+Use this as:
+1. a secondary adapter target for execution abstraction,
+2. a possible chain-specific demo path if onsite confirmation is strong,
+3. a clearly labeled non-public-proof input until direct confirmation artifacts are captured.
 
 ## Initial Database Model
 

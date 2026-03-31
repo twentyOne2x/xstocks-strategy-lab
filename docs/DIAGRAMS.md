@@ -24,20 +24,23 @@ flowchart LR
     A --> C["Directional Vault"]
     B --> D["Starter baskets"]
     B --> E["Recommendation + replay"]
+    B --> J["Theme-led discovery"]
     B --> F["Activation fallback live path"]
     C --> G["Long / short entry"]
     C --> H["Health factor preview"]
     C --> I["Hero long/short mode"]
+    C --> K["Venue + vault transparency"]
 ```
 
 ## First User Journey
 
 ```mermaid
 flowchart TD
-    A["Home"] --> B["Pick starter basket or long/short mode"]
-    B --> C["Comparison / preview"]
-    C --> D["Strategy detail"]
+    A["Home terminal"] --> B["Pick a theme or strategy mode"]
+    B --> C["Comparison / replay workspace"]
+    C --> D["Detail + route + vault context"]
     D --> E["Connect wallet"]
     E --> F["Activate strategy"]
     F --> G["Activity / paused state"]
+    G --> H["Bottom blotter: positions / history / activity"]
 ```

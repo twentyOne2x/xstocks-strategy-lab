@@ -10,7 +10,8 @@ The product is designed so:
 1. xStocks stay the core asset universe and live truth source,
 2. Euler stays central for long/short strategies,
 3. the frontend stays no-wallet-first,
-4. the live proof path can fall back to Autopilot if exact xStocks-on-Euler market availability is still unverified by demo freeze.
+4. the live proof path follows the strongest publicly verified rails,
+5. the live proof path can fall back to Autopilot if exact xStocks-on-Euler market availability is still unverified by demo freeze.
 
 ## Product Thesis
 
@@ -39,6 +40,30 @@ Use Euler primitives to:
 2. show health factor and liquidation distance clearly,
 3. keep xStocks multiplier and route state visible alongside position risk.
 
+Euler stays central in the product framing, but the current strongest publicly verified live lending path is `SPYx -> borrow AUSD` on Morpho. The repo should treat that as a truthful live-proof rail while Euler-specific market proof catches up.
+
+## Current Verified Rails
+
+As of 2026-03-31, the repo should treat these as the current verified live rails:
+1. `xChange` is available on `Ethereum` and `Ink`.
+2. On `Ethereum`, xChange is available on aggregators such as `Cow Swap` and `1inch`.
+3. `Morpho` has a live xStocks lending path where users can deposit `SPYx` and borrow `AUSD`.
+
+That means:
+1. `Cow Swap` and `1inch` are the verified Ethereum execution surfaces to design around now.
+2. `SPYx/AUSD` on Morpho is the strongest verified live lending proof path right now.
+3. Euler remains central in the product experience and long/short thesis, but the repo should not overclaim exact live xStocks-on-Euler market availability until that is separately verified.
+
+## Mentor-Reported Rails To Confirm Onsite
+
+The repo also tracks one promising secondary rail from onsite guidance:
+1. `Spread Finance` on `Ink` as a trading terminal powered by `Cow Swap` and xChange atomic RFQ.
+
+Treat this as:
+1. a strong secondary execution path candidate,
+2. useful for product and demo planning,
+3. not yet promoted to the same public-proof tier as Ethereum `Cow Swap / 1inch` or `SPYx/AUSD` on Morpho unless we capture direct public or onsite confirmation artifacts.
+
 ## Architecture
 
 ```mermaid
@@ -46,14 +71,14 @@ flowchart LR
     A["Frontend (apps/web)"] --> B["API (apps/api)"]
     B --> C["xStocks adapters (packages/xstocks)"]
     B --> D["Policy compiler (packages/policy)"]
-    B --> E["Euler integration (packages/euler)"]
+    B --> E["Directional market adapters (packages/euler)"]
     F["Research runner (packages/research + apps/worker)"] --> B
     F --> G["Pinned research dataset"]
     C --> H["Official xStocks public APIs"]
-    E --> I["Euler app / EVC / market data"]
+    E --> I["Euler / Morpho / EVC market data"]
     B --> J["Postgres / job state"]
     A --> K["Wallet / smart account"]
-    B --> L["1inch / execution adapter"]
+    B --> L["Cow Swap / 1inch execution adapter"]
 ```
 
 ```mermaid
@@ -82,6 +107,10 @@ More detail:
 1. [ARCHITECTURE.md](/Users/user/PycharmProjects/xstocks-strategy-lab/ARCHITECTURE.md)
 2. [docs/ROADMAP.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ROADMAP.md)
 3. [docs/DIAGRAMS.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/DIAGRAMS.md)
+4. [docs/EXECUTION_PLAN.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/EXECUTION_PLAN.md)
+5. [docs/FRONTEND_STYLE.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/FRONTEND_STYLE.md)
+6. [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md)
+7. [docs/plans/active/README.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/README.md)
 
 ## Monorepo Layout
 
@@ -108,6 +137,9 @@ packages/
 3. wire xStocks live-state adapters,
 4. define the research artifact schemas.
 
+Critical-path and parallel split:
+1. [docs/EXECUTION_PLAN.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/EXECUTION_PLAN.md)
+
 ### Phase 2: product proof
 
 1. build starter baskets and comparison view,
@@ -119,8 +151,11 @@ packages/
 
 1. confirm exact demo asset and chain,
 2. confirm exact xStocks + Euler market path if available,
-3. wire one truthful execution or dry-run path,
-4. cut the two-minute demo.
+3. otherwise use the currently verified live rails:
+   - Ethereum xChange through Cow Swap or 1inch
+   - SPYx/AUSD lending on Morpho
+4. wire one truthful execution or dry-run path,
+5. cut the two-minute demo.
 
 ## Current Scope Rules
 
@@ -129,7 +164,9 @@ packages/
 3. xStocks-only asset universe,
 4. Ethereum mainnet default,
 5. Euler stays central for long/short,
-6. Autopilot stays the shared substrate and fallback live path.
+6. current verified Ethereum execution surfaces are Cow Swap and 1inch,
+7. current verified live lending path is SPYx/AUSD on Morpho,
+8. Autopilot stays the shared substrate and fallback live path.
 
 ## Status
 
