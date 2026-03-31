@@ -68,17 +68,31 @@ Treat this as:
 
 ```mermaid
 flowchart LR
-    A["Frontend (apps/web)"] --> B["API (apps/api)"]
+    subgraph T["Frontend terminal (apps/web)"]
+        A["Portfolio workspace"]
+        M["Market Intelligence side panel"]
+        N["Bottom blotter: positions / history / activity"]
+    end
+
+    A --> B["API (apps/api)"]
+    M --> B
+    N --> B
+
+    subgraph I["Standalone Market Intelligence product"]
+        F["Signal engine (packages/research + apps/worker)"]
+        G["Pinned research dataset"]
+    end
+
     B --> C["xStocks adapters (packages/xstocks)"]
-    B --> D["Policy compiler (packages/policy)"]
-    B --> E["Directional market adapters (packages/euler)"]
-    F["Research runner (packages/research + apps/worker)"] --> B
-    F --> G["Pinned research dataset"]
+    B --> D["Portfolio + policy engine (packages/policy)"]
+    B --> E["Directional + rail adapters (packages/euler)"]
+    F --> B
+    F --> G
     C --> H["Official xStocks public APIs"]
-    E --> I["Euler / Morpho / EVC market data"]
-    B --> J["Postgres / job state"]
-    A --> K["Wallet / smart account"]
-    B --> L["Cow Swap / 1inch execution adapter"]
+    E --> J["Euler / Morpho / EVC market data"]
+    B --> K["Postgres / signal + portfolio state"]
+    T --> L["Wallet / smart account / funding"]
+    B --> O["Cow Swap / 1inch / Morpho rails"]
 ```
 
 ```mermaid
@@ -86,18 +100,21 @@ sequenceDiagram
     participant U as User
     participant W as Web
     participant A as API
-    participant R as Research
+    participant I as Intelligence
+    participant P as Portfolio Engine
     participant X as xStocks APIs
-    participant E as Euler
+    participant E as Euler/Morpho
     participant S as Smart Account
 
-    U->>W: Choose starter basket or long/short mode
-    W->>A: Request comparison / preview
-    A->>R: Run or load research results
-    R->>X: Load live xStocks truth
-    R->>E: Load directional market / risk inputs
-    R-->>A: Return ranked candidates + replay data
-    A-->>W: Return recommendation and preview
+    U->>W: Open terminal and pick theme, asset, or mode
+    W->>A: Request workspace + intelligence + replay
+    A->>I: Load or refresh blackbox signal artifact
+    I->>X: Read live xStocks truth
+    I-->>A: Return signal artifact
+    A->>P: Translate signal into recommendation
+    P->>E: Load directional market / vault inputs when needed
+    P-->>A: Return target portfolio or directional preview
+    A-->>W: Render workspace, side panel, and blotter
     U->>W: Connect wallet and activate
     W->>S: Create or attach smart account
     W->>A: Save activated strategy / position config

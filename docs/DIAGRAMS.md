@@ -4,32 +4,49 @@
 
 ```mermaid
 flowchart TD
-    A["User"] --> B["Web App"]
-    B --> C["API"]
-    C --> D["xStocks Package"]
-    C --> E["Euler Package"]
-    C --> F["Policy Package"]
-    G["Worker"] --> H["Research Package"]
-    H --> C
-    D --> I["Official xStocks APIs"]
-    E --> J["Euler market / EVC surfaces"]
-    C --> K["Postgres"]
+    A["User"] --> B["Terminal web app"]
+    subgraph T["Embedded terminal surfaces"]
+        C["Portfolio workspace"]
+        D["Market Intelligence side panel"]
+        E["Bottom blotter"]
+    end
+    B --> T
+    C --> F["API"]
+    D --> F
+    E --> F
+    subgraph M["Standalone Market Intelligence product"]
+        G["Signal engine"]
+        H["Pinned research dataset"]
+    end
+    F --> I["xStocks package"]
+    F --> J["Portfolio + policy package"]
+    F --> K["Euler / rail package"]
+    G --> F
+    G --> H
+    I --> L["Official xStocks APIs"]
+    K --> N["Euler / Morpho / EVC surfaces"]
+    F --> O["Postgres"]
 ```
 
-## Product Modes
+## Product Surface
 
 ```mermaid
 flowchart LR
-    A["xStocks Strategy Lab"] --> B["Autopilot"]
-    A --> C["Directional Vault"]
-    B --> D["Starter baskets"]
-    B --> E["Recommendation + replay"]
-    B --> J["Theme-led discovery"]
-    B --> F["Activation fallback live path"]
-    C --> G["Long / short entry"]
-    C --> H["Health factor preview"]
-    C --> I["Hero long/short mode"]
-    C --> K["Venue + vault transparency"]
+    A["xStocks Strategy Lab"] --> B["Theme-led discovery"]
+    A --> C["Portfolio workspace"]
+    A --> D["Market Intelligence"]
+    A --> E["Bottom blotter"]
+    D --> F["Standalone product"]
+    D --> G["Embedded side panel"]
+    C --> H["Autopilot basket recommendations"]
+    C --> I["Directional long / short previews"]
+    C --> J["Replay + why it won"]
+    G --> K["Current view + confidence"]
+    G --> L["What changed"]
+    G --> M["Portfolio implication"]
+    E --> N["Positions"]
+    E --> O["History"]
+    E --> P["Activity"]
 ```
 
 ## First User Journey
@@ -37,10 +54,10 @@ flowchart LR
 ```mermaid
 flowchart TD
     A["Home terminal"] --> B["Pick a theme or strategy mode"]
-    B --> C["Comparison / replay workspace"]
-    C --> D["Detail + route + vault context"]
-    D --> E["Connect wallet"]
-    E --> F["Activate strategy"]
-    F --> G["Activity / paused state"]
-    G --> H["Bottom blotter: positions / history / activity"]
+    B --> C["Portfolio workspace + replay"]
+    C --> D["Inspect Market Intelligence side panel"]
+    D --> E["Review route, vault, and live-state context"]
+    E --> F["Connect wallet when ready"]
+    F --> G["Activate strategy"]
+    G --> H["Monitor positions, history, and activity blotter"]
 ```
