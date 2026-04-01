@@ -2378,7 +2378,8 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
     assert.equal(report.metrics.wallets.connected, 2);
     assert.equal(report.metrics.wallets.smart, 2);
     assert.equal(report.metrics.activations.total, 4);
-    assert.equal(report.metrics.activations.fundingRequired, 1);
+    assert.equal(report.metrics.users.activationSavedFundingBlocked, 1);
+    assert.equal(report.metrics.activations.savedFundingBlocked, 1);
     assert.equal(report.metrics.executions.requestsTotal, 3);
     assert.equal(report.metrics.executions.requestsWithQuotedLeg, 3);
     assert.equal(report.metrics.executions.requestsAwaitingApproval, 1);
@@ -2396,12 +2397,36 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
       "canonical",
     );
     assert.equal(
+      report.ladder.find(
+        (stage) => stage.stage === "activation_saved_funding_blocked",
+      ).coverage,
+      "canonical",
+    );
+    assert.equal(
       report.ladder.find((stage) => stage.stage === "submitted").coverage,
       "canonical",
     );
     assert.equal(
       report.ladder.find((stage) => stage.stage === "wallet_connected").reached.subjects,
       2,
+    );
+    assert.equal(
+      report.ladder.find(
+        (stage) => stage.stage === "activation_saved_funding_blocked",
+      ).reached.users,
+      1,
+    );
+    assert.equal(
+      report.ladder.find(
+        (stage) => stage.stage === "activation_saved_funding_blocked",
+      ).reached.activations,
+      1,
+    );
+    assert.equal(
+      report.ladder.find(
+        (stage) => stage.stage === "activation_saved_funding_blocked",
+      ).source,
+      "runtime_store.funnel_events",
     );
     assert.equal(
       report.ladder.find((stage) => stage.stage === "quote_ready").reached.executionRequests,
@@ -2427,7 +2452,8 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
     );
     assert.equal(
       report.blockers.some(
-        (blocker) => blocker.blockerId === "funding_required_lower_bound_only",
+        (blocker) =>
+          blocker.blockerId === "generic_funding_readiness_pre_save_unproven",
       ),
       true,
     );

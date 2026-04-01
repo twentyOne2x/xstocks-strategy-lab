@@ -18,8 +18,8 @@ const STAGE_DEFINITIONS = Object.freeze({
     "Visitors who reached a promoted activation surface resolved by manifestId or slotId.",
   wallet_connected:
     "Authenticated Privy users with one verified linked wallet recorded at the connection boundary.",
-  funding_required:
-    "Users with a saved activation snapshot currently blocked on funding.",
+  activation_saved_funding_blocked:
+    "Users with a saved activation snapshot canonically recorded as funding-blocked at persistence time.",
   quote_ready: "Users or wallets with at least one persisted quoted execution leg.",
   awaiting_approval:
     "Users or wallets with at least one persisted execution leg awaiting user approval.",
@@ -171,6 +171,10 @@ function addFunnelEventContext(accumulator, event) {
 
   if (walletAddress) {
     accumulator.wallets.add(walletAddress);
+  }
+
+  if (event?.activationId) {
+    accumulator.activations.add(event.activationId);
   }
 }
 
@@ -337,7 +341,7 @@ function aggregateRuntimeBlockers({ activations, executionRequests, activationBy
   activations.forEach((activation) => {
     const activationStage =
       activation?.executionPlanSnapshot?.executionState === "funding_required"
-        ? "funding_required"
+        ? "activation_saved_funding_blocked"
         : null;
 
     uniqueStrings(activation?.executionPlanSnapshot?.blockers ?? []).forEach(
@@ -407,12 +411,12 @@ function buildFixedBlockers() {
       affectedExecutionRequests: null,
     },
     {
-      blockerId: "funding_required_lower_bound_only",
+      blockerId: "generic_funding_readiness_pre_save_unproven",
       severity: "warning",
-      title: "Funding-required counts are still lower-bound.",
+      title: "Generic funding readiness is only canonical at activation save.",
       detail:
-        "funding_required still begins at saved activation snapshots. The repo does not yet have a canonical funding-state event ledger before activation save.",
-      affectedStage: "funding_required",
+        "The repo can canonically record activation_saved_funding_blocked when a saved activation snapshot is funding-blocked. It still does not independently verify pre-save or current funding balances before activation persistence.",
+      affectedStage: null,
       affectedUsers: null,
       affectedExecutionRequests: null,
     },
@@ -475,23 +479,18 @@ export function buildXStocksReportingSnapshot({
         );
       }
 
+      if (stage === "activation_saved_funding_blocked") {
+        notes.push(
+          "Counts are emitted only when a saved activation snapshot persisted with executionState=funding_required.",
+        );
+        notes.push(
+          "This stage does not prove pre-save or current onchain funding readiness outside that saved activation boundary.",
+        );
+      }
+
       (funnelEventsByStage.get(stage) ?? []).forEach((event) =>
         addFunnelEventContext(accumulator, event),
       );
-    } else if (stage === "funding_required") {
-      coverage = "lower_bound";
-      source = "runtime_store.activations.executionPlanSnapshot";
-      notes.push(
-        "Counts begin at activation save and do not capture users who left before persisting an activation snapshot.",
-      );
-      activations
-        .filter(
-          (activation) =>
-            activation?.status === "funding_required" ||
-            activation?.executionPlanSnapshot?.executionState ===
-              "funding_required",
-        )
-        .forEach((activation) => addActivationContext(accumulator, activation));
     } else {
       const predicate =
         stage === "quote_ready"
@@ -699,12 +698,13 @@ export function buildXStocksReportingSnapshot({
       activationViewLedger:
         "activation_viewed is captured from the activation surface only after the manifest resolves through repo-owned contracts.",
       walletConnectionCoverage:
-        "wallet_connected is canonical from Privy-authenticated wallet events; funding_required remains lower-bound from saved activation snapshots only.",
+        "wallet_connected is canonical from Privy-authenticated wallet events; activation_saved_funding_blocked is canonical only when a funding-blocked activation snapshot is persisted.",
       executionVolumeCoverage:
         "submitted_volume_usd and confirmed_volume_usd are canonical sums of stored execution legs only.",
       notes: [
         "Anonymous funnel subjects are durable browser-scoped repo identifiers, not person identity claims.",
         "The repo still does not prove continuity from an anonymous subject to a later authenticated activation unless that bridge was recorded in the same subject stream.",
+        "The repo still does not independently prove generic pre-save or current funding readiness before activation persistence.",
         "Execution volume excludes preview, recommendation, wallet-connect-only, and quote-only activity.",
       ],
     },
@@ -724,7 +724,8 @@ export function buildXStocksReportingSnapshot({
       users: {
         authenticated: overallUsers.size,
         walletConnected: stageByName.get("wallet_connected")?.reached.users ?? 0,
-        fundingRequired: stageByName.get("funding_required")?.reached.users ?? 0,
+        activationSavedFundingBlocked:
+          stageByName.get("activation_saved_funding_blocked")?.reached.users ?? 0,
         quoteReady: stageByName.get("quote_ready")?.reached.users ?? 0,
         awaitingApproval:
           stageByName.get("awaiting_approval")?.reached.users ?? 0,
@@ -746,9 +747,8 @@ export function buildXStocksReportingSnapshot({
         total: activations.length,
         ready: activations.filter((activation) => activation?.status === "ready").length,
         blocked: activations.filter((activation) => activation?.status === "blocked").length,
-        fundingRequired: activations.filter(
-          (activation) => activation?.status === "funding_required",
-        ).length,
+        savedFundingBlocked:
+          stageByName.get("activation_saved_funding_blocked")?.reached.activations ?? 0,
       },
       executions: {
         requestsTotal: executionRequests.length,
