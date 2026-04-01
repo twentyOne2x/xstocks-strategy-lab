@@ -266,7 +266,49 @@ function createStaticLiveStateRepository() {
   };
 }
 
-async function startProviderHarness() {
+function createStoredOwner(overrides = {}) {
+  return {
+    providerId: "privy",
+    appId: "privy-app-test",
+    userId: "did:privy:provider-test",
+    sessionId: "session_provider_test",
+    issuer: "privy.io",
+    authenticatedAt: "2026-04-01T17:00:00.000Z",
+    ...overrides,
+  };
+}
+
+function createPrivyRequestContext(overrides = {}) {
+  const owner = createStoredOwner(overrides.owner);
+
+  return {
+    owner,
+    linkedWalletAddresses: [
+      "0x1111111111111111111111111111111111111111",
+      ...(overrides.linkedWalletAddresses ?? []),
+    ],
+    linkedEmbeddedWalletAddresses: [
+      "0x2222222222222222222222222222222222222222",
+      ...(overrides.linkedEmbeddedWalletAddresses ?? []),
+    ],
+    linkedSmartWalletAddresses: [
+      "0x2222222222222222222222222222222222222222",
+      ...(overrides.linkedSmartWalletAddresses ?? []),
+    ],
+    linkedAccounts: [],
+    accessTokenSource: "provider-test",
+    accessTokenVerified: true,
+    identityTokenSource: null,
+    identityTokenVerified: false,
+    linkedAccountsSource: "provider-test",
+    privyUserId: owner.userId,
+  };
+}
+
+async function startProviderHarness({
+  activationOwner = null,
+  privyRequestContext = null,
+} = {}) {
   const { publicKey, privateKey } = generateKeyPairSync("ec", {
     namedCurve: "secp256k1",
   });
@@ -291,6 +333,13 @@ async function startProviderHarness() {
         jwk: publicKey.export({ format: "jwk" }),
       },
     ],
+    privyAuthService: privyRequestContext
+      ? {
+        async authenticateRequest() {
+          return privyRequestContext;
+        },
+      }
+      : null,
   });
 
   await new Promise((resolveListen) => {
@@ -301,7 +350,7 @@ async function startProviderHarness() {
   await runtimeStore.appendActivation({
     activation: {
       activationId: "activation_provider_1",
-      owner: null,
+      owner: activationOwner,
       chain: "ethereum",
       manifestId: "onboarding.default_basket:promoted:baseline_v1",
       slotId: "onboarding.default_basket",
@@ -376,6 +425,7 @@ async function startProviderHarness() {
   return {
     baseUrl,
     runtimeStore,
+    privyRequestContext,
     createSignedRequest,
     async close() {
       await new Promise((resolveClose, rejectClose) => {
@@ -423,15 +473,169 @@ test("provider rebalance ingress accepts a signed review-only event and opens aw
     assert.deepEqual(payload.data.receipt.reasonCodes, ["accepted_review_only"]);
     assert.equal(payload.data.rebalanceOrchestration.state, "awaiting_operator");
     assert.equal(payload.data.rebalanceOrchestration.triggerSource, "provider_triggered");
+    assert.match(
+      payload.data.rebalanceOrchestration.providerReceiptId,
+      /^provider_receipt_/u,
+    );
     assert.equal(
       payload.data.rebalanceOrchestration.automationTruth.providerTriggeredProven,
       true,
     );
     assert.equal(latestRebalance.state, "awaiting_operator");
     assert.equal(latestRebalance.triggerSource, "provider_triggered");
+    assert.equal(
+      latestRebalance.providerReceiptId,
+      payload.data.rebalanceOrchestration.providerReceiptId,
+    );
     assert.equal(providerReceipts.length, 1);
     assert.equal(providerReceipts[0].decision, "accepted");
     assert.equal(executionRequests.length, 0);
+  } finally {
+    await harness.close();
+  }
+});
+
+test("execute_all stages provider-triggered review through canonical execution linkage", async () => {
+  const harness = await startProviderHarness({
+    activationOwner: createStoredOwner(),
+    privyRequestContext: createPrivyRequestContext(),
+  });
+
+  try {
+    const signedRequest = harness.createSignedRequest();
+    const providerResponse = await fetch(
+      `${harness.baseUrl}/api/internal/rebalances/provider-events`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${signedRequest.token}`,
+        },
+        body: JSON.stringify(signedRequest.body),
+      },
+    );
+    const providerPayload = await providerResponse.json();
+    const executeAllResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "execute_all",
+        activationId: "activation_provider_1",
+      }),
+    });
+    const executeAllPayload = await executeAllResponse.json();
+    const latestRebalance = await harness.runtimeStore.getLatestRebalance({
+      slotId: "onboarding.default_basket",
+    });
+    const providerReceipts = await harness.runtimeStore.listProviderReceipts({
+      rebalanceId: latestRebalance.rebalanceId,
+      decision: "accepted",
+    });
+    const executionRequests = await harness.runtimeStore.listExecutionRequests({
+      rebalanceId: latestRebalance.rebalanceId,
+    });
+
+    assert.equal(providerResponse.status, 202);
+    assert.equal(executeAllResponse.status, 200);
+    assert.equal(
+      executeAllPayload.data.executionRequest.triggerSource,
+      "provider_staging",
+    );
+    assert.equal(
+      executeAllPayload.data.executionRequest.runtimeOwner,
+      "operator_manual",
+    );
+    assert.equal(
+      executeAllPayload.data.executionRequest.rebalanceId,
+      latestRebalance.rebalanceId,
+    );
+    assert.equal(
+      executeAllPayload.data.executionRequest.manifestId,
+      providerPayload.data.rebalanceOrchestration.targetManifestId,
+    );
+    assert.equal(
+      executeAllPayload.data.executionRequest.linkage.providerReceiptId,
+      providerPayload.data.receipt.receiptId,
+    );
+    assert.equal(executionRequests.length, 1);
+    assert.equal(providerReceipts.length, 1);
+    assert.equal(
+      providerReceipts[0].executionRequestId,
+      executionRequests[0].executionRequestId,
+    );
+    assert.equal(
+      latestRebalance.executionRequestId,
+      executionRequests[0].executionRequestId,
+    );
+    assert.equal(latestRebalance.executionTriggerSource, "provider_staging");
+    assert.equal(latestRebalance.executionRequestState, "requested");
+    assert.equal(
+      executionRequests[0].legs.every(
+        (leg) =>
+          leg.linkage.executionRequestId === executionRequests[0].executionRequestId
+          && leg.linkage.providerReceiptId === providerPayload.data.receipt.receiptId,
+      ),
+      true,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("execute_all fails closed when current session proof is missing", async () => {
+  const harness = await startProviderHarness({
+    activationOwner: createStoredOwner(),
+    privyRequestContext: createPrivyRequestContext({
+      owner: {
+        sessionId: null,
+      },
+    }),
+  });
+
+  try {
+    const signedRequest = harness.createSignedRequest();
+    const providerResponse = await fetch(
+      `${harness.baseUrl}/api/internal/rebalances/provider-events`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${signedRequest.token}`,
+        },
+        body: JSON.stringify(signedRequest.body),
+      },
+    );
+    const executeAllResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "execute_all",
+        activationId: "activation_provider_1",
+      }),
+    });
+    const executeAllPayload = await executeAllResponse.json();
+    const latestRebalance = await harness.runtimeStore.getLatestRebalance({
+      slotId: "onboarding.default_basket",
+    });
+    const providerReceipts = await harness.runtimeStore.listProviderReceipts({
+      rebalanceId: latestRebalance.rebalanceId,
+      decision: "accepted",
+    });
+    const executionRequests = await harness.runtimeStore.listExecutionRequests({
+      rebalanceId: latestRebalance.rebalanceId,
+    });
+
+    assert.equal(providerResponse.status, 202);
+    assert.equal(executeAllResponse.status, 409);
+    assert.match(executeAllPayload.error, /session proof is required/i);
+    assert.equal(executionRequests.length, 0);
+    assert.equal(providerReceipts.length, 1);
+    assert.equal(providerReceipts[0].executionRequestId, null);
+    assert.equal(latestRebalance.executionRequestId, null);
   } finally {
     await harness.close();
   }

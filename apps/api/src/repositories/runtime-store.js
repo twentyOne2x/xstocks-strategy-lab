@@ -4,7 +4,7 @@ import { readJsonFile, writeJsonFile } from "../json.js";
 
 function createDefaultState(now) {
   return {
-    schemaVersion: "2026-04-01.runtime-store.v9",
+    schemaVersion: "2026-04-02.runtime-store.v10",
     meta: {
       createdAt: now(),
       updatedAt: now(),
@@ -105,8 +105,11 @@ function normalizeActivation(activation) {
     manifestId: activation.manifestId ?? activation.manifest_id,
     slotId: activation.slotId ?? activation.slot_id,
     recommendationId: activation.recommendationId ?? activation.recommendation_id,
-    activationManifestRef:
-      activation.activationManifestRef ?? activation.activation_manifest_ref,
+    activationManifestRef: firstDefined(
+      activation.activationManifestRef,
+      activation.activation_manifest_ref,
+      null,
+    ),
     requestedNotionalUsd:
       activation.requestedNotionalUsd ?? activation.requested_notional_usd,
     surfaceTruth: activation.surfaceTruth ?? activation.surface_truth,
@@ -280,8 +283,11 @@ function normalizeRebalance(rebalance, index, now) {
       `rebalance_${index}`,
     slotId: rebalance.slotId ?? rebalance.slot_id,
     chain: rebalance.chain ?? "ethereum",
-    activationManifestRef:
-      rebalance.activationManifestRef ?? rebalance.activation_manifest_ref,
+    activationManifestRef: firstDefined(
+      rebalance.activationManifestRef,
+      rebalance.activation_manifest_ref,
+      null,
+    ),
     targetManifestId,
     baselineActivationId: firstDefined(
       rebalance.baselineActivationId,
@@ -329,6 +335,34 @@ function normalizeRebalance(rebalance, index, now) {
       "blocked",
     surfaceTruth:
       rebalance.surfaceTruth ?? rebalance.surface_truth ?? "blocked",
+    providerReceiptId: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.providerReceiptId,
+        rebalance.provider_receipt_id,
+        null,
+      ),
+    ),
+    executionRequestId: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.executionRequestId,
+        rebalance.execution_request_id,
+        null,
+      ),
+    ),
+    executionTriggerSource: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.executionTriggerSource,
+        rebalance.execution_trigger_source,
+        null,
+      ),
+    ),
+    executionRequestState: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.executionRequestState,
+        rebalance.execution_request_state,
+        null,
+      ),
+    ),
     blockers: (rebalance.blockers ?? []).map((value) => String(value)),
     warnings: (rebalance.warnings ?? []).map((value) => String(value)),
     automationTruth: normalizeAutomationTruth(
@@ -425,11 +459,73 @@ function normalizeProviderReceipt(receipt, index, now) {
     baselineManifestId: normalizeNonEmptyString(
       firstDefined(receipt.baselineManifestId, receipt.baseline_manifest_id, null),
     ),
+    executionRequestId: normalizeNonEmptyString(
+      firstDefined(receipt.executionRequestId, receipt.execution_request_id, null),
+    ),
+    executionTriggerSource: normalizeNonEmptyString(
+      firstDefined(
+        receipt.executionTriggerSource,
+        receipt.execution_trigger_source,
+        null,
+      ),
+    ),
+    executionState: normalizeNonEmptyString(
+      firstDefined(receipt.executionState, receipt.execution_state, null),
+    ),
     rebalanceBlockers: (receipt.rebalanceBlockers ?? receipt.rebalance_blockers ?? []).map(
       (value) => String(value),
     ),
     request: receipt.request ?? null,
     jwt: normalizeProviderJwtSummary(receipt.jwt),
+  };
+}
+
+function normalizeExecutionRequestLinkage(linkage) {
+  if (!linkage || typeof linkage !== "object") {
+    return null;
+  }
+
+  return {
+    rebalanceId: normalizeNonEmptyString(
+      firstDefined(linkage.rebalanceId, linkage.rebalance_id, null),
+    ),
+    providerReceiptId: normalizeNonEmptyString(
+      firstDefined(linkage.providerReceiptId, linkage.provider_receipt_id, null),
+    ),
+    providerDeliveryId: normalizeNonEmptyString(
+      firstDefined(
+        linkage.providerDeliveryId,
+        linkage.provider_delivery_id,
+        null,
+      ),
+    ),
+    providerEventId: normalizeNonEmptyString(
+      firstDefined(linkage.providerEventId, linkage.provider_event_id, null),
+    ),
+  };
+}
+
+function normalizeExecutionLegArtifactLinkage(linkage) {
+  if (!linkage || typeof linkage !== "object") {
+    return null;
+  }
+
+  const executionRequestId = normalizeNonEmptyString(
+    firstDefined(linkage.executionRequestId, linkage.execution_request_id, null),
+  );
+
+  if (!executionRequestId) {
+    return null;
+  }
+
+  return {
+    executionRequestId,
+    ...(normalizeExecutionRequestLinkage(linkage) ?? {
+      rebalanceId: null,
+      providerReceiptId: null,
+      providerDeliveryId: null,
+      providerEventId: null,
+    }),
   };
 }
 
@@ -726,6 +822,9 @@ function normalizeExecutionLeg(leg, index, now) {
     venueStatus: normalizeExecutionVenueStatus(leg.venueStatus, now),
     receipt: normalizeExecutionReceipt(leg.receipt),
     trade: normalizeExecutionTrade(leg.trade, now),
+    linkage: normalizeExecutionLegArtifactLinkage(
+      firstDefined(leg.linkage, leg.artifactLinkage, leg.artifact_linkage, null),
+    ),
   };
 }
 
@@ -743,6 +842,15 @@ function normalizeExecutionRequest(request, index, now) {
     owner: normalizeAuthenticatedOwner(
       request.owner ?? request.authenticated_owner,
     ),
+    rebalanceId: normalizeNonEmptyString(
+      firstDefined(
+        request.rebalanceId,
+        request.rebalance_id,
+        request.linkage?.rebalanceId,
+        request.linkage?.rebalance_id,
+        null,
+      ),
+    ),
     activationId: request.activationId ?? request.activation_id,
     manifestId: request.manifestId ?? request.manifest_id,
     slotId: request.slotId ?? request.slot_id,
@@ -752,8 +860,11 @@ function normalizeExecutionRequest(request, index, now) {
     triggerSource:
       request.triggerSource ?? request.trigger_source ?? "operator_manual",
     adapterId: request.adapterId ?? request.adapter_id ?? "unknown",
-    activationManifestRef:
-      request.activationManifestRef ?? request.activation_manifest_ref,
+    activationManifestRef: firstDefined(
+      request.activationManifestRef,
+      request.activation_manifest_ref,
+      null,
+    ),
     requestedNotionalUsd:
       request.requestedNotionalUsd ?? request.requested_notional_usd ?? 0,
     fundingAssetSymbol:
@@ -768,6 +879,14 @@ function normalizeExecutionRequest(request, index, now) {
     warnings: (request.warnings ?? []).map((value) => String(value)),
     legs: (request.legs ?? []).map((leg, legIndex) =>
       normalizeExecutionLeg(leg, legIndex, now),
+    ),
+    linkage: normalizeExecutionRequestLinkage(
+      firstDefined(
+        request.linkage,
+        request.executionLinkage,
+        request.execution_linkage,
+        null,
+      ),
     ),
     createdAt: request.createdAt ?? request.created_at ?? now(),
     updatedAt: request.updatedAt ?? request.updated_at ?? now(),
@@ -1277,9 +1396,30 @@ export function createRuntimeStore({
       await writeState(state);
       return normalizedReceipt;
     },
+    async upsertProviderReceipt({ receipt }) {
+      const state = await readState();
+      const normalizedReceipt = normalizeProviderReceipt(receipt, 0, now);
+      const existingIndex = state.providerReceipts.findIndex(
+        (item) => item.receiptId === normalizedReceipt.receiptId,
+      );
+
+      if (existingIndex === -1) {
+        state.providerReceipts.unshift(normalizedReceipt);
+      } else {
+        state.providerReceipts.splice(existingIndex, 1, normalizedReceipt);
+      }
+
+      state.providerReceipts.sort((left, right) =>
+        String(right.receivedAt).localeCompare(String(left.receivedAt)),
+      );
+      await writeState(state);
+      return normalizedReceipt;
+    },
     async listProviderReceipts({
       providerId,
       deliveryId,
+      rebalanceId,
+      decision,
       signerAddress,
       jwtId,
       requestDigest,
@@ -1297,6 +1437,18 @@ export function createRuntimeStore({
       if (deliveryId) {
         providerReceipts = providerReceipts.filter(
           (receipt) => receipt.deliveryId === deliveryId,
+        );
+      }
+
+      if (rebalanceId) {
+        providerReceipts = providerReceipts.filter(
+          (receipt) => receipt.rebalanceId === rebalanceId,
+        );
+      }
+
+      if (decision) {
+        providerReceipts = providerReceipts.filter(
+          (receipt) => receipt.decision === decision,
         );
       }
 
@@ -1451,6 +1603,7 @@ export function createRuntimeStore({
     },
     async listExecutionRequests({
       executionRequestId,
+      rebalanceId,
       activationId,
       manifestId,
       slotId,
@@ -1469,6 +1622,12 @@ export function createRuntimeStore({
       if (executionRequestId) {
         executionRequests = executionRequests.filter(
           (request) => request.executionRequestId === executionRequestId,
+        );
+      }
+
+      if (rebalanceId) {
+        executionRequests = executionRequests.filter(
+          (request) => request.rebalanceId === rebalanceId,
         );
       }
 

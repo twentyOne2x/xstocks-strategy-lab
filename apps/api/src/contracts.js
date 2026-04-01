@@ -6,7 +6,11 @@ import {
   activationActionSchema,
   activationPermissionSchema,
 } from "../../../packages/shared/dist/contracts/activation.js";
-import { executionRequestSchema } from "../../../packages/shared/dist/contracts/execution.js";
+import {
+  executionRequestSchema,
+  executionRequestStateSchema,
+  executionTriggerSourceSchema,
+} from "../../../packages/shared/dist/contracts/execution.js";
 import {
   xstocksFunnelEventIngestRequestSchema,
   xstocksFunnelEventSchema,
@@ -314,6 +318,10 @@ const rebalanceOrchestrationSchema = z.object({
   executionState: executionStateSchema,
   executionEligibility: executionEligibilitySchema,
   surfaceTruth: routeTruthLabelSchema,
+  providerReceiptId: nonEmptyStringSchema.nullable(),
+  executionRequestId: nonEmptyStringSchema.nullable(),
+  executionTriggerSource: executionTriggerSourceSchema.nullable(),
+  executionRequestState: executionRequestStateSchema.nullable(),
   blockers: z.array(nonEmptyStringSchema),
   warnings: z.array(nonEmptyStringSchema),
   automationTruth: rebalanceAutomationTruthSchema,
@@ -692,6 +700,7 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
     body: [
       "action",
       "activationId?",
+      "rebalanceId?",
       "executionRouteId?",
       "executionRequestId?",
       "legId?",
@@ -809,6 +818,7 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     generatedAt: timestampSchema,
     action: z.enum([
       "create",
+      "execute_all",
       "quote_leg",
       "record_submission",
       "poll_receipt",

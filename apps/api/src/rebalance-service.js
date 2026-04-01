@@ -21,6 +21,20 @@ function buildExecutionRequestId(rebalanceId) {
   return `execution_${rebalanceId}`;
 }
 
+function resolveExecutionTriggerSource(
+  rebalance,
+  requestedTriggerSource = "operator_manual",
+) {
+  if (
+    requestedTriggerSource === "execute_all"
+    && rebalance.triggerSource === "provider_triggered"
+  ) {
+    return "provider_staging";
+  }
+
+  return requestedTriggerSource;
+}
+
 function ensureManualExecutionEligibility(rebalance) {
   if (
     rebalance.state !== "awaiting_operator"
@@ -108,6 +122,10 @@ function mapReceiptStatus(status) {
 export function createOperatorManualCoWRebalanceRequest(input) {
   const now = input.now ?? new Date().toISOString();
   const rebalance = normalizeRebalanceForManualLane(input.rebalance, now);
+  const executionTriggerSource = resolveExecutionTriggerSource(
+    rebalance,
+    input.executionTriggerSource,
+  );
 
   ensureManualExecutionEligibility(rebalance);
 
@@ -131,7 +149,7 @@ export function createOperatorManualCoWRebalanceRequest(input) {
       chain: rebalance.chain,
       mode: input.mode ?? "basket",
       runtimeOwner: "operator_manual",
-      triggerSource: "operator_manual",
+      triggerSource: executionTriggerSource,
       adapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
       activationManifestRef: input.activationManifestRef ?? null,
       requestedNotionalUsd: input.requestedNotionalUsd,
@@ -145,6 +163,13 @@ export function createOperatorManualCoWRebalanceRequest(input) {
       updatedAt: now,
     },
   };
+}
+
+export function createOperatorExecuteAllCoWRebalanceRequest(input) {
+  return createOperatorManualCoWRebalanceRequest({
+    ...input,
+    executionTriggerSource: "execute_all",
+  });
 }
 
 export function captureCowQuoteArtifacts(input) {
@@ -375,6 +400,7 @@ export function createOperatorManualCoWRebalanceService(config = {}) {
       config.cowClient
       ?? createCowSwapApiClient(config.cowClientConfig ?? {}),
     createExecutionRequest: createOperatorManualCoWRebalanceRequest,
+    createExecuteAllExecutionRequest: createOperatorExecuteAllCoWRebalanceRequest,
     captureQuotes: captureCowQuoteArtifacts,
     recordSubmission: recordSignedCowSubmission,
     confirmSettlement: confirmCowSettlements,

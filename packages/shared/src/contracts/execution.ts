@@ -244,6 +244,24 @@ export const executionVenueStatusSchema = z.object({
 });
 export type ExecutionVenueStatus = z.infer<typeof executionVenueStatusSchema>;
 
+export const executionRequestLinkageSchema = z.object({
+  rebalanceId: nonEmptyStringSchema.nullable(),
+  providerReceiptId: nonEmptyStringSchema.nullable(),
+  providerDeliveryId: nonEmptyStringSchema.nullable(),
+  providerEventId: nonEmptyStringSchema.nullable(),
+});
+export type ExecutionRequestLinkage = z.infer<
+  typeof executionRequestLinkageSchema
+>;
+
+export const executionLegArtifactLinkageSchema =
+  executionRequestLinkageSchema.extend({
+    executionRequestId: nonEmptyStringSchema,
+  });
+export type ExecutionLegArtifactLinkage = z.infer<
+  typeof executionLegArtifactLinkageSchema
+>;
+
 export const executionRequestLegSchema = z.object({
   legId: nonEmptyStringSchema,
   sequence: z.number().int().positive(),
@@ -268,6 +286,7 @@ export const executionRequestLegSchema = z.object({
   venueStatus: executionVenueStatusSchema.nullable(),
   receipt: executionReceiptSchema.nullable(),
   trade: executionTradeSchema.nullable(),
+  linkage: executionLegArtifactLinkageSchema.nullable().optional(),
 });
 export type ExecutionRequestLeg = z.infer<typeof executionRequestLegSchema>;
 
@@ -275,6 +294,7 @@ export const executionRequestSchema = z.object({
   version: contractVersionSchema,
   executionRequestId: nonEmptyStringSchema,
   owner: authenticatedOwnerSchema.nullable(),
+  rebalanceId: nonEmptyStringSchema.nullable().optional(),
   activationId: nonEmptyStringSchema,
   manifestId: nonEmptyStringSchema,
   slotId: strategySlotIdSchema,
@@ -291,6 +311,7 @@ export const executionRequestSchema = z.object({
   blockers: z.array(nonEmptyStringSchema),
   warnings: z.array(nonEmptyStringSchema),
   legs: z.array(executionRequestLegSchema),
+  linkage: executionRequestLinkageSchema.nullable().optional(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });

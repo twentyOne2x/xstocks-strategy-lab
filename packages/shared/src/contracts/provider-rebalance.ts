@@ -8,6 +8,10 @@ import {
   strategySlotIdSchema,
   timestampSchema,
 } from "./common.js";
+import {
+  executionRequestStateSchema,
+  executionTriggerSourceSchema,
+} from "./execution.js";
 
 const ethereumAddressSchema = z
   .string()
@@ -119,6 +123,9 @@ export const providerRebalanceReceiptSchema = z.object({
   rebalanceState: rebalanceStateSchema.nullable(),
   targetManifestId: nonEmptyStringSchema.nullable(),
   baselineManifestId: nonEmptyStringSchema.nullable(),
+  executionRequestId: nonEmptyStringSchema.nullable(),
+  executionTriggerSource: executionTriggerSourceSchema.nullable(),
+  executionState: executionRequestStateSchema.nullable(),
   rebalanceBlockers: z.array(nonEmptyStringSchema),
   request: providerRebalanceReviewRequestSchema.nullable(),
   jwt: jwtSummarySchema.nullable(),

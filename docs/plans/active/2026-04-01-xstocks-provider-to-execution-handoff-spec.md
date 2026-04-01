@@ -129,3 +129,6 @@ This lane is materially closed only when:
 
 - 2026-04-01T23:14:00+02:00: Created `XSL-018B` as the owner spec for provider-review-to-execution handoff after the signed ingress lane proved only the intake boundary.
 - 2026-04-02T11:05:00+02:00: Reconciled current truth so this lane now starts from the completed `XSL-014A` substrate instead of a stale CoW-only assumption.
+- 2026-04-02T00:55:00+02:00: Scoped the first execution slice to one authenticated operator `execute_all` handoff from provider-backed `awaiting_operator` into canonical execution staging with explicit `provider_staging` provenance and fail-closed signer/session proof.
+- 2026-04-02T01:35:00+02:00: Implemented the first repo-local handoff slice in `apps/api/**` plus shared execution/provider contracts. Accepted provider review now persists receipt-to-rebalance linkage, `execute_all` stages the canonical execution request with `triggerSource=provider_staging`, request/leg artifacts carry shared linkage ids, and missing current signer/session proof returns a fail-closed error instead of silent staging.
+- 2026-04-02T01:36:00+02:00: Verification passed with `node --test apps/api/test/provider-rebalance-api.test.js`, `node --test apps/api/test/rebalance-service.test.js`, `node --test packages/policy/test/rebalance-policy.test.js`, and `git diff --check`.

@@ -5,6 +5,7 @@ import { deriveRebalanceOrchestration } from "../../../packages/policy/src/rebal
 import {
   captureCowQuoteArtifacts,
   confirmCowSettlements,
+  createOperatorExecuteAllCoWRebalanceRequest,
   createOperatorManualCoWRebalanceRequest,
   recordSignedCowSubmission,
 } from "../src/rebalance-service.js";
@@ -196,5 +197,31 @@ test("provider-triggered review can only enter the existing operator-manual CoW 
   assert.equal(staged.rebalance.triggerSource, "provider_triggered");
   assert.equal(staged.rebalance.automationTruth.providerTriggeredProven, true);
   assert.equal(staged.executionRequest.triggerSource, "operator_manual");
+  assert.equal(staged.executionRequest.runtimeOwner, "operator_manual");
+});
+
+test("execute_all stages provider-triggered review with explicit provider_staging provenance", () => {
+  const staged = createOperatorExecuteAllCoWRebalanceRequest({
+    rebalance: createProviderTriggeredRebalance(),
+    ownerAddress: "0xowner",
+    settlementAddress: "0xsettlement",
+    activationId: "activation_1",
+    requestedNotionalUsd: 1000,
+    fundingAssetSymbol: "USDC",
+    legs: [
+      {
+        legId: "leg_1",
+        sleeve: "core_xstocks",
+        assetSymbol: "NVDAx",
+        targetWeightPct: 32,
+        targetNotionalUsd: 320,
+        paymentAssetSymbol: "USDC",
+      },
+    ],
+  });
+
+  assert.equal(staged.rebalance.state, "awaiting_operator");
+  assert.equal(staged.rebalance.triggerSource, "provider_triggered");
+  assert.equal(staged.executionRequest.triggerSource, "provider_staging");
   assert.equal(staged.executionRequest.runtimeOwner, "operator_manual");
 });

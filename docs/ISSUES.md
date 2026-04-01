@@ -786,14 +786,26 @@ Last updated: 2026-04-01
 - Context: accepted provider review is real, but it still dead-ends at `awaiting_operator` rather than feeding the canonical execution path now owned by `XSL-014A`.
 - Suspected cause: the provider-review lane and the manual execution lane were proven separately and never joined by one handoff contract.
 - Fix intent: hand accepted provider review into the same execution request path used by manual operator-triggered `Execute all`, and reserve any later automation for that same path.
+- Acceptance criteria:
+  1. An authenticated operator `execute_all` action can consume an accepted provider-triggered `awaiting_operator` rebalance and stage the canonical execution request without creating a hidden autonomous executor.
+  2. Provider-backed execution staging persists linkage across the provider receipt, rebalance record, execution request, and per-leg venue artifacts.
+  3. Provider-backed staging uses `triggerSource=provider_staging` while keeping `runtimeOwner=operator_manual`.
+  4. Missing signer or session proof fails closed and does not silently create provider execution staging.
+- Executor prompt:
+  - Reuse the landed XSL-014A execution request contract and venue-routed API path; do not reopen 1inch adapter internals beyond narrow integration.
+  - Add a top-level `execute_all` API action that can consume provider-triggered review state and stage the canonical request with provider linkage.
+  - Keep first closure strictly operator-triggered; do not introduce hidden or autonomous execution.
 - Plan links:
   - [2026-04-01-xstocks-provider-to-execution-handoff-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-provider-to-execution-handoff-spec.md)
 - Checklist:
-  - [ ] report captured
-  - [ ] context added
-  - [ ] fix applied
-  - [ ] tests run
-  - [ ] proof artifacts captured
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] proof artifacts captured
+- Local proof note:
+  - `POST /api/executions { action=execute_all }` now stages provider-backed `awaiting_operator` review into the canonical execution request contract with `triggerSource=provider_staging`, back-links the accepted provider receipt and rebalance record, and fails closed when current signer/session proof is missing.
+  - Verification passed with `node --test apps/api/test/provider-rebalance-api.test.js`, `node --test apps/api/test/rebalance-service.test.js`, `node --test packages/policy/test/rebalance-policy.test.js`, and `git diff --check`.
 
 ## 2026-04-01 Final Residual Backlog
 
