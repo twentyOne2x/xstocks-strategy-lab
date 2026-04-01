@@ -74,7 +74,7 @@ When this lane is materially closed:
 1. event creation or stubbing must produce a persisted review intent, not just local UI state.
 2. `Execute all` must degrade honestly:
    - hidden or disabled if no execution plan exists,
-   - staging-only if the backend execution lane is partial,
+   - staging-only if the provider handoff or hosted/session-backed proof is partial,
    - executable only when the backend says the plan is ready.
 3. the right rail must show:
    - event summary,
