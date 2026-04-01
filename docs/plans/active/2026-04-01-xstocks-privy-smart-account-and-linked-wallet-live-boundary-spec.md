@@ -1,245 +1,307 @@
 # xStocks Privy Smart-Account And Linked-Wallet Live Boundary Spec
 
 Date: 2026-04-01
+Last updated: 2026-04-02
 Owner: Codex
 Status: active
+Canonical issue: `XSL-005`
+Supporting proof lane: `XSL-014`
 
 ## Goal
 
-Close the remaining Privy live-boundary gap for xStocks by:
-1. deciding the canonical production posture for the current Ethereum CoW lane,
-2. proving whether the lane is linked-wallet-first, smart-wallet-required, or dual-mode with one canonical public branch,
-3. removing stale `smart_account_required` and `minRequiredUsd: 1000` implications wherever they no longer match deployed truth,
-4. and making the chosen boundary testable through agent surfaces and `skill.md`.
+Upgrade the existing Privy smart-account boundary from posture-only ambiguity into execution-grade implementation planning that:
+1. makes Privy smart accounts the canonical account-ownership, destination, and policy surface for future automation,
+2. freezes one exact target branch and rejects the alternatives explicitly,
+3. defines the exact code/runtime changes required across `packages/policy`, `apps/api`, and `apps/web`,
+4. separates the current manual signer surface from the future smart-account-first automation posture,
+5. defers AA-native venue signing on CoW or 1inch until a later explicit proof lane,
+6. and leaves one exact hosted proof bar only before the repo may claim smart-account-first execution posture.
 
 ## Non-goals
 
-This workstream does not:
-1. reopen landing-page redesign or general frontend polish,
-2. reopen Chainlink CRE implementation,
-3. add new execution venues,
-4. claim full signed CoW settlement if quoteability still blocks the basket,
-5. force the product to require a smart wallet if the truthful live lane does not.
+This planning pass does not:
+1. implement runtime behavior,
+2. open a new owner lane outside `XSL-005`,
+3. duplicate the hosted-proof owner work already tracked in `XSL-014`,
+4. force every current manual order to sign from the smart account now,
+5. assume CoW or 1inch are already smart-account-native execution rails,
+6. own final CRE autonomy policy or provider-triggered auto-submit rules,
+7. or treat a UI-only smart-wallet indicator as execution closure.
 
 ## Existing-Spec Inventory
 
-1. [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md)
-   - Current relevance: very high.
-   - Decision: reuse as the stack-selection baseline.
-   - Why: it already owns the Privy, CoW, funding, and smart-account baseline but not the exact live proof boundary.
-2. [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md)
-   - Current relevance: very high.
-   - Decision: keep as the umbrella owner and create this sub-spec alongside it.
-   - Why: the authenticated execution proof lane is now too broad to also own the detailed linked-wallet versus smart-wallet truth contract without duplication.
-3. [apps/web/public/skill.md](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/public/skill.md)
-   - Current relevance: high.
-   - Decision: update later if the canonical public posture changes.
-   - Why: the public agent-start surface must not imply a smart-wallet requirement that the real live lane no longer needs, or omit one that truly exists.
-4. [docs/runbooks/xstocks-operator-execution-proof.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/runbooks/xstocks-operator-execution-proof.md)
-   - Current relevance: high.
-   - Decision: update later through implementation.
-   - Why: the internal proof path must explicitly verify the chosen Privy boundary.
+| Artifact | Current relevance | Decision | Why duplication is not justified |
+| --- | --- | --- | --- |
+| [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | canonical execution/funding owner lane | reuse | `XSL-005` already owns the rail, funding, and Privy boundary; this sub-spec should stay under it |
+| [2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md) | existing narrow smart-account boundary doc | update | this is already the right supporting surface; it needed execution-grade implementation planning, not replacement |
+| [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md) | downstream hosted execution proof lane | reuse | proof ownership stays in `XSL-014`; this doc now defines the smart-account-first runtime contract that `XSL-014` must prove |
+| [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md) | canonical issue ownership map | update only as needed | the issue map already points this gap at `XSL-005`; only plan-link alignment is needed |
 
-## Current Live Truth
+## Thread-Recurrence Audit
 
-1. The earlier stale Railway preview contract that returned `smart_account_required`, `not_created`, and `minRequiredUsd: 1000` is no longer the latest deployed backend truth after the verified Railway redeploy.
-2. Latest hosted proof in [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md) shows a real Privy-authenticated production session with linked wallet `0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2`, no smart wallet linked, successful activation save, successful execution create, and real per-leg CoW venue responses.
-3. No hosted proof artifact currently shows a real Privy smart-wallet bootstrap or a production execution path that depends on a smart wallet.
-4. Public and repo-facing language is still mixed: some older surfaces and historic probes imply `smart_account_required`, while current policy/tests say the current CoW lane can be live without a smart wallet.
+1. The same underlying problem has now appeared in three places: the original `XSL-005` owner spec, the earlier posture-only smart-account boundary doc, and the `XSL-014` hosted-proof continuation notes.
+2. Prior work proved current linked-wallet hosted progress, but it did not freeze the future execution-account model that would make smart accounts the real execution surface.
+3. The active thread is still one bounded workstream inside `XSL-005`, so a backlog-wide priority matrix is not needed.
+
+## User Vision Freeze
+
+When this work closes:
+1. manual or user-approved execution remains wallet-first, using a linked wallet or embedded-wallet signer when that is the truthful current venue path,
+2. automation and future CRE-triggered execution require a Privy smart account as the canonical account-ownership surface,
+3. the smart account becomes the canonical execution destination and policy container before AA-native venue signing is claimed,
+4. AA-native venue signing on CoW or 1inch remains explicitly deferred until separately proven,
+5. and the repo has one exact hosted proof bar for smart-account-first execution posture rather than multiple competing interpretations.
+
+## Current Runtime Truth
+
+1. `packages/policy` currently hard-overrides the wallet-first Ethereum basket execution lane to `requiresSmartAccount=false` and `minFundingUsd=0` in [wallet-requirements.js](/Users/user/PycharmProjects/xstocks-strategy-lab/packages/policy/src/wallet-requirements.js), covering the current linked-wallet execution routes on `cow_swap.ethereum` and `1inch.ethereum`, so the effective manual readiness model is linked-wallet-first even when manifest metadata says otherwise.
+2. [smart-account.js](/Users/user/PycharmProjects/xstocks-strategy-lab/packages/policy/src/smart-account.js) already prefers the smart-account address as the destination address when the smart account is ready, but for the current manual lane it returns `readiness: "not_required"` and keeps bootstrap optional.
+3. [execution-plan.js](/Users/user/PycharmProjects/xstocks-strategy-lab/packages/policy/src/execution-plan.js) treats `SMART_ACCOUNT_NOT_REQUIRED` as a fully complete preparation step, so the current manual execution plan can become `ready` without any smart-account bootstrap.
+4. [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js) resolves the settlement address by preferring a ready smart account, but resolves the execution signer by falling back to the embedded wallet or linked wallet only. The current manual venue request therefore uses two different account surfaces when a smart account exists.
+5. The current API execution request builder stores `receiver: settlementAddress` and `owner: signerAddress`, so smart-account settlement and EOA ownership diverge structurally.
+6. `apps/api` already verifies linked smart-wallet addresses from Privy identity claims in [privy-auth.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/privy-auth.js) and [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js), but the runtime does not yet separate manual signing posture from automation account posture.
+7. [privy-provider.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/privy-provider.tsx) mounts only `PrivyProvider`; it does not mount the smart-wallet provider or configure a smart-account-first browser path.
+8. [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx) proves auth and wallet connect only. It does not expose embedded-wallet readiness, smart-account creation, smart-account linking, or typed-data approval on the smart-account branch.
+9. [activation-screen.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/activation-screen.tsx) hard-stops honestly at connect/funding preview. It does not prove embedded-wallet bootstrap, smart-account closure, or smart-account-first execution readiness.
+10. Hosted proof in [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md) currently proves the truthful linked-wallet manual branch only: activation save, execution create, and live venue quote truth without a smart wallet.
 
 ## Current Local Implementation Audit
 
-### Shipped
+| Area | Shipped | Partial | Missing or stale |
+| --- | --- | --- | --- |
+| `packages/policy` | readiness derivation, funding-path shaping, smart-account inspection, tests | destination prefers smart account if present | canonical execution-account model is still linked-wallet-first for current manual basket venues |
+| `apps/api` | authenticated owner binding, smart-wallet address verification, execution request persistence, venue quote/approval/submission scaffolding | settlement already prefers smart account | signer ownership, approval scheme, and stored execution account still fall back to EOA |
+| `apps/web` | real Privy auth/connect, funnel tracking, honest preview-only activation copy | wallet connect is real | no smart-wallet provider, no bootstrap closure, no smart-account-linked proof, no smart-wallet order approval path |
+| hosted proof | authenticated linked-wallet hosted boundary | per-leg quote truth only | no hosted smart-account bootstrap, no hosted manual-versus-automation posture proof, no hosted bridge-state proof |
 
-1. backend Privy access-token verification and authenticated owner binding.
-2. execution-plan derivation that can mark the current CoW lane `smartAccount.readiness = "not_required"`.
-3. policy tests proving a `$25` authenticated CoW basket lane becomes live without a smart wallet.
-4. hosted proof showing the linked-wallet path reaches the real quote boundary.
+## Completion Reconciliation
 
-### Partial
+1. Completion relative to the earlier posture-only smart-account spec = partial. It documented the ambiguity, but it did not define the implementation contract that would remove it.
+2. Completion relative to repeated thread asks = unresolved. The repo still cannot answer “what exact code path turns smart accounts into the real execution surface?” with one canonical runtime contract.
+3. Completion relative to prior implementation claims = linked-wallet hosted progress is real, but any broader smart-account-first posture interpretation would be overclaimed.
+4. Verified implementation and proof status = linked-wallet authenticated execution-create and per-leg quote truth are proven; smart-account-first execution posture is not.
+5. Canonical frontend functioning status = auth/connect only; smart-account bootstrap and closure are not yet functioning on the canonical route.
 
-1. frontend and public-surface alignment to the current Privy boundary.
-2. explicit smart-wallet bootstrap proof path.
-3. operator and agent runbooks that make the canonical branch obvious.
+## Canonical Branch Decision
 
-### Spec-only or unproven
+### Selected branch
 
-1. a production-proven smart-wallet-required execution branch,
-2. a canonical product decision on whether smart wallet is required, optional, or deferred for the current CoW lane,
-3. agent-safe public/internal verification surfaces that distinguish linked-wallet truth from smart-wallet truth cleanly.
+`manual = wallet-first`
 
-## Symptom Contract
+`automation = smart-account-first`
 
-Observed problem:
-1. users and operators still see contradictory smart-account signals across repo history, backend probes, and public surfaces.
-2. older production probes showed `smart_account_required`, while current local policy/tests and latest hosted proof show the live quote boundary is reachable without a smart wallet.
-3. the repo lacks one canonical answer to “is a Privy smart wallet actually required for the current xStocks CoW lane?”
+`AA-native venue signing = later explicit proof lane`
 
-## Likely Culprits / Ranked Hypotheses
+This means:
+1. current manual or user-approved execution may continue to use a linked wallet or Privy embedded wallet as the venue signer when that is the truthful current rail,
+2. the smart account becomes the canonical account-ownership, destination, and policy surface for automation and future CRE-driven execution,
+3. CoW or 1inch smart-account-native venue signing is not assumed, not claimed, and not required for this spec to close,
+4. `XSL-005` owns the account architecture and the smart-account-first posture, while the future AA-native venue-signing closure stays in a later proof lane.
 
-1. Most likely: the product and deploy posture moved from mandatory smart-wallet gating toward linked-wallet-first execution, but not every surface or plan was realigned.
-2. Likely: the stale `smart_account_required` contract reflected an older backend deploy and remained sticky in thread memory after Railway was updated.
-3. Possible: a smart-wallet-required branch is still intended for a later lane, but current docs/copy blur that future posture into the current one.
+### Why this branch is the canonical target
 
-## Non-obvious Alternatives
+1. It matches current runtime truth instead of pretending current manual venue proof already signs from a smart account.
+2. It gives automation one canonical account surface now, which is the actual architectural gap the repo still lacks.
+3. It removes ambiguity by separating three distinct questions:
+   - current manual signing surface,
+   - smart-account-first account architecture,
+   - future venue-native AA signing.
+4. It keeps `XSL-005` scoped to wallet/account architecture, manual-versus-automation posture, and hosted proof for smart-account-first posture without swallowing CRE autonomy policy or venue-native signing closure.
 
-1. The smart-wallet path may still be required for a later execution branch, but not for the current user-approved CoW lane.
-2. The linked-wallet proof may be sufficient for MVP, and the remaining issue is only public/testability clarity rather than runtime capability.
-3. The real blocker may be quoteability only, with smart-wallet confusion masking that the current lane already advanced past the wallet requirement.
+### Exact bridge state
 
-## Falsifiers / What Would Disprove The Current Theory
+If the smart account is introduced first as the canonical destination and policy account before smart-account-native signing is proven, the bridge state is:
+1. `manualSignerAddress` remains the verified linked-wallet or embedded-wallet signer used for current manual or user-approved venue actions,
+2. `policyAccountAddress` is the verified Privy smart-account address and becomes the canonical account surface for automation, policy, and future autonomous ownership,
+3. `executionDestinationAddress` points to the smart account on venue paths where a separate destination or receiver is already supported and explicitly proven,
+4. if a venue path does not yet have a separately proven destination model, settlement remains on the manual signer and the smart account is still recorded as the canonical policy account only,
+5. `venueSigningMode` stays `wallet_signer_manual_only` until a later AA-native venue-signing lane proves otherwise,
+6. automation stays fail-closed without a verified smart account even while current manual signing remains allowed.
 
-1. A new production proof showing execution cannot progress past activation without a real Privy smart wallet would falsify the current linked-wallet-first interpretation.
-2. A deployed smart-wallet bootstrap flow reaching a distinct execution boundary would prove the smart-wallet branch is not merely deferred scaffolding.
-3. A fully aligned public/backend/agent surface already reflecting linked-wallet sufficiency would falsify the need for additional smart-account realignment work.
+### Explicitly rejected branches
 
-## Product Outcome Contract
+`everything_signs_from_the_smart_account_now`
+1. rejected because current repo truth and hosted proof do not yet prove CoW or 1inch as smart-account-native signing rails,
+2. rejected because it would overclaim venue capability and collapse the boundary between current manual proof and future AA-native proof,
+3. rejected because the user explicitly asked not to force the spec into universal smart-account signing now.
 
-When this workstream is done:
-1. xStocks has one canonical answer to whether the current CoW lane requires a smart wallet,
-2. public product copy, backend contracts, and proof docs all tell the same story,
-3. stale `smart_account_required` implications no longer leak into the current production lane if linked-wallet execution is the truthful branch,
-4. or a real smart-wallet-required bootstrap lane exists and is proven if that is the chosen branch.
+`wallet-first_for_manual_and_automation`
+1. rejected because it leaves automation without a canonical account-ownership surface,
+2. rejected because it preserves the current ambiguity instead of upgrading the architecture,
+3. rejected because it gives `XSL-005` no truthful smart-account-first posture to prove.
 
-## User-Journey Contract
+`smart-account-first_with_cre_autonomy_policy_in_scope`
+1. rejected because final CRE autonomy policy and provider-triggered auto-submit rules belong to the future CRE lane, not this spec,
+2. rejected because it would make `XSL-005` own autonomy decisions the user explicitly kept out of scope.
 
-For the current execution lane, the user journey must be one of the following and only one may be the canonical public posture:
-1. `Privy auth -> linked wallet -> activation save -> execution create -> quote/approval/submission`,
-2. `Privy auth -> embedded wallet -> smart-wallet bootstrap -> activation save -> execution create -> quote/approval/submission`.
+## Canonical Runtime Contract
 
-The product must not imply both as equally current unless both are proven and the default branch is explicit.
+| Surface | Canonical target |
+| --- | --- |
+| manual signer surface | verified linked wallet or Privy embedded wallet |
+| automation ownership surface | verified Privy smart-account address |
+| canonical policy container | verified Privy smart-account address |
+| execution destination | verified Privy smart-account address where the current venue path already supports and proves a separate receiver; otherwise record the smart account as policy account only |
+| automation readiness | `smart_account_required` |
+| manual execution readiness | may remain wallet-first |
+| current venue signing mode | `wallet_signer_manual_only` |
+| AA-native venue signing | deferred to later proof lane |
 
-## State-And-Truth Contract
+Truth rules:
+1. Manual readiness and automation readiness must be modeled separately.
+2. `smart_account_required` applies to automation and future CRE-owned execution posture, not automatically to every current manual order.
+3. The smart account is the canonical account-ownership and policy surface even before AA-native venue signing is proven.
+4. Funding minimum remains a separate policy decision from smart-account requirement. Do not reuse `requiresSmartAccount=false` as a shortcut for `minFundingUsd=0`.
+5. No runtime surface may imply that CoW or 1inch already sign natively from the smart account unless a later proof lane closes that claim explicitly.
 
-### Wallet / Privy State
+## Exact Runtime / Code Changes
 
-1. `unauthenticated`
-2. `authenticated_no_wallet`
-3. `authenticated_linked_wallet`
-4. `embedded_wallet_pending`
-5. `embedded_wallet_ready`
-6. `smart_wallet_pending`
-7. `smart_wallet_ready`
-8. `smart_wallet_not_required`
+## `packages/policy`
 
-### Allowed Claims
+1. In [wallet-requirements.js](/Users/user/PycharmProjects/xstocks-strategy-lab/packages/policy/src/wallet-requirements.js), stop overloading one `requiresSmartAccount` flag to answer both manual and automation posture. Keep the current wallet-first manual allowance where truthful, but add a distinct automation-account requirement contract.
+2. Extend the policy contract to carry separate posture fields, for example:
+   - `manualSigningMode: "wallet_first"`
+   - `automationAccountMode: "smart_account_required"`
+   - `venueSigningMode: "wallet_signer_manual_only"`
+3. In [smart-account.js](/Users/user/PycharmProjects/xstocks-strategy-lab/packages/policy/src/smart-account.js), keep `NOT_REQUIRED` only for the current manual signing lane if that remains truthful, but add a separate automation readiness result that cannot become ready without a verified smart account.
+4. Add a distinct bridge-state result for “smart account exists as policy and destination account, but venue signing is still wallet-first” so the architecture is explicit and not mistaken for AA-native signing.
+5. In [execution-plan.js](/Users/user/PycharmProjects/xstocks-strategy-lab/packages/policy/src/execution-plan.js), split the current single readiness surface into:
+   - `manualExecution`
+   - `automationExecution`
+   - `accountArchitecture`
+   - `bridgeState`
+6. Keep current manual execution capable of reaching `ready` with a linked wallet or embedded wallet when that is truthful, but make automation remain preview-only or blocked until the smart account is ready and verified.
+7. Change the funding-path and destination contract so policy can name both:
+   - the current manual funding or signing surface,
+   - the canonical smart-account destination or policy account.
+8. Add a first-class execution-account architecture object so downstream code stops inferring ownership from one mixed wallet state.
+9. Add or update policy tests to prove:
+   - manual execution may stay wallet-first,
+   - automation remains smart-account-required,
+   - bridge-state output is explicit,
+   - venue-signing mode stays non-AA-native until separately changed.
 
-1. “Privy connected” only if the backend verifies the access token and binds one canonical user.
-2. “Linked wallet ready” only if one verified linked wallet address exists.
-3. “Smart wallet ready” only if the smart-wallet address exists and the current lane actually uses it.
-4. “Smart wallet optional” only if local policy and hosted proof both show the current execution lane reaches the next truthful boundary without a smart wallet.
-5. “Smart wallet required” only if the current deployed execution lane blocks without it.
+## `apps/api`
 
-### Disallowed Claims
+1. In [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js), stop collapsing manual signer posture and smart-account posture into one inferred execution account. Introduce separate helpers for:
+   - `manualSignerSurface`
+   - `policyAccountSurface`
+   - `bridgeState`
+2. Keep current manual execution-request creation capable of using a wallet or embedded-wallet signer where truthful, but persist the smart account separately as the canonical policy and automation account when it exists.
+3. Record explicit fields on activation and execution requests for:
+   - `manualSignerAddress`
+   - `policyAccountAddress`
+   - `executionDestinationAddress`
+   - `venueSigningMode`
+   - `automationAccountMode`
+4. Tighten authenticated wallet-state validation so smart-account verification is required for automation-capable posture, even when current manual signer flow remains acceptable.
+5. Maintain compatibility with both Privy native smart-wallet records and linked SIWE-backed smart-account records when normalizing auth context.
+6. Keep current manual CoW and 1inch submission logic in the wallet-signer lane until AA-native signing is separately proven. Do not rewrite current submission handlers to assume `eip1271`.
+7. Add bridge-state persistence for the current manual lane:
+   - if the venue path supports a proven separate receiver, store the smart account as `executionDestinationAddress`,
+   - otherwise store the smart account as `policyAccountAddress` only and keep settlement on the manual signer.
+8. Add lifecycle/activity events for:
+   - `embedded_wallet_ready`
+   - `smart_account_ready`
+   - `smart_account_verified`
+   - `automation_account_ready`
+   - `manual_signer_wallet_first`
+9. Add or update API tests to prove:
+   - current manual execution remains wallet-first,
+   - automation posture remains blocked without a smart account,
+   - bridge-state fields are explicit and truthful,
+   - no API surface claims AA-native venue signing prematurely.
 
-1. stale `smart_account_required` on the current public execution lane if linked-wallet proof is canonical,
-2. implying smart-wallet live proof from scaffolding alone,
-3. implying linked-wallet sufficiency if the deployed lane still truly blocks on smart-wallet bootstrap.
+## `apps/web`
 
-## Measurement / Proof Contract
+1. In [privy-provider.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/privy-provider.tsx), mount the Privy smart-wallet provider inside the base provider and configure the embedded-wallet creation posture intentionally. Do not leave smart-wallet support as an implicit dashboard-only assumption.
+2. Replace [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx) and its `useWalletState` helper with a hook that surfaces:
+   - auth readiness,
+   - external wallet linkage,
+   - embedded-wallet readiness and address,
+   - smart-wallet readiness and address,
+   - bootstrap actions,
+   - current manual signer posture,
+   - current automation account posture.
+3. Add a browser bootstrap sequence that:
+   - ensures the embedded wallet exists,
+   - creates or detects the smart wallet on Ethereum,
+   - links the smart-account address back to the authenticated Privy user if backend verification requires it,
+   - then passes the verified wallet-state contract to the backend.
+4. Update [activation-screen.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/activation-screen.tsx) so the step machine is no longer one mixed funnel. It must render three distinct surfaces:
+   - current manual signing surface,
+   - smart-account-first account architecture,
+   - future AA-native venue-signing lane as deferred.
+5. Update [smart-account-panel.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/smart-account-panel.tsx) and [api-adapter.ts](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/lib/api-adapter.ts) to render:
+   - manual signer address,
+   - policy account address,
+   - execution destination if supported on the current venue path,
+   - automation readiness,
+   - deferred AA-native signing status.
+6. Keep current manual approval UI honest: it may still use wallet-first signing where truthful. Add copy and state labels that explicitly say smart-account-native signing is not yet the canonical current manual path.
+7. Add browser-visible proof surfaces that show:
+   - the smart-account address,
+   - the current manual signer address,
+   - the policy account or destination address,
+   - the current venue-signing mode,
+   - the exact blocker if automation posture is not yet ready.
+8. Add or update frontend tests and route-proof notes to prove the canonical activation route distinguishes manual wallet-first execution from automation smart-account-first posture.
 
-Required proof categories:
+## Exact Hosted Proof Contract
 
-1. Local proof
-   - policy and API tests for both `not_required` and `required` branches,
-   - exact execution-plan derivation output for the canonical branch.
-2. Deployed-host proof
-   - production `POST /api/activations` and `POST /api/executions` behavior under authenticated context,
-   - explicit activation/execution payload showing the canonical Privy boundary.
-3. Browser proof
-   - canonical frontend route(s) show the same boundary as the backend,
-   - no stale `smart_account_required` or stale minimum-funding state on the chosen branch.
-4. Agent proof
-   - public `skill.md` can guide the correct public path,
-   - internal skill/runbook can reproduce the authenticated verification path.
+The repo may claim `smart-account-first execution posture` only when one hosted proof bundle contains all of the following on the canonical served app and backend:
+1. a real authenticated Privy session on the canonical host,
+2. browser proof that the embedded wallet is ready,
+3. browser proof that the Ethereum smart account is ready, linked, and visibly identified by address,
+4. authenticated activation proof where the backend returns separate manual and automation posture fields rather than one mixed wallet state,
+5. authenticated execution-plan or execution-create proof where:
+   - current manual signer posture remains wallet-first,
+   - smart account is recorded as the canonical policy account,
+   - execution destination is smart-account-first only where the current venue path explicitly supports it,
+   - venue-signing mode remains non-AA-native,
+6. hosted proof that automation posture is fail-closed without the smart account and becomes ready only once the smart account is verified,
+7. hosted UI or API proof that no surface claims CoW or 1inch already sign natively from the smart account,
+8. one exact bridge-state artifact showing how the current manual signer and the smart-account policy or destination account coexist on the current lane.
 
-## Acceptance Score Vs Proof Provenance
-
-| Area | Local tests | Hosted/backend proof | Browser proof | Closure rule |
-| --- | --- | --- | --- | --- |
-| Linked-wallet sufficiency | required | required | required | close only if all three agree |
-| Smart-wallet-required branch | required | required | required | close only if all three agree |
-| Public/agent alignment | optional | optional | required | close only when skill/runbook/public wording matches canonical truth |
-
-## Critical Assumptions And Invalidators
-
-### Assumptions
-
-1. Privy remains the authentication and wallet provider for the current execution lane.
-2. CoW remains the current live execution rail.
-3. The current promoted basket quoteability blocker is separate from the smart-account truth boundary.
-
-### Invalidators
-
-1. Privy provider changes or product direction intentionally requires smart-wallet-only execution.
-2. Hosted proof discovers the linked-wallet path can no longer reach authenticated execution create.
-3. The frontend canonical activation surface diverges materially from the backend contract.
-
-## Migration / Coexistence / Deprecation Contract
-
-1. Keep both linked-wallet and smart-wallet code branches only while the canonical public posture is being finalized.
-2. Once the canonical branch is proven, stale public wording and stale backend preview assumptions for the non-canonical branch must be removed from user-facing surfaces.
-3. Smart-wallet scaffolding may remain in code if it is explicitly classified as future, optional, or non-canonical for the current lane.
-
-## Data / Privacy / Retention Contract
-
-1. Privy access tokens, refresh tokens, and secrets must never be committed.
-2. Linked-wallet and smart-wallet addresses may appear in proof artifacts only when masked by default unless the operator-runbook explicitly requires the real address.
-3. Execution-request IDs, quote IDs, order UIDs, and tx hashes may be stored in proof notes and runtime records because they are part of the truthful execution boundary.
-
-## Owners And Decision-Rights Contract
-
-1. `apps/api` and `packages/policy` own the runtime truth and eligibility decision.
-2. `apps/web` owns only the reflection of the canonical boundary, not the underlying rule.
-3. `apps/web/public/skill.md` and internal runbooks own agent-testability wording after runtime truth is decided.
-4. `XSL-014` remains the umbrella owner lane; this sub-spec owns the narrowed Privy boundary.
-
-## Agent-Testability Contract
-
-Public agent path must verify:
-1. `/skill.md` explains the current public Privy boundary truthfully,
-2. `/onboarding` and `/activate/[manifestSlug]` do not imply the wrong wallet requirement.
-
-Internal agent path must verify:
-1. authenticated Privy session binding,
-2. whether a linked wallet alone reaches activation save and execution create,
-3. whether any smart-wallet bootstrap step is truly mandatory for the current lane,
-4. exact blocker if the smart-wallet branch is still unproven.
-
-Required internal surfaces:
-1. [skills/xstocks-activation-truth/SKILL.md](/Users/user/PycharmProjects/xstocks-strategy-lab/skills/xstocks-activation-truth/SKILL.md)
-2. [docs/runbooks/xstocks-operator-execution-proof.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/runbooks/xstocks-operator-execution-proof.md)
-
-## Verification Commands
-
-1. `pnpm --dir packages/policy check`
-2. `pnpm --dir apps/api check`
-3. `node --test --test-name-pattern "verified CoW basket rails become live at the requested notional without a smart wallet" packages/policy/test/policy.test.js`
-4. `node --test --test-name-pattern "authenticated CoW activation can reach quote readiness at a small requested notional without a smart wallet|execution quote, approval, submission, and receipt actions persist live CoW truth" apps/api/test/api.test.js`
-5. authenticated production probe covering activation save, execution create, and the next truthful hosted boundary
-6. browser proof for `/skill.md` and the canonical activation route
+Anything less than that exact bundle is not enough for a smart-account-first execution posture claim.
 
 ## Acceptance Criteria
 
-1. One canonical answer exists for the current CoW lane: `linked_wallet_sufficient`, `smart_wallet_required`, or `dual_mode_with_explicit_default`.
-2. The canonical answer is backed by local tests and at least one hosted proof artifact.
-3. Public and internal agent surfaces reflect the same canonical answer.
-4. If the canonical answer is `linked_wallet_sufficient`, stale `smart_account_required` and stale funding-minimum implications are removed from the current public execution story.
-5. If the canonical answer is `smart_wallet_required`, a real bootstrap path with proof artifacts exists and the repo no longer relies on linked-wallet-only claims for the current lane.
+1. `XSL-005` keeps ownership of the smart-account execution boundary and this doc is the updated supporting spec instead of a duplicate lane.
+2. One canonical branch is frozen as `manual = wallet-first`, `automation = smart-account-first`, `AA-native venue signing = later explicit proof lane`.
+3. The other two branches are rejected explicitly with technical reasons grounded in current repo truth.
+4. The plan names the exact file/surface changes needed in `packages/policy`, `apps/api`, and `apps/web`.
+5. The plan removes the current signer/settlement ambiguity by defining an explicit bridge state and separate manual-versus-automation account contracts.
+6. The plan leaves one exact hosted proof bar only before the repo may claim smart-account-first execution posture.
+7. The plan is truthful about current runtime status: linked-wallet hosted proof exists today, smart-account-first account architecture does not yet.
+
+## Verification Commands
+
+For this planning pass:
+1. `git diff --check`
+
+For the later implementation lane:
+1. `node --test packages/policy/test/policy.test.js`
+2. `node --test apps/api/test/api.test.js`
+3. `pnpm --dir apps/web check`
+4. canonical browser proof for the smart-account bootstrap and bridge-state route
+5. one authenticated hosted reprobe covering activation save, execution create, manual-versus-automation posture, and bridge-state truth
 
 ## Rollback / Recovery Contract
 
-1. If hosted proof contradicts the chosen branch, revert public/product wording to the last proven branch immediately.
-2. Keep non-canonical code branches fail-closed until they have their own proof artifact.
-3. Do not retire smart-wallet scaffolding until the chosen branch is stable across local, deployed-host, and browser proof.
+1. Until the implementation lands, keep all current repo and public claims at the already proven linked-wallet hosted boundary and do not imply smart-account-first execution.
+2. If implementation later lands partially, fail closed back to preview or linked-wallet historical proof rather than silently preserving mixed smart-account settlement and EOA execution ownership.
+3. If Privy identity output differs between native smart-wallet records and linked SIWE-backed records, normalize both in backend auth before reintroducing any hosted claim.
 
 ## Decision Log
 
-1. 2026-04-01: kept `XSL-014` as the umbrella owner instead of creating a duplicate issue lane.
-2. 2026-04-01: created a dedicated sub-spec because the smart-account question is now a distinct execution-boundary problem, not just a footnote inside broader CoW proof work.
-3. 2026-04-01: treated agent-testability as a first-class requirement because public `skill.md` and internal runbooks must stop propagating stale wallet-requirement assumptions.
+1. 2026-04-02: kept this file under `XSL-005` and removed the old implicit framing that treated `XSL-014` as the owner of the smart-account decision.
+2. 2026-04-02: selected `manual = wallet-first`, `automation = smart-account-first`, `AA-native venue signing = later explicit proof lane` as the canonical target branch.
+3. 2026-04-02: rejected universal smart-account signing now because the user explicitly kept current manual signer truth and AA-native venue-signing closure out of scope.
+4. 2026-04-02: rejected wallet-first automation because it leaves future automation without a canonical smart-account ownership surface.
 
 ## Progress Log
 
-1. 2026-04-01: audited current repo truth and latest hosted proof; local policy/tests and hosted proof both point to linked-wallet sufficiency for the current live quote boundary, while stale historical surfaces still imply smart-wallet gating.
-2. 2026-04-01: split this live-boundary problem into its own execution-grade sub-spec under `XSL-014`.
+1. 2026-04-02: audited current runtime truth across `packages/policy`, `apps/api`, and `apps/web`.
+2. 2026-04-02: confirmed the current state split that must be made explicit rather than flattened: wallet-first manual signing, optional smart-account destination, missing automation account posture, and frontend proof that stops at auth/connect only.
+3. 2026-04-02: upgraded the smart-account boundary from posture-only wording to execution-grade implementation planning with one exact hosted proof contract and one explicit bridge-state model.
