@@ -59,7 +59,7 @@ export function HomeTerminal() {
           <nav className="landing-header-nav">
             <a className="landing-header-link" href="#infra">Infrastructure</a>
             <Link className="button button-primary button-lg" href="/onboarding">
-              Open Terminal
+              Find my portfolio
             </Link>
           </nav>
         </div>
@@ -69,16 +69,15 @@ export function HomeTerminal() {
       <section className="landing-hero">
         <div className="landing-hero-inner">
           <h1 className="landing-h1">
-            Tokenized equities.<br />
-            Your wallet. Your rules.
+            Tokenized equity portfolios you actually control.
           </h1>
           <p className="landing-hero-sub">
-            Get a portfolio of tokenized US equities matched to you.
-            Preview everything. Fund with $10. Self-custody the whole way.
+            Matched to your profile. Preview every holding.
+            Fund with $10. Self-custody the whole way.
           </p>
           <div className="landing-hero-cta">
             <Link className="button button-primary button-xl" href="/onboarding">
-              Open Terminal
+              Find my portfolio
             </Link>
             <Link className="button button-ghost button-lg" href="/workspace/comparison">
               Browse portfolios
@@ -140,7 +139,7 @@ export function HomeTerminal() {
             Seven questions. Preview the portfolio. Fund when you want.
           </p>
           <Link className="button button-primary button-xl" href="/onboarding">
-            Open Terminal
+            Find my portfolio
           </Link>
         </div>
       </section>
@@ -156,7 +155,7 @@ export function HomeTerminal() {
             </div>
           </div>
           <div className="landing-footer-links">
-            <Link href="/onboarding">Open Terminal</Link>
+            <Link href="/onboarding">Find my portfolio</Link>
             <Link href="/workspace/comparison">Browse portfolios</Link>
           </div>
           <div className="landing-footer-infra">
