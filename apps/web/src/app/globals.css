@@ -926,8 +926,8 @@ button { font: inherit; }
 
 .onboarding-entry-card {
   display: grid;
-  gap: 24px;
-  max-width: 480px;
+  gap: 28px;
+  max-width: 640px;
   padding: 0 16px;
 }
 
@@ -945,10 +945,10 @@ button { font: inherit; }
 
 .onboarding-entry-card h1 {
   margin: 0;
-  font-size: clamp(2.6rem, 4.5vw, 3.8rem);
+  font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 700;
-  line-height: 1.0;
-  letter-spacing: -0.03em;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   color: var(--text);
 }
 
@@ -961,10 +961,10 @@ button { font: inherit; }
 
 .ob-entry-infra {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   justify-content: center;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -992,9 +992,9 @@ button { font: inherit; }
 .onboarding-entry-card p {
   margin: 0;
   color: var(--text-soft);
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: 1.5;
-  max-width: 36ch;
+  max-width: 40ch;
   margin-inline: auto;
 }
 
@@ -1106,10 +1106,10 @@ button { font: inherit; }
 
 .onboarding-flow-question h2 {
   margin: 0;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
   color: var(--text);
 }
 
@@ -1361,6 +1361,133 @@ button { font: inherit; }
   padding: 24px;
 }
 
+/* ── Analysis Transition Screen ── */
+
+.analysis-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 64px 24px;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(31, 213, 154, 0.06), transparent 55%),
+    var(--bg);
+}
+
+.analysis-inner {
+  max-width: 560px;
+  text-align: center;
+  display: grid;
+  gap: 24px;
+  justify-items: center;
+}
+
+.analysis-title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  animation: analysisFadeIn 400ms ease both;
+}
+
+.analysis-detail {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  animation: analysisFadeIn 400ms ease 100ms both;
+}
+
+.analysis-progress-track {
+  width: 100%;
+  max-width: 360px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.analysis-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.analysis-steps {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+  text-align: left;
+}
+
+.analysis-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  transition: color 300ms ease;
+}
+
+.analysis-step-active {
+  color: var(--text);
+}
+
+.analysis-step-done {
+  color: var(--accent);
+}
+
+.analysis-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  transition: background 300ms ease;
+}
+
+.analysis-step-active .analysis-step-dot {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(31, 213, 154, 0.4);
+}
+
+.analysis-step-done .analysis-step-dot {
+  background: rgba(31, 213, 154, 0.5);
+}
+
+.analysis-profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  animation: analysisFadeIn 400ms ease 200ms both;
+}
+
+@keyframes analysisFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analysis-title,
+  .analysis-detail,
+  .analysis-profile-chips {
+    animation: none;
+  }
+
+  .analysis-progress-fill {
+    transition: none;
+  }
+
+  .analysis-step,
+  .analysis-step-dot {
+    transition: none;
+  }
+}
+
 /* ── Behavior Chips (dashboard preview) ── */
 
 .behavior-chips {
@@ -1427,8 +1554,8 @@ button { font: inherit; }
 /* ── Button Sizes ── */
 
 .button-sm { min-height: 34px; padding: 0 14px; font-size: 0.82rem; }
-.button-lg { min-height: 48px; padding: 0 28px; font-size: 1rem; font-weight: 600; }
-.button-xl { min-height: 56px; padding: 0 40px; font-size: 1.1rem; font-weight: 700; border-radius: 16px; }
+.button-lg { min-height: 54px; padding: 0 32px; font-size: 1.05rem; font-weight: 600; }
+.button-xl { min-height: 64px; padding: 0 48px; font-size: 1.2rem; font-weight: 700; border-radius: 16px; }
 
 /* ──────────────────────────────────────────────
    Landing Page — Full-width marketing homepage
@@ -1508,7 +1635,7 @@ button { font: inherit; }
 /* ── Hero ── */
 
 .landing-hero {
-  padding: 100px 32px 80px;
+  padding: 120px 32px 100px;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(31, 213, 154, 0.07), transparent 55%),
     var(--bg);
@@ -1524,27 +1651,27 @@ button { font: inherit; }
   margin-bottom: 20px;
   color: var(--accent);
   font-family: var(--font-mono), monospace;
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .landing-h1 {
-  margin: 0 0 24px;
-  font-size: clamp(3.2rem, 6.5vw, 5rem);
+  margin: 0 0 28px;
+  font-size: clamp(3.6rem, 7.5vw, 6.5rem);
   font-weight: 700;
-  line-height: 1.0;
-  letter-spacing: -0.03em;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   color: var(--text);
 }
 
 .landing-hero-sub {
-  margin: 0 0 36px;
-  max-width: 56ch;
+  margin: 0 0 40px;
+  max-width: 52ch;
   color: var(--text-soft);
-  font-size: 1.15rem;
-  line-height: 1.6;
+  font-size: 1.35rem;
+  line-height: 1.55;
 }
 
 .landing-hero-cta {
@@ -1574,7 +1701,7 @@ button { font: inherit; }
 /* ── Infra Band ── */
 
 .landing-infra-band {
-  padding: 32px 32px;
+  padding: 40px 32px;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   background: var(--surface);
@@ -1596,7 +1723,7 @@ button { font: inherit; }
 
 .landing-infra-card {
   flex: 1;
-  padding: 16px 20px;
+  padding: 24px 28px;
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   background: rgba(255, 255, 255, 0.015);
@@ -1605,14 +1732,15 @@ button { font: inherit; }
 .landing-infra-card strong {
   display: block;
   color: var(--text);
-  font-size: 1.05rem;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
 .landing-infra-card span {
   display: block;
   color: var(--text-muted);
-  font-size: 0.78rem;
-  margin-top: 2px;
+  font-size: 0.88rem;
+  margin-top: 4px;
 }
 
 /* ── Flow Diagram ── */
@@ -1635,8 +1763,8 @@ button { font: inherit; }
 }
 
 .flow-node-circle {
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   border: 2px solid rgba(31, 213, 154, 0.4);
   background: rgba(31, 213, 154, 0.08);
@@ -1647,23 +1775,23 @@ button { font: inherit; }
 .flow-node-num {
   color: var(--accent);
   font-family: var(--font-mono), monospace;
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
 .flow-node strong {
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 1.1rem;
 }
 
 .flow-node span {
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
 }
 
 .flow-connector {
   position: absolute;
-  top: 28px;
+  top: 36px;
   left: calc(50% + 40px);
   width: calc(100% - 80px + 48px);
   height: 2px;
@@ -1680,25 +1808,25 @@ button { font: inherit; }
 }
 
 .landing-trust-chip {
-  padding: 20px 24px;
+  padding: 28px 32px;
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   background: rgba(255, 255, 255, 0.015);
   text-align: center;
-  min-width: 180px;
+  min-width: 200px;
 }
 
 .landing-trust-chip strong {
   display: block;
   color: var(--text);
-  font-size: 1rem;
-  margin-bottom: 4px;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
 }
 
 .landing-trust-chip span {
   display: block;
   color: var(--text-muted);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
 }
 
 .landing-section-center {
@@ -1726,18 +1854,18 @@ button { font: inherit; }
   margin-bottom: 14px;
   color: var(--text-muted);
   font-family: var(--font-mono), monospace;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .landing-h2 {
-  margin: 0 0 16px;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  margin: 0 0 20px;
+  font-size: clamp(2.2rem, 3.5vw, 3.2rem);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
   color: var(--text);
 }
 
@@ -1934,24 +2062,24 @@ button { font: inherit; }
 }
 
 .pq-gate-inner {
-  max-width: 580px;
+  max-width: 680px;
   display: grid;
-  gap: 20px;
+  gap: 24px;
 }
 
 .pq-gate-title {
   margin: 0;
-  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+  font-size: clamp(3rem, 5.5vw, 4.5rem);
   font-weight: 700;
-  line-height: 1.0;
-  letter-spacing: -0.03em;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   color: var(--text);
 }
 
 /* ── Gate chart ── */
 
 .pq-gate-chart {
-  height: 120px;
+  height: 160px;
   border-radius: var(--radius-row);
   overflow: hidden;
 }
@@ -1971,8 +2099,8 @@ button { font: inherit; }
 
 .pq-gate-stat {
   flex: 1;
-  min-width: 100px;
-  padding: 12px 16px;
+  min-width: 110px;
+  padding: 16px 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius-row);
   background: rgba(255, 255, 255, 0.02);
@@ -1981,7 +2109,7 @@ button { font: inherit; }
 .pq-gate-stat span {
   display: block;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1989,9 +2117,9 @@ button { font: inherit; }
 
 .pq-gate-stat strong {
   display: block;
-  margin-top: 4px;
+  margin-top: 6px;
   color: var(--text);
-  font-size: 1.1rem;
+  font-size: 1.35rem;
 }
 
 /* ── Gate chips ── */
@@ -2199,7 +2327,7 @@ button { font: inherit; }
 
 .pq-summary-head h2 {
   margin: 6px 0 0;
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--text);
 }

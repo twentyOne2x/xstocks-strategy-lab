@@ -139,8 +139,9 @@ function mapActionKind(action: string): SharedActivationAction["kind"] {
   return "swap";
 }
 
-function fundingAmountForMode(mode: StrategyMode): number {
-  return mode === "directional" ? 1800 : 2500;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function fundingAmountForMode(_mode: StrategyMode): number {
+  return 10;
 }
 
 function buildSignalArtifact(manifest: PromotedManifest): SharedSignalArtifact {

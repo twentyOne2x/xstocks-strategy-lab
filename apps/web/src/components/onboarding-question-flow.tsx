@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type {
   BlotterData,
@@ -168,21 +168,31 @@ function PostQuestionnaireWorkspace({
     onRetry?: () => void;
   } | null;
 }) {
-  const [showWorkspace, setShowWorkspace] = useState(false);
+  const [phase, setPhase] = useState<"analysis" | "gate" | "workspace">("analysis");
   const [tourStep, setTourStep] = useState(0);
   const [tourDismissed, setTourDismissed] = useState(false);
 
   const bundle = getRecommendationExplanationBundle(manifest);
   const directionalPreviewOnly = isDirectionalPreviewOnly(manifest);
 
-  if (!showWorkspace) {
+  if (phase === "analysis") {
+    return (
+      <AnalysisTransition
+        recommendation={recommendation}
+        manifest={manifest}
+        onComplete={() => setPhase("gate")}
+      />
+    );
+  }
+
+  if (phase === "gate") {
     return (
       <RecommendationGate
         recommendation={recommendation}
         manifest={manifest}
         bundle={bundle}
         directionalPreviewOnly={directionalPreviewOnly}
-        onEnterWorkspace={() => setShowWorkspace(true)}
+        onEnterWorkspace={() => setPhase("workspace")}
         onReset={onReset}
         previewStatus={previewStatus}
       />
@@ -205,6 +215,96 @@ function PostQuestionnaireWorkspace({
       onTourDismiss={() => setTourDismissed(true)}
       previewStatus={previewStatus}
     />
+  );
+}
+
+/* ── Analysis Transition — staged progress between questionnaire and gate ── */
+
+function AnalysisTransition({
+  recommendation,
+  manifest,
+  onComplete,
+}: {
+  recommendation: StrategyRecommendation;
+  manifest: PromotedManifest;
+  onComplete: () => void;
+}) {
+  const [activeStep, setActiveStep] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prefersReducedMotion = useRef(false);
+
+  const steps = [
+    { label: "Analyzing your profile", detail: `Risk: ${recommendation.risk_band} · Rebalance: ${recommendation.rebalance_cadence.replaceAll("_", " ")}` },
+    { label: "Comparing portfolio candidates", detail: `${manifest.allocations.length} holdings across ${manifest.frontend.risk_label.toLowerCase()} risk` },
+    { label: "Checking risk fit", detail: `Drawdown band: ${recommendation.risk_band} · Stance: ${recommendation.stance.replaceAll("_", " ")}` },
+    { label: "Building recommendation", detail: recommendation.title },
+    { label: "Preparing your preview", detail: "Almost ready" },
+  ];
+
+  useEffect(() => {
+    prefersReducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion.current) {
+      // Skip animation entirely for reduced-motion users
+      onComplete();
+      return;
+    }
+
+    const durations = [700, 800, 700, 600, 500];
+    let step = 0;
+
+    function advance() {
+      step++;
+      if (step >= steps.length) {
+        // Brief pause on last step before transitioning
+        timerRef.current = setTimeout(onComplete, 400);
+        return;
+      }
+      setActiveStep(step);
+      timerRef.current = setTimeout(advance, durations[step]);
+    }
+
+    timerRef.current = setTimeout(advance, durations[0]);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const current = steps[activeStep];
+  const progress = ((activeStep + 1) / steps.length) * 100;
+
+  return (
+    <div className="analysis-screen">
+      <div className="analysis-inner">
+        <span className="landing-kicker">Evaluating fit</span>
+        <h1 className="analysis-title">{current.label}</h1>
+        <p className="analysis-detail">{current.detail}</p>
+
+        <div className="analysis-progress-track">
+          <div className="analysis-progress-fill" style={{ width: `${progress}%` }} />
+        </div>
+
+        <div className="analysis-steps">
+          {steps.map((s, i) => (
+            <div
+              className={`analysis-step ${i < activeStep ? "analysis-step-done" : ""} ${i === activeStep ? "analysis-step-active" : ""}`}
+              key={s.label}
+            >
+              <span className="analysis-step-dot" />
+              <span>{s.label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="analysis-profile-chips">
+          {recommendation.behavior_chips.slice(0, 5).map((chip) => (
+            <span className="token-pill" key={chip}>{chip}</span>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 

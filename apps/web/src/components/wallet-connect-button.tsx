@@ -1,9 +1,44 @@
 "use client";
 
-import { usePrivy } from "@privy-io/react-auth";
+import { getIdentityToken, usePrivy } from "@privy-io/react-auth";
+import { useEffect, useRef } from "react";
+
+import { trackXStocksFunnelStage } from "@/lib/funnel-tracking";
 
 export function WalletConnectButton() {
-  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { ready, authenticated, user, login, logout, getAccessToken } = usePrivy();
+  const trackedWalletRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!authenticated) {
+      trackedWalletRef.current = null;
+      return;
+    }
+
+    const walletAddress = user?.wallet?.address ?? null;
+
+    if (!walletAddress || trackedWalletRef.current === walletAddress) {
+      return;
+    }
+
+    void (async () => {
+      try {
+        const [accessToken, identityToken] = await Promise.all([
+          getAccessToken(),
+          getIdentityToken(),
+        ]);
+
+        await trackXStocksFunnelStage({
+          stage: "wallet_connected",
+          accessToken,
+          identityToken,
+        });
+        trackedWalletRef.current = walletAddress;
+      } catch {
+        trackedWalletRef.current = null;
+      }
+    })();
+  }, [authenticated, getAccessToken, user]);
 
   if (!ready) {
     return (

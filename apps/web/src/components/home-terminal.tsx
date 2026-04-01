@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
+
 function ChartIcon({ size = 32 }: { size?: number }) {
   return (
     <svg aria-hidden="true" className="landing-icon" fill="none" height={size} viewBox="0 0 128 128" width={size} xmlns="http://www.w3.org/2000/svg">
@@ -45,6 +47,7 @@ const infraPartners = [
 export function HomeTerminal() {
   return (
     <div className="landing">
+      <XStocksFunnelStageTracker stage="landing_viewed" />
       {/* ── Header ── */}
       <header className="landing-header">
         <div className="landing-header-inner">
