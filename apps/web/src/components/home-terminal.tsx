@@ -16,6 +16,7 @@ const infraPartners = [
   { name: "xStocks", role: "Tokenized equities on Ethereum", href: "https://xstocks.fi" },
   { name: "Privy", role: "Smart wallets and authentication", href: "https://privy.io" },
   { name: "CoW Protocol", role: "MEV-protected swap execution", href: "https://cow.fi" },
+  { name: "1inch", role: "DEX aggregation and Fusion swaps", href: "https://1inch.io" },
   { name: "Chainlink CRE", role: "Automated rebalancing rails", href: "https://chain.link" },
 ];
 
