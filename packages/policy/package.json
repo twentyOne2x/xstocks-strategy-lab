@@ -1,0 +1,11 @@
+{
+  "name": "@xstocks/policy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ./scripts/lint.js",
+    "lint": "node ./scripts/lint.js",
+    "test": "node --test",
+    "check": "node ./scripts/lint.js && node --test"
+  }
+}

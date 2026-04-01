@@ -1,0 +1,102 @@
+{
+  "prices_version": "prices.monthly.2025_h1_v1",
+  "frequency": "monthly",
+  "points": [
+    {
+      "date": "2025-01-31",
+      "prices": {
+        "AAPLx": 100,
+        "AMZNx": 100,
+        "GOOGLx": 100,
+        "METAx": 100,
+        "MSFTx": 100,
+        "NVDAx": 100,
+        "TSLAx": 100,
+        "AMDx": 100,
+        "AVGOx": 100,
+        "ORCLx": 100,
+        "SPYx": 100
+      }
+    },
+    {
+      "date": "2025-02-28",
+      "prices": {
+        "AAPLx": 102,
+        "AMZNx": 103,
+        "GOOGLx": 101,
+        "METAx": 104,
+        "MSFTx": 102,
+        "NVDAx": 108,
+        "TSLAx": 98,
+        "AMDx": 107,
+        "AVGOx": 105,
+        "ORCLx": 101,
+        "SPYx": 101
+      }
+    },
+    {
+      "date": "2025-03-31",
+      "prices": {
+        "AAPLx": 105,
+        "AMZNx": 106,
+        "GOOGLx": 103,
+        "METAx": 107,
+        "MSFTx": 105,
+        "NVDAx": 115,
+        "TSLAx": 96,
+        "AMDx": 112,
+        "AVGOx": 110,
+        "ORCLx": 103,
+        "SPYx": 103
+      }
+    },
+    {
+      "date": "2025-04-30",
+      "prices": {
+        "AAPLx": 107,
+        "AMZNx": 109,
+        "GOOGLx": 104,
+        "METAx": 110,
+        "MSFTx": 107,
+        "NVDAx": 122,
+        "TSLAx": 99,
+        "AMDx": 117,
+        "AVGOx": 114,
+        "ORCLx": 105,
+        "SPYx": 104
+      }
+    },
+    {
+      "date": "2025-05-31",
+      "prices": {
+        "AAPLx": 110,
+        "AMZNx": 111,
+        "GOOGLx": 106,
+        "METAx": 112,
+        "MSFTx": 109,
+        "NVDAx": 128,
+        "TSLAx": 101,
+        "AMDx": 119,
+        "AVGOx": 116,
+        "ORCLx": 107,
+        "SPYx": 106
+      }
+    },
+    {
+      "date": "2025-06-30",
+      "prices": {
+        "AAPLx": 112,
+        "AMZNx": 114,
+        "GOOGLx": 108,
+        "METAx": 115,
+        "MSFTx": 111,
+        "NVDAx": 135,
+        "TSLAx": 103,
+        "AMDx": 121,
+        "AVGOx": 118,
+        "ORCLx": 110,
+        "SPYx": 108
+      }
+    }
+  ]
+}

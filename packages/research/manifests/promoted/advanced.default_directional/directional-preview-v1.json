@@ -1,0 +1,243 @@
+{
+  "version": "1",
+  "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+  "manifest_id": "advanced.default_directional:directional-preview-v1:promoted",
+  "slotId": "advanced.default_directional",
+  "slot_id": "advanced.default_directional",
+  "mode": "directional",
+  "chain": "ethereum",
+  "strategyVersion": "directional-preview-v1",
+  "strategy_version": "directional-preview-v1",
+  "promoted": true,
+  "frontend": {
+    "title": "Directional default preview",
+    "subtitle": "Preview-only incumbent for the advanced directional lane.",
+    "riskLabel": "high",
+    "risk_label": "high",
+    "summary": "Preview-only SPYx directional incumbent that stays blocked for execution until exact live xStocks-on-Euler proof is independently verified.",
+    "badges": [
+      "promoted_manifest",
+      "preview_only",
+      "route_unverified"
+    ]
+  },
+  "validation": {
+    "datasetVersion": "research-bundle-v2",
+    "dataset_version": "research-bundle-v2",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "evaluator_version": "strategy_lab_evaluator_v1",
+    "objectiveId": "directional_calmar_after_cost_v1",
+    "objective_id": "directional_calmar_after_cost_v1",
+    "score": 0,
+    "deltaVsIncumbent": null,
+    "delta_vs_incumbent": null,
+    "promotedAt": "2026-04-01T11:00:18.855Z",
+    "promoted_at": "2026-04-01T11:00:18.855Z"
+  },
+  "signal_refs": [
+    "manifest:advanced.default_directional:directional-preview-v1:promoted"
+  ],
+  "signalRefs": [
+    {
+      "signalId": "manifest:advanced.default_directional:directional-preview-v1:promoted",
+      "scopeType": "asset",
+      "scopeKey": "SPYx"
+    }
+  ],
+  "target_allocations": [],
+  "target_directional_expressions": [
+    {
+      "asset_symbol": "SPYx",
+      "stance": "conviction_long",
+      "notional_share_bps": 6000
+    }
+  ],
+  "requiredAssets": [
+    "SPYx",
+    "AUSD"
+  ],
+  "requiredRoutes": [
+    {
+      "routeId": "euler.ethereum.directional",
+      "label": "Euler Directional",
+      "routeKind": "directional_market",
+      "requiredFor": "directional"
+    }
+  ],
+  "required_routes": [
+    {
+      "route_id": "euler.ethereum.directional",
+      "route_kind": "execution",
+      "required_for": "directional",
+      "label": "Euler Directional"
+    }
+  ],
+  "walletRequirements": {
+    "requiresWallet": true,
+    "requiresSmartAccount": true,
+    "minFundingUsd": 1500,
+    "preferredFundingProvider": "privy",
+    "preferredBridgeProvider": "lifi",
+    "topUpAsset": "USDC"
+  },
+  "wallet_requirements": {
+    "requires_wallet": true,
+    "requires_smart_account": true,
+    "min_funding_usd": 1500,
+    "preferred_funding_provider": "privy",
+    "preferred_bridge_provider": "lifi",
+    "top_up_asset": "USDC"
+  },
+  "activationTemplate": {
+    "mode": "directional",
+    "templateId": "xstocks_directional_expression_v1",
+    "fundingAssetSymbol": "USDC",
+    "assetSymbol": "SPYx",
+    "targetDirectionalExpression": {
+      "view": "conviction_long",
+      "assetSymbol": "SPYx",
+      "grossExposurePct": 60,
+      "netExposurePct": 60,
+      "targetLtvPct": 35
+    }
+  },
+  "activation_template": {
+    "template_id": "xstocks_directional_expression_v1",
+    "preview_available": true,
+    "required_assets": [
+      "SPYx",
+      "AUSD"
+    ],
+    "required_routes": [
+      {
+        "route_id": "euler.ethereum.directional",
+        "route_kind": "execution",
+        "required_for": "directional",
+        "label": "Euler Directional"
+      }
+    ],
+    "target_allocations": [],
+    "target_directional_expressions": [
+      {
+        "asset_symbol": "SPYx",
+        "stance": "conviction_long",
+        "notional_share_bps": 6000
+      }
+    ],
+    "wallet_requirements": {
+      "requires_wallet": true,
+      "requires_smart_account": true,
+      "min_funding_usd": 1500,
+      "preferred_funding_provider": "privy",
+      "preferred_bridge_provider": "lifi",
+      "top_up_asset": "USDC"
+    },
+    "permissions": {
+      "allow_pause": false,
+      "allow_turn_off": false
+    }
+  },
+  "fallback": {
+    "previousIncumbentId": null,
+    "previous_incumbent_id": null,
+    "disableConditions": [
+      "slot_not_promoted",
+      "preview_only",
+      "route_unverified",
+      "directional_activation_disabled"
+    ],
+    "disable_conditions": [
+      "slot_not_promoted",
+      "preview_only",
+      "route_unverified",
+      "directional_activation_disabled"
+    ]
+  },
+  "executionBoundary": {
+    "promoted": true,
+    "source": {
+      "type": "research_promoted_manifest",
+      "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+      "slotId": "advanced.default_directional"
+    },
+    "requiredAssets": [
+      "SPYx",
+      "AUSD"
+    ],
+    "requiredRoutes": [
+      {
+        "routeId": "euler.ethereum.directional",
+        "label": "Euler Directional",
+        "routeKind": "directional_market",
+        "requiredFor": "directional"
+      }
+    ],
+    "walletRequirements": {
+      "requiresWallet": true,
+      "requiresSmartAccount": true,
+      "minFundingUsd": 1500,
+      "preferredFundingProvider": "privy",
+      "preferredBridgeProvider": "lifi",
+      "topUpAsset": "USDC"
+    },
+    "signalRefs": [
+      {
+        "signalId": "manifest:advanced.default_directional:directional-preview-v1:promoted",
+        "scopeType": "asset",
+        "scopeKey": "SPYx"
+      }
+    ]
+  },
+  "routeValidation": {
+    "executionEligibility": "preview_only",
+    "surfaceTruth": "preview",
+    "routeTruthLabels": [
+      {
+        "routeId": "euler.ethereum.directional",
+        "label": "Euler Directional",
+        "routeKind": "execution",
+        "chain": "ethereum",
+        "verificationTier": "unverified",
+        "truthLabel": "preview",
+        "availability": "preview_only",
+        "requiredFor": "directional",
+        "reason": "Directional lane stays preview-only until exact live Euler xStocks proof exists."
+      }
+    ],
+    "proofNotes": [
+      "Preview only: exact live xStocks-on-Euler route proof remains unverified.",
+      "Directional activation stays fail-closed until a verified live rail replaces this preview incumbent."
+    ],
+    "validationBadges": [
+      "promoted_manifest",
+      "preview_only",
+      "route_unverified"
+    ]
+  },
+  "route_validation": {
+    "execution_eligibility": "preview_only",
+    "surface_truth": "preview",
+    "route_truth_labels": [
+      {
+        "route_id": "euler.ethereum.directional",
+        "label": "Euler Directional",
+        "route_kind": "execution",
+        "chain": "ethereum",
+        "verification_tier": "unverified",
+        "truth_label": "preview",
+        "availability": "preview_only",
+        "required_for": "directional",
+        "reason": "Directional lane stays preview-only until exact live Euler xStocks proof exists."
+      }
+    ],
+    "proof_notes": [
+      "Preview only: exact live xStocks-on-Euler route proof remains unverified.",
+      "Directional activation stays fail-closed until a verified live rail replaces this preview incumbent."
+    ],
+    "validation_badges": [
+      "promoted_manifest",
+      "preview_only",
+      "route_unverified"
+    ]
+  }
+}

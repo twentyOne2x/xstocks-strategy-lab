@@ -1,0 +1,24 @@
+{
+  "validation_set_id": "validation.monthly.2025_full_year_stress_v2",
+  "primary_window_id": "2025_full_year_stress_v2",
+  "comparison_window_ids": ["2025_h1_reference_v1"],
+  "windows": [
+    {
+      "window_id": "2025_full_year_stress_v2",
+      "label": "2025 full-year stress validation",
+      "start": "2025-01-31",
+      "end": "2025-12-31",
+      "notes": [
+        "Preserves the original 2025 H1 momentum phase.",
+        "Adds an H2 semiconductor drawdown, partial rebound, and year-end reversal.",
+        "Makes drift-triggered rebalance costs materially observable under the authoritative scorer."
+      ]
+    },
+    {
+      "window_id": "2025_h1_reference_v1",
+      "label": "2025 H1 reference validation",
+      "start": "2025-01-31",
+      "end": "2025-06-30"
+    }
+  ]
+}

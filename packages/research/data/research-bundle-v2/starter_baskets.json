@@ -1,0 +1,29 @@
+{
+  "starter_baskets_version": "starter_baskets_v1",
+  "baskets": [
+    {
+      "basket_id": "mag7",
+      "title": "Mag 7",
+      "kind": "starter",
+      "members": ["AAPLx", "AMZNx", "GOOGLx", "METAx", "MSFTx", "NVDAx", "TSLAx"]
+    },
+    {
+      "basket_id": "ai_infra",
+      "title": "AI Infra",
+      "kind": "starter",
+      "members": ["AMDx", "AVGOx", "MSFTx", "NVDAx", "ORCLx"]
+    },
+    {
+      "basket_id": "us_tech_leaders",
+      "title": "US Tech Leaders",
+      "kind": "starter",
+      "members": ["AAPLx", "AMZNx", "GOOGLx", "METAx", "MSFTx", "NVDAx", "ORCLx"]
+    },
+    {
+      "basket_id": "sp500_core",
+      "title": "S&P Core",
+      "kind": "benchmark",
+      "members": ["SPYx"]
+    }
+  ]
+}

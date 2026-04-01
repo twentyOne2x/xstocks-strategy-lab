@@ -1,0 +1,140 @@
+{
+  "version": "1",
+  "incumbentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+  "slotId": "onboarding.default_basket",
+  "mode": "basket",
+  "chain": "ethereum",
+  "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+  "promotedAt": "2026-04-01T11:00:18.704Z",
+  "previousIncumbentId": "onboarding.default_basket:basket-baseline-v1",
+  "runId": "challenger_running-onboarding.default_basket-20260401T110018704z-basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+  "frontend": {
+    "title": "Autopilot: Mag 7 Core",
+    "subtitle": "Default onboarding basket anchored to the pinned Mag 7 baseline.",
+    "riskLabel": "moderate",
+    "summary": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.",
+    "badges": [
+      "validated_strategy",
+      "promoted_manifest",
+      "basket_live_ready"
+    ]
+  },
+  "validation": {
+    "datasetVersion": "research-bundle-v2",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "objectiveId": "basket_excess_calmar_after_cost_v1",
+    "score": 1.405954,
+    "deltaVsIncumbent": 0.399074,
+    "promotedAt": "2026-04-01T11:00:18.704Z"
+  },
+  "fallback": {
+    "previousIncumbentId": "onboarding.default_basket:basket-baseline-v1",
+    "disableConditions": [
+      "slot_not_promoted",
+      "research_manifest_missing",
+      "xstocks_live_state_stale"
+    ]
+  },
+  "status": "promoted",
+  "activationTemplate": {
+    "mode": "basket",
+    "templateId": "xstocks_basket_allocations_v1",
+    "fundingAssetSymbol": "USDC",
+    "starterBasketId": "mag7",
+    "targetAllocations": [
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 18,
+        "assetSymbol": "NVDAx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 16.4382,
+        "assetSymbol": "MSFTx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 15.7461,
+        "assetSymbol": "AAPLx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 15.4,
+        "assetSymbol": "METAx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 14.8809,
+        "assetSymbol": "AMZNx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 14.5348,
+        "assetSymbol": "GOOGLx"
+      },
+      {
+        "sleeve": "yield_buffer",
+        "targetWeightPct": 5,
+        "assetSymbol": "AUSD",
+        "venueId": "flowdesk_ausd_rwa_strategy"
+      }
+    ]
+  },
+  "research": {
+    "candidateRef": "basket-challenger:onboarding.default_basket:starter-h6-p100-c5-cap18-a0-r300:v1",
+    "basketId": "mag7",
+    "starterBasketId": "mag7",
+    "benchmarkId": "basket.sp500_core_v1",
+    "targetAllocations": [
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 18,
+        "assetSymbol": "NVDAx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 16.4382,
+        "assetSymbol": "MSFTx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 15.7461,
+        "assetSymbol": "AAPLx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 15.4,
+        "assetSymbol": "METAx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 14.8809,
+        "assetSymbol": "AMZNx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 14.5348,
+        "assetSymbol": "GOOGLx"
+      },
+      {
+        "sleeve": "yield_buffer",
+        "targetWeightPct": 5,
+        "assetSymbol": "AUSD",
+        "venueId": "flowdesk_ausd_rwa_strategy"
+      }
+    ],
+    "rebalanceThresholdBps": 300,
+    "reasonCodes": [
+      "starter_basket:mag7",
+      "selection_universe:starter_only",
+      "holdings_count:6",
+      "starter_bias:0pct",
+      "ranking:baseline_signal_score",
+      "weighting_curve:signal_score_proportional",
+      "signal_power:1x",
+      "cash_weight:5pct",
+      "concentration_cap:18pct",
+      "rebalance_threshold:300bps"
+    ]
+  }
+}

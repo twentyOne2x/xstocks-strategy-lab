@@ -1,0 +1,504 @@
+{
+  "version": "1",
+  "runId": "baseline-onboarding.alt_basket_1-20260401T110018697z-basket-baseline-v1",
+  "completedAtUtc": "2026-04-01T11:00:18.697Z",
+  "stage": "baseline",
+  "mode": "basket",
+  "slotId": "onboarding.alt_basket_1",
+  "status": "keep",
+  "objectiveId": "basket_excess_calmar_after_cost_v1",
+  "candidateRef": "basket-baseline:onboarding.alt_basket_1:ai_infra:v1",
+  "resultRow": {
+    "version": "1",
+    "runId": "baseline-onboarding.alt_basket_1-20260401T110018697z-basket-baseline-v1",
+    "completedAtUtc": "2026-04-01T11:00:18.697Z",
+    "stage": "baseline",
+    "mode": "basket",
+    "slotId": "onboarding.alt_basket_1",
+    "objectiveId": "basket_excess_calmar_after_cost_v1",
+    "status": "keep",
+    "candidateRef": "basket-baseline:onboarding.alt_basket_1:ai_infra:v1",
+    "incumbentRunId": null,
+    "manualVersion": "strategy_lab_program_v1",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "researchDatasetId": "research_bundle_v2",
+    "validationSetId": "validation.monthly.2025_full_year_stress_v2",
+    "universeId": "xstocks.ethereum.mainnet.core-v1",
+    "chainId": "ethereum",
+    "liveTruthSourceId": "xstocks_public_api_v1",
+    "primaryScore": 0.794121,
+    "incumbentScore": 0.794121,
+    "deltaScore": 0,
+    "guardrailPass": true,
+    "returnAnnPct": 23.6932,
+    "maxDrawdownPct": 13.2641,
+    "turnoverAnnPct": 0,
+    "costsTotalBps": 0,
+    "description": "basket_policy_profile;profile_id=baseline;candidate_family_id=slot_baseline;candidate_family_class=baseline;anchor_basket=ai_infra;selection_universe=starter_only;top_n=5;starter_bias_pct=0;weighting_curve=signal_score_proportional;weight_exponent=1;cap_policy=single_name_max_weight_pct;max_weight_pct=22;cap_redistribution=redistribute_proportionally_to_uncapped_names;cash_sleeve=static_target_weight;cash_asset=AUSD;cash_weight_pct=8;rebalance_policy=absolute_drift_threshold_bps;rebalance_threshold_bps=325",
+    "benchmarkId": "basket.sp500_core_v1",
+    "constituentCountAvg": 5,
+    "weightMaxPct": 21.7593,
+    "grossExposureAvgPct": null,
+    "netExposureAvgPct": null,
+    "leverageAvg": null,
+    "borrowCostBps": null,
+    "eulerMarketSetId": null,
+    "eulerHealthMin": null
+  },
+  "bundle": {
+    "researchDatasetId": "research_bundle_v2",
+    "datasetVersion": "research-bundle-v2",
+    "validationSetId": "validation.monthly.2025_full_year_stress_v2",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "chainId": "ethereum",
+    "liveTruthSourceId": "xstocks_public_api_v1"
+  },
+  "guardrailPass": true,
+  "candidate": {
+    "candidateRef": "basket-baseline:onboarding.alt_basket_1:ai_infra:v1",
+    "mode": "basket",
+    "slotId": "onboarding.alt_basket_1",
+    "strategyVersion": "basket-baseline-v1",
+    "basketId": "ai_infra",
+    "benchmarkId": "basket.sp500_core_v1",
+    "description": "basket_policy_profile;profile_id=baseline;candidate_family_id=slot_baseline;candidate_family_class=baseline;anchor_basket=ai_infra;selection_universe=starter_only;top_n=5;starter_bias_pct=0;weighting_curve=signal_score_proportional;weight_exponent=1;cap_policy=single_name_max_weight_pct;max_weight_pct=22;cap_redistribution=redistribute_proportionally_to_uncapped_names;cash_sleeve=static_target_weight;cash_asset=AUSD;cash_weight_pct=8;rebalance_policy=absolute_drift_threshold_bps;rebalance_threshold_bps=325",
+    "policy": {
+      "policyId": "baseline",
+      "selectionUniverse": "starter_only",
+      "holdingsCount": 5,
+      "starterBiasPct": 0,
+      "signalPower": 1,
+      "cashWeight": 0.08,
+      "maxWeightPct": 22,
+      "rebalanceThresholdBps": 325
+    },
+    "policyProfile": {
+      "profileId": "baseline",
+      "profileVersion": "v1",
+      "slotId": "onboarding.alt_basket_1",
+      "anchorBasketId": "ai_infra",
+      "benchmarkId": "basket.sp500_core_v1",
+      "parameters": {
+        "breadth": {
+          "topN": 5
+        },
+        "weighting": {
+          "rankingSignalId": "baseline_signal_score",
+          "curveId": "signal_score_proportional",
+          "exponent": 1
+        },
+        "capPolicy": {
+          "mode": "single_name_max_weight_pct",
+          "maxWeightPct": 22,
+          "redistributionMode": "redistribute_proportionally_to_uncapped_names"
+        },
+        "cashSleeve": {
+          "mode": "static_target_weight",
+          "assetSymbol": "AUSD",
+          "targetWeightPct": 8
+        },
+        "rebalance": {
+          "mode": "absolute_drift_threshold_bps",
+          "thresholdBps": 325
+        },
+        "starterAnchoring": {
+          "selectionUniverse": "starter_only",
+          "starterBiasPct": 0
+        }
+      }
+    },
+    "taxonomy": {
+      "taxonomyVersion": "v1",
+      "templateId": "baseline",
+      "familyId": "slot_baseline",
+      "familyLabel": "Slot Baseline",
+      "familyClassId": "baseline",
+      "familyClassLabel": "Pinned baseline",
+      "operatorSummary": "Keeps the pinned starter basket with the slot-default breadth, cash sleeve, cap, and rebalance trigger."
+    },
+    "plan": {
+      "targetWeights": [
+        {
+          "symbol": "NVDAx",
+          "weight": 0.217593,
+          "assetName": "NVIDIA"
+        },
+        {
+          "symbol": "AMDx",
+          "weight": 0.194689,
+          "assetName": "AMD"
+        },
+        {
+          "symbol": "AVGOx",
+          "weight": 0.187054,
+          "assetName": "Broadcom"
+        },
+        {
+          "symbol": "MSFTx",
+          "weight": 0.181328,
+          "assetName": "Microsoft"
+        },
+        {
+          "symbol": "ORCLx",
+          "weight": 0.139336,
+          "assetName": "Oracle"
+        }
+      ],
+      "cashWeight": 0.08,
+      "rebalanceThresholdBps": 325,
+      "reasonCodes": [
+        "starter_basket:ai_infra",
+        "selection_universe:starter_only",
+        "holdings_count:5",
+        "starter_bias:0pct",
+        "ranking:baseline_signal_score",
+        "weighting_curve:signal_score_proportional",
+        "signal_power:1x",
+        "cash_weight:8pct",
+        "concentration_cap:22pct",
+        "rebalance_threshold:325bps"
+      ]
+    }
+  },
+  "metrics": {
+    "navFinal": 1.215207,
+    "returnAnnPct": 23.6932,
+    "maxDrawdownPct": 13.2641,
+    "turnoverAnnPct": 0,
+    "costsTotalBps": 0,
+    "constituentCountAvg": 5,
+    "weightMaxPct": 21.7593,
+    "rebalanceSimulation": {
+      "modelId": "path_dependent_rebalance_after_cost_v1",
+      "thresholdBps": 325,
+      "rebalanceEventCount": 0,
+      "rebalanceEventsAnn": 0,
+      "turnoverWindowPct": 0,
+      "turnoverAnnPct": 0,
+      "costsTotalBps": 0,
+      "maxObservedDriftBps": 309.6594,
+      "avgObservedDriftBps": 199.5884,
+      "rebalanceDates": [],
+      "navFinal": 1.215207,
+      "netNavFinal": 1.215207,
+      "returnAnnPct": 23.6932,
+      "afterCostReturnAnnPct": 23.6932,
+      "maxDrawdownPct": 13.2641,
+      "netMaxDrawdownPct": 13.2641,
+      "observedWeightMaxPct": 24.8559
+    },
+    "legacyStaticWeight": {
+      "modelId": "static_weight_proxy_v1",
+      "navFinal": 1.217419,
+      "returnAnnPct": 23.9388,
+      "maxDrawdownPct": 12.8445,
+      "turnoverAnnPct": 92,
+      "costsTotalBps": 42.2
+    }
+  },
+  "benchmark": {
+    "benchmarkId": "basket.sp500_core_v1",
+    "basketId": "sp500_core",
+    "metrics": {
+      "navFinal": 1.12,
+      "returnAnnPct": 13.1599,
+      "maxDrawdownPct": 6.4815,
+      "turnoverAnnPct": 0,
+      "costsTotalBps": 0,
+      "constituentCountAvg": 1,
+      "weightMaxPct": 100,
+      "rebalanceSimulation": {
+        "modelId": "path_dependent_rebalance_after_cost_v1",
+        "thresholdBps": 0,
+        "rebalanceEventCount": 0,
+        "rebalanceEventsAnn": 0,
+        "turnoverWindowPct": 0,
+        "turnoverAnnPct": 0,
+        "costsTotalBps": 0,
+        "maxObservedDriftBps": 0,
+        "avgObservedDriftBps": 0,
+        "rebalanceDates": [],
+        "navFinal": 1.12,
+        "netNavFinal": 1.12,
+        "returnAnnPct": 13.1599,
+        "afterCostReturnAnnPct": 13.1599,
+        "maxDrawdownPct": 6.4815,
+        "netMaxDrawdownPct": 6.4815,
+        "observedWeightMaxPct": 100
+      },
+      "legacyStaticWeight": {
+        "modelId": "static_weight_proxy_v1",
+        "navFinal": 1.12,
+        "returnAnnPct": 13.1599,
+        "maxDrawdownPct": 6.4815,
+        "turnoverAnnPct": 100,
+        "costsTotalBps": 45
+      }
+    }
+  },
+  "score": {
+    "scoringModelId": "path_dependent_rebalance_after_cost_v1",
+    "primaryScore": 0.794121,
+    "legacyPrimaryScore": 0.841364,
+    "incumbentScore": 0.794121,
+    "deltaScore": 0,
+    "promotionEpsilon": 0.05
+  },
+  "invalidators": [],
+  "explanationBundle": {
+    "truthMode": "promoted_incumbent_and_run_summary_only",
+    "incumbentState": "baseline_kept",
+    "strategyTaxonomy": {
+      "taxonomyVersion": "v1",
+      "templateId": "baseline",
+      "familyId": "slot_baseline",
+      "familyLabel": "Slot Baseline",
+      "familyClassId": "baseline",
+      "familyClassLabel": "Pinned baseline",
+      "operatorSummary": "Keeps the pinned starter basket with the slot-default breadth, cash sleeve, cap, and rebalance trigger."
+    },
+    "reasonCodes": [
+      {
+        "code": "starter_basket:ai_infra",
+        "kind": "starter_basket",
+        "value": "ai_infra",
+        "label": "Starts from the pinned AI Infra basket membership."
+      },
+      {
+        "code": "selection_universe:starter_only",
+        "kind": "selection_universe",
+        "value": "starter_only",
+        "label": "Selects names from the starter basket only."
+      },
+      {
+        "code": "holdings_count:5",
+        "kind": "holdings_count",
+        "value": "5",
+        "label": "Keeps the basket at 5 names."
+      },
+      {
+        "code": "starter_bias:0pct",
+        "kind": "starter_bias",
+        "value": "0pct",
+        "label": "Applies a 0% score boost to starter-basket names inside broader selection."
+      },
+      {
+        "code": "ranking:baseline_signal_score",
+        "kind": "ranking",
+        "value": "baseline_signal_score",
+        "label": "Ranks names by baseline signal score."
+      },
+      {
+        "code": "weighting_curve:signal_score_proportional",
+        "kind": "weighting_curve",
+        "value": "signal_score_proportional",
+        "label": "Weights names with the signal score proportional curve."
+      },
+      {
+        "code": "signal_power:1x",
+        "kind": "signal_power",
+        "value": "1x",
+        "label": "Raises ranking scores to the 1x power before weights are normalized."
+      },
+      {
+        "code": "cash_weight:8pct",
+        "kind": "cash_weight",
+        "value": "8pct",
+        "label": "Keeps 8% in the AUSD yield buffer."
+      },
+      {
+        "code": "concentration_cap:22pct",
+        "kind": "concentration_cap",
+        "value": "22pct",
+        "label": "Limits any single name to 22%."
+      },
+      {
+        "code": "rebalance_threshold:325bps",
+        "kind": "rebalance_threshold",
+        "value": "325bps",
+        "label": "Only rebalances after 325 bps of drift."
+      }
+    ],
+    "targetWeights": [
+      {
+        "rank": 1,
+        "symbol": "NVDAx",
+        "assetName": "NVIDIA",
+        "targetWeightPct": 21.7593
+      },
+      {
+        "rank": 2,
+        "symbol": "AMDx",
+        "assetName": "AMD",
+        "targetWeightPct": 19.4689
+      },
+      {
+        "rank": 3,
+        "symbol": "AVGOx",
+        "assetName": "Broadcom",
+        "targetWeightPct": 18.7054
+      },
+      {
+        "rank": 4,
+        "symbol": "MSFTx",
+        "assetName": "Microsoft",
+        "targetWeightPct": 18.1328
+      },
+      {
+        "rank": 5,
+        "symbol": "ORCLx",
+        "assetName": "Oracle",
+        "targetWeightPct": 13.9336
+      }
+    ],
+    "cashWeightPct": 8,
+    "rebalanceThresholdBps": 325,
+    "rebalanceThresholdPct": 3.25,
+    "benchmarkDelta": {
+      "benchmarkId": "basket.sp500_core_v1",
+      "returnAnnPct": 23.6932,
+      "benchmarkReturnAnnPct": 13.1599,
+      "afterCostReturnAnnPct": 23.6932,
+      "benchmarkAfterCostReturnAnnPct": 13.1599,
+      "excessReturnAfterCostPct": 10.5333,
+      "score": 0.794121,
+      "deltaVsIncumbent": 0
+    },
+    "portfolioMetrics": {
+      "constituentCount": 5,
+      "concentrationPct": 21.7593,
+      "concentrationCapPct": 22,
+      "turnoverAnnPct": 0,
+      "costsTotalBps": 0,
+      "rebalanceSimulation": {
+        "modelId": "path_dependent_rebalance_after_cost_v1",
+        "thresholdBps": 325,
+        "rebalanceEventCount": 0,
+        "rebalanceEventsAnn": 0,
+        "turnoverWindowPct": 0,
+        "turnoverAnnPct": 0,
+        "costsTotalBps": 0,
+        "maxObservedDriftBps": 309.6594,
+        "avgObservedDriftBps": 199.5884,
+        "rebalanceDates": [],
+        "navFinal": 1.215207,
+        "netNavFinal": 1.215207,
+        "returnAnnPct": 23.6932,
+        "afterCostReturnAnnPct": 23.6932,
+        "maxDrawdownPct": 13.2641,
+        "netMaxDrawdownPct": 13.2641,
+        "observedWeightMaxPct": 24.8559
+      },
+      "legacyStaticWeight": {
+        "modelId": "static_weight_proxy_v1",
+        "navFinal": 1.217419,
+        "returnAnnPct": 23.9388,
+        "maxDrawdownPct": 12.8445,
+        "turnoverAnnPct": 92,
+        "costsTotalBps": 42.2
+      }
+    },
+    "summaries": {
+      "construction": "92% stays in xStocks across 5 names. 8% remains in AUSD. Largest sleeves: NVDAx 21.76%, AMDx 19.47%, AVGOx 18.71%.",
+      "benchmark": "After estimated costs, the pinned run delivered 23.69% versus 13.16% for basket.sp500_core_v1, an excess of +10.53%.",
+      "rebalance": "Rebalance only when drift clears 325 bps. Authoritative path-dependent scoring implies 0% annualized turnover, 0 bps annualized costs, and 0 rebalances over the frozen window. Legacy static proxy would have printed 92% turnover and 42.2 bps total costs with 8% parked in AUSD.",
+      "realityCheck": "Authoritative scoring now uses 325 bps drift bands and implies 0% annualized turnover across 0 rebalance events; legacy static proxy remains available for comparison.",
+      "operator": "Slot Baseline keeps 92% in xStocks across 5 starter basket only names anchored to AI Infra, with 8% in AUSD. Top sleeves: NVDAx 21.76%, AMDx 19.47%, AVGOx 18.71%. Change from slot baseline: No parameter changes from the slot baseline.. After estimated costs, the pinned run delivered 23.69% versus 13.16% for basket.sp500_core_v1, an excess of +10.53%."
+    }
+  },
+  "tuningSummary": {
+    "headline": "92% invested across 5 names selected from the starter basket only with 8% in AUSD and a 325 bps rebalance trigger.",
+    "strategyFamily": {
+      "taxonomyVersion": "v1",
+      "templateId": "baseline",
+      "familyId": "slot_baseline",
+      "familyLabel": "Slot Baseline",
+      "familyClassId": "baseline",
+      "familyClassLabel": "Pinned baseline",
+      "operatorSummary": "Keeps the pinned starter basket with the slot-default breadth, cash sleeve, cap, and rebalance trigger."
+    },
+    "incumbentInterpretation": "Slot Baseline. 5-name starter basket only basket with 8% in AUSD. NVDAx is the largest sleeve at 21.76%. Under the authoritative path-dependent rebalance scorer, after costs it outperformed basket.sp500_core_v1 by 10.53% in the frozen window.",
+    "currentKnobs": [
+      {
+        "knobId": "candidate_family",
+        "label": "Candidate family",
+        "currentValue": "Slot Baseline",
+        "tuningImpact": "Keeps the pinned starter basket with the slot-default breadth, cash sleeve, cap, and rebalance trigger."
+      },
+      {
+        "knobId": "starter_basket",
+        "label": "Starter basket",
+        "currentValue": "AI Infra",
+        "tuningImpact": "Changes basket membership before weights are assigned."
+      },
+      {
+        "knobId": "selection_universe",
+        "label": "Selection universe",
+        "currentValue": "starter basket only",
+        "tuningImpact": "Widens the eligible pool beyond the starter basket without changing slot identity."
+      },
+      {
+        "knobId": "holdings_count",
+        "label": "Holdings breadth",
+        "currentValue": "5",
+        "tuningImpact": "Changes how many names survive ranking into the target basket."
+      },
+      {
+        "knobId": "starter_bias",
+        "label": "Starter anchor bias",
+        "currentValue": "0%",
+        "tuningImpact": "Keeps the slot anchored to its starter basket even when broader selection is enabled."
+      },
+      {
+        "knobId": "ranking_signal",
+        "label": "Ranking signal",
+        "currentValue": "baseline signal score",
+        "tuningImpact": "Changes which names rise or fall inside the current basket."
+      },
+      {
+        "knobId": "weighting_curve",
+        "label": "Weighting curve",
+        "currentValue": "signal score proportional",
+        "tuningImpact": "Changes how aggressively higher-ranked names dominate the basket."
+      },
+      {
+        "knobId": "signal_power",
+        "label": "Signal power",
+        "currentValue": "1x",
+        "tuningImpact": "Makes the weighting curve flatter or more conviction-heavy without changing the underlying signal."
+      },
+      {
+        "knobId": "cash_weight",
+        "label": "Cash sleeve",
+        "currentValue": "8%",
+        "tuningImpact": "Changes how much capital stays in AUSD instead of xStocks exposure."
+      },
+      {
+        "knobId": "concentration_cap",
+        "label": "Single-name cap",
+        "currentValue": "22%",
+        "tuningImpact": "Limits the maximum weight of one name."
+      },
+      {
+        "knobId": "rebalance_threshold",
+        "label": "Rebalance trigger",
+        "currentValue": "325 bps",
+        "tuningImpact": "Skips smaller drifts to reduce churn."
+      }
+    ],
+    "watchpoints": [
+      "NVDAx is the largest sleeve at 21.76% against a 22% single-name cap.",
+      "Authoritative rebalance simulation implies 0% turnover and 0 bps of annualized costs across 0 rebalance events.",
+      "Authoritative turnover is 0% with 0 bps of total costs.",
+      "Legacy static proxy would have printed 92% turnover and 42.2 bps of total costs.",
+      "5 names are selected from the starter basket only.",
+      "Benchmark edge after costs is 10.53% versus basket.sp500_core_v1."
+    ],
+    "operatorSummary": {
+      "whatThisIs": "Slot Baseline keeps 92% in xStocks across 5 starter basket only names anchored to AI Infra, with 8% in AUSD. Top sleeves: NVDAx 21.76%, AMDx 19.47%, AVGOx 18.71%.",
+      "changedFromBaseline": "No parameter changes from the slot baseline.",
+      "whyThisIncumbent": "Slot Baseline. 5-name starter basket only basket with 8% in AUSD. NVDAx is the largest sleeve at 21.76%. Under the authoritative path-dependent rebalance scorer, after costs it outperformed basket.sp500_core_v1 by 10.53% in the frozen window.",
+      "whatToWatch": "NVDAx is the largest sleeve at 21.76% against a 22% single-name cap. Authoritative rebalance simulation implies 0% turnover and 0 bps of annualized costs across 0 rebalance events."
+    }
+  }
+}

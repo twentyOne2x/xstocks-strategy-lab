@@ -1,0 +1,81 @@
+{
+  "name": "@xstocks-strategy-lab/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./contracts": {
+      "types": "./dist/contracts/index.d.ts",
+      "import": "./dist/contracts/index.js"
+    },
+    "./contracts/common": {
+      "types": "./dist/contracts/common.d.ts",
+      "import": "./dist/contracts/common.js"
+    },
+    "./contracts/onboarding": {
+      "types": "./dist/contracts/onboarding.d.ts",
+      "import": "./dist/contracts/onboarding.js"
+    },
+    "./contracts/qualification": {
+      "types": "./dist/contracts/qualification.d.ts",
+      "import": "./dist/contracts/qualification.js"
+    },
+    "./contracts/intelligence": {
+      "types": "./dist/contracts/intelligence.d.ts",
+      "import": "./dist/contracts/intelligence.js"
+    },
+    "./contracts/portfolio": {
+      "types": "./dist/contracts/portfolio.d.ts",
+      "import": "./dist/contracts/portfolio.js"
+    },
+    "./contracts/activation": {
+      "types": "./dist/contracts/activation.d.ts",
+      "import": "./dist/contracts/activation.js"
+    },
+    "./contracts/activity": {
+      "types": "./dist/contracts/activity.d.ts",
+      "import": "./dist/contracts/activity.js"
+    },
+    "./contracts/research": {
+      "types": "./dist/contracts/research.d.ts",
+      "import": "./dist/contracts/research.js"
+    },
+    "./contracts/reporting": {
+      "types": "./dist/contracts/reporting.d.ts",
+      "import": "./dist/contracts/reporting.js"
+    },
+    "./constants": {
+      "types": "./dist/constants/index.d.ts",
+      "import": "./dist/constants/index.js"
+    },
+    "./constants/starter-baskets": {
+      "types": "./dist/constants/starter-baskets.d.ts",
+      "import": "./dist/constants/starter-baskets.js"
+    },
+    "./constants/starter-slots": {
+      "types": "./dist/constants/starter-slots.d.ts",
+      "import": "./dist/constants/starter-slots.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "test": "pnpm run build && node --test ./test/*.test.mjs",
+    "check": "pnpm run lint && pnpm run test"
+  },
+  "dependencies": {
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "typescript": "6.0.2"
+  }
+}

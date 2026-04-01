@@ -1,0 +1,70 @@
+{
+  "manifest_version": "research_bundle_manifest_v1",
+  "research_dataset_id": "research_bundle_v1",
+  "dataset_version": "research-bundle-v1",
+  "generated_at_utc": "2026-03-31T00:00:00Z",
+  "chain": "ethereum",
+  "chain_id": "1",
+  "universe_id": "xstocks.ethereum.mainnet.core-v1",
+  "live_truth_source_id": "xstocks_public_api_v1",
+  "manual_version": "strategy_lab_program_v1",
+  "evaluator_version": "strategy_lab_evaluator_v1",
+  "objective_ids": {
+    "basket": "basket_excess_calmar_after_cost_v1",
+    "directional": "directional_calmar_after_cost_v1"
+  },
+  "bundle_contract": {
+    "default_mode": "basket",
+    "promotion_epsilon": 0.05,
+    "one_candidate_per_run": true,
+    "frozen_semantics": [
+      "xstocks_universe",
+      "ethereum_mainnet",
+      "pinned_validation_windows",
+      "fixed_cost_model",
+      "promoted_manifests_only"
+    ]
+  },
+  "artifacts": [
+    {
+      "artifact_id": "universe_snapshot",
+      "path": "universe_snapshot.json",
+      "kind": "universe"
+    },
+    {
+      "artifact_id": "starter_baskets",
+      "path": "starter_baskets.json",
+      "kind": "starter_baskets"
+    },
+    {
+      "artifact_id": "prices",
+      "path": "prices.json",
+      "kind": "prices"
+    },
+    {
+      "artifact_id": "multipliers",
+      "path": "multipliers.json",
+      "kind": "multipliers"
+    },
+    {
+      "artifact_id": "halts_and_status",
+      "path": "halts_and_status.json",
+      "kind": "halts"
+    },
+    {
+      "artifact_id": "euler_market_map",
+      "path": "euler_market_map.json",
+      "kind": "directional_placeholder"
+    },
+    {
+      "artifact_id": "execution_cost_model",
+      "path": "execution_cost_model.json",
+      "kind": "cost_model"
+    },
+    {
+      "artifact_id": "validation_windows",
+      "path": "validation_windows.json",
+      "kind": "validation_windows"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "validation_set_id": "validation.monthly.2025_h1_v1",
+  "windows": [
+    {
+      "window_id": "2025_h1",
+      "label": "2025 H1 validation",
+      "start": "2025-01-31",
+      "end": "2025-06-30"
+    }
+  ]
+}

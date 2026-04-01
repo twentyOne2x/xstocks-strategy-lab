@@ -1,0 +1,128 @@
+{
+  "version": "1",
+  "registryVersion": "strategy_lab_slot_registry_v1",
+  "registry_version": "strategy_lab_slot_registry_v1",
+  "authority": "promoted_manifests_only",
+  "generatedAtUtc": "2026-04-01T11:00:18.963Z",
+  "generated_at_utc": "2026-04-01T11:00:18.963Z",
+  "promotedManifestRoot": "packages/research/manifests/promoted",
+  "promoted_manifest_root": "packages/research/manifests/promoted",
+  "slots": {
+    "onboarding.default_basket": {
+      "version": "1",
+      "slot": {
+        "chain": "ethereum",
+        "surface": "onboarding",
+        "position": 0,
+        "title": "Autopilot: Mag 7 Core",
+        "description": "Default onboarding basket anchored to the pinned Mag 7 baseline.",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "starterBasketId": "mag7"
+      },
+      "mode": "basket",
+      "currentManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "currentManifestPath": "packages/research/manifests/promoted/onboarding.default_basket/current.json",
+      "current_manifest_id": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "current_manifest_path": "packages/research/manifests/promoted/onboarding.default_basket/current.json",
+      "versionedManifestPath": "packages/research/manifests/promoted/onboarding.default_basket/basket-starter-h6-p100-c5-cap18-a0-r300-v1.json",
+      "versioned_manifest_path": "packages/research/manifests/promoted/onboarding.default_basket/basket-starter-h6-p100-c5-cap18-a0-r300-v1.json",
+      "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+      "strategy_version": "basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+      "promotedAt": "2026-04-01T11:00:18.704Z",
+      "promoted_at": "2026-04-01T11:00:18.704Z"
+    },
+    "onboarding.alt_basket_1": {
+      "version": "1",
+      "slot": {
+        "chain": "ethereum",
+        "surface": "onboarding",
+        "position": 1,
+        "title": "Autopilot: AI Infra",
+        "description": "Alternative onboarding basket tilted toward AI infrastructure names.",
+        "slotId": "onboarding.alt_basket_1",
+        "mode": "basket",
+        "starterBasketId": "ai_infra"
+      },
+      "mode": "basket",
+      "currentManifestRef": {
+        "manifestId": "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1:promoted",
+        "slotId": "onboarding.alt_basket_1",
+        "mode": "basket",
+        "strategyVersion": "basket-core-h5-p100-c2-cap22-a0-r275-v1"
+      },
+      "currentManifestPath": "packages/research/manifests/promoted/onboarding.alt_basket_1/current.json",
+      "current_manifest_id": "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1:promoted",
+      "current_manifest_path": "packages/research/manifests/promoted/onboarding.alt_basket_1/current.json",
+      "versionedManifestPath": "packages/research/manifests/promoted/onboarding.alt_basket_1/basket-core-h5-p100-c2-cap22-a0-r275-v1.json",
+      "versioned_manifest_path": "packages/research/manifests/promoted/onboarding.alt_basket_1/basket-core-h5-p100-c2-cap22-a0-r275-v1.json",
+      "strategyVersion": "basket-core-h5-p100-c2-cap22-a0-r275-v1",
+      "strategy_version": "basket-core-h5-p100-c2-cap22-a0-r275-v1",
+      "promotedAt": "2026-04-01T11:00:18.727Z",
+      "promoted_at": "2026-04-01T11:00:18.727Z"
+    },
+    "onboarding.alt_basket_2": {
+      "version": "1",
+      "slot": {
+        "chain": "ethereum",
+        "surface": "onboarding",
+        "position": 2,
+        "title": "Autopilot: US Tech Leaders",
+        "description": "Alternative onboarding basket for broader US tech leadership exposure.",
+        "slotId": "onboarding.alt_basket_2",
+        "mode": "basket",
+        "starterBasketId": "us_tech_leaders"
+      },
+      "mode": "basket",
+      "currentManifestRef": {
+        "manifestId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+        "slotId": "onboarding.alt_basket_2",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c1-cap17-a0-r275-v1"
+      },
+      "currentManifestPath": "packages/research/manifests/promoted/onboarding.alt_basket_2/current.json",
+      "current_manifest_id": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+      "current_manifest_path": "packages/research/manifests/promoted/onboarding.alt_basket_2/current.json",
+      "versionedManifestPath": "packages/research/manifests/promoted/onboarding.alt_basket_2/basket-starter-h6-p100-c1-cap17-a0-r275-v1.json",
+      "versioned_manifest_path": "packages/research/manifests/promoted/onboarding.alt_basket_2/basket-starter-h6-p100-c1-cap17-a0-r275-v1.json",
+      "strategyVersion": "basket-starter-h6-p100-c1-cap17-a0-r275-v1",
+      "strategy_version": "basket-starter-h6-p100-c1-cap17-a0-r275-v1",
+      "promotedAt": "2026-04-01T11:00:18.731Z",
+      "promoted_at": "2026-04-01T11:00:18.731Z"
+    },
+    "advanced.default_directional": {
+      "version": "1",
+      "slot": {
+        "chain": "ethereum",
+        "surface": "advanced",
+        "position": 0,
+        "title": "Directional default preview",
+        "description": "Preview-only advanced directional lane pinned to SPYx while exact live Euler proof remains unverified.",
+        "slotId": "advanced.default_directional",
+        "mode": "directional",
+        "assetSymbol": "SPYx"
+      },
+      "mode": "directional",
+      "currentManifestRef": {
+        "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+        "slotId": "advanced.default_directional",
+        "mode": "directional",
+        "strategyVersion": "directional-preview-v1"
+      },
+      "currentManifestPath": "packages/research/manifests/promoted/advanced.default_directional/current.json",
+      "current_manifest_id": "advanced.default_directional:directional-preview-v1:promoted",
+      "current_manifest_path": "packages/research/manifests/promoted/advanced.default_directional/current.json",
+      "versionedManifestPath": "packages/research/manifests/promoted/advanced.default_directional/directional-preview-v1.json",
+      "versioned_manifest_path": "packages/research/manifests/promoted/advanced.default_directional/directional-preview-v1.json",
+      "strategyVersion": "directional-preview-v1",
+      "strategy_version": "directional-preview-v1",
+      "promotedAt": "2026-04-01T11:00:18.855Z",
+      "promoted_at": "2026-04-01T11:00:18.855Z"
+    }
+  }
+}

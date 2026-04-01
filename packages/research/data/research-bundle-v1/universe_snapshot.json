@@ -1,0 +1,84 @@
+{
+  "universe_id": "xstocks.ethereum.mainnet.core-v1",
+  "chain": "ethereum",
+  "as_of_utc": "2026-03-31T00:00:00Z",
+  "assets": [
+    {
+      "symbol": "AAPLx",
+      "name": "Apple",
+      "baseline_signal_score": 0.91,
+      "status": "active",
+      "starter_baskets": ["mag7", "us_tech_leaders"]
+    },
+    {
+      "symbol": "AMZNx",
+      "name": "Amazon",
+      "baseline_signal_score": 0.86,
+      "status": "active",
+      "starter_baskets": ["mag7", "us_tech_leaders"]
+    },
+    {
+      "symbol": "GOOGLx",
+      "name": "Alphabet",
+      "baseline_signal_score": 0.84,
+      "status": "active",
+      "starter_baskets": ["mag7", "us_tech_leaders"]
+    },
+    {
+      "symbol": "METAx",
+      "name": "Meta",
+      "baseline_signal_score": 0.89,
+      "status": "active",
+      "starter_baskets": ["mag7", "us_tech_leaders"]
+    },
+    {
+      "symbol": "MSFTx",
+      "name": "Microsoft",
+      "baseline_signal_score": 0.95,
+      "status": "active",
+      "starter_baskets": ["mag7", "ai_infra", "us_tech_leaders"]
+    },
+    {
+      "symbol": "NVDAx",
+      "name": "NVIDIA",
+      "baseline_signal_score": 1.14,
+      "status": "active",
+      "starter_baskets": ["mag7", "ai_infra", "us_tech_leaders"]
+    },
+    {
+      "symbol": "TSLAx",
+      "name": "Tesla",
+      "baseline_signal_score": 0.52,
+      "status": "active",
+      "starter_baskets": ["mag7"]
+    },
+    {
+      "symbol": "AMDx",
+      "name": "AMD",
+      "baseline_signal_score": 1.02,
+      "status": "active",
+      "starter_baskets": ["ai_infra"]
+    },
+    {
+      "symbol": "AVGOx",
+      "name": "Broadcom",
+      "baseline_signal_score": 0.98,
+      "status": "active",
+      "starter_baskets": ["ai_infra"]
+    },
+    {
+      "symbol": "ORCLx",
+      "name": "Oracle",
+      "baseline_signal_score": 0.73,
+      "status": "active",
+      "starter_baskets": ["ai_infra", "us_tech_leaders"]
+    },
+    {
+      "symbol": "SPYx",
+      "name": "S&P 500",
+      "baseline_signal_score": 0.7,
+      "status": "active",
+      "starter_baskets": ["sp500_core"]
+    }
+  ]
+}

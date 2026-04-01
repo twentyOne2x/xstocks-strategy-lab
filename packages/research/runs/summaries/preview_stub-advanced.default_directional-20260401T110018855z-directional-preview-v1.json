@@ -1,0 +1,549 @@
+{
+  "version": "1",
+  "runId": "preview_stub-advanced.default_directional-20260401T110018855z-directional-preview-v1",
+  "completedAtUtc": "2026-04-01T11:00:18.855Z",
+  "stage": "preview_stub",
+  "mode": "directional",
+  "slotId": "advanced.default_directional",
+  "status": "preview_only",
+  "objectiveId": "directional_calmar_after_cost_v1",
+  "candidateRef": "directional-preview:advanced.default_directional:SPYx:v2",
+  "resultRow": {
+    "version": "1",
+    "runId": "preview_stub-advanced.default_directional-20260401T110018855z-directional-preview-v1",
+    "completedAtUtc": "2026-04-01T11:00:18.855Z",
+    "stage": "preview_stub",
+    "mode": "directional",
+    "slotId": "advanced.default_directional",
+    "objectiveId": "directional_calmar_after_cost_v1",
+    "status": "preview_only",
+    "candidateRef": "directional-preview:advanced.default_directional:SPYx:v2",
+    "incumbentRunId": null,
+    "manualVersion": "strategy_lab_program_v1",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "researchDatasetId": "research_bundle_v2",
+    "validationSetId": "validation.monthly.2025_full_year_stress_v2",
+    "universeId": "xstocks.ethereum.mainnet.core-v1",
+    "chainId": "ethereum",
+    "liveTruthSourceId": "xstocks_public_api_v1",
+    "primaryScore": 0,
+    "incumbentScore": null,
+    "deltaScore": null,
+    "guardrailPass": true,
+    "returnAnnPct": 0,
+    "maxDrawdownPct": 0,
+    "turnoverAnnPct": 0,
+    "costsTotalBps": 0,
+    "description": "Preview-only SPYx directional incumbent that stays blocked until exact live xStocks-on-Euler proof is verified.",
+    "benchmarkId": null,
+    "constituentCountAvg": null,
+    "weightMaxPct": null,
+    "grossExposureAvgPct": 60,
+    "netExposureAvgPct": 60,
+    "leverageAvg": 1.35,
+    "borrowCostBps": 540,
+    "eulerMarketSetId": "euler.ethereum.placeholder_v1",
+    "eulerHealthMin": 1.857143
+  },
+  "bundle": {
+    "researchDatasetId": "research_bundle_v2",
+    "datasetVersion": "research-bundle-v2",
+    "validationSetId": "validation.monthly.2025_full_year_stress_v2",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "chainId": "ethereum",
+    "liveTruthSourceId": "xstocks_public_api_v1"
+  },
+  "guardrailPass": true,
+  "candidate": {
+    "candidateRef": "directional-preview:advanced.default_directional:SPYx:v2",
+    "mode": "directional",
+    "slotId": "advanced.default_directional",
+    "strategyVersion": "directional-preview-v1",
+    "assetSymbol": "SPYx",
+    "borrowAssetSymbol": "AUSD",
+    "venueId": "euler",
+    "description": "Preview-only SPYx directional incumbent that stays blocked until exact live xStocks-on-Euler proof is verified.",
+    "expression": {
+      "view": "conviction_long",
+      "assetSymbol": "SPYx",
+      "grossExposurePct": 60,
+      "netExposurePct": 60,
+      "targetLtvPct": 35
+    },
+    "preview": {
+      "truthState": "unverified",
+      "executionEligibility": "preview_only",
+      "healthFactor": 1.857143,
+      "liquidationDistancePct": 60.114,
+      "liveSupport": false,
+      "executable": false,
+      "previewInputs": {
+        "source": "canonical_directional_preview_input_v2",
+        "side": "long",
+        "currentPriceUsd": 563.14,
+        "collateralUsd": 12500,
+        "targetHealthFactor": 1.35,
+        "grossExposurePct": 60,
+        "netExposurePct": 60,
+        "targetLtvPct": 35
+      },
+      "xstocksLiveState": {
+        "assetSymbol": "SPYx",
+        "asOf": "2026-03-31T12:00:00.000Z",
+        "status": "active",
+        "priceUsd": 563.14,
+        "multiplier": 1,
+        "proofOfReserves": "verified",
+        "routeTruth": "live",
+        "executionRoutes": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "availability": "available",
+            "notes": "Verified Ethereum execution surface for xStocks xChange."
+          },
+          {
+            "routeId": "1inch.ethereum",
+            "label": "1inch on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "availability": "available",
+            "notes": "Verified Ethereum execution surface for xStocks xChange."
+          },
+          {
+            "routeId": "spread.ink",
+            "label": "Spread Finance on Ink",
+            "routeKind": "execution",
+            "chain": "ink",
+            "verificationTier": "mentor_reported",
+            "availability": "available",
+            "notes": "Mentor-reported Ink execution surface. Do not surface as live without direct proof."
+          }
+        ]
+      },
+      "boundaryContext": {
+        "morphoRouteContext": {
+          "adapterId": "morpho_spyx_ausd",
+          "label": "Morpho SPYx/AUSD",
+          "venue": "morpho",
+          "platform": "Morpho",
+          "chain": "Ethereum",
+          "kind": "lending_market",
+          "truth": "live",
+          "proofSource": "verified_public",
+          "implementationState": "implemented",
+          "marketKey": "spyx-ausd",
+          "marketAddress": "0xmorphospyxausd",
+          "collateralSymbol": "SPYx",
+          "debtSymbol": "AUSD",
+          "notes": [
+            "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays.",
+            "Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+          ]
+        },
+        "flowdeskVaultContext": {
+          "adapterId": "flowdesk_ausd_rwa_strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "venue": "flowdesk",
+          "platform": "Morpho",
+          "chain": "Ethereum",
+          "kind": "yield_vault",
+          "truth": "live",
+          "proofSource": "verified_public",
+          "implementationState": "implemented",
+          "vaultKey": "ausd-rwa-strategy",
+          "vaultAddress": "0xflowdeskausd",
+          "depositSymbol": "AUSD",
+          "rewardSymbol": "AUSD",
+          "notes": [
+            "Verified Flowdesk AUSD vault context for yield-buffer sleeves.",
+            "Keep this explicit in payloads when Euler remains preview-only."
+          ]
+        },
+        "eulerRouteContext": {
+          "adapterId": "euler_directional",
+          "label": "Euler Directional",
+          "venue": "euler",
+          "platform": "Euler",
+          "chain": "Ethereum",
+          "kind": "directional_market",
+          "truth": "unverified",
+          "proofSource": "unverified",
+          "implementationState": "scaffolded",
+          "marketKey": null,
+          "marketAddress": null,
+          "collateralSymbol": "MSTRx",
+          "debtSymbol": "AUSD",
+          "notes": [
+            "Euler remains central for directional UX, but direct live xStocks-on-Euler execution is still unverified.",
+            "Do not promote this route above preview until public proof is captured."
+          ]
+        },
+        "liveProofOverlay": {
+          "truth": "live",
+          "routeContext": {
+            "adapterId": "morpho_spyx_ausd",
+            "label": "Morpho SPYx/AUSD",
+            "venue": "morpho",
+            "platform": "Morpho",
+            "chain": "Ethereum",
+            "kind": "lending_market",
+            "truth": "live",
+            "proofSource": "verified_public",
+            "implementationState": "implemented",
+            "marketKey": "spyx-ausd",
+            "marketAddress": "0xmorphospyxausd",
+            "collateralSymbol": "SPYx",
+            "debtSymbol": "AUSD",
+            "notes": [
+              "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays.",
+              "Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+            ]
+          },
+          "vaultContext": {
+            "adapterId": "flowdesk_ausd_rwa_strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "venue": "flowdesk",
+            "platform": "Morpho",
+            "chain": "Ethereum",
+            "kind": "yield_vault",
+            "truth": "live",
+            "proofSource": "verified_public",
+            "implementationState": "implemented",
+            "vaultKey": "ausd-rwa-strategy",
+            "vaultAddress": "0xflowdeskausd",
+            "depositSymbol": "AUSD",
+            "rewardSymbol": "AUSD",
+            "notes": [
+              "Verified Flowdesk AUSD vault context for yield-buffer sleeves.",
+              "Keep this explicit in payloads when Euler remains preview-only."
+            ]
+          },
+          "note": "Verified live-proof overlay uses Morpho SPYx/AUSD and the Flowdesk AUSD vault while Euler market proof remains incomplete."
+        }
+      },
+      "routeEntries": [
+        {
+          "routeId": "morpho.spyx-ausd",
+          "label": "Morpho SPYx/AUSD",
+          "routeKind": "lending_market",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "availability": "available",
+          "notes": "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays. Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+        },
+        {
+          "routeId": "flowdesk.ausd-rwa-strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "routeKind": "yield_vault",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "availability": "available",
+          "notes": "Verified Flowdesk AUSD vault context for yield-buffer sleeves. Keep this explicit in payloads when Euler remains preview-only."
+        },
+        {
+          "routeId": "euler.ethereum.directional",
+          "label": "Euler Directional",
+          "routeKind": "directional_market",
+          "chain": "ethereum",
+          "verificationTier": "unverified",
+          "availability": "preview_only",
+          "notes": "Euler remains central for directional UX, but direct live xStocks-on-Euler execution is still unverified. Do not promote this route above preview until public proof is captured."
+        }
+      ],
+      "overlayMarket": {
+        "adapterId": "morpho_spyx_ausd",
+        "label": "Morpho SPYx/AUSD",
+        "venue": "morpho",
+        "platform": "Morpho",
+        "chain": "Ethereum",
+        "truth": "live",
+        "proofSource": "verified_public",
+        "implementationState": "implemented",
+        "marketKey": "spyx-ausd",
+        "marketAddress": "0xmorphospyxausd",
+        "collateralSymbol": "SPYx",
+        "debtSymbol": "AUSD",
+        "maxLtvBps": 8600,
+        "liquidationThresholdBps": 9000,
+        "supplyApyBps": 320,
+        "borrowApyBps": 540,
+        "utilizationBps": 6400,
+        "liquidityUsd": 25000000,
+        "notes": [
+          "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays.",
+          "Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+        ]
+      },
+      "overlayVault": {
+        "adapterId": "flowdesk_ausd_rwa_strategy",
+        "label": "Flowdesk AUSD RWA Strategy",
+        "venue": "flowdesk",
+        "platform": "Morpho",
+        "chain": "Ethereum",
+        "truth": "live",
+        "proofSource": "verified_public",
+        "implementationState": "implemented",
+        "vaultKey": "ausd-rwa-strategy",
+        "vaultAddress": "0xflowdeskausd",
+        "depositSymbol": "AUSD",
+        "rewardSymbol": "AUSD",
+        "apyBps": 470,
+        "tvlUsd": 18000000,
+        "notes": [
+          "Verified Flowdesk AUSD vault context for yield-buffer sleeves.",
+          "Keep this explicit in payloads when Euler remains preview-only."
+        ]
+      },
+      "supportableMetrics": {
+        "borrowCostBps": 540,
+        "supplyApyBps": 320,
+        "utilizationBps": 6400,
+        "overlayLiquidityUsd": 25000000,
+        "vaultApyBps": 470,
+        "vaultTvlUsd": 18000000
+      },
+      "notes": [
+        "Preview metrics use the frozen research market map plus verified Morpho SPYx/AUSD and Flowdesk AUSD overlay context.",
+        "SPYx xStocks asset state is read from canonical package fixtures, not inferred from policy or API synthesis.",
+        "Preview only: exact live xStocks-on-Euler route proof remains unverified.",
+        "Directional activation stays fail-closed until a verified live rail replaces this preview incumbent.",
+        "Frozen research market-map constraints are applied conservatively before overlay metrics are surfaced.",
+        "Verified Morpho and Flowdesk surfaces are treated as read-only proof overlays, not as evidence of live Euler execution."
+      ],
+      "debtUsd": 4375,
+      "grossExposureUsd": 16875,
+      "leverageMultiple": 1.35,
+      "borrowCostBps": 540,
+      "eulerMarketSetId": "euler.ethereum.placeholder_v1",
+      "eulerMarketMapStatus": "placeholder",
+      "previewPayload": {
+        "activationAllowed": false,
+        "currentPriceUsd": 563.14,
+        "collateralUsd": 12500,
+        "debtUsd": 4375,
+        "grossExposureUsd": 16875,
+        "leverageMultiple": 1.35,
+        "healthFactor": 1.857143,
+        "healthStatus": "healthy",
+        "healthDeltaToTarget": 0.507143,
+        "targetHealthFactor": 1.35,
+        "liquidationDistancePct": 60.114,
+        "liquidationDistanceUsd": 338.5258,
+        "liquidationStatus": "safe",
+        "liquidationThresholdBps": 6500
+      },
+      "marketContext": {
+        "marketSetId": "euler.ethereum.placeholder_v1",
+        "marketStatus": "placeholder",
+        "baseAsset": "SPYx",
+        "borrowAsset": "AUSD",
+        "maxLtvPct": 65,
+        "minHealthBufferPct": 15,
+        "liquidityTier": "demo",
+        "ltvHeadroomPct": 30,
+        "healthBufferPct": 85.7143,
+        "conservativeLiquidationThresholdBps": 6500
+      },
+      "overlayInsights": {
+        "morphoBorrowCostBps": 540,
+        "morphoSupplyApyBps": 320,
+        "morphoUtilizationBps": 6400,
+        "morphoLiquidityUsd": 25000000,
+        "flowdeskVaultApyBps": 470,
+        "flowdeskVaultTvlUsd": 18000000
+      },
+      "guardrails": {
+        "targetLtvWithinFrozenCap": true,
+        "healthBufferAboveFrozenFloor": true,
+        "liquidationPathIntact": true,
+        "overlayBorrowCostAvailable": true
+      },
+      "guardrailPass": true
+    }
+  },
+  "metrics": {
+    "grossExposureAvgPct": 60,
+    "netExposureAvgPct": 60,
+    "leverageAvg": 1.35,
+    "borrowCostBps": 540,
+    "eulerHealthMin": 1.857143,
+    "liquidationDistancePct": 60.114,
+    "debtUsd": 4375,
+    "grossExposureUsd": 16875,
+    "ltvHeadroomPct": 30,
+    "healthBufferPct": 85.7143
+  },
+  "score": {
+    "scoringMode": "preview_metrics_only",
+    "primaryScore": 0,
+    "incumbentScore": null,
+    "deltaScore": null,
+    "promotionEpsilon": 0.05
+  },
+  "invalidators": [
+    "preview_only",
+    "route_unverified",
+    "directional_activation_disabled"
+  ],
+  "message": "Directional lane now emits conservative preview metrics from the frozen Euler market map plus verified overlay context, but activation remains blocked until exact live xStocks-on-Euler support is independently verified.",
+  "readiness": {
+    "previewable": true,
+    "executable": false,
+    "liveSupport": false,
+    "executionEligibility": "preview_only",
+    "activationAllowed": false
+  },
+  "previewContext": {
+    "marketContext": {
+      "marketSetId": "euler.ethereum.placeholder_v1",
+      "marketStatus": "placeholder",
+      "baseAsset": "SPYx",
+      "borrowAsset": "AUSD",
+      "maxLtvPct": 65,
+      "minHealthBufferPct": 15,
+      "liquidityTier": "demo",
+      "ltvHeadroomPct": 30,
+      "healthBufferPct": 85.7143,
+      "conservativeLiquidationThresholdBps": 6500
+    },
+    "requiredDirectionalRoute": {
+      "routeId": "euler.ethereum.directional",
+      "truth": "unverified",
+      "proofSource": "unverified",
+      "implementationState": "scaffolded",
+      "notes": [
+        "Euler remains central for directional UX, but direct live xStocks-on-Euler execution is still unverified.",
+        "Do not promote this route above preview until public proof is captured."
+      ]
+    },
+    "verifiedOverlay": {
+      "note": "Verified live-proof overlay uses Morpho SPYx/AUSD and the Flowdesk AUSD vault while Euler market proof remains incomplete.",
+      "morphoMarket": {
+        "adapterId": "morpho_spyx_ausd",
+        "label": "Morpho SPYx/AUSD",
+        "venue": "morpho",
+        "platform": "Morpho",
+        "chain": "Ethereum",
+        "truth": "live",
+        "proofSource": "verified_public",
+        "implementationState": "implemented",
+        "marketKey": "spyx-ausd",
+        "marketAddress": "0xmorphospyxausd",
+        "collateralSymbol": "SPYx",
+        "debtSymbol": "AUSD",
+        "maxLtvBps": 8600,
+        "liquidationThresholdBps": 9000,
+        "supplyApyBps": 320,
+        "borrowApyBps": 540,
+        "utilizationBps": 6400,
+        "liquidityUsd": 25000000,
+        "notes": [
+          "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays.",
+          "Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+        ]
+      },
+      "flowdeskVault": {
+        "adapterId": "flowdesk_ausd_rwa_strategy",
+        "label": "Flowdesk AUSD RWA Strategy",
+        "venue": "flowdesk",
+        "platform": "Morpho",
+        "chain": "Ethereum",
+        "truth": "live",
+        "proofSource": "verified_public",
+        "implementationState": "implemented",
+        "vaultKey": "ausd-rwa-strategy",
+        "vaultAddress": "0xflowdeskausd",
+        "depositSymbol": "AUSD",
+        "rewardSymbol": "AUSD",
+        "apyBps": 470,
+        "tvlUsd": 18000000,
+        "notes": [
+          "Verified Flowdesk AUSD vault context for yield-buffer sleeves.",
+          "Keep this explicit in payloads when Euler remains preview-only."
+        ]
+      }
+    },
+    "xstocksAssetSurface": {
+      "assetSymbol": "SPYx",
+      "asOf": "2026-03-31T12:00:00.000Z",
+      "status": "active",
+      "priceUsd": 563.14,
+      "multiplier": 1,
+      "proofOfReserves": "verified",
+      "routeTruth": "live",
+      "executionRoutes": [
+        {
+          "routeId": "cow_swap.ethereum",
+          "label": "Cow Swap on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "availability": "available",
+          "notes": "Verified Ethereum execution surface for xStocks xChange."
+        },
+        {
+          "routeId": "1inch.ethereum",
+          "label": "1inch on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "availability": "available",
+          "notes": "Verified Ethereum execution surface for xStocks xChange."
+        },
+        {
+          "routeId": "spread.ink",
+          "label": "Spread Finance on Ink",
+          "routeKind": "execution",
+          "chain": "ink",
+          "verificationTier": "mentor_reported",
+          "availability": "available",
+          "notes": "Mentor-reported Ink execution surface. Do not surface as live without direct proof."
+        }
+      ]
+    },
+    "routeEntries": [
+      {
+        "routeId": "morpho.spyx-ausd",
+        "label": "Morpho SPYx/AUSD",
+        "routeKind": "lending_market",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "availability": "available",
+        "notes": "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays. Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+      },
+      {
+        "routeId": "flowdesk.ausd-rwa-strategy",
+        "label": "Flowdesk AUSD RWA Strategy",
+        "routeKind": "yield_vault",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "availability": "available",
+        "notes": "Verified Flowdesk AUSD vault context for yield-buffer sleeves. Keep this explicit in payloads when Euler remains preview-only."
+      },
+      {
+        "routeId": "euler.ethereum.directional",
+        "label": "Euler Directional",
+        "routeKind": "directional_market",
+        "chain": "ethereum",
+        "verificationTier": "unverified",
+        "availability": "preview_only",
+        "notes": "Euler remains central for directional UX, but direct live xStocks-on-Euler execution is still unverified. Do not promote this route above preview until public proof is captured."
+      }
+    ],
+    "previewPayload": {
+      "activationAllowed": false,
+      "healthStatus": "healthy",
+      "liquidationStatus": "safe"
+    },
+    "unavailableMetrics": [
+      "historical_return_ann_pct",
+      "historical_max_drawdown_pct",
+      "exact_live_euler_execution_proof"
+    ]
+  }
+}
