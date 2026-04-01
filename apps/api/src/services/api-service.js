@@ -1597,6 +1597,7 @@ export function createApiService({
   function buildFunnelEventDedupeKey({
     stage,
     subjectId,
+    activationId = null,
     manifestId = null,
     recommendationId = null,
     walletAddress = null,
@@ -1604,26 +1605,36 @@ export function createApiService({
     if (stage === "portfolio_recommended") {
       return [
         stage,
-        subjectId,
+        subjectId ?? "none",
         manifestId ?? "none",
         recommendationId ?? "none",
       ].join(":");
     }
 
     if (stage === "activation_viewed") {
-      return [stage, subjectId, manifestId ?? "none"].join(":");
+      return [stage, subjectId ?? "none", manifestId ?? "none"].join(":");
     }
 
     if (stage === "wallet_connected") {
-      return [stage, subjectId, walletAddress ?? "none"].join(":");
+      return [stage, subjectId ?? "none", walletAddress ?? "none"].join(":");
     }
 
-    return [stage, subjectId].join(":");
+    if (stage === "activation_saved_funding_blocked") {
+      return [
+        stage,
+        activationId ?? "none",
+        manifestId ?? "none",
+        walletAddress ?? "none",
+      ].join(":");
+    }
+
+    return [stage, subjectId ?? "none"].join(":");
   }
 
   function createFunnelEvent({
     stage,
     subjectId,
+    activationId = null,
     owner = null,
     walletAddress = null,
     manifest = null,
@@ -1643,6 +1654,7 @@ export function createApiService({
       subjectId,
       owner,
       walletAddress: normalizedWalletAddress,
+      activationId,
       manifestId,
       slotId,
       recommendationId: recommendationId ?? null,
@@ -1651,6 +1663,7 @@ export function createApiService({
       dedupeKey: buildFunnelEventDedupeKey({
         stage,
         subjectId,
+        activationId,
         manifestId,
         recommendationId,
         walletAddress: normalizedWalletAddress,
@@ -2433,6 +2446,7 @@ export function createApiService({
       const authenticatedRequestContext =
         requireAuthenticatedRequestContext(requestContext);
       assertNoRawCandidatePayload(body);
+      const requestedSubjectId = getOptionalSubjectId(body);
       const manifest = await resolveManifest(body);
       const { liveXStocksState, liveRouteState } = await loadLiveState(manifest);
       const boundaryPayload = deriveBoundaryPayload({
@@ -2445,6 +2459,9 @@ export function createApiService({
       ensureWalletStateMatchesAuthenticatedUser({
         walletState: boundaryPayload.walletState,
         requestContext: authenticatedRequestContext,
+      });
+      const { subjectId } = await resolveFunnelSubject(requestedSubjectId, {
+        required: false,
       });
 
       const activation = {
@@ -2475,6 +2492,22 @@ export function createApiService({
         activation,
         activityEvents,
       });
+
+      if (boundaryPayload.executionPlan.executionState === "funding_required") {
+        await persistFunnelEvents([
+          createFunnelEvent({
+            stage: "activation_saved_funding_blocked",
+            subjectId,
+            activationId: activation.activationId,
+            owner: activation.owner,
+            walletAddress: activation.walletState?.walletAddress ?? null,
+            manifest,
+            recommendationId: activation.recommendationId,
+            source: "api",
+            verificationMethod: "activation_save_snapshot",
+          }),
+        ]);
+      }
 
       return {
         activation,

@@ -19,7 +19,7 @@ export const XSTOCKS_REPORTING_LADDER_STAGE_VALUES = [
   "portfolio_recommended",
   "activation_viewed",
   "wallet_connected",
-  "funding_required",
+  "activation_saved_funding_blocked",
   "quote_ready",
   "awaiting_approval",
   "submitted",
@@ -40,6 +40,7 @@ export const XSTOCKS_FUNNEL_LEDGER_STAGE_VALUES = [
   "portfolio_recommended",
   "activation_viewed",
   "wallet_connected",
+  "activation_saved_funding_blocked",
 ] as const;
 export const xstocksFunnelLedgerStageSchema = z.enum(
   XSTOCKS_FUNNEL_LEDGER_STAGE_VALUES,
@@ -75,6 +76,7 @@ export const XSTOCKS_FUNNEL_VERIFICATION_METHOD_VALUES = [
   "questionnaire_qualification",
   "manifest_activation_route",
   "privy_wallet_auth",
+  "activation_save_snapshot",
 ] as const;
 export const xstocksFunnelVerificationMethodSchema = z.enum(
   XSTOCKS_FUNNEL_VERIFICATION_METHOD_VALUES,
@@ -93,9 +95,10 @@ export const xstocksFunnelEventSchema = z.object({
   eventId: nonEmptyStringSchema,
   stage: xstocksFunnelLedgerStageSchema,
   occurredAt: timestampSchema,
-  subjectId: nonEmptyStringSchema,
+  subjectId: nonEmptyStringSchema.nullable(),
   owner: authenticatedOwnerSchema.nullable(),
   walletAddress: ethereumAddressSchema.nullable(),
+  activationId: nonEmptyStringSchema.nullable(),
   manifestId: nonEmptyStringSchema.nullable(),
   slotId: strategySlotIdSchema.nullable(),
   recommendationId: nonEmptyStringSchema.nullable(),
@@ -232,7 +235,7 @@ export const xstocksReportingMetricsSchema = z.object({
   users: z.object({
     authenticated: z.number().int().nonnegative(),
     walletConnected: z.number().int().nonnegative(),
-    fundingRequired: z.number().int().nonnegative(),
+    activationSavedFundingBlocked: z.number().int().nonnegative(),
     quoteReady: z.number().int().nonnegative(),
     awaitingApproval: z.number().int().nonnegative(),
     submitted: z.number().int().nonnegative(),
@@ -252,7 +255,7 @@ export const xstocksReportingMetricsSchema = z.object({
     total: z.number().int().nonnegative(),
     ready: z.number().int().nonnegative(),
     blocked: z.number().int().nonnegative(),
-    fundingRequired: z.number().int().nonnegative(),
+    savedFundingBlocked: z.number().int().nonnegative(),
   }),
   executions: z.object({
     requestsTotal: z.number().int().nonnegative(),

@@ -4,7 +4,7 @@ import { readJsonFile, writeJsonFile } from "../json.js";
 
 function createDefaultState(now) {
   return {
-    schemaVersion: "2026-04-01.runtime-store.v6",
+    schemaVersion: "2026-04-01.runtime-store.v7",
     meta: {
       createdAt: now(),
       updatedAt: now(),
@@ -14,6 +14,30 @@ function createDefaultState(now) {
     funnelEvents: [],
     rebalances: [],
     executionRequests: [],
+    autoresearchRuntime: {
+      runtimeId: "strategy_lab_regular_autoresearch_v1",
+      runtimeOwner: "worker_strategy_lab",
+      cadenceHours: 24,
+      status: "idle",
+      truthBoundary: "worker_runtime_only",
+      repoOwnedRuntime: true,
+      recurringAutonomousProven: false,
+      supportedTriggerSources: ["manual_cli", "scheduled_cron"],
+      notes: [
+        "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
+        "Scheduled cron is a supported trigger shape, not proof of a deployed recurring host.",
+        "Promoted manifests remain the only public explanation boundary.",
+      ],
+      lastRequestedAt: null,
+      lastStartedAt: null,
+      lastCompletedAt: null,
+      lastRunId: null,
+      lastTriggerSource: null,
+      nextDueAt: null,
+      lastPromotionCount: 0,
+      lastPromotedManifestIds: [],
+    },
+    autoresearchRuns: [],
   };
 }
 
@@ -118,7 +142,12 @@ function normalizeFunnelEvent(event, index, now) {
   }
 
   const stage = event.stage ?? null;
-  const subjectId = event.subjectId ?? event.subject_id ?? null;
+  const subjectId = firstDefined(event.subjectId, event.subject_id, null);
+  const activationId = firstDefined(
+    event.activationId,
+    event.activation_id,
+    null,
+  );
   const manifestId = firstDefined(event.manifestId, event.manifest_id, null);
   const slotId = firstDefined(event.slotId, event.slot_id, null);
   const recommendationId = firstDefined(
@@ -141,6 +170,7 @@ function normalizeFunnelEvent(event, index, now) {
     subjectId,
     owner,
     walletAddress,
+    activationId,
     manifestId,
     slotId,
     recommendationId,
@@ -150,8 +180,13 @@ function normalizeFunnelEvent(event, index, now) {
     dedupeKey:
       event.dedupeKey ??
       event.dedupe_key ??
-      [stage, subjectId, manifestId ?? "none", recommendationId ?? "none"]
-        .join(":"),
+      [
+        stage,
+        subjectId ?? "none",
+        activationId ?? "none",
+        manifestId ?? "none",
+        recommendationId ?? "none",
+      ].join(":"),
   };
 }
 
@@ -586,6 +621,194 @@ function normalizeExecutionRequest(request, index, now) {
   };
 }
 
+function normalizeAutoresearchRuntime(runtime, now) {
+  const defaultState = createDefaultState(now);
+  const defaultRuntime = defaultState.autoresearchRuntime;
+
+  if (!runtime || typeof runtime !== "object") {
+    return defaultRuntime;
+  }
+
+  return {
+    runtimeId:
+      runtime.runtimeId ??
+      runtime.runtime_id ??
+      defaultRuntime.runtimeId,
+    runtimeOwner:
+      runtime.runtimeOwner ??
+      runtime.runtime_owner ??
+      defaultRuntime.runtimeOwner,
+    cadenceHours: Number(
+      firstDefined(
+        runtime.cadenceHours,
+        runtime.cadence_hours,
+        defaultRuntime.cadenceHours,
+      ),
+    ),
+    status: String(runtime.status ?? defaultRuntime.status),
+    truthBoundary:
+      runtime.truthBoundary ??
+      runtime.truth_boundary ??
+      defaultRuntime.truthBoundary,
+    repoOwnedRuntime: Boolean(
+      firstDefined(
+        runtime.repoOwnedRuntime,
+        runtime.repo_owned_runtime,
+        defaultRuntime.repoOwnedRuntime,
+      ),
+    ),
+    recurringAutonomousProven: Boolean(
+      firstDefined(
+        runtime.recurringAutonomousProven,
+        runtime.recurring_autonomous_proven,
+        defaultRuntime.recurringAutonomousProven,
+      ),
+    ),
+    supportedTriggerSources: (
+      runtime.supportedTriggerSources ??
+      runtime.supported_trigger_sources ??
+      defaultRuntime.supportedTriggerSources
+    ).map((value) => String(value)),
+    notes: (
+      runtime.notes ??
+      defaultRuntime.notes
+    ).map((value) => String(value)),
+    lastRequestedAt: firstDefined(
+      runtime.lastRequestedAt,
+      runtime.last_requested_at,
+      null,
+    ),
+    lastStartedAt: firstDefined(
+      runtime.lastStartedAt,
+      runtime.last_started_at,
+      null,
+    ),
+    lastCompletedAt: firstDefined(
+      runtime.lastCompletedAt,
+      runtime.last_completed_at,
+      null,
+    ),
+    lastRunId: firstDefined(runtime.lastRunId, runtime.last_run_id, null),
+    lastTriggerSource: firstDefined(
+      runtime.lastTriggerSource,
+      runtime.last_trigger_source,
+      null,
+    ),
+    nextDueAt: firstDefined(runtime.nextDueAt, runtime.next_due_at, null),
+    lastPromotionCount: Number(
+      firstDefined(
+        runtime.lastPromotionCount,
+        runtime.last_promotion_count,
+        defaultRuntime.lastPromotionCount,
+      ),
+    ),
+    lastPromotedManifestIds: (
+      runtime.lastPromotedManifestIds ??
+      runtime.last_promoted_manifest_ids ??
+      defaultRuntime.lastPromotedManifestIds
+    ).map((value) => String(value)),
+  };
+}
+
+function normalizeAutoresearchRun(run, index, now) {
+  if (!run || typeof run !== "object") {
+    return run;
+  }
+
+  return {
+    runId:
+      run.runId ??
+      run.run_id ??
+      `autoresearch_run_${index + 1}`,
+    runtimeId:
+      run.runtimeId ??
+      run.runtime_id ??
+      "strategy_lab_regular_autoresearch_v1",
+    runtimeOwner:
+      run.runtimeOwner ??
+      run.runtime_owner ??
+      "worker_strategy_lab",
+    triggerSource:
+      run.triggerSource ??
+      run.trigger_source ??
+      "manual_cli",
+    cadenceHours: Number(
+      firstDefined(run.cadenceHours, run.cadence_hours, 24),
+    ),
+    status: String(run.status ?? "running"),
+    truthBoundary:
+      run.truthBoundary ??
+      run.truth_boundary ??
+      "worker_runtime_only",
+    recurringAutonomousProven: Boolean(
+      firstDefined(
+        run.recurringAutonomousProven,
+        run.recurring_autonomous_proven,
+        false,
+      ),
+    ),
+    startedAt: firstDefined(run.startedAt, run.started_at, now()),
+    completedAt: firstDefined(run.completedAt, run.completed_at, null),
+    slotIds: (run.slotIds ?? run.slot_ids ?? []).map((value) => String(value)),
+    baselineSeeded: Boolean(
+      firstDefined(run.baselineSeeded, run.baseline_seeded, false),
+    ),
+    waveExecuted: Boolean(
+      firstDefined(run.waveExecuted, run.wave_executed, false),
+    ),
+    previousManifestIds: (
+      run.previousManifestIds ??
+      run.previous_manifest_ids ??
+      []
+    ).map((value) => String(value)),
+    nextManifestIds: (
+      run.nextManifestIds ??
+      run.next_manifest_ids ??
+      []
+    ).map((value) => String(value)),
+    promotedManifestIds: (
+      run.promotedManifestIds ??
+      run.promoted_manifest_ids ??
+      []
+    ).map((value) => String(value)),
+    promotionCount: Number(
+      firstDefined(run.promotionCount, run.promotion_count, 0),
+    ),
+    checks:
+      run.checks && typeof run.checks === "object"
+        ? {
+            researchContractsOk: Boolean(
+              firstDefined(
+                run.checks.researchContractsOk,
+                run.checks.research_contracts_ok,
+                false,
+              ),
+            ),
+            researchRunIntegrityOk: Boolean(
+              firstDefined(
+                run.checks.researchRunIntegrityOk,
+                run.checks.research_run_integrity_ok,
+                false,
+              ),
+            ),
+            promotedBoundaryOk: Boolean(
+              firstDefined(
+                run.checks.promotedBoundaryOk,
+                run.checks.promoted_boundary_ok,
+                false,
+              ),
+            ),
+          }
+        : null,
+    note: firstDefined(run.note, null),
+    errorMessage: firstDefined(
+      run.errorMessage,
+      run.error_message,
+      null,
+    ),
+  };
+}
+
 function normalizeState(state, now) {
   const defaultState = createDefaultState(now);
 
@@ -612,6 +835,15 @@ function normalizeState(state, now) {
       state.execution_requests ??
       []
     ).map((request, index) => normalizeExecutionRequest(request, index, now)),
+    autoresearchRuntime: normalizeAutoresearchRuntime(
+      state.autoresearchRuntime ?? state.autoresearch_runtime,
+      now,
+    ),
+    autoresearchRuns: (
+      state.autoresearchRuns ??
+      state.autoresearch_runs ??
+      []
+    ).map((run, index) => normalizeAutoresearchRun(run, index, now)),
   };
 }
 
@@ -894,7 +1126,98 @@ export function createRuntimeStore({
         activityEvents: [...state.activityEvents],
         funnelEvents: [...state.funnelEvents],
         executionRequests: [...state.executionRequests],
+        autoresearchRuntime: state.autoresearchRuntime,
+        autoresearchRuns: [...state.autoresearchRuns],
       };
+    },
+    async getAutoresearchRuntime() {
+      const state = await readState();
+      return state.autoresearchRuntime;
+    },
+    async listAutoresearchRuns({ limit = 20 } = {}) {
+      const state = await readState();
+      return [...state.autoresearchRuns]
+        .sort((left, right) =>
+          String(right.startedAt).localeCompare(String(left.startedAt)),
+        )
+        .slice(0, limit);
+    },
+    async beginAutoresearchRun({ run }) {
+      const state = await readState();
+      const normalizedRun = normalizeAutoresearchRun(run, 0, now);
+      const existingIndex = state.autoresearchRuns.findIndex(
+        (item) => item.runId === normalizedRun.runId,
+      );
+
+      if (existingIndex === -1) {
+        state.autoresearchRuns.unshift(normalizedRun);
+      } else {
+        state.autoresearchRuns.splice(existingIndex, 1, normalizedRun);
+      }
+
+      state.autoresearchRuntime = normalizeAutoresearchRuntime(
+        {
+          ...state.autoresearchRuntime,
+          status: "running",
+          lastRequestedAt: normalizedRun.startedAt,
+          lastStartedAt: normalizedRun.startedAt,
+          lastRunId: normalizedRun.runId,
+          lastTriggerSource: normalizedRun.triggerSource,
+          cadenceHours: normalizedRun.cadenceHours,
+        },
+        now,
+      );
+
+      await writeState(state);
+      return normalizedRun;
+    },
+    async completeAutoresearchRun({ run }) {
+      const state = await readState();
+      const normalizedRun = normalizeAutoresearchRun(run, 0, now);
+      const existingIndex = state.autoresearchRuns.findIndex(
+        (item) => item.runId === normalizedRun.runId,
+      );
+
+      if (existingIndex === -1) {
+        state.autoresearchRuns.unshift(normalizedRun);
+      } else {
+        state.autoresearchRuns.splice(existingIndex, 1, normalizedRun);
+      }
+
+      const nextDueAt =
+        normalizedRun.completedAt === null
+          ? null
+          : new Date(
+              new Date(normalizedRun.completedAt).getTime() +
+                normalizedRun.cadenceHours * 60 * 60 * 1000,
+            ).toISOString();
+      const runtimeStatus =
+        normalizedRun.status === "failed"
+          ? "failed"
+          : normalizedRun.status === "succeeded"
+            ? "idle"
+            : normalizedRun.status;
+
+      state.autoresearchRuntime = normalizeAutoresearchRuntime(
+        {
+          ...state.autoresearchRuntime,
+          status: runtimeStatus,
+          cadenceHours: normalizedRun.cadenceHours,
+          lastRunId: normalizedRun.runId,
+          lastTriggerSource: normalizedRun.triggerSource,
+          lastCompletedAt: normalizedRun.completedAt,
+          nextDueAt,
+          lastPromotionCount: normalizedRun.promotionCount,
+          lastPromotedManifestIds: normalizedRun.promotedManifestIds,
+        },
+        now,
+      );
+
+      state.autoresearchRuns.sort((left, right) =>
+        String(right.startedAt).localeCompare(String(left.startedAt)),
+      );
+      await writeState(state);
+      return normalizedRun;
     },
     async upsertRebalance({ rebalance, eventType = "evaluation" }) {
       const state = await readState();
