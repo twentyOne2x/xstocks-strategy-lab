@@ -9,10 +9,12 @@ Status: active
 Define one execution-grade umbrella control plane for `xStocks Strategy Lab` that keeps:
 1. xStocks as the core asset universe and live truth source,
 2. Euler central for directional strategies,
-3. market intelligence as a standalone blackbox signal product,
-4. portfolio construction and rebalancing as a separate decision layer,
-5. the frontend as a bridge between trading-terminal UX and onchain controls,
-6. live proof tied to publicly verified execution, lending, and funding rails.
+3. `Strategy Lab` as a real autoresearch-style operating model rather than vague backtesting language,
+4. market intelligence as a standalone blackbox signal product,
+5. portfolio construction and rebalancing as a separate decision layer,
+6. rebalance automation and execution orchestration as a separate runtime lane,
+7. the frontend as a bridge between trading-terminal UX and onchain controls,
+8. live proof tied to publicly verified execution, lending, funding, and automation rails.
 
 ## Non-goals
 
@@ -29,10 +31,11 @@ When this program is done enough to be demoable:
 1. a user can enter through a no-wallet-first terminal-like frontend,
 2. discover an xStocks theme, public strategy, or hero intelligence lane,
 3. see blackbox market-intelligence output translated into a portfolio or directional recommendation,
-4. inspect route, vault, multiplier, proof-of-reserves, and activity context,
+4. inspect replay, validation, route, vault, multiplier, proof-of-reserves, and activity context,
 5. connect a wallet only at activation or funding time,
 6. see market intelligence as a dedicated side-panel product surface inside the terminal,
-7. see a truthful live or dry-run proof path on verified rails.
+7. interact only with promoted strategy manifests rather than raw experiment churn,
+8. see a truthful live or dry-run proof path on verified rails.
 
 ## User-Journey Contract
 
@@ -40,7 +43,7 @@ The canonical user journey is:
 1. land on a theme-led home terminal,
 2. choose a theme, strategy, or hero asset such as `MSTRx`,
 3. inspect replay, intelligence side panel, and route/vault context,
-4. review the recommended portfolio or directional expression,
+4. review the promoted basket or directional expression plus validation badges,
 5. fund or connect only when ready,
 6. activate the strategy,
 7. monitor positions, history, and lifecycle events from the same workspace.
@@ -102,6 +105,8 @@ As of 2026-03-31, the repo should treat these as current live truth:
 3. Morpho publicly exposes an `SPYx/AUSD` lending path and the linked Flowdesk AUSD RWA Strategy vault is live.
 4. The exact live xStocks-on-Euler market path remains unverified from public sources.
 5. Spread Finance on Ink is currently mentor-reported rather than independently verified in public proof captured by this repo.
+6. Live rebalance automation ownership is not yet proven in repo truth.
+7. Chainlink-branded automation is not yet proven in repo truth.
 
 ## Current Local Implementation Audit
 
@@ -121,10 +126,12 @@ Partial:
 
 Spec-only:
 1. market intelligence engine,
-2. portfolio construction and rebalance engine,
-3. execution/funding adapter contracts,
-4. wallet and smart-account flow,
-5. all UI implementations.
+2. strategy-lab operating model,
+3. portfolio construction and rebalance engine,
+4. execution/funding adapter contracts,
+5. rebalance automation and execution orchestration,
+6. wallet and smart-account flow,
+7. all UI implementations.
 
 Not present:
 1. DB schema,
@@ -140,7 +147,7 @@ Not present:
 The clean posture is:
 1. extend the existing monorepo scaffold,
 2. add a repo-local planning surface instead of creating duplicate planning elsewhere,
-3. decompose into one umbrella spec plus four workstream specs,
+3. decompose into one umbrella spec plus six workstream specs,
 4. keep existing lightweight docs as orientation docs rather than overloading them into executor docs.
 
 ## Codebase Fit And Iteration-Speed Contract
@@ -205,28 +212,34 @@ Thread-priority matrix is needed because the conversation already contains sever
 | Rank | Workstream | Recurrence | Value | Readiness | Current state | Mapping | Verified status | Recommended next move |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Shared contracts and DB substrate | high | high | high | unshipped | `XSL-001` | none | freeze schemas and DB first |
-| 2 | Terminal frontend | high | high | high | spec-only | `XSL-004` | none | handoff to Claude after schema freeze |
-| 3 | Market intelligence blackbox | high | high | medium | spec-only | `XSL-002` | none | freeze signal artifact and hero lanes |
-| 4 | Portfolio construction and rebalance | high | high | medium | spec-only | `XSL-003` | none | freeze mapping and rebalance policy |
-| 5 | Execution, funding, live rails | high | medium | medium | partial truth only | `XSL-005` | partial public proof | implement after contracts |
+| 2 | Strategy Lab operating model | high | high | high | spec-only | `XSL-006` | none | freeze harness, hot surfaces, and manifest boundary |
+| 3 | Terminal frontend | high | high | high | spec-only | `XSL-004` | none | handoff to Claude after schema freeze |
+| 4 | Market intelligence blackbox | high | high | medium | spec-only | `XSL-002` | none | freeze signal artifact and hero lanes |
+| 5 | Portfolio construction and rebalance | high | high | medium | spec-only | `XSL-003` | none | freeze mapping and rebalance policy |
+| 6 | Execution, funding, live rails | high | medium | medium | partial truth only | `XSL-005` | partial public proof | implement after contracts |
+| 7 | Rebalance automation and execution orchestration | medium | medium | low | mostly unproven | `XSL-011` | no runtime proof | audit truth first, then choose owner/provider path |
 
 ## Spec'd-But-Unimplemented Table
 
 | Workstream | Governing doc | What should exist | What repo proves now | What is still missing | Gap type |
 | --- | --- | --- | --- | --- | --- |
 | Control plane | this doc | authoritative umbrella spec | now present after this patch | implementation closure | proof/state |
+| Strategy Lab | `XSL-006` | frozen harness, hot surfaces, ledger, manifests | prose only | code, fixtures, manifest registry | backend/process |
 | Intelligence | `XSL-002` | signal artifact and product lane | prose only | code, UI, examples | backend/frontend |
 | Portfolio | `XSL-003` | recommendation and rebalance layer | prose only | schemas, logic, blotter data | backend/frontend |
 | Frontend | `XSL-004` | terminal shell | design direction only | actual UI | frontend |
 | Rails | `XSL-005` | venue/funding/live-proof stack | prose truth only | adapters, proof harness, UI | integration |
+| Automation | `XSL-011` | trigger source, scheduler, operator override, live automation proof | prose truth only | scheduler owner, provider truth, proof harness | runtime/integration |
 
 ## Workstream Map
 
 This program decomposes into:
-1. [Market Intelligence Signal Engine](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-market-intelligence-signal-engine-spec.md)
-2. [Portfolio Construction And Rebalance](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-construction-and-rebalance-spec.md)
-3. [Terminal Frontend Experience](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md)
-4. [Execution, Funding, And Rails](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md)
+1. [Strategy Lab Autoresearch Operating Model](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
+2. [Market Intelligence Signal Engine](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-market-intelligence-signal-engine-spec.md)
+3. [Portfolio Construction And Rebalance](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-construction-and-rebalance-spec.md)
+4. [Terminal Frontend Experience](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md)
+5. [Execution, Funding, And Rails](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md)
+6. [Rebalance Automation And Execution Orchestration](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-rebalance-automation-and-execution-orchestration-spec.md)
 
 ## Shared State And Truth Model
 
@@ -234,21 +247,25 @@ This program decomposes into:
 
 1. `theme`
 2. `public_strategy`
-3. `signal_artifact`
-4. `portfolio_recommendation`
-5. `directional_preview`
-6. `activation_payload`
-7. `position_row`
-8. `activity_event`
+3. `strategy_slot`
+4. `signal_artifact`
+5. `portfolio_recommendation`
+6. `directional_preview`
+7. `activation_manifest`
+8. `research_result_row`
+9. `activation_payload`
+10. `position_row`
+11. `activity_event`
 
 ### Source-of-truth split
 
 1. xStocks official public APIs own live asset, price, multiplier, PoR, and status truth.
-2. Market intelligence owns blackbox signal generation.
-3. Portfolio construction owns target weights or target directional expression.
-4. Execution rails own route-specific live action truth.
-5. The frontend owns presentation, not source truth.
-6. The intelligence side panel is the canonical embedded surface for the market-intelligence product inside the terminal.
+2. the Strategy Lab harness owns pinned research bundles, evaluator versions, incumbent logic, and promoted manifests.
+3. Market intelligence owns blackbox signal generation.
+4. Portfolio construction owns target weights or target directional expression.
+5. Execution rails own route-specific live action truth.
+6. The frontend owns presentation, not source truth.
+7. The intelligence side panel is the canonical embedded surface for the market-intelligence product inside the terminal.
 
 ## Shared Quantitative Targets
 
@@ -256,10 +273,11 @@ The first shipped product proof should satisfy:
 1. one coherent no-wallet-first frontend journey,
 2. at least three named themes or public strategies,
 3. at least one hero intelligence lane with machine-readable signal output,
-4. at least one basket recommendation flow,
-5. at least one directional preview flow,
-6. at least one truthful live or dry-run rail proof,
-7. one bottom blotter showing positions and past actions.
+4. at least one basket incumbent promoted through a frozen harness,
+5. at least one basket recommendation flow,
+6. at least one directional preview flow,
+7. at least one truthful live or dry-run rail proof,
+8. one bottom blotter showing positions and past actions.
 
 ## State-And-Truth Contract
 
@@ -275,8 +293,9 @@ Canonical shared states:
 Shared source-of-truth split:
 1. xStocks public APIs for asset state,
 2. signal artifacts for market view,
-3. recommendation objects for target state,
-4. activation and activity records for live state.
+3. promoted activation manifests for frontend-visible strategy state,
+4. recommendation objects for target state,
+5. activation and activity records for live state.
 
 Fail-closed rule:
 1. blocked, unverified, or stale rails must never surface as active-ready.
@@ -302,9 +321,10 @@ Current status:
 ### Tranche 1
 
 1. create DB schema and shared contracts,
-2. freeze signal artifact schema,
-3. freeze portfolio recommendation schema,
-4. freeze activation and blotter schemas.
+2. freeze research harness, results ledger, and activation-manifest schemas,
+3. freeze signal artifact schema,
+4. freeze portfolio recommendation schema,
+5. freeze activation and blotter schemas.
 
 ### Tranche 2
 
@@ -325,6 +345,7 @@ Current status:
 | Next item | Why it follows | Blocked on current closure | Start now or later | Extends |
 | --- | --- | --- | --- | --- |
 | Prisma + DB schema | every lane depends on shared state | no | now | control plane + `XSL-003` |
+| Research operating model freeze | frontend and portfolio need stable promoted artifacts | no | now | `XSL-006` |
 | Shared payload schemas | frontend and backend both need them | no | now | all sub-specs |
 | Claude frontend build | frontend spec is now explicit | yes, on schema freeze | later | `XSL-004` |
 | Signal adapter scaffold | hero intelligence needs code | yes, on payloads | later | `XSL-002` |
@@ -334,7 +355,7 @@ Current status:
 
 Wave 1:
 1. planning + shared contract freeze,
-2. allowed claim: `repo has an execution-grade control plane`.
+2. allowed claim: `repo has an execution-grade control plane and research operating model`.
 
 Wave 2:
 1. DB + shared schemas + xStocks normalized state,
@@ -355,6 +376,7 @@ Wave 4:
 3. Market intelligence remains a standalone product boundary.
 4. The intelligence signal remains blackbox to users but structured to downstream consumers.
 5. Claude Code will own most frontend implementation after contracts freeze.
+6. `autoresearch` remains an internal operating-model term rather than the external product name.
 
 ## Shared Invalidators
 
@@ -369,7 +391,7 @@ The control plane is only satisfied if:
 1. every major workstream has an execution-grade sub-spec,
 2. no major product area is still defined only by chat context,
 3. the repo can point to one current live-rail hierarchy without contradiction,
-4. the frontend, intelligence, portfolio, and execution layers have explicit boundaries,
+4. the frontend, intelligence, portfolio, strategy-lab, and execution layers have explicit boundaries,
 5. the proof bar is honest about what is live, what is dry-run, and what is still conceptual.
 
 ## Shared Proof Artifacts
@@ -378,9 +400,10 @@ Minimum proof artifacts across the program:
 1. schema files or documented payload contracts,
 2. screenshots or recordings of the terminal frontend,
 3. example signal artifacts and recommendation outputs,
-4. evidence of at least one truthful live or dry-run rail path,
-5. activity ledger output for positions/history/activity,
-6. README and planning links that match the implemented product.
+4. one sample promoted activation manifest and one research-results row,
+5. evidence of at least one truthful live or dry-run rail path,
+6. activity ledger output for positions/history/activity,
+7. README and planning links that match the implemented product.
 
 ## Final Reporting Contract
 
@@ -408,7 +431,7 @@ Planned implementation-phase commands:
 ## Exit Criteria
 
 This control-plane spec can move to completed only when:
-1. all four workstream specs have either completed or explicitly superseded status,
+1. all five workstream specs have either completed or explicitly superseded status,
 2. the repo README and architecture docs match the implemented product,
 3. the live-proof story is internally consistent,
 4. the product can be demoed without relying on undocumented chat context.
