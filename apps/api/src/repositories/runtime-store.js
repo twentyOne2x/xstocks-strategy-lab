@@ -439,6 +439,58 @@ function normalizeExecutionQuote(quote) {
   }
 
   if (
+    quote.kind === "oneinch_fusion" ||
+    (Object.hasOwn(quote, "fromTokenAmount") &&
+      Object.hasOwn(quote, "toTokenAmount") &&
+      Object.hasOwn(quote, "recommendedPreset"))
+  ) {
+    return {
+      kind: "oneinch_fusion",
+      quoteId: firstDefined(quote.quoteId, quote.quote_id, quote.id, null),
+      quotedAt:
+        quote.quotedAt ??
+        quote.quoted_at ??
+        quote.requestedAt ??
+        quote.requested_at ??
+        quote.createdAt,
+      fromTokenAddress:
+        quote.fromTokenAddress ?? quote.from_token_address ?? null,
+      toTokenAddress: quote.toTokenAddress ?? quote.to_token_address ?? null,
+      walletAddress: quote.walletAddress ?? quote.wallet_address ?? null,
+      fromTokenAmount:
+        quote.fromTokenAmount ?? quote.from_token_amount ?? null,
+      toTokenAmount: quote.toTokenAmount ?? quote.to_token_amount ?? null,
+      settlementAddress:
+        quote.settlementAddress ?? quote.settlement_address ?? null,
+      recommendedPreset:
+        quote.recommendedPreset ??
+        quote.recommended_preset ??
+        quote.preset ??
+        null,
+      priceImpactPercent: firstDefined(
+        quote.priceImpactPercent,
+        quote.price_impact_percent,
+        null,
+      ),
+      fee: quote.fee ?? {
+        receiver: quote.feeReceiver ?? quote.fee_receiver ?? null,
+        bps: quote.feeBps ?? quote.fee_bps ?? 0,
+        whitelistDiscountPercent:
+          quote.whitelistDiscountPercent ??
+          quote.whitelist_discount_percent ??
+          0,
+      },
+      submissionSupported: Boolean(
+        firstDefined(
+          quote.submissionSupported,
+          quote.submission_supported,
+          false,
+        ),
+      ),
+    };
+  }
+
+  if (
     quote.kind === "cow_swap" ||
     Object.hasOwn(quote, "order") ||
     Object.hasOwn(quote, "expiration")

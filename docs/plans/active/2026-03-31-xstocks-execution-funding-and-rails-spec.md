@@ -89,10 +89,11 @@ Maintainability:
 2. Public xStocks messaging names Cow Swap and 1inch as Ethereum execution surfaces.
 3. Morpho has a live `SPYx/AUSD` market and the Flowdesk AUSD RWA Strategy vault is live.
 4. Euler is real infrastructure for directional strategies, but the exact live xStocks-on-Euler path remains unverified from public proof captured here.
-5. Privy is the strongest current fit for wallet creation plus card/exchange funding.
+5. Privy is the strongest current fit for wallet creation and destination reveal, but strict self-serve deposit truth is still wallet-funded only: external wallet transfer or manual same-chain transfer into the revealed destination.
 6. LI.FI is the strongest current fit for bridge/swap after funding.
-7. Mesh is more naturally a pay-from-wallet/exchange checkout layer than the primary funding rail for this app.
-8. Spread Finance on Ink remains mentor-reported until captured with direct proof.
+7. `privy_card` and `privy_exchange` are optional hosted convenience rails and may require regulated on-ramp verification; they are not the canonical self-serve default.
+8. Mesh remains explicit absent/deferred until a real repo-owned UI and backend contract exist for it.
+9. Spread Finance on Ink remains mentor-reported until captured with direct proof.
 
 ## Current Local Implementation Audit
 
@@ -192,18 +193,30 @@ Deferred:
 ## Funding Contract
 
 Recommended funding stack:
-1. `Privy` for embedded wallet creation and funding entry
-2. `LI.FI` for bridge/swap after funding if assets land on the wrong chain/token
+1. `Privy` for embedded wallet creation, wallet connection, and destination reveal
+2. canonical strict self-serve deposit path: external wallet transfer / manual same-chain transfer into the revealed destination (`privy_wallet` plus `manual_transfer`)
+3. `LI.FI` for bridge/swap after funding if assets land on the wrong chain/token
+
+Optional hosted convenience rails:
+1. `privy_card`
+2. `privy_exchange`
+
+Hosted convenience-rail rule:
+1. treat them as optional only,
+2. never describe them as the canonical self-serve path,
+3. state that regulated on-ramp verification may be required.
 
 Optional later:
-1. `Mesh` for pay-from-exchange/wallet checkout cases
+1. `Mesh` for pay-from-exchange/wallet checkout cases only after a real repo-owned contract exists; for now it stays absent/deferred
 
 Funding flow:
 1. browse without wallet,
 2. connect or create wallet at activation,
-3. fund via Privy,
-4. route into needed chain/token via LI.FI if required,
-5. activate strategy.
+3. reveal the same-chain destination address,
+4. fund via external wallet transfer or manual same-chain transfer as the canonical self-serve path,
+5. optionally use `privy_card` or `privy_exchange` only when the user explicitly wants a hosted convenience rail and any regulated verification succeeds,
+6. route into needed chain/token via LI.FI if required,
+7. activate strategy.
 
 ## Live-Proof Rules
 
@@ -333,9 +346,21 @@ Wave 3:
 ## Hosted / Deployed / Production Boundary
 
 1. local-only: current planning
-2. deployed-host verified: none yet
-3. production-host verified: none yet
-4. still unproven: all funding and live-rail claims
+2. deployed-host verified: authenticated linked-wallet activation save, execution-request creation, per-leg CoW quote sweep across `25`, `50`, `100`, `250`, and `500` USD gross, and runtime-store capture all exist for the current promoted Ethereum basket lane.
+3. production-host verified: partial only. One real `$25` hosted linked-wallet proof reaches CoW `awaiting_approval` on `NVDAx`, proving the current live lane can save activation, create execution, and reach the approval boundary for at least one core leg.
+4. still unproven: a full promoted-basket signed submission plus receipt, because no all-leg executable floor was observed through `500` USD gross and the remaining core legs are structurally blocked on current CoW venue truth (`MSFTx`, `AAPLx`, `METAx`, `AMZNx`, `GOOGLx`).
+
+## Exact Current CoW Universe
+
+Direct standalone USDC -> xStock CoW quotes across the full repo-owned Ethereum xStocks universe currently split as:
+1. quoteable across the tested `15, 25, 50, 100, 250, 500, 1000, 2500, 5000` USD ladder: `NVDAx`, `TSLAx`, `SPYx`
+2. never quote directly across that ladder: `AAPLx`, `AMDx`, `AMZNx`, `AVGOx`, `GOOGLx`, `METAx`, `MSFTx`, `ORCLx`
+3. exact blocker class for the never-quoteable set in the current standalone scan: `cow_no_liquidity`
+
+Resulting basket posture:
+1. the current promoted basket remains structurally incompatible with present CoW venue truth because it still requires five never-quoteable core legs,
+2. no product-usable CoW-only onboarding basket exists yet because the direct quoteable universe is only three xStocks, below the research minimum `holdings_count=4`,
+3. the only fully intact repo basket under current CoW truth is the benchmark-only `sp500_core` / `SPYx` lane, so current onboarding baskets stay recommendation-only.
 
 ## Assumptions
 
@@ -386,3 +411,19 @@ This workstream is complete only when:
 2. the execution stack is frozen,
 3. the product can truthfully state what is live, preview, and mentor-reported,
 4. the frontend can expose route, vault, and funding context without ambiguity.
+
+## Decision Log
+
+1. 2026-04-01: canonical basket-lane wallet requirements must follow effective readiness truth for current user-facing surfaces, and the live default-basket catalog now matches that linked-wallet-first export.
+2. 2026-04-01: public wording must describe the current basket as linked-wallet-first and smart-wallet-optional without converting that into a full hosted-execution-closure claim.
+3. 2026-04-01: Mesh remains explicit absent/deferred truth until a real repo-owned UI and backend contract exist.
+4. 2026-04-01: strict self-serve deposit means no new KYC/KYB step introduced by this app; the canonical path is external wallet transfer / manual same-chain transfer only.
+5. 2026-04-01: `privy_card` and `privy_exchange` stay available only as optional hosted convenience rails and may require regulated on-ramp verification.
+
+## Progress Log
+
+1. 2026-04-01: verified that Railway serves `/api/public-agent-handoff`, `/health`, and `/api/catalog`, and that the live default-basket catalog now exports linked-wallet-first wallet metadata with `requiresSmartAccount=false` and `minFundingUsd=0`.
+2. 2026-04-01: aligned the repo-owned wording so wallet-funded transfer is the canonical self-serve deposit truth, `privy_card` and `privy_exchange` are convenience rails only, and Mesh stays explicit absent/deferred.
+3. 2026-04-01: captured a real hosted authenticated proof run for the promoted basket at `$25`; activation save and execution-request creation succeeded, `NVDAx` reached `awaiting_approval`, and the remaining core legs failed with exact CoW venue blockers instead of route-construction ambiguity.
+4. 2026-04-01: post-proof reconciliation confirms the remaining execution/funding gap is no longer catalog-wallet-metadata drift; it is the still-partial hosted execution boundary owned by `XSL-014`, plus the exact self-serve deposit truth that wallet-funded USDC transfer remains the only truthful no-KYC/no-KYB path.
+5. 2026-04-01: direct standalone CoW universe scanning across all repo-owned Ethereum xStocks now confirms only `NVDAx`, `TSLAx`, and `SPYx` quote directly; no product-usable CoW-only onboarding basket exists under current venue truth, so onboarding execution stays preview-only.

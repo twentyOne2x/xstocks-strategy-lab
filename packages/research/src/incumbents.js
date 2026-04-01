@@ -52,6 +52,7 @@ import {
   promotedManifestDirForSlot,
   publicSlotFor,
 } from "./slots.js";
+import { deriveCowExecutionSurfaceForManifest } from "./cow-execution-truth.js";
 
 function uniqueStrings(values) {
   return [...new Set(values.filter(Boolean))];
@@ -59,6 +60,19 @@ function uniqueStrings(values) {
 
 function stableJson(value) {
   return JSON.stringify(value);
+}
+
+function deriveBasketExecutionSurfaceForAllocations(frontendBadges, targetAllocations) {
+  return deriveCowExecutionSurfaceForManifest(
+    {
+      mode: "basket",
+      targetAllocations: targetAllocations.map((allocation) => ({
+        sleeve: allocation.sleeve,
+        assetSymbol: allocation.asset_symbol,
+      })),
+    },
+    frontendBadges,
+  );
 }
 
 function stripRegistryGenerationTimestamp(registry) {
@@ -353,6 +367,11 @@ function buildRouteValidation(incumbent, sharedRequiredRoutes) {
     };
   }
 
+  const targetAllocations = buildCanonicalTargetAllocations(incumbent);
+  const executionSurface = deriveBasketExecutionSurfaceForAllocations(
+    incumbent.frontend.badges,
+    targetAllocations,
+  );
   const routeTruthLabels = [
     {
       route_id: COW_SWAP_ROUTE_ID,
@@ -360,10 +379,10 @@ function buildRouteValidation(incumbent, sharedRequiredRoutes) {
       route_kind: "execution",
       chain: CHAIN,
       verification_tier: "public_verified",
-      truth_label: "live",
-      availability: "available",
+      truth_label: executionSurface.cowRouteTruthState,
+      availability: executionSurface.cowRouteAvailability,
       required_for: "core_xstocks",
-      reason: "Public xStocks basket execution route is verified for live onboarding baskets.",
+      reason: executionSurface.cowRouteReason,
     },
   ];
 
@@ -382,14 +401,11 @@ function buildRouteValidation(incumbent, sharedRequiredRoutes) {
   }
 
   return {
-    execution_eligibility: "executable",
-    surface_truth: "live",
+    execution_eligibility: executionSurface.executionEligibility,
+    surface_truth: executionSurface.surfaceTruth,
     route_truth_labels: routeTruthLabels,
-    proof_notes: [
-      "Basket execution routes are validated for live onboarding activations.",
-      "Yield-buffer sleeve uses the verified Flowdesk AUSD vault whenever AUSD is present.",
-    ],
-    validation_badges: incumbent.frontend.badges,
+    proof_notes: executionSurface.proofNotes,
+    validation_badges: executionSurface.frontendBadges,
   };
 }
 
@@ -443,6 +459,10 @@ export function createPromotedIncumbent({ slot, evaluation, previousIncumbentId 
   const resultRow = evaluation.resultRow;
   const targetAllocations = createBasketTargetAllocations(evaluation);
   const strategyVersion = evaluation.candidate?.strategyVersion ?? slot.strategyVersion;
+  const executionSurface = deriveBasketExecutionSurfaceForAllocations(
+    ["validated_strategy", "promoted_manifest", "basket_live_ready"],
+    targetAllocations,
+  );
 
   return {
     version: CONTRACT_VERSION,
@@ -460,7 +480,7 @@ export function createPromotedIncumbent({ slot, evaluation, previousIncumbentId 
       subtitle: slot.subtitle,
       riskLabel: slot.riskLabel,
       summary: slot.summary,
-      badges: ["validated_strategy", "promoted_manifest", "basket_live_ready"],
+      badges: executionSurface.frontendBadges,
     },
     validation: {
       datasetVersion: DATASET_VERSION,
@@ -571,6 +591,13 @@ export function buildActivationManifest(incumbent) {
   const requiredAssets = buildRequiredAssets(normalizedIncumbent, targetAllocations);
   const walletRequirements = buildWalletRequirementPair(normalizedIncumbent);
   const routeValidation = buildRouteValidation(normalizedIncumbent, requiredRoutes);
+  const frontendBadges =
+    normalizedIncumbent.mode === "basket"
+      ? deriveBasketExecutionSurfaceForAllocations(
+          normalizedIncumbent.frontend.badges,
+          targetAllocations,
+        ).frontendBadges
+      : normalizedIncumbent.frontend.badges;
   const runtimeRequiredRoutes = buildExecutionBoundaryRoutes(
     normalizedIncumbent,
     targetAllocations,
@@ -609,7 +636,7 @@ export function buildActivationManifest(incumbent) {
       riskLabel: normalizedIncumbent.frontend.riskLabel,
       risk_label: normalizedIncumbent.frontend.riskLabel,
       summary: normalizedIncumbent.frontend.summary,
-      badges: normalizedIncumbent.frontend.badges,
+      badges: frontendBadges,
     },
     validation: {
       datasetVersion: normalizedIncumbent.validation.datasetVersion,
@@ -947,6 +974,10 @@ export function validatePromotedBoundary() {
         throw new Error("Directional manifest must not claim fake live readiness.");
       }
     } else {
+      const expectedBasketExecutionSurface = deriveBasketExecutionSurfaceForAllocations(
+        currentManifest.frontend.badges,
+        currentManifestDocument.target_allocations,
+      );
       const expectedExplanationSurface = buildBasketExplanationSurface(incumbent);
       const serializedExplanationSurface = stableJson({
         explanationBundle: currentManifestDocument.explanationBundle,
@@ -987,16 +1018,27 @@ export function validatePromotedBoundary() {
         }
       }
 
-      if (currentManifestDocument.route_validation.execution_eligibility !== "executable") {
-        throw new Error(`${slotId} basket manifest must stay live-ready and executable.`);
+      if (
+        currentManifestDocument.route_validation.execution_eligibility !==
+        expectedBasketExecutionSurface.executionEligibility
+      ) {
+        throw new Error(
+          `${slotId} basket manifest execution eligibility drift detected.`,
+        );
       }
 
-      if (currentManifestDocument.routeValidation.surfaceTruth !== "live") {
-        throw new Error(`${slotId} basket manifest must stay live in runtime routeValidation.`);
+      if (
+        currentManifestDocument.routeValidation.surfaceTruth !==
+        expectedBasketExecutionSurface.surfaceTruth
+      ) {
+        throw new Error(`${slotId} basket manifest surface truth drift detected.`);
       }
 
-      if (!currentManifest.frontend.badges.includes("basket_live_ready")) {
-        throw new Error(`${slotId} basket manifest must retain the basket_live_ready badge.`);
+      if (
+        stableJson(currentManifest.frontend.badges) !==
+        stableJson(expectedBasketExecutionSurface.frontendBadges)
+      ) {
+        throw new Error(`${slotId} basket manifest frontend badge drift detected.`);
       }
     }
   }

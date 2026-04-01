@@ -7,7 +7,7 @@ Canonical issue: `XSL-006A` under `XSL-006`
 
 ## Objective
 
-Move xstocks autoresearch from `worker_runtime_only` to a truthfully provable deployed recurring runtime only if a real repo-owned scheduler host and receipts can be established.
+Record the closed recurring-runtime truth for xstocks autoresearch: the repo now proves deployed recurrence on Railway cron service `autoresearch-worker`, with `truthBoundary=railway_cron_service`, `recurringAutonomousProven=true`, live receipt `autoresearch_20260401T170541978z_bd9d4900`, and the next run derived from cron schedule `5 17 * * *`.
 
 ## Non-goals
 
@@ -20,7 +20,7 @@ This tranche does not:
 
 ## User-Stated Desired Outcome
 
-Own the deployed autoresearch scheduler-host proof/build lane, decide whether an existing recurring host already exists or the repo needs the narrowest new host, and either prove truthful deployed recurrence with receipts or isolate one exact blocker while keeping truth at `worker_runtime_only`.
+Leave one closure record that proves the repo-owned recurring host, exact receipt, next-run derivation, and ownership boundary without widening the lane into GitHub Actions or Vercel.
 
 ## Constraints And Non-Negotiables
 
@@ -32,23 +32,28 @@ Own the deployed autoresearch scheduler-host proof/build lane, decide whether an
 
 ## Current Verified Truth
 
-1. `railway whoami` succeeds from this machine and Railway project `xstocks-strategy-lab-preview` is linked locally.
-2. Railway project `80528e32-e909-4b21-8dbd-906b9d54db2e` has exactly one service, `api`, in environment `production`.
-3. `railway functions list` returns no functions for that project/environment.
-4. `gh workflow list -R twentyOne2x/xstocks-strategy-lab` and `gh run list -R twentyOne2x/xstocks-strategy-lab` both return empty output.
-5. `origin/main` contains no `.github/**` or `.vercel/**` tree.
-6. Live Railway `GET /health` still exposes an older API contract than local and does not include `/api/executions` or `/api/reporting/xstocks`.
-7. SSH into the live `api` service shows `/app/apps/api/data/runtime-store.json` exists, but grep finds no `autoresearch`, `truthBoundary`, or `recurringAutonomousProven` entries.
+1. The chosen scheduler host is Railway cron service `autoresearch-worker` in project `xstocks-strategy-lab-preview` / environment `production`.
+2. The live runtime proof surface and persisted runtime store now report `truthBoundary=railway_cron_service` and `recurringAutonomousProven=true`.
+3. The first scheduled host receipt is anchored to run id `autoresearch_20260401T170541978z_bd9d4900`, started `2026-04-01T17:05:41.978Z`, completed `2026-04-01T17:05:42.918Z`, and proof-captured `2026-04-01T17:05:42.921Z` on deployment `38862730-0d6a-42f7-8246-b639ea48a9c3` with snapshot `116ecc2e-ca12-4a9f-b6c8-ec3898419779`.
+4. The next host tick is deterministically derived from the live cron schedule `5 17 * * *` as `2026-04-02 17:05 UTC`.
+5. `railway whoami` still succeeds from this machine, and the revalidation read still returns the same `autoresearch-worker` receipt through both the live proof endpoint and the persisted runtime store.
+6. GitHub Actions ownership remains absent: `gh workflow list -R twentyOne2x/xstocks-strategy-lab` and `gh run list -R twentyOne2x/xstocks-strategy-lab` both return empty output.
+7. Vercel is not an owning surface for this lane: the workspace still has no `.vercel/**` link and no local `vercel` CLI.
 
-## Host-Surface Decision Framework
+## Historical Opening Snapshot
 
-Evaluate in this order:
-1. Railway worker/service plus Railway cron/job.
-2. GitHub Actions schedule only if Railway cannot own the worker truthfully.
-3. Vercel cron only if it is genuinely narrower and does not turn `apps/api` into the hidden scheduler host.
+1. `railway whoami` succeeded from this machine and Railway project `xstocks-strategy-lab-preview` was linked locally.
+2. Railway project `80528e32-e909-4b21-8dbd-906b9d54db2e` initially had exactly one service, `api`, in environment `production`.
+3. `railway functions list` returned no functions for that project/environment.
+4. `origin/main` contained no `.github/**` or `.vercel/**` tree.
+5. Live Railway `GET /health` still exposed an older API contract than local and did not include `/api/executions` or `/api/reporting/xstocks`.
+6. SSH into the live `api` service showed `/app/apps/api/data/runtime-store.json` existed, but grep found no `autoresearch`, `truthBoundary`, or `recurringAutonomousProven` entries.
 
-Initial decision:
-1. Prefer Railway cron worker because the live deployed backend already runs on Railway, the worker entrypoint already exists in `apps/worker`, and neither GitHub Actions nor Vercel currently exists as a repo-owned scheduler surface in this repo.
+## Host-Surface Classification
+
+1. Owning surface: Railway cron service `autoresearch-worker`.
+2. Truth boundary: `railway_cron_service`.
+3. Non-owning surfaces: GitHub Actions and Vercel.
 
 ## Proof Contract
 
@@ -88,14 +93,14 @@ If the lane still cannot close, classify the blocker as one of:
 5. `missing_host_log_or_run_receipt`
 6. `missing_deploy_permission`
 
-## Step-By-Step Plan
+## Closure Sequence Used
 
-1. Record the canonical issue and freeze current deploy truth.
-2. Decide whether an existing scheduler host already exists across Railway, GitHub Actions, and Vercel.
-3. If no host exists, implement the narrowest truthful scheduler path in `apps/worker` and deployment/runtime config.
-4. Add one tiny API proof or receipt surface only if host receipts otherwise require SSH-only access.
-5. Provision and deploy the chosen host.
-6. Capture exact receipts and update runtime truth only if the deployed host evidence is real.
+1. Recorded the canonical issue and froze the opening deploy truth.
+2. Audited Railway, GitHub Actions, and Vercel ownership for an existing recurring host.
+3. Implemented the narrowest truthful scheduler path in `apps/worker` and deployment/runtime config only after confirming no repo-owned recurring host already existed.
+4. Added one narrow API proof surface so later audits would not require SSH-only access.
+5. Provisioned and deployed Railway cron service `autoresearch-worker`.
+6. Captured the first scheduled host receipt and flipped runtime truth only after live host evidence existed.
 
 ## Verification Plan
 
@@ -139,3 +144,4 @@ Expected artifacts:
 - 2026-04-01T19:05:41+02:00: Railway cron service `autoresearch-worker` executed the first scheduled run on deployment `38862730-0d6a-42f7-8246-b639ea48a9c3`.
 - 2026-04-01T19:05:42+02:00: Live proof surface flipped to `truthBoundary=railway_cron_service` and `recurringAutonomousProven=true` with run id `autoresearch_20260401T170541978z_bd9d4900`, one promoted manifest update, and persisted scheduler receipt metadata including snapshot `116ecc2e-ca12-4a9f-b6c8-ec3898419779` and private domain `autoresearch-worker.railway.internal`.
 - 2026-04-01T19:06:14+02:00: Verified live proof via `GET /api/runtime/autoresearch`; next host tick is deterministically derived from the deployed cron schedule `5 17 * * *` as `2026-04-02 17:05 UTC`.
+- 2026-04-01T19:15:27+02:00: Re-audited from current live access. `railway whoami` still succeeds, `railway status` remains linked to `api`, `gh workflow list` and `gh run list` remain empty, the workspace still has no `.vercel/**` link and no `vercel` CLI, and both the live proof endpoint plus live `runtime-store.json` still report the same `autoresearch-worker` Railway cron receipt.

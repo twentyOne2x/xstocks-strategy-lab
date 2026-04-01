@@ -24,16 +24,19 @@ This closeout spec does not:
 
 ## Current Live Truth
 
-As of 2026-03-31, local repo truth is:
-1. `packages/shared`, `packages/xstocks`, `packages/euler`, `packages/research`, `packages/policy`, `apps/api`, and `apps/worker` all pass `npm run check`.
-2. Root `npm run prisma:generate` passes.
-3. Root `npm run prisma:validate` fails only when `DATABASE_URL` is absent and passes when a Postgres URL is supplied.
-4. Research, worker, policy, and API all keep directional fail-closed and preview-only.
-5. `apps/web` exists and is being rewritten in a clean Claude lane, but canonical browser proof does not yet exist.
-6. Market-intelligence language and payload fields exist in shared contracts and frontend adapters, but no separately verified signal-engine producer exists in non-frontend repo truth.
-7. Portfolio recommendation, promoted-manifest, and rebalance semantics exist in research, shared contracts, policy, and API, but the canonical frontend still has not proven those surfaces end to end.
-8. The canonical landing, onboarding, and preview surfaces still risk reading as a black box because the explanation boundary from promoted research output to user-facing interpretation is not yet closed.
-9. The repo is still a large dirty worktree on `main`, so release hygiene is not yet acceptable.
+As of 2026-04-01, reconciled repo and hosted truth is:
+1. `packages/shared`, `packages/xstocks`, `packages/euler`, `packages/research`, `packages/policy`, `apps/api`, `apps/worker`, and `apps/web` all pass `pnpm --dir <path> check`.
+2. Root `pnpm run prisma:generate` passes, and `DATABASE_URL=... pnpm run prisma:validate` passes when a Postgres URL is supplied.
+3. Research, worker, policy, and API still keep directional fail-closed and preview-only.
+4. Recurring autoresearch is already proven as internal backend/runtime truth on Railway cron service `autoresearch-worker`; live repo truth is `truthBoundary=railway_cron_service`, `recurringAutonomousProven=true`, and receipt `autoresearch_20260401T170541978z_bd9d4900`.
+5. Hosted `/`, `/onboarding`, `/workspace/comparison`, `/activate/ai-infra-autopilot`, `/ops/xstocks`, Railway `/health`, and `GET /api/public-agent-handoff` all respond.
+6. Hosted `https://equityterminal.app/skill.md` now matches the current repo-owned public-safe copy on the key public-safe points, and the default-basket Railway catalog now exports linked-wallet-first wallet metadata with `requiresSmartAccount=false` and `minFundingUsd=0`.
+7. Provider-triggered rebalance review ingress is now materially proven on the deployed API: a signed review-only event was accepted, persisted, and opened `awaiting_operator` only. The current caveat is signer provenance, not ingress capability: the accepted proof used a temporary proof signer plus seeded baseline activation context rather than a real external Chainlink signer.
+8. `apps/web` builds and checks cleanly, but canonical browser proof with screenshots and console evidence still does not exist.
+9. Market-intelligence language and payload fields exist in shared contracts and frontend adapters, but no separately verified signal-engine producer exists in repo truth.
+10. Portfolio recommendation, promoted-manifest, and rebalance semantics are proven in backend code, but the served frontend still has route-truth drift: the production API remains preview-only or manual for the current activation boundary while some served copy still implies `Chainlink CRE` or `Status live`.
+11. The canonical landing, onboarding, and preview surfaces still need browser-level explanation proof, not just endpoint proof.
+12. `git diff --check` passed, but the repo now contains the active implementation tranche and proof artifacts, so release hygiene is improved only in the sense that the diff is syntax-clean; landing posture is still not closed.
 
 ## Current Local Implementation Audit
 
@@ -49,7 +52,7 @@ As of 2026-03-31, local repo truth is:
 
 ### Partial
 
-1. `apps/web` contains a substantial product shell, but the canonical xStocks-native pass is still in flight and not yet browser-proven.
+1. `apps/web` now contains the hosted product shell, real Privy connect code, and the ops/reporting surface, but it is still not browser-proven and some served truth labels remain too aggressive.
 2. Market-intelligence payload semantics exist, but the lane is still mostly represented through manifests, contracts, and frontend mock/adaptation logic rather than a separately verified producer.
 3. Portfolio construction exists as basket and directional evaluator logic plus recommendation shaping, but not as a separately proven product lane with browser-level closure.
 4. Root Prisma posture is operationally partial because validation depends on env wiring that is not guaranteed by default.
@@ -58,9 +61,30 @@ As of 2026-03-31, local repo truth is:
 
 1. Canonical browser-clickable proof for the no-wallet qualification flow into preview dashboard and deposit CTA.
 2. Integrated `apps/web` -> `apps/api` proof pack with screenshots and console-clean browser evidence.
-3. Release-shape hygiene on a bounded branch or landed slices.
-4. Operator-ready observability or deployment proof.
-5. A standalone market-intelligence producer lane beyond contracts and placeholder/frontend consumption.
+3. Browser proof plus operator-ready observability for the canonical user-facing closeout path.
+4. A standalone market-intelligence producer lane beyond contracts and placeholder/frontend consumption.
+
+## 2026-04-01 Final Reconciliation Update
+
+This section supersedes stale planning-tranche assumptions elsewhere in this doc.
+
+Closed enough to rely on:
+1. non-frontend package and app checks,
+2. Prisma generate or validate with explicit database env,
+3. recurring autoresearch host proof on Railway cron service `autoresearch-worker`,
+4. live hosted route existence for the main public and operator surfaces,
+5. hosted public `skill.md` parity plus linked-wallet-first default-basket catalog exports on the live Railway host,
+6. syntax-clean diff plus passing `git diff --check`.
+
+Still partial:
+1. canonical browser proof for onboarding -> workspace -> activation,
+2. served UI truth alignment to the production API,
+3. hosted ops/reporting token configuration.
+
+Exact blockers keeping this closeout lane open:
+1. no screenshot or console-clean browser proof pack exists,
+2. hosted UI still contains `Chainlink CRE` or `Status live` claims that outrun the current production API boundary,
+3. `/ops/xstocks` and `/api/reporting/xstocks` stay fail-closed until their hosted tokens are configured.
 
 ## Symptom Contract
 
@@ -196,9 +220,9 @@ The blocker is the gap between local backend truth and canonical user-visible un
 1. completion relative to spec = mostly complete for the current demo boundary.
 2. completion relative to repeated thread asks = mostly complete.
 3. completion relative to prior implementation claims = largely accurate for non-frontend scope.
-4. verified implementation and proof status = research, worker, policy, API, shared, xstocks, and euler checks all pass locally.
+4. verified implementation and proof status = research, worker, policy, API, shared, xstocks, and euler checks all pass locally, and recurring autoresearch is already proven on Railway cron service `autoresearch-worker` with `truthBoundary=railway_cron_service`.
 5. canonical frontend functioning status = not yet verified because manifest-driven surfaces are not yet browser-proven.
-6. exact remaining gap = canonical frontend consumption and optional directional follow-up.
+6. exact remaining gap = canonical frontend consumption and optional directional follow-up, not recurring-host ownership.
 
 ### Market-intelligence lane
 

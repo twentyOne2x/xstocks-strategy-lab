@@ -14,6 +14,10 @@ import {
   assertPromotedActivationManifest,
   createActivationManifestRef,
 } from "./manifest.js";
+import {
+  getCowBlockedSymbolInfo,
+  getCowQuoteabilityAssessmentForManifest,
+} from "../../research/src/cow-execution-truth.js";
 import { deriveReadinessWalletRequirements } from "./readiness-policy.js";
 import { createSmartAccountProviderScaffold } from "./smart-account.js";
 
@@ -67,6 +71,13 @@ function applyRouteValidationConstraint(routeTruthLabel, manifestRouteTruthLabel
 
 function deriveAssetChecks(manifest, liveXStocksState) {
   const assetIndex = createIndex(liveXStocksState?.assets ?? [], "assetSymbol");
+  const cowQuoteabilityAssessment = getCowQuoteabilityAssessmentForManifest(manifest);
+  const blockedCowSymbols = new Map(
+    cowQuoteabilityAssessment.blockedCoreSymbols.map((symbol) => [
+      symbol.symbol,
+      symbol,
+    ]),
+  );
 
   return manifest.requiredAssets.map((assetSymbol) => {
     const liveAsset = assetIndex.get(assetSymbol);
@@ -86,6 +97,20 @@ function deriveAssetChecks(manifest, liveXStocksState) {
         truthState: ROUTE_TRUTH_LABEL.BLOCKED,
         status: liveAsset.status,
         reason: "Asset is not currently active for execution.",
+      };
+    }
+
+    const cowBlockedSymbol = blockedCowSymbols.get(assetSymbol);
+    if (cowBlockedSymbol) {
+      const exactBlocker = getCowBlockedSymbolInfo(assetSymbol);
+      return {
+        assetSymbol,
+        truthState: ROUTE_TRUTH_LABEL.PREVIEW,
+        status: "cow_unquoteable",
+        reason: `Direct standalone USDC -> ${assetSymbol} CoW quotes never cleared in the tested ladder; blockerClass=${exactBlocker?.blockerClass ?? cowBlockedSymbol.blockerClass}.`,
+        blockerClass: exactBlocker?.blockerClass ?? cowBlockedSymbol.blockerClass,
+        errorType: exactBlocker?.errorType ?? cowBlockedSymbol.errorType ?? null,
+        statusCode: exactBlocker?.statusCode ?? cowBlockedSymbol.statusCode ?? null,
       };
     }
 
@@ -221,6 +246,7 @@ function deriveFundingPath(
     requestedNotionalUsd,
     normalizeUsd(walletRequirements.minFundingUsd, 0),
   );
+  const requestedNotionalPending = requiredNotionalUsd <= 0;
   const fundingGapUsd = Math.max(
     0,
     Number(
@@ -236,7 +262,7 @@ function deriveFundingPath(
   const readiness =
     destinationAddress === null
       ? FUNDING_READINESS.DESTINATION_REQUIRED
-      : fundingGapUsd > 0
+      : requestedNotionalPending || fundingGapUsd > 0
         ? FUNDING_READINESS.FUNDING_REQUIRED
         : FUNDING_READINESS.FUNDED;
   const fundingMethodStatus =
@@ -245,8 +271,14 @@ function deriveFundingPath(
       : fundingGapUsd > 0
         ? "available"
         : "available";
+  const selfServeMethodStatus =
+    destinationAddress === null
+      ? "blocked"
+      : readiness === FUNDING_READINESS.FUNDING_REQUIRED
+        ? "recommended"
+        : "available";
   const recommendedMethodId =
-    fundingGapUsd > 0 && destinationAddress ? "privy_card" : null;
+    fundingGapUsd > 0 && destinationAddress ? "privy_wallet" : null;
 
   return {
     provider: walletRequirements.preferredFundingProvider ?? "privy",
@@ -261,26 +293,37 @@ function deriveFundingPath(
     recommendedMethodId,
     surfaces: [
       createFundingSurface({
-        methodId: "privy_card",
-        kind: "card",
-        status:
-          readiness === FUNDING_READINESS.FUNDING_REQUIRED
-            ? "recommended"
-            : fundingMethodStatus,
+        methodId: "privy_wallet",
+        kind: "wallet",
+        status: selfServeMethodStatus,
         destinationAddress,
         assetSymbol: walletRequirements.topUpAsset ?? "USDC",
         notes: [
-          "Privy card funding is a mainnet-only funding surface.",
+          "Canonical self-serve path: transfer from your external wallet into the revealed same-chain destination address.",
+          "This wallet-funded path does not introduce a new app-level KYC/KYB step.",
         ],
       }),
+      {
+        methodId: "manual_transfer",
+        providerId: "manual",
+        kind: "manual_transfer",
+        status: selfServeMethodStatus,
+        destinationAddress,
+        assetSymbol: walletRequirements.topUpAsset ?? "USDC",
+        notes: [
+          "Canonical strict self-serve fallback: complete a manual same-chain transfer from your external wallet into the revealed destination address.",
+          "Use this fail-closed path when hosted convenience rails are unavailable or not desired.",
+        ],
+      },
       createFundingSurface({
-        methodId: "privy_wallet",
-        kind: "wallet",
+        methodId: "privy_card",
+        kind: "card",
         status: fundingMethodStatus,
         destinationAddress,
         assetSymbol: walletRequirements.topUpAsset ?? "USDC",
         notes: [
-          "Use this when the user wants to transfer from an external wallet.",
+          "Optional hosted convenience rail for card top-up on mainnet.",
+          "A regulated on-ramp may require identity verification before funding completes.",
         ],
       }),
       createFundingSurface({
@@ -290,20 +333,10 @@ function deriveFundingPath(
         destinationAddress,
         assetSymbol: walletRequirements.topUpAsset ?? "USDC",
         notes: [
-          "Privy exchange funding is expected to land on the current destination address on mainnet.",
+          "Optional hosted convenience rail for exchange-linked funding into the current destination on mainnet.",
+          "A regulated exchange or on-ramp partner may require identity verification before funding completes.",
         ],
       }),
-      {
-        methodId: "manual_transfer",
-        providerId: "manual",
-        kind: "manual_transfer",
-        status: destinationAddress === null ? "blocked" : "available",
-        destinationAddress,
-        assetSymbol: walletRequirements.topUpAsset ?? "USDC",
-        notes: [
-          "Manual same-chain transfer remains the fail-closed fallback when hosted funding is unavailable.",
-        ],
-      },
     ],
   };
 }
@@ -337,6 +370,11 @@ function deriveEligibility({
 }) {
   const blockingAssetChecks = assetChecks.filter(
     (assetCheck) => assetCheck.truthState === ROUTE_TRUTH_LABEL.BLOCKED,
+  );
+  const previewOnlyAssetChecks = assetChecks.filter(
+    (assetCheck) =>
+      assetCheck.status === "cow_unquoteable" ||
+      assetCheck.truthState === ROUTE_TRUTH_LABEL.PREVIEW,
   );
   const blockedRoutes = routeTruthLabels.filter(
     (route) => route.truthState === ROUTE_TRUTH_LABEL.BLOCKED,
@@ -381,6 +419,14 @@ function deriveEligibility({
   }
 
   if (previewOnlyRoutes.length > 0) {
+    return {
+      surface_truth: ROUTE_TRUTH_LABEL.PREVIEW,
+      execution_state: EXECUTION_STATE.BLOCKED,
+      execution_eligibility: EXECUTION_ELIGIBILITY.PREVIEW_ONLY,
+    };
+  }
+
+  if (previewOnlyAssetChecks.length > 0) {
     return {
       surface_truth: ROUTE_TRUTH_LABEL.PREVIEW,
       execution_state: EXECUTION_STATE.BLOCKED,
@@ -442,6 +488,24 @@ function buildSteps({
   const smartAccountStepComplete =
     smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.READY ||
     smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.NOT_REQUIRED;
+  const fundingStepStatus =
+    fundingPath.readiness === FUNDING_READINESS.DESTINATION_REQUIRED
+      ? "blocked"
+      : fundingPath.readiness === FUNDING_READINESS.FUNDING_REQUIRED
+        ? normalizedWalletState.walletConnected
+          ? "pending"
+          : "blocked"
+        : "complete";
+  const fundingStepDetail =
+    fundingPath.readiness === FUNDING_READINESS.DESTINATION_REQUIRED
+      ? normalizedWalletState.walletConnected
+        ? "A deposit destination is still being prepared before any funding step can be shown."
+        : "Connect a wallet first so the product can reveal the correct deposit destination."
+      : fundingPath.readiness === FUNDING_READINESS.FUNDING_REQUIRED
+        ? fundingPath.fundingGapUsd <= 0
+          ? "Choose a USDC notional first, then use an external wallet transfer or manual same-chain transfer. Privy card and exchange remain optional hosted convenience rails and may require regulated on-ramp verification."
+          : `Fund ${fundingPath.topUpAsset} into ${fundingPath.destinationKind} ${fundingPath.destinationAddress ?? "destination"} using an external wallet transfer or manual same-chain transfer. Privy card and exchange remain optional hosted convenience rails and may require regulated on-ramp verification.`
+        : "Wallet funding meets the current requested notional.";
   const steps = [
     {
       stepId: "review_promoted_manifest",
@@ -458,20 +522,15 @@ function buildSteps({
     {
       stepId: "fund_wallet",
       title: "Fund wallet",
-      status:
-        fundingPath.readiness === FUNDING_READINESS.FUNDING_REQUIRED
-          ? normalizedWalletState.walletConnected
-            ? "pending"
-            : "blocked"
-          : "complete",
-      detail:
-        fundingPath.readiness === FUNDING_READINESS.FUNDING_REQUIRED
-          ? `Fund ${fundingPath.topUpAsset} into ${fundingPath.destinationKind} ${fundingPath.destinationAddress ?? "destination"} using one of the Privy-compatible funding surfaces.`
-          : "Wallet funding meets the current notional requirement.",
+      status: fundingStepStatus,
+      detail: fundingStepDetail,
     },
     {
       stepId: "prepare_smart_account",
-      title: "Bootstrap smart account",
+      title:
+        smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.NOT_REQUIRED
+          ? "Smart wallet optional"
+          : "Bootstrap smart wallet",
       status:
         smartAccountStepComplete
           ? "complete"
@@ -482,7 +541,7 @@ function buildSteps({
         smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.NOT_REQUIRED
           ? "Privy smart wallet remains optional for the current user-approved CoW execution lane."
           : smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.READY
-          ? "Privy smart wallet destination is ready for user-approved execution."
+          ? "Privy smart wallet destination is ready if the user chooses to use it for execution."
           : "Create the embedded wallet first, then bootstrap the Privy smart wallet on Ethereum.",
     },
     {
@@ -491,7 +550,7 @@ function buildSteps({
       status: execution_state === EXECUTION_STATE.READY ? "pending" : "blocked",
       detail:
         execution_state === EXECUTION_STATE.READY
-          ? "All required rails, funding, and smart-account checks are satisfied for CoW quote preparation."
+          ? "All required rails, wallet, and funding checks are satisfied for CoW quote preparation."
           : "CoW quoting remains preview-only until every required rail and wallet check passes.",
     },
     {
@@ -550,6 +609,7 @@ function collectMessages(
   assetChecks,
   routeTruthLabels,
   fundingPath,
+  normalizedWalletState,
   smartAccountInspection,
 ) {
   const blockers = [];
@@ -558,6 +618,11 @@ function collectMessages(
   for (const assetCheck of assetChecks) {
     if (assetCheck.truthState === ROUTE_TRUTH_LABEL.BLOCKED) {
       blockers.push(`${assetCheck.assetSymbol}: ${assetCheck.reason}`);
+      continue;
+    }
+
+    if (assetCheck.status === "cow_unquoteable") {
+      warnings.push(`${assetCheck.assetSymbol}: ${assetCheck.reason}`);
     }
   }
 
@@ -577,10 +642,16 @@ function collectMessages(
   }
 
   if (fundingPath.readiness === FUNDING_READINESS.DESTINATION_REQUIRED) {
-    blockers.push("Funding destination is not ready yet.");
+    blockers.push(
+      normalizedWalletState.walletConnected
+        ? "Deposit destination is not ready yet."
+        : "Connect a wallet first so the correct deposit destination can be derived.",
+    );
   } else if (fundingPath.readiness === FUNDING_READINESS.FUNDING_REQUIRED) {
     blockers.push(
-      `Fund ${fundingPath.topUpAsset} with at least ${fundingPath.fundingGapUsd} additional USD-equivalent before execution can become live.`,
+      fundingPath.fundingGapUsd <= 0
+        ? `Choose a ${fundingPath.topUpAsset} notional first so the funding target can be derived.`
+        : `Fund ${fundingPath.topUpAsset} with at least ${fundingPath.fundingGapUsd} additional USD-equivalent before execution can become live.`,
     );
   }
 
@@ -632,6 +703,7 @@ export function deriveExecutionPlan({
     assetChecks,
     routeTruthLabels,
     fundingPath,
+    normalizedWalletState,
     smartAccountInspection,
   );
   const executionPlanId = `exec_${hashExecutionPlanInput({

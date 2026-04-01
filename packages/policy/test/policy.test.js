@@ -92,7 +92,7 @@ function createBoundaryState(manifest) {
         {
           routeId: "flowdesk.ausd-rwa-strategy",
           label: "Flowdesk AUSD RWA Strategy",
-          routeKind: "yield_vault",
+          routeKind: "vault",
           chain: "ethereum",
           verificationTier: "public_verified",
           availability: "available",
@@ -124,19 +124,132 @@ function createActivationBaseline({
   };
 }
 
+function createSyntheticExecutableBasketManifest() {
+  const liveReadyBadges = ["validated_strategy", "promoted_manifest", "basket_live_ready"];
+
+  return {
+    ...basketManifest,
+    manifestId: "test.synthetic_quoteable_basket:promoted",
+    slotId: "onboarding.default_basket",
+    strategyVersion: "synthetic_quoteable_basket_v1",
+    frontend: {
+      ...basketManifest.frontend,
+      title: "Synthetic Quoteable Basket",
+      badges: liveReadyBadges,
+    },
+    targetAllocations: [
+      {
+        sleeve: "core_xstocks",
+        targetWeightPct: 47.5,
+        assetSymbol: "NVDAx",
+      },
+      {
+        sleeve: "core_xstocks",
+        targetWeightPct: 47.5,
+        assetSymbol: "TSLAx",
+      },
+      {
+        sleeve: "yield_buffer",
+        targetWeightPct: 5,
+        assetSymbol: "AUSD",
+        venueId: "flowdesk_ausd_rwa_strategy",
+      },
+    ],
+    requiredAssets: ["NVDAx", "TSLAx", "AUSD"],
+    requiredRoutes: [
+      {
+        routeId: "cow_swap.ethereum",
+        label: "Cow Swap on Ethereum",
+        routeKind: "execution",
+        requiredFor: "core_xstocks",
+      },
+      {
+        routeId: "flowdesk.ausd-rwa-strategy",
+        label: "Flowdesk AUSD RWA Strategy",
+        routeKind: "vault",
+        requiredFor: "yield_buffer",
+      },
+    ],
+    executionBoundary: {
+      ...basketManifest.executionBoundary,
+      requiredAssets: ["NVDAx", "TSLAx", "AUSD"],
+      requiredRoutes: [
+        {
+          routeId: "cow_swap.ethereum",
+          label: "Cow Swap on Ethereum",
+          routeKind: "execution",
+          requiredFor: "core_xstocks",
+        },
+        {
+          routeId: "flowdesk.ausd-rwa-strategy",
+          label: "Flowdesk AUSD RWA Strategy",
+          routeKind: "vault",
+          requiredFor: "yield_buffer",
+        },
+      ],
+    },
+    routeValidation: {
+      executionEligibility: "executable",
+      surfaceTruth: "live",
+      routeTruthLabels: [
+        {
+          routeId: "cow_swap.ethereum",
+          label: "Cow Swap on Ethereum",
+          routeKind: "execution",
+          chain: "ethereum",
+          verificationTier: "public_verified",
+          truthState: "live",
+          availability: "available",
+          requiredFor: "core_xstocks",
+          reason: "Synthetic test basket keeps only directly quoteable core legs.",
+        },
+        {
+          routeId: "flowdesk.ausd-rwa-strategy",
+          label: "Flowdesk AUSD RWA Strategy",
+          routeKind: "vault",
+          chain: "ethereum",
+          verificationTier: "public_verified",
+          truthState: "live",
+          availability: "available",
+          requiredFor: "yield_buffer",
+          reason: "AUSD yield-buffer vault remains live.",
+        },
+      ],
+      proofNotes: [
+        "Synthetic test basket constrains core legs to direct-quoteable CoW symbols only.",
+      ],
+      validationBadges: liveReadyBadges,
+    },
+  };
+}
+
 const rawBasketManifest = await loadRawResearchManifest("onboarding.default_basket");
 const basketManifest = await loadResearchManifest("onboarding.default_basket");
+const executableBasketManifest = createSyntheticExecutableBasketManifest();
 const directionalManifest = await loadResearchManifest("advanced.default_directional");
 const basketBoundaryState = createBoundaryState(basketManifest);
+const executableBasketBoundaryState = createBoundaryState(executableBasketManifest);
 const directionalBoundaryState = createBoundaryState(directionalManifest);
 
-test("research-provided execution boundary is consumed directly when present", () => {
+test("research-provided execution boundary keeps route truth but canonicalizes basket wallet requirements", () => {
   assert.equal(basketManifest.legacyFallback, false);
-  assert.deepEqual(basketManifest.executionBoundary, rawBasketManifest.executionBoundary);
   assert.deepEqual(basketManifest.requiredRoutes, rawBasketManifest.executionBoundary.requiredRoutes);
+  assert.equal(
+    rawBasketManifest.executionBoundary.walletRequirements.requiresSmartAccount,
+    true,
+  );
+  assert.equal(rawBasketManifest.executionBoundary.walletRequirements.minFundingUsd, 1000);
+  assert.deepEqual(basketManifest.walletRequirements, {
+    requiresWallet: true,
+    requiresSmartAccount: false,
+    minFundingUsd: 0,
+    preferredFundingProvider: "privy",
+    preferredBridgeProvider: "lifi",
+    topUpAsset: "USDC",
+  });
   assert.deepEqual(
+    basketManifest.executionBoundary.walletRequirements,
     basketManifest.walletRequirements,
-    rawBasketManifest.executionBoundary.walletRequirements,
   );
   assert.equal(basketManifest.signalRefs[0].signalId, rawBasketManifest.signal_refs[0]);
 });
@@ -177,18 +290,40 @@ test("verified rails with no wallet stay preview-only until wallet connection", 
   });
 
   assert.equal(executionPlan.surfaceTruth, "preview");
-  assert.equal(executionPlan.executionState, "wallet_required");
-  assert.equal(
-    executionPlan.routeTruthLabels.every((route) => route.truthState === "live"),
-    true,
-  );
+  assert.equal(executionPlan.executionState, "blocked");
+  assert.equal(executionPlan.routeTruthLabels[0].truthState, "preview");
 });
 
-test("verified rails become live only after wallet, funding, and smart account are ready", () => {
+test("current promoted basket stays preview-only after wallet connection because required CoW legs remain unquoteable", () => {
   const executionPlan = deriveExecutionPlan({
     activation_manifest: basketManifest,
     live_xstocks_state: basketBoundaryState.liveXStocksState,
     live_route_state: basketBoundaryState.liveRouteState,
+    user_notional_usd: 1000,
+    wallet_state: {
+      walletConnected: true,
+      walletAddress: "0xabc",
+      fundedNotionalUsd: 1250,
+      smartAccount: {
+        status: "ready",
+        address: "0xsmart",
+      },
+    },
+  });
+
+  assert.equal(executionPlan.surfaceTruth, "preview");
+  assert.equal(executionPlan.executionState, "blocked");
+  assert.equal(executionPlan.executionEligibility, "preview_only");
+  assert.equal(executionPlan.blockers.length, 0);
+  assert.match(executionPlan.warnings.join(" "), /MSFTx/i);
+  assert.match(executionPlan.warnings.join(" "), /cow_no_liquidity/i);
+});
+
+test("synthetic quoteable basket becomes live after wallet connection and sufficient funding", () => {
+  const executionPlan = deriveExecutionPlan({
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -258,9 +393,9 @@ test("recommendations stay tied to canonical promoted manifest refs", () => {
 
 test("execution plans keep Privy funding surfaces available when smart-wallet bootstrap is optional for CoW", () => {
   const executionPlan = deriveExecutionPlan({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -287,15 +422,68 @@ test("execution plans keep Privy funding surfaces available when smart-wallet bo
   assert.equal(executionPlan.fundingPath.readiness, "funded");
   assert.deepEqual(
     executionPlan.fundingPath.surfaces.map((surface) => surface.methodId),
-    ["privy_card", "privy_wallet", "privy_exchange", "manual_transfer"],
+    ["privy_wallet", "manual_transfer", "privy_card", "privy_exchange"],
   );
 });
 
-test("verified CoW basket rails become live at the requested notional without a smart wallet", () => {
+test("funding-required basket plans keep wallet-funded surfaces canonical and hosted rails optional", () => {
   const executionPlan = deriveExecutionPlan({
     activation_manifest: basketManifest,
     live_xstocks_state: basketBoundaryState.liveXStocksState,
     live_route_state: basketBoundaryState.liveRouteState,
+    user_notional_usd: 250,
+    wallet_state: {
+      walletConnected: true,
+      walletAddress: "0xabc",
+      fundedNotionalUsd: 0,
+      embeddedWallet: {
+        status: "ready",
+        address: "0xembedded",
+      },
+      smartAccount: {
+        status: "pending",
+      },
+    },
+  });
+
+  assert.equal(executionPlan.fundingPath.readiness, "funding_required");
+  assert.equal(executionPlan.fundingPath.recommendedMethodId, "privy_wallet");
+
+  const surfaces = Object.fromEntries(
+    executionPlan.fundingPath.surfaces.map((surface) => [surface.methodId, surface]),
+  );
+
+  assert.equal(surfaces.privy_wallet.status, "recommended");
+  assert.equal(surfaces.manual_transfer.status, "recommended");
+  assert.equal(surfaces.privy_card.status, "available");
+  assert.equal(surfaces.privy_exchange.status, "available");
+  assert.match(
+    surfaces.privy_wallet.notes.join(" "),
+    /Canonical self-serve path: transfer from your external wallet/,
+  );
+  assert.match(
+    surfaces.manual_transfer.notes.join(" "),
+    /Canonical strict self-serve fallback: complete a manual same-chain transfer/,
+  );
+  assert.match(
+    surfaces.privy_card.notes.join(" "),
+    /Optional hosted convenience rail/,
+  );
+  assert.match(
+    surfaces.privy_exchange.notes.join(" "),
+    /may require identity verification/,
+  );
+  assert.match(
+    executionPlan.steps.find((step) => step.stepId === "fund_wallet")?.detail ?? "",
+    /external wallet transfer or manual same-chain transfer/,
+  );
+});
+
+test("synthetic quoteable CoW basket rails become live at the requested notional without a smart wallet", () => {
+  const executionPlan = deriveExecutionPlan({
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 25,
     wallet_state: {
       walletConnected: true,
@@ -419,9 +607,9 @@ test("legacy fallback remains basket-only and bounded", () => {
 
 test("rebalance orchestration stays preview-only until a live activation baseline exists", () => {
   const executionPlan = deriveExecutionPlan({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -434,9 +622,9 @@ test("rebalance orchestration stays preview-only until a live activation baselin
     },
   });
   const recommendation = deriveRecommendation({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -450,7 +638,7 @@ test("rebalance orchestration stays preview-only until a live activation baselin
   });
 
   const rebalance = deriveRebalanceOrchestration({
-    activation_manifest: basketManifest,
+    activation_manifest: executableBasketManifest,
     recommendation,
     execution_plan: executionPlan,
     latest_activation: null,
@@ -465,9 +653,9 @@ test("rebalance orchestration stays preview-only until a live activation baselin
 
 test("rebalance orchestration recommends operator review when a newer promoted manifest replaces the activation baseline", () => {
   const executionPlan = deriveExecutionPlan({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -480,9 +668,9 @@ test("rebalance orchestration recommends operator review when a newer promoted m
     },
   });
   const recommendation = deriveRecommendation({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -496,7 +684,7 @@ test("rebalance orchestration recommends operator review when a newer promoted m
   });
 
   const rebalance = deriveRebalanceOrchestration({
-    activation_manifest: basketManifest,
+    activation_manifest: executableBasketManifest,
     recommendation,
     execution_plan: executionPlan,
     latest_activation: createActivationBaseline(),
@@ -516,9 +704,9 @@ test("rebalance orchestration recommends operator review when a newer promoted m
 
 test("scheduled cron evaluations can queue a truthful scheduled rebalance review", () => {
   const executionPlan = deriveExecutionPlan({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -531,9 +719,9 @@ test("scheduled cron evaluations can queue a truthful scheduled rebalance review
     },
   });
   const recommendation = deriveRecommendation({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -547,7 +735,7 @@ test("scheduled cron evaluations can queue a truthful scheduled rebalance review
   });
 
   const rebalance = deriveRebalanceOrchestration({
-    activation_manifest: basketManifest,
+    activation_manifest: executableBasketManifest,
     recommendation,
     execution_plan: executionPlan,
     latest_activation: createActivationBaseline(),
@@ -565,9 +753,9 @@ test("scheduled cron evaluations can queue a truthful scheduled rebalance review
 
 test("provider-triggered evaluations stay fail-closed at the Chainlink-oriented boundary", () => {
   const executionPlan = deriveExecutionPlan({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -580,9 +768,9 @@ test("provider-triggered evaluations stay fail-closed at the Chainlink-oriented 
     },
   });
   const recommendation = deriveRecommendation({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -596,7 +784,7 @@ test("provider-triggered evaluations stay fail-closed at the Chainlink-oriented 
   });
 
   const rebalance = deriveRebalanceOrchestration({
-    activation_manifest: basketManifest,
+    activation_manifest: executableBasketManifest,
     recommendation,
     execution_plan: executionPlan,
     latest_activation: createActivationBaseline(),
@@ -614,22 +802,22 @@ test("provider-triggered evaluations stay fail-closed at the Chainlink-oriented 
 
 test("rebalance orchestration fails closed when manifest drift exists but readiness checks are not satisfied", () => {
   const executionPlan = deriveExecutionPlan({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {},
   });
   const recommendation = deriveRecommendation({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {},
   });
 
   const rebalance = deriveRebalanceOrchestration({
-    activation_manifest: basketManifest,
+    activation_manifest: executableBasketManifest,
     recommendation,
     execution_plan: executionPlan,
     latest_activation: createActivationBaseline(),
@@ -641,9 +829,9 @@ test("rebalance orchestration fails closed when manifest drift exists but readin
 
 test("explicit rebalance transitions stay bounded to manual operator actions", () => {
   const executionPlan = deriveExecutionPlan({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -656,9 +844,9 @@ test("explicit rebalance transitions stay bounded to manual operator actions", (
     },
   });
   const recommendation = deriveRecommendation({
-    activation_manifest: basketManifest,
-    live_xstocks_state: basketBoundaryState.liveXStocksState,
-    live_route_state: basketBoundaryState.liveRouteState,
+    activation_manifest: executableBasketManifest,
+    live_xstocks_state: executableBasketBoundaryState.liveXStocksState,
+    live_route_state: executableBasketBoundaryState.liveRouteState,
     user_notional_usd: 1000,
     wallet_state: {
       walletConnected: true,
@@ -671,7 +859,7 @@ test("explicit rebalance transitions stay bounded to manual operator actions", (
     },
   });
   const recommended = deriveRebalanceOrchestration({
-    activation_manifest: basketManifest,
+    activation_manifest: executableBasketManifest,
     recommendation,
     execution_plan: executionPlan,
     latest_activation: createActivationBaseline(),
@@ -700,6 +888,7 @@ for (const fixtureName of [
   "theme-tilt",
   "active-leaders",
   "directional-opt-in",
+  "skip-not-sure",
 ]) {
   test(`qualification fixture ${fixtureName} resolves canonical slot and truth`, async () => {
     const fixture = await loadQualificationFixture(fixtureName);
@@ -713,6 +902,12 @@ for (const fixtureName of [
     });
     const manifest = await loadResearchManifest(fixture.expected.slotId);
     const boundaryState = createBoundaryState(manifest);
+    const expectedExecutionState =
+      fixture.expected.mode === "basket" ? "blocked" : fixture.expected.executionState;
+    const expectedActivationReady =
+      fixture.expected.mode === "basket" ? false : fixture.expected.activationReady;
+    const expectedExecutionEligibility =
+      fixture.expected.mode === "basket" ? "preview_only" : fixture.expected.executionEligibility;
     const qualification = deriveAgentQualification({
       onboarding_answers: normalizedAnswers,
       activation_manifest: manifest,
@@ -730,7 +925,7 @@ for (const fixtureName of [
     );
     assert.equal(
       qualification.activationTruth.executionState,
-      fixture.expected.executionState,
+      expectedExecutionState,
     );
     assert.equal(
       qualification.activationTruth.directionalPreviewOnly,
@@ -738,11 +933,11 @@ for (const fixtureName of [
     );
     assert.equal(
       qualification.activationTruth.activationReady,
-      fixture.expected.activationReady,
+      expectedActivationReady,
     );
     assert.equal(
       qualification.activationTruth.executionEligibility,
-      fixture.expected.executionEligibility,
+      expectedExecutionEligibility,
     );
     assert.equal(
       qualification.explanationSurface.surfaceId,

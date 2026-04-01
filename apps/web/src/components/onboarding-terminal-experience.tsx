@@ -216,7 +216,6 @@ export function OnboardingTerminalExperience({
   if (!started) {
     return (
       <div className="onboarding-entry">
-        <AppHeader />
         <div className="onboarding-entry-card">
           <h1>Build your portfolio.</h1>
           <p>7 questions. Under a minute. Preview everything before you fund.</p>
@@ -235,7 +234,6 @@ export function OnboardingTerminalExperience({
             <span>Chainlink</span>
           </div>
         </div>
-        <AppFooter />
       </div>
     );
   }
@@ -244,7 +242,6 @@ export function OnboardingTerminalExperience({
   if (!allPrimaryAnswered) {
     return (
       <>
-        <AppHeader />
         <XStocksFunnelStageTracker stage="onboarding_started" />
         <OnboardingQuestionFlow
           answers={answers}

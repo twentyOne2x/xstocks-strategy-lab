@@ -208,7 +208,7 @@ Must show:
 
 Must show:
 1. wallet and smart-account state,
-2. funding options,
+2. canonical self-serve funding first: external wallet transfer / manual same-chain transfer, with `privy_card` and `privy_exchange` shown only as optional hosted convenience rails that may require regulated verification,
 3. route and rail summary,
 4. strategy permissions and reversibility,
 5. manifest-derived activation summary,

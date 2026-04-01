@@ -251,7 +251,7 @@ export function buildExplainabilityMetricCards(
       note: `After costs versus ${benchmarkId}`,
     },
     {
-      label: "Largest sleeve",
+      label: "Top holding",
       value: leadWeight
         ? `${leadWeight.symbol} ${formatExplainabilityPercent(
             leadWeight.targetWeightPct,

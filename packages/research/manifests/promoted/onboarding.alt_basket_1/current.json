@@ -18,7 +18,7 @@
     "badges": [
       "validated_strategy",
       "promoted_manifest",
-      "basket_live_ready"
+      "preview_only"
     ]
   },
   "validation": {
@@ -301,8 +301,8 @@
     ]
   },
   "routeValidation": {
-    "executionEligibility": "executable",
-    "surfaceTruth": "live",
+    "executionEligibility": "preview_only",
+    "surfaceTruth": "preview",
     "routeTruthLabels": [
       {
         "routeId": "cow_swap.ethereum",
@@ -310,10 +310,10 @@
         "routeKind": "execution",
         "chain": "ethereum",
         "verificationTier": "public_verified",
-        "truthLabel": "live",
-        "availability": "available",
+        "truthLabel": "preview",
+        "availability": "preview_only",
         "requiredFor": "core_xstocks",
-        "reason": "Public xStocks basket execution route is verified for live onboarding baskets."
+        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, and SPYx; required core legs AMDx, AVGOx, MSFTx, and AAPLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
       },
       {
         "routeId": "flowdesk.ausd-rwa-strategy",
@@ -328,18 +328,18 @@
       }
     ],
     "proofNotes": [
-      "Basket execution routes are validated for live onboarding activations.",
-      "Yield-buffer sleeve uses the verified Flowdesk AUSD vault whenever AUSD is present."
+      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, and SPYx.",
+      "This basket still requires AMDx, AVGOx, MSFTx, and AAPLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
     ],
     "validationBadges": [
       "validated_strategy",
       "promoted_manifest",
-      "basket_live_ready"
+      "preview_only"
     ]
   },
   "route_validation": {
-    "execution_eligibility": "executable",
-    "surface_truth": "live",
+    "execution_eligibility": "preview_only",
+    "surface_truth": "preview",
     "route_truth_labels": [
       {
         "route_id": "cow_swap.ethereum",
@@ -347,10 +347,10 @@
         "route_kind": "execution",
         "chain": "ethereum",
         "verification_tier": "public_verified",
-        "truth_label": "live",
-        "availability": "available",
+        "truth_label": "preview",
+        "availability": "preview_only",
         "required_for": "core_xstocks",
-        "reason": "Public xStocks basket execution route is verified for live onboarding baskets."
+        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, and SPYx; required core legs AMDx, AVGOx, MSFTx, and AAPLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
       },
       {
         "route_id": "flowdesk.ausd-rwa-strategy",
@@ -365,13 +365,13 @@
       }
     ],
     "proof_notes": [
-      "Basket execution routes are validated for live onboarding activations.",
-      "Yield-buffer sleeve uses the verified Flowdesk AUSD vault whenever AUSD is present."
+      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, and SPYx.",
+      "This basket still requires AMDx, AVGOx, MSFTx, and AAPLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
     ],
     "validation_badges": [
       "validated_strategy",
       "promoted_manifest",
-      "basket_live_ready"
+      "preview_only"
     ]
   },
   "explanationBundle": {

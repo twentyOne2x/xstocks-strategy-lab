@@ -137,8 +137,30 @@ export const cowSwapQuoteSchema = z.object({
 });
 export type CowSwapQuote = z.infer<typeof cowSwapQuoteSchema>;
 
+export const oneInchFusionQuoteSchema = z.object({
+  kind: z.literal("oneinch_fusion"),
+  quoteId: nonEmptyStringSchema.nullable(),
+  quotedAt: timestampSchema,
+  fromTokenAddress: nonEmptyStringSchema,
+  toTokenAddress: nonEmptyStringSchema,
+  walletAddress: nonEmptyStringSchema,
+  fromTokenAmount: nonEmptyStringSchema,
+  toTokenAmount: nonEmptyStringSchema,
+  settlementAddress: nonEmptyStringSchema,
+  recommendedPreset: nonEmptyStringSchema,
+  priceImpactPercent: z.union([z.number().finite(), nonEmptyStringSchema]).nullable(),
+  fee: z.object({
+    receiver: nonEmptyStringSchema,
+    bps: z.number().finite(),
+    whitelistDiscountPercent: z.number().finite(),
+  }),
+  submissionSupported: z.boolean(),
+});
+export type OneInchFusionQuote = z.infer<typeof oneInchFusionQuoteSchema>;
+
 export const executionQuoteSchema = z.union([
   cowSwapQuoteSchema,
+  oneInchFusionQuoteSchema,
   xstocksXChangeQuoteSchema,
 ]);
 export type ExecutionQuote = z.infer<typeof executionQuoteSchema>;

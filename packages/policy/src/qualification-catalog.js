@@ -481,6 +481,17 @@ export const QUALIFICATION_QUESTION_CATALOG = qualificationQuestionCatalogSchema
             },
           },
           {
+            id: "unsure",
+            label: "Skip / not sure",
+            description:
+              "Treat this as exploring. Keep the match flexible and explain the preview plainly.",
+            qualification: {
+              yieldBufferAllowed: true,
+              fitNote:
+                "Certainty left open — treat the user as exploring.",
+            },
+          },
+          {
             id: "low",
             label: "I'm mostly exploring",
             description:

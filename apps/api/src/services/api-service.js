@@ -49,9 +49,15 @@ const EXECUTION_ACTIONS = new Set([
   "record_submission",
   "poll_receipt",
 ]);
-const OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "cow_swap";
+const OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "venue_router";
+const COW_SWAP_EXECUTION_ADAPTER_ID = "cow_swap";
+const COW_SWAP_EXECUTION_ROUTE_ID = "cow_swap.ethereum";
+const ONEINCH_EXECUTION_ADAPTER_ID = "oneinch_fusion";
+const ONEINCH_EXECUTION_ROUTE_ID = "1inch.ethereum";
 const YIELD_BUFFER_DEFERRED_WARNING =
   "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve.";
+const ONEINCH_SUBMISSION_BLOCKER =
+  "1inch Fusion quote capture is proven, but backend order creation and submission are not yet wired in this runtime.";
 const COW_ORDER_UID_PATTERN = /^0x([A-Fa-f0-9]{112})$/u;
 const XSTOCKS_FUNNEL_SUBJECT_PREFIX = "subj";
 const BLOCKED_REQUEST_FIELDS = [
@@ -1185,6 +1191,20 @@ function resolveCowReceivingToken(deployment) {
   };
 }
 
+function resolveOneInchReceivingToken(deployment) {
+  if (!deployment?.address) {
+    return {
+      address: null,
+      source: "missing",
+    };
+  }
+
+  return {
+    address: deployment.address,
+    source: "deployment.address",
+  };
+}
+
 function formatUsdAmount(value) {
   return Number(normalizeUsd(value, 0)).toFixed(2);
 }
@@ -1204,6 +1224,25 @@ function buildCowQuoteAttemptContext({
       leg.targetNotionalUsd,
       leg.paymentTokenDecimals ?? 6,
     ),
+    targetNotionalUsd: Number(formatUsdAmount(leg.targetNotionalUsd)),
+  };
+}
+
+function buildOneInchQuoteAttemptContext({
+  leg,
+  signerAddress,
+  receivingTokenAddress,
+}) {
+  return {
+    fromTokenAddress: leg.paymentTokenAddress,
+    toTokenAddress: receivingTokenAddress,
+    walletAddress: signerAddress,
+    amount: toAtomicAmount(
+      leg.targetNotionalUsd,
+      leg.paymentTokenDecimals ?? 6,
+    ),
+    enableEstimate: true,
+    source: "xstocks-strategy-lab",
     targetNotionalUsd: Number(formatUsdAmount(leg.targetNotionalUsd)),
   };
 }
@@ -1250,6 +1289,51 @@ function deriveCowQuoteBlockerClass({ statusCode, errorType }) {
   return "cow_quote_error";
 }
 
+function parseOneInchErrorPayload(rawBody) {
+  if (typeof rawBody !== "string" || rawBody.trim().length === 0) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(rawBody);
+
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return null;
+    }
+
+    return {
+      code: typeof parsed.code === "string" ? parsed.code : null,
+      description:
+        typeof parsed.description === "string" &&
+        parsed.description.trim().length > 0
+          ? parsed.description.trim()
+          : null,
+      error:
+        typeof parsed.error === "string" && parsed.error.trim().length > 0
+          ? parsed.error.trim()
+          : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function deriveOneInchQuoteBlockerClass({ statusCode, code }) {
+  if (code === "PATHFINDER_UNKNOWN") {
+    return "oneinch_pathfinder_unknown";
+  }
+
+  if (typeof code === "string" && code.trim().length > 0) {
+    return `oneinch_${code.trim().toLowerCase()}`;
+  }
+
+  if (Number.isInteger(statusCode) && statusCode > 0) {
+    return `oneinch_quote_http_${statusCode}`;
+  }
+
+  return "oneinch_quote_error";
+}
+
 function normalizeCowQuoteFailure(error) {
   const errorMessage = error instanceof Error ? error.message : String(error);
   const statusMatch = errorMessage.match(
@@ -1279,6 +1363,36 @@ function normalizeCowQuoteFailure(error) {
   };
 }
 
+function normalizeOneInchQuoteFailure(error) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const statusMatch = errorMessage.match(
+    /^1inch Fusion quote request failed with status (?<status>\d+):\s*(?<body>.*)$/su,
+  );
+  const statusCode = statusMatch?.groups?.status
+    ? Number.parseInt(statusMatch.groups.status, 10)
+    : null;
+  const rawBody =
+    statusMatch?.groups?.body && statusMatch.groups.body.trim().length > 0
+      ? statusMatch.groups.body.trim()
+      : null;
+  const parsedPayload = parseOneInchErrorPayload(rawBody);
+  const errorCode = parsedPayload?.code ?? null;
+  const errorDescription =
+    parsedPayload?.description ?? parsedPayload?.error ?? null;
+
+  return {
+    message: errorMessage,
+    statusCode,
+    rawBody,
+    errorCode,
+    errorDescription,
+    blockerClass: deriveOneInchQuoteBlockerClass({
+      statusCode,
+      code: errorCode,
+    }),
+  };
+}
+
 function buildCowQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
   const parts = [
     `CoW quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
@@ -1303,11 +1417,36 @@ function buildCowQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
   return parts.join(" ");
 }
 
+function buildOneInchQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
+  const parts = [
+    `1inch Fusion quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
+    `buyToken=${quoteAttempt.toTokenAddress ?? "missing"}`,
+    `sellToken=${quoteAttempt.fromTokenAddress ?? "missing"}`,
+    `amount=${quoteAttempt.amount}`,
+    `targetNotionalUsd=${formatUsdAmount(leg.targetNotionalUsd)}`,
+    `blockerClass=${quoteFailure.blockerClass}`,
+  ];
+
+  if (quoteFailure.errorCode) {
+    parts.push(`venueErrorCode=${quoteFailure.errorCode}`);
+  }
+
+  if (quoteFailure.errorDescription) {
+    parts.push(`venueErrorDescription=${quoteFailure.errorDescription}`);
+  }
+
+  parts.push(`reason=${quoteFailure.message}`);
+
+  return parts.join(" ");
+}
+
 function stripExecutionQuoteBlockers(messages = []) {
   return messages.filter(
     (message) =>
       !String(message).startsWith("CoW quote request failed") &&
-      !String(message).startsWith("CoW order submission failed"),
+      !String(message).startsWith("1inch Fusion quote request failed") &&
+      !String(message).startsWith("CoW order submission failed") &&
+      !String(message).startsWith("1inch Fusion order submission failed"),
   );
 }
 
@@ -1356,30 +1495,31 @@ function createExecutionLeg({
 
   const deployment = findEthereumDeployment(fetchedAsset);
   const fundingStablecoin = findFundingStablecoin(deployment, fundingAssetSymbol);
-  const receivingToken = resolveCowReceivingToken(deployment);
+  const cowReceivingToken = resolveCowReceivingToken(deployment);
+  const oneInchReceivingToken = resolveOneInchReceivingToken(deployment);
   const blockers = [];
 
-  if (!receivingToken.address) {
+  if (!cowReceivingToken.address && !oneInchReceivingToken.address) {
     blockers.push(
-      `Ethereum CoW buy-token metadata is missing for ${allocation.assetSymbol}; neither wrapperAddress nor deployment.address is available.`,
+      `Ethereum execution token metadata is missing for ${allocation.assetSymbol}; neither CoW wrapperAddress nor 1inch deployment.address is available.`,
     );
   }
 
   if (!fundingStablecoin?.address) {
     blockers.push(
-      `${allocation.assetSymbol} does not expose ${fundingAssetSymbol} as an Ethereum payment asset in the live xstocks metadata required for CoW.`,
+      `${allocation.assetSymbol} does not expose ${fundingAssetSymbol} as an Ethereum payment asset in the live xstocks metadata required for venue-routed execution.`,
     );
   }
 
   if (!signerAddress) {
     blockers.push(
-      "A verified signer wallet is required before the user-approved CoW lane can quote or submit this leg.",
+      "A verified signer wallet is required before the user-approved venue-routed lane can quote or submit this leg.",
     );
   }
 
   if (!settlementAddress) {
     blockers.push(
-      "A settlement wallet or smart-wallet destination is required before the user-approved CoW lane can quote or submit this leg.",
+      "A settlement wallet or smart-wallet destination is required before the user-approved venue-routed lane can quote or submit this leg.",
     );
   }
 
@@ -1397,7 +1537,7 @@ function createExecutionLeg({
     sequence,
     sleeve: allocation.sleeve,
     assetSymbol: allocation.assetSymbol,
-    venueId: allocation.venueId,
+    venueId: allocation.venueId ?? findManifestRouteId(manifest, allocation.sleeve),
     adapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
     requiredRouteId: findManifestRouteId(manifest, allocation.sleeve),
     targetWeightPct: allocation.targetWeightPct,
@@ -1405,15 +1545,18 @@ function createExecutionLeg({
     paymentAssetSymbol: fundingAssetSymbol,
     paymentTokenAddress: fundingStablecoin?.address ?? null,
     paymentTokenDecimals: fundingStablecoin?.decimals ?? null,
-    receivingTokenAddress: receivingToken.address,
+    receivingTokenAddress: cowReceivingToken.address ?? oneInchReceivingToken.address,
     receivingTokenDecimals: null,
     settlementAddress,
     state: blockers.length > 0 ? "blocked" : "pending",
     blockers,
     warnings: uniqueStrings([
-      "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
-      receivingToken.source === "wrapperAddress"
+      "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+      cowReceivingToken.source === "wrapperAddress"
         ? `${allocation.assetSymbol} will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.`
+        : null,
+      oneInchReceivingToken.source === "deployment.address"
+        ? `${allocation.assetSymbol} can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.`
         : null,
     ]),
     quote: null,
@@ -1579,7 +1722,29 @@ function toStoredExecutionQuote(quote, quotedAt) {
   };
 }
 
-function createApprovalFromQuote(storedQuote) {
+function toStoredOneInchExecutionQuote(quote, quoteAttempt, quotedAt) {
+  return {
+    kind: "oneinch_fusion",
+    quoteId: quote.quoteId ?? null,
+    quotedAt,
+    fromTokenAddress: quoteAttempt.fromTokenAddress,
+    toTokenAddress: quoteAttempt.toTokenAddress,
+    walletAddress: quoteAttempt.walletAddress,
+    fromTokenAmount: quote.fromTokenAmount,
+    toTokenAmount: quote.toTokenAmount,
+    settlementAddress: quote.settlementAddress,
+    recommendedPreset: quote.recommended_preset,
+    priceImpactPercent: quote.priceImpactPercent ?? null,
+    fee: {
+      receiver: quote.fee.receiver,
+      bps: quote.fee.bps,
+      whitelistDiscountPercent: quote.fee.whitelistDiscountPercent,
+    },
+    submissionSupported: false,
+  };
+}
+
+function createApprovalFromCowQuote(storedQuote) {
   return {
     approvalType: "eip712_signature",
     status: "awaiting_user",
@@ -1599,6 +1764,22 @@ function createApprovalFromQuote(storedQuote) {
   };
 }
 
+function getExecutionVenueLabel(leg) {
+  if (leg?.quote?.kind === "oneinch_fusion") {
+    return "1inch Fusion";
+  }
+
+  if (leg?.quote?.kind === "cow_swap") {
+    return "CoW";
+  }
+
+  if (leg?.venueId === ONEINCH_EXECUTION_ROUTE_ID) {
+    return "1inch Fusion";
+  }
+
+  return "CoW";
+}
+
 function buildExecutionActivityEvents({
   activation,
   executionRequest,
@@ -1609,16 +1790,20 @@ function buildExecutionActivityEvents({
   const events = [];
   const txHash = leg.receipt?.txHash ?? null;
   const venueOrderId = leg.venueStatus?.venueOrderId ?? null;
+  const venueLabel = getExecutionVenueLabel(leg);
 
   if (
-    leg.state === "awaiting_approval" &&
-    previousLeg?.state !== "awaiting_approval"
+    (leg.state === "awaiting_approval" || leg.state === "quote_ready") &&
+    previousLeg?.state !== leg.state
   ) {
     events.push(
       createActivityEvent({
         activation,
         eventType: "activation_ready",
-        summary: `CoW quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary:
+          leg.state === "awaiting_approval"
+            ? `${venueLabel} quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`
+            : `${venueLabel} quote prepared for ${leg.assetSymbol ?? leg.sleeve}; submission remains blocked on the current backend boundary.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1638,7 +1823,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_submitted",
-        summary: `Recorded user-approved CoW submission for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `Recorded user-approved ${venueLabel} submission for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1656,7 +1841,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_succeeded",
-        summary: `CoW execution confirmed for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `${venueLabel} execution confirmed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1672,7 +1857,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_failed",
-        summary: `CoW execution failed for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `${venueLabel} execution failed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1686,6 +1871,40 @@ function buildExecutionActivityEvents({
   }
 
   return events;
+}
+
+function compareAtomicAmountStrings(left, right) {
+  const leftValue = BigInt(String(left ?? "0"));
+  const rightValue = BigInt(String(right ?? "0"));
+
+  if (leftValue === rightValue) {
+    return 0;
+  }
+
+  return leftValue > rightValue ? 1 : -1;
+}
+
+function selectVenueQuoteCandidate(candidates) {
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  return [...candidates].sort((left, right) => {
+    if (left.submissionSupported !== right.submissionSupported) {
+      return left.submissionSupported ? -1 : 1;
+    }
+
+    const amountComparison = compareAtomicAmountStrings(
+      right.outputAmount,
+      left.outputAmount,
+    );
+
+    if (amountComparison !== 0) {
+      return amountComparison;
+    }
+
+    return left.adapterId.localeCompare(right.adapterId);
+  })[0];
 }
 
 function sortCatalogRecords(records) {
@@ -1707,6 +1926,7 @@ export function createApiService({
   liveStateRepository,
   runtimeStore,
   cowExecutionClient = null,
+  oneInchExecutionClient = null,
   ethereumRpcClient = null,
   privyAuthService = null,
   providerRebalanceAuthService = null,
@@ -3098,7 +3318,7 @@ export function createApiService({
         if (!legId) {
           throw new HttpError(
             400,
-            "legId is required to request a live CoW quote.",
+            "legId is required to request a live venue quote.",
           );
         }
 
@@ -3133,94 +3353,201 @@ export function createApiService({
           ...executionRequest,
           blockers: stripExecutionQuoteBlockers(executionRequest.blockers),
         };
+        const signerAddress = resolveExecutionSignerAddress(activation.walletState);
+        const fetchedAsset =
+          leg.assetSymbol && typeof liveStateRepository.fetchAssetSnapshot === "function"
+            ? await liveStateRepository.fetchAssetSnapshot(leg.assetSymbol)
+            : null;
+        const deployment = findEthereumDeployment(fetchedAsset);
+        const fundingStablecoin = findFundingStablecoin(
+          deployment,
+          leg.paymentAssetSymbol,
+        );
+        const cowReceivingToken = resolveCowReceivingToken(deployment);
+        const oneInchReceivingToken = resolveOneInchReceivingToken(deployment);
+        const quoteCandidates = [];
+        const quoteFailures = [];
+        const quoteAttempts = {};
 
-        if (!cowExecutionClient) {
-          const blockedLeg = {
-            ...nextLegBase,
-            state: "blocked",
-            blockers: uniqueStrings([
-              ...nextLegBase.blockers,
-              "CoW client is not configured for this runtime.",
-            ]),
-          };
-          const persisted = await persistExecutionRequest({
-            executionRequest: replaceExecutionLeg(nextRequestBase, blockedLeg),
-            activation,
-          });
-
-          return parseApiResponse("execution_write", {
-            version: DEFAULT_RESPONSE_VERSION,
-            generatedAt: now(),
-            action,
-            ...persisted,
-          });
-        }
-
-        try {
-          const signerAddress = resolveExecutionSignerAddress(activation.walletState);
-          const quoteAttempt = buildCowQuoteAttemptContext({
-            leg,
-            signerAddress,
-            settlementAddress: executionRequest.settlementAddress,
-          });
-          const quote = await cowExecutionClient.requestQuote(quoteAttempt);
-          const storedQuote = toStoredExecutionQuote(quote, now());
-          const quotedLeg = {
-            ...nextLegBase,
-            state: "awaiting_approval",
-            quote: storedQuote,
-            approval: createApprovalFromQuote(storedQuote),
-            venueStatus: {
-              venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
-              venueOrderId: null,
-              status: "quote_ready",
-              settlementTxHash: null,
-              lastCheckedAt: null,
-              updatedAt: now(),
-              rawStatus: {
-                quoteId: storedQuote.quoteId,
-                ...quoteAttempt,
+        if (cowExecutionClient) {
+          if (
+            fundingStablecoin?.address &&
+            signerAddress &&
+            executionRequest.settlementAddress &&
+            cowReceivingToken.address
+          ) {
+            const quoteAttempt = buildCowQuoteAttemptContext({
+              leg: {
+                ...leg,
+                paymentTokenAddress: fundingStablecoin.address,
+                paymentTokenDecimals:
+                  fundingStablecoin.decimals ?? leg.paymentTokenDecimals,
+                receivingTokenAddress: cowReceivingToken.address,
               },
-            },
-          };
-          const nextRequest = replaceExecutionLeg(nextRequestBase, quotedLeg);
-          const persisted = await persistExecutionRequest({
-            executionRequest: nextRequest,
-            activation,
-            activityEvents: buildExecutionActivityEvents({
-              activation,
-              executionRequest: updateExecutionRequestState(nextRequest),
-              previousLeg: leg,
-              leg: quotedLeg,
-              now,
-            }),
-          });
+              signerAddress,
+              settlementAddress: executionRequest.settlementAddress,
+            });
 
-          return parseApiResponse("execution_write", {
-            version: DEFAULT_RESPONSE_VERSION,
-            generatedAt: now(),
-            action,
-            ...persisted,
-          });
-        } catch (error) {
-          const quoteAttempt = buildCowQuoteAttemptContext({
-            leg,
-            signerAddress: resolveExecutionSignerAddress(
-              activation.walletState,
-            ),
-            settlementAddress: executionRequest.settlementAddress,
-          });
-          const quoteFailure = normalizeCowQuoteFailure(error);
-          const blockedLeg = {
-            ...nextLegBase,
-            state: "blocked",
-            blockers: uniqueStrings([
-              ...nextLegBase.blockers,
-              buildCowQuoteFailureMessage({
+            try {
+              const quote = await cowExecutionClient.requestQuote(quoteAttempt);
+              const storedQuote = toStoredExecutionQuote(quote, now());
+              quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
+                status: "quoted",
+                venueId: COW_SWAP_EXECUTION_ROUTE_ID,
+                submissionSupported: true,
+                quoteId: storedQuote.quoteId,
+                buyAmount: storedQuote.order.buyAmount,
+                sellAmount: storedQuote.order.sellAmount,
+                ...quoteAttempt,
+              };
+              quoteCandidates.push({
+                adapterId: COW_SWAP_EXECUTION_ADAPTER_ID,
+                venueId: COW_SWAP_EXECUTION_ROUTE_ID,
+                receivingTokenAddress: cowReceivingToken.address,
+                storedQuote,
+                approval: createApprovalFromCowQuote(storedQuote),
+                state: "awaiting_approval",
+                outputAmount: storedQuote.order.buyAmount,
+                submissionSupported: true,
+                warnings: [],
+              });
+            } catch (error) {
+              const quoteFailure = normalizeCowQuoteFailure(error);
+              const failureMessage = buildCowQuoteFailureMessage({
                 leg,
                 quoteAttempt,
                 quoteFailure,
-              }),
+              });
+              quoteFailures.push(failureMessage);
+              quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
+                status: "failed",
+                venueId: COW_SWAP_EXECUTION_ROUTE_ID,
+                ...quoteAttempt,
+                error: quoteFailure.message,
+                errorStatusCode: quoteFailure.statusCode,
+                errorType: quoteFailure.errorType,
+                errorDescription: quoteFailure.errorDescription,
+                errorBody: quoteFailure.rawBody,
+                blockerClass: quoteFailure.blockerClass,
+              };
+            }
+          } else {
+            quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
+              status: "skipped",
+              venueId: COW_SWAP_EXECUTION_ROUTE_ID,
+              reason:
+                !fundingStablecoin?.address
+                  ? `${leg.assetSymbol} is missing an Ethereum ${leg.paymentAssetSymbol} payment token for CoW.`
+                  : !signerAddress
+                    ? "A verified signer wallet is required before CoW can quote this leg."
+                    : !executionRequest.settlementAddress
+                      ? "A settlement destination is required before CoW can quote this leg."
+                      : `Ethereum CoW buy-token metadata is missing for ${leg.assetSymbol}.`,
+            };
+          }
+        } else {
+          quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
+            status: "skipped",
+            venueId: COW_SWAP_EXECUTION_ROUTE_ID,
+            reason: "CoW client is not configured for this runtime.",
+          };
+        }
+
+        if (oneInchExecutionClient) {
+          if (fundingStablecoin?.address && signerAddress && oneInchReceivingToken.address) {
+            const quoteAttempt = buildOneInchQuoteAttemptContext({
+              leg: {
+                ...leg,
+                paymentTokenAddress: fundingStablecoin.address,
+                paymentTokenDecimals:
+                  fundingStablecoin.decimals ?? leg.paymentTokenDecimals,
+              },
+              signerAddress,
+              receivingTokenAddress: oneInchReceivingToken.address,
+            });
+
+            try {
+              const quote = await oneInchExecutionClient.requestQuote(quoteAttempt);
+              const storedQuote = toStoredOneInchExecutionQuote(
+                quote,
+                quoteAttempt,
+                now(),
+              );
+              quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
+                status: "quoted",
+                venueId: ONEINCH_EXECUTION_ROUTE_ID,
+                submissionSupported: false,
+                quoteId: storedQuote.quoteId,
+                buyAmount: storedQuote.toTokenAmount,
+                sellAmount: storedQuote.fromTokenAmount,
+                recommendedPreset: storedQuote.recommendedPreset,
+                settlementAddress: storedQuote.settlementAddress,
+                ...quoteAttempt,
+              };
+              quoteCandidates.push({
+                adapterId: ONEINCH_EXECUTION_ADAPTER_ID,
+                venueId: ONEINCH_EXECUTION_ROUTE_ID,
+                receivingTokenAddress: oneInchReceivingToken.address,
+                storedQuote,
+                approval: null,
+                state: "quote_ready",
+                outputAmount: storedQuote.toTokenAmount,
+                submissionSupported: false,
+                warnings: [ONEINCH_SUBMISSION_BLOCKER],
+              });
+            } catch (error) {
+              const quoteFailure = normalizeOneInchQuoteFailure(error);
+              const failureMessage = buildOneInchQuoteFailureMessage({
+                leg,
+                quoteAttempt,
+                quoteFailure,
+              });
+              quoteFailures.push(failureMessage);
+              quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
+                status: "failed",
+                venueId: ONEINCH_EXECUTION_ROUTE_ID,
+                ...quoteAttempt,
+                error: quoteFailure.message,
+                errorStatusCode: quoteFailure.statusCode,
+                errorCode: quoteFailure.errorCode,
+                errorDescription: quoteFailure.errorDescription,
+                errorBody: quoteFailure.rawBody,
+                blockerClass: quoteFailure.blockerClass,
+              };
+            }
+          } else {
+            quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
+              status: "skipped",
+              venueId: ONEINCH_EXECUTION_ROUTE_ID,
+              reason:
+                !fundingStablecoin?.address
+                  ? `${leg.assetSymbol} is missing an Ethereum ${leg.paymentAssetSymbol} payment token for 1inch Fusion.`
+                  : !signerAddress
+                    ? "A verified signer wallet is required before 1inch Fusion can quote this leg."
+                    : `Ethereum deployment.address metadata is missing for ${leg.assetSymbol}.`,
+            };
+          }
+        } else {
+          quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
+            status: "skipped",
+            venueId: ONEINCH_EXECUTION_ROUTE_ID,
+            reason: "1inch Fusion client is not configured for this runtime.",
+          };
+        }
+
+        const selectedCandidate = selectVenueQuoteCandidate(quoteCandidates);
+
+        if (!selectedCandidate) {
+          const quoteSkipReasons = Object.values(quoteAttempts)
+            .filter((attempt) => attempt?.status === "skipped" && attempt.reason)
+            .map((attempt) => attempt.reason);
+          const blockedLeg = {
+            ...nextLegBase,
+            state: "blocked",
+            blockers: uniqueStrings([
+              ...nextLegBase.blockers,
+              ...quoteFailures,
+              ...quoteSkipReasons,
             ]),
             venueStatus: {
               venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
@@ -3230,13 +3557,8 @@ export function createApiService({
               lastCheckedAt: null,
               updatedAt: now(),
               rawStatus: {
-                ...quoteAttempt,
-                error: quoteFailure.message,
-                errorStatusCode: quoteFailure.statusCode,
-                errorType: quoteFailure.errorType,
-                errorDescription: quoteFailure.errorDescription,
-                errorBody: quoteFailure.rawBody,
-                blockerClass: quoteFailure.blockerClass,
+                selectedVenueId: null,
+                quoteAttempts,
               },
             },
           };
@@ -3252,6 +3574,63 @@ export function createApiService({
             ...persisted,
           });
         }
+
+        const selectionReason =
+          quoteCandidates.length === 1
+            ? `${selectedCandidate.venueId} was the only venue that returned a live quote.`
+            : selectedCandidate.submissionSupported
+              ? `${selectedCandidate.venueId} was selected because it is currently the strongest submission-capable venue in the repo-owned manual lane.`
+              : `${selectedCandidate.venueId} was selected because CoW did not return a live quote for this leg.`;
+        const quotedLeg = {
+          ...nextLegBase,
+          state: selectedCandidate.state,
+          venueId: selectedCandidate.venueId,
+          adapterId: selectedCandidate.adapterId,
+          paymentTokenAddress: fundingStablecoin?.address ?? leg.paymentTokenAddress,
+          paymentTokenDecimals:
+            fundingStablecoin?.decimals ?? leg.paymentTokenDecimals,
+          receivingTokenAddress: selectedCandidate.receivingTokenAddress,
+          quote: selectedCandidate.storedQuote,
+          approval: selectedCandidate.approval,
+          warnings: uniqueStrings([
+            ...nextLegBase.warnings,
+            ...selectedCandidate.warnings,
+          ]),
+          venueStatus: {
+            venueId: selectedCandidate.venueId,
+            venueOrderId: null,
+            status: "quote_ready",
+            settlementTxHash: null,
+            lastCheckedAt: null,
+            updatedAt: now(),
+            rawStatus: {
+              selectedVenueId: selectedCandidate.venueId,
+              selectedAdapterId: selectedCandidate.adapterId,
+              selectionReason,
+              submissionSupported: selectedCandidate.submissionSupported,
+              quoteAttempts,
+            },
+          },
+        };
+        const nextRequest = replaceExecutionLeg(nextRequestBase, quotedLeg);
+        const persisted = await persistExecutionRequest({
+          executionRequest: nextRequest,
+          activation,
+          activityEvents: buildExecutionActivityEvents({
+            activation,
+            executionRequest: updateExecutionRequestState(nextRequest),
+            previousLeg: leg,
+            leg: quotedLeg,
+            now,
+          }),
+        });
+
+        return parseApiResponse("execution_write", {
+          version: DEFAULT_RESPONSE_VERSION,
+          generatedAt: now(),
+          action,
+          ...persisted,
+        });
       }
 
       if (!legId) {
@@ -3286,6 +3665,10 @@ export function createApiService({
         );
         const txHash = suppliedTxHash;
 
+        if (leg.quote?.kind === "oneinch_fusion") {
+          throw new HttpError(409, ONEINCH_SUBMISSION_BLOCKER);
+        }
+
         if (!signature) {
           throw new HttpError(
             400,
@@ -3296,7 +3679,7 @@ export function createApiService({
         if (!leg.quote || !leg.approval?.orderToSign) {
           throw new HttpError(
             409,
-            "A live CoW quote and approval payload must be captured before submission can be recorded.",
+            "A live execution quote and approval payload must be captured before submission can be recorded.",
           );
         }
 
@@ -3458,6 +3841,10 @@ export function createApiService({
               },
             }
           : leg;
+
+      if (refreshedLeg.quote?.kind === "oneinch_fusion") {
+        throw new HttpError(409, ONEINCH_SUBMISSION_BLOCKER);
+      }
 
       refreshedLeg = await refreshCowVenueStatus(refreshedLeg);
 

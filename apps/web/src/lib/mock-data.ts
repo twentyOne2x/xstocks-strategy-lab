@@ -85,9 +85,9 @@ export const manifests: PromotedManifest[] = [
       subtitle: "Promoted default for concentrated AI infrastructure exposure.",
       risk_label: "Moderate",
       summary:
-        "Four-name basket leaning into AI compute leaders with a cash sleeve to soften rebalance churn.",
+        "Four-name portfolio leaning into AI compute leaders with a cash reserve to soften rebalance churn.",
       thesis:
-        "Momentum stays positive while breadth improves, so the promoted winner keeps NVDAx and AVGOx heavy but leaves room for MSFTx ballast and reserve carry.",
+        "Momentum stays positive while breadth improves, so the promoted winner keeps NVDAx and AVGOx heavy but leaves room for MSFTx stability and reserve carry.",
       badges: [
         {
           label: "Current default",
@@ -117,7 +117,7 @@ export const manifests: PromotedManifest[] = [
     },
     activation_template: {
       route_summary:
-        "Fund USDC, convert through verified Ethereum xChange route, settle basket sleeves through promoted weights.",
+        "Fund USDC, convert through verified Ethereum xChange route, settle portfolio positions through promoted weights.",
       allowed_actions: [
         "Connect wallet",
         "Fund wallet",
@@ -155,7 +155,7 @@ export const manifests: PromotedManifest[] = [
         },
         {
           label: "Reserve logic",
-          prompt: "Explain why the reserve sleeve stays explicit before the next rebalance.",
+          prompt: "Explain why the cash reserve stays explicit before the next rebalance.",
         },
       ],
       drivers: [
@@ -183,7 +183,7 @@ export const manifests: PromotedManifest[] = [
         primaryVenue: "Cow Swap",
         backupVenue: "1inch",
         reserveWindow: "Healthy reserve spread",
-        multiplierWindow: "1.00x spot sleeves",
+        multiplierWindow: "1.00x spot positions",
         proofOfReserves: "99.2% disclosed backing",
         status: "view_ready",
       },
@@ -195,7 +195,7 @@ export const manifests: PromotedManifest[] = [
       },
       vaultState: {
         venue: "xChange basket route",
-        structure: "Spot basket with reserve sleeve",
+        structure: "Spot basket with cash reserve",
         borrowAsset: "None",
         reversibility: "Pause or turn off without hidden leverage unwind",
         status: "Promoted",
@@ -204,13 +204,13 @@ export const manifests: PromotedManifest[] = [
     },
     explanation: {
       thesis:
-        "Momentum stays positive while breadth improves, so the promoted winner keeps NVDAx and AVGOx heavy but leaves room for MSFTx ballast and reserve carry.",
+        "Momentum stays positive while breadth improves, so the promoted winner keeps NVDAx and AVGOx heavy but leaves room for MSFTx stability and reserve carry.",
       whatThisDoes:
-        "Holds four tokenized AI infrastructure names with a visible reserve sleeve so the basket can rebalance without hiding route friction.",
+        "Holds four tokenized AI infrastructure names with a visible cash reserve so the basket can rebalance without hiding route friction.",
       bestForUser:
-        "Best for users who want concentrated AI-infra exposure but still want the reserve sleeve and rebalance rules explained up front.",
+        "Best for users who want concentrated AI-infra exposure but still want the cash reserve and rebalance rules explained up front.",
       howItChanges:
-        "The basket only changes when the promoted weights refresh and the reserve sleeve still clears the rebalance thresholds.",
+        "The basket only changes when the promoted weights refresh and the cash reserve still clears the rebalance thresholds.",
       replayInterpretation:
         "Replay shows how the promoted basket would have behaved over the validated window. It is not a live execution promise.",
       holdingRationales: [
@@ -226,7 +226,7 @@ export const manifests: PromotedManifest[] = [
         },
         {
           symbol: "MSFTx",
-          sleeve: "Quality ballast",
+          sleeve: "Stability anchor",
           rationale: "Stability anchor: reduces overall portfolio risk.",
         },
         {
@@ -237,17 +237,17 @@ export const manifests: PromotedManifest[] = [
       ],
       bundle: {
         whatThisPortfolioDoes:
-          "Holds four tokenized AI infrastructure names with a visible reserve sleeve so the basket can rebalance without hiding route friction.",
+          "Holds four tokenized AI infrastructure names with a visible cash reserve so the basket can rebalance without hiding route friction.",
         howItIsBuilt:
-          "The basket keeps NVDAx and AVGOx as the core upside sleeves, adds MSFTx as quality ballast, and preserves a visible USDC reserve buffer for cleaner rebalances.",
+          "The basket keeps NVDAx and AVGOx as the core growth positions, adds MSFTx as a stability anchor, and preserves a visible USDC reserve buffer for cleaner rebalances.",
         howItChanges:
-          "The basket only changes when the promoted weights refresh and the reserve sleeve still clears the rebalance thresholds.",
+          "The basket only changes when the promoted weights refresh and the cash reserve still clears the rebalance thresholds.",
         whatWouldTriggerNextRebalance:
           "A promoted-weight refresh or reserve-threshold drift is required before the next rebalance review is worth taking.",
         howToReadReplay:
           "Replay shows how the promoted basket would have behaved over the validated window. It is not a live execution promise.",
         bestFor:
-          "Best for users who want concentrated AI-infra exposure but still want the reserve sleeve and rebalance rules explained up front.",
+          "Best for users who want concentrated AI-infra exposure but still want the cash reserve and rebalance rules explained up front.",
         components: [
           {
             componentId: "nvdax-core",
@@ -276,7 +276,7 @@ export const manifests: PromotedManifest[] = [
           {
             componentId: "msftx-ballast",
             kind: "asset",
-            sleeve: "Quality ballast",
+            sleeve: "Stability anchor",
             title: "MSFTx",
             rationale: "Stability anchor: reduces overall portfolio risk.",
             targetWeightPct: 21,
@@ -372,7 +372,7 @@ export const manifests: PromotedManifest[] = [
       {
         symbol: "MSFTx",
         targetWeight: "21%",
-        sleeve: "Quality ballast",
+        sleeve: "Stability anchor",
         venue: "xChange / 1inch",
         multiplier: "1.00x",
         proofOfReserves: "99.3%",
@@ -391,7 +391,7 @@ export const manifests: PromotedManifest[] = [
     route_notes: [
       "Primary route uses verified Ethereum xChange execution through Cow Swap.",
       "1inch remains the secondary venue for route fallback and quote comparison.",
-      "No hidden leverage in the promoted basket sleeves.",
+      "No hidden leverage in the promoted portfolio positions.",
     ],
     methodology_notes: [
       "Replay uses the pinned Q1 research bundle with fixed evaluator rules.",
@@ -402,9 +402,9 @@ export const manifests: PromotedManifest[] = [
       state: "view_ready",
       routeLabel: "Route available",
       routeSummary: "Cow Swap primary, 1inch backup",
-      reserveLabel: "Reserve sleeve ready",
+      reserveLabel: "Cash reserve ready",
       multiplierLabel: "Spot basket only",
-      proofOfReservesLabel: "PoR visible per sleeve",
+      proofOfReservesLabel: "PoR visible per position",
       pauseRule: "Pause stops future rebalances, current holdings remain explicit.",
     },
     preview: {
@@ -426,7 +426,7 @@ export const manifests: PromotedManifest[] = [
       subtitle: "Broader quality basket with lighter concentration and lower churn.",
       risk_label: "Moderate",
       summary:
-        "Balanced mega-cap sleeve built for users who want a calmer default than the focused AI infra basket.",
+        "Balanced mega-cap allocation built for users who want a calmer default than the focused AI infra basket.",
       thesis:
         "Quality leadership remains intact, but the promoted basket trims the highest-beta names and lets cash damp volatility between rebalances.",
       badges: [
@@ -453,7 +453,7 @@ export const manifests: PromotedManifest[] = [
     },
     activation_template: {
       route_summary:
-        "Build a diversified mega-cap basket through verified Ethereum spot routes with a visible cash sleeve.",
+        "Build a diversified mega-cap basket through verified Ethereum spot routes with a visible cash reserve.",
       allowed_actions: [
         "Connect wallet",
         "Fund wallet",
@@ -487,8 +487,8 @@ export const manifests: PromotedManifest[] = [
           prompt: "Compare this balanced basket against the concentrated AI infra winner on breadth and turnover.",
         },
         {
-          label: "Cash sleeve",
-          prompt: "Show how the cash sleeve reduced churn versus the faster basket.",
+          label: "Cash reserve",
+          prompt: "Show how the cash reserve reduced churn versus the faster basket.",
         },
       ],
       drivers: [
@@ -515,8 +515,8 @@ export const manifests: PromotedManifest[] = [
         chain: "Ethereum",
         primaryVenue: "1inch",
         backupVenue: "Cow Swap",
-        reserveWindow: "Cash sleeve absorbing minor dislocations",
-        multiplierWindow: "1.00x spot sleeves",
+        reserveWindow: "Cash reserve absorbing minor dislocations",
+        multiplierWindow: "1.00x spot positions",
         proofOfReserves: "99.1% disclosed backing",
         status: "view_ready",
       },
@@ -539,11 +539,11 @@ export const manifests: PromotedManifest[] = [
       thesis:
         "Quality leadership remains intact, but the promoted basket trims the highest-beta names and lets cash damp volatility between rebalances.",
       whatThisDoes:
-        "Builds a broader mega-cap basket with a larger reserve sleeve so turnover and route churn stay calmer than the concentrated AI basket.",
+        "Builds a broader mega-cap basket with a larger cash reserve so turnover and route churn stay calmer than the concentrated AI basket.",
       bestForUser:
         "Best for users who want broad tech exposure, lower churn, and a clearer first deposit path than the higher-conviction basket.",
       howItChanges:
-        "This basket changes on the promoted refresh cadence, with the cash sleeve absorbing smaller drifts before a full rebalance is worth taking.",
+        "This basket changes on the promoted refresh cadence, with the cash reserve absorbing smaller drifts before a full rebalance is worth taking.",
       replayInterpretation:
         "Replay compares the promoted balanced basket against the same validated window. It does not imply live automation.",
       holdingRationales: [
@@ -554,7 +554,7 @@ export const manifests: PromotedManifest[] = [
         },
         {
           symbol: "AAPLx",
-          sleeve: "Cash flow ballast",
+          sleeve: "Cash flow stabilizer",
           rationale: "Adds diversification across consumer and cloud platforms.",
         },
         {
@@ -570,13 +570,13 @@ export const manifests: PromotedManifest[] = [
       ],
       bundle: {
         whatThisPortfolioDoes:
-          "Builds a broader mega-cap basket with a larger reserve sleeve so turnover and route churn stay calmer than the concentrated AI basket.",
+          "Builds a broader mega-cap basket with a larger cash reserve so turnover and route churn stay calmer than the concentrated AI basket.",
         howItIsBuilt:
-          "The portfolio spreads exposure across quality mega-cap leaders and keeps a larger USDC reserve sleeve so the basket can absorb smaller drifts without forcing trades.",
+          "The portfolio spreads exposure across quality mega-cap leaders and keeps a larger USDC cash reserve so the basket can absorb smaller drifts without forcing trades.",
         howItChanges:
-          "This basket changes on the promoted refresh cadence, with the cash sleeve absorbing smaller drifts before a full rebalance is worth taking.",
+          "This basket changes on the promoted refresh cadence, with the cash reserve absorbing smaller drifts before a full rebalance is worth taking.",
         whatWouldTriggerNextRebalance:
-          "A promoted refresh or a larger cash-sleeve drift triggers the next rebalance review.",
+          "A promoted refresh or a larger cash-reserve drift triggers the next rebalance review.",
         howToReadReplay:
           "Replay compares the promoted balanced basket against the same validated window. It does not imply live automation.",
         bestFor:
@@ -597,7 +597,7 @@ export const manifests: PromotedManifest[] = [
           {
             componentId: "aaplx-cashflow-ballast",
             kind: "asset",
-            sleeve: "Cash flow ballast",
+            sleeve: "Cash flow stabilizer",
             title: "AAPLx",
             rationale: "Adds diversification across consumer and cloud platforms.",
             targetWeightPct: 19,
@@ -656,7 +656,7 @@ export const manifests: PromotedManifest[] = [
       {
         symbol: "AAPLx",
         targetWeight: "19%",
-        sleeve: "Cash flow ballast",
+        sleeve: "Cash flow stabilizer",
         venue: "xChange / 1inch",
         multiplier: "1.00x",
         proofOfReserves: "99.0%",
@@ -693,9 +693,9 @@ export const manifests: PromotedManifest[] = [
       state: "view_ready",
       routeLabel: "Route available",
       routeSummary: "1inch primary, Cow Swap backup",
-      reserveLabel: "High reserve sleeve",
+      reserveLabel: "High cash reserve",
       multiplierLabel: "Spot basket only",
-      proofOfReservesLabel: "PoR visible per sleeve",
+      proofOfReservesLabel: "PoR visible per position",
       pauseRule: "Pause stops future rebalances.",
     },
     preview: {
@@ -744,7 +744,7 @@ export const manifests: PromotedManifest[] = [
     },
     activation_template: {
       route_summary:
-        "Keep the route simple around SPYx, hold a reserve sleeve, and expose every reversible control before activation.",
+        "Keep the route simple around SPYx, hold a cash reserve, and expose every reversible control before activation.",
       allowed_actions: [
         "Connect wallet",
         "Fund wallet",
@@ -778,7 +778,7 @@ export const manifests: PromotedManifest[] = [
         },
         {
           label: "Reserve posture",
-          prompt: "Show how the reserve sleeve protects first-run users during wider spreads.",
+          prompt: "Show how the cash reserve protects first-run users during wider spreads.",
         },
       ],
       drivers: [
@@ -799,8 +799,8 @@ export const manifests: PromotedManifest[] = [
         chain: "Ethereum",
         primaryVenue: "Cow Swap",
         backupVenue: "None",
-        reserveWindow: "Wide reserve sleeve",
-        multiplierWindow: "1.00x spot sleeves",
+        reserveWindow: "Wide cash reserve",
+        multiplierWindow: "1.00x spot positions",
         proofOfReserves: "99.5% disclosed backing",
         status: "connect_required",
       },
@@ -823,7 +823,7 @@ export const manifests: PromotedManifest[] = [
       thesis:
         "Stay close to beta, keep route complexity simple, and surface a calmer activation path for first funding.",
       whatThisDoes:
-        "Keeps SPYx at the center, adds a small quality ballast, and preserves a large reserve sleeve so first-run users see a simple spot basket.",
+        "Keeps SPYx at the center, adds a small stability anchor, and preserves a large cash reserve so first-run users see a simple spot basket.",
       bestForUser:
         "Best for users who care more about capital protection and a calmer activation path than squeezing out every bit of upside.",
       howItChanges:
@@ -838,7 +838,7 @@ export const manifests: PromotedManifest[] = [
         },
         {
           symbol: "MSFTx",
-          sleeve: "Quality ballast",
+          sleeve: "Stability anchor",
           rationale: "Adds quality tech exposure for growth alongside the index.",
         },
         {
@@ -849,9 +849,9 @@ export const manifests: PromotedManifest[] = [
       ],
       bundle: {
         whatThisPortfolioDoes:
-          "Keeps SPYx at the center, adds a small quality ballast, and preserves a large reserve sleeve so first-run users see a simple spot basket.",
+          "Keeps SPYx at the center, adds a small stability anchor, and preserves a large cash reserve so first-run users see a simple spot basket.",
         howItIsBuilt:
-          "The portfolio stays anchored to SPYx, uses MSFTx as a lighter quality ballast, and leaves a large USDC reserve sleeve to keep the first funding path cleaner.",
+          "The portfolio stays anchored to SPYx, uses MSFTx as a lighter stability anchor, and leaves a large USDC cash reserve to keep the first funding path cleaner.",
         howItChanges:
           "It changes less often than the other baskets and only refreshes when the defensive posture or reserve thresholds move enough to matter.",
         whatWouldTriggerNextRebalance:
@@ -876,7 +876,7 @@ export const manifests: PromotedManifest[] = [
           {
             componentId: "msftx-quality-ballast",
             kind: "asset",
-            sleeve: "Quality ballast",
+            sleeve: "Stability anchor",
             title: "MSFTx",
             rationale: "Adds quality tech exposure for growth alongside the index.",
             targetWeightPct: 14,
@@ -923,7 +923,7 @@ export const manifests: PromotedManifest[] = [
       {
         symbol: "MSFTx",
         targetWeight: "14%",
-        sleeve: "Quality ballast",
+        sleeve: "Stability anchor",
         venue: "xChange / 1inch",
         multiplier: "1.00x",
         proofOfReserves: "99.3%",
@@ -951,7 +951,7 @@ export const manifests: PromotedManifest[] = [
       state: "connect_required",
       routeLabel: "Route visible",
       routeSummary: "Cow Swap spot route",
-      reserveLabel: "Large reserve sleeve",
+      reserveLabel: "Large cash reserve",
       multiplierLabel: "Spot basket only",
       proofOfReservesLabel: "PoR visible",
       pauseRule: "Turn off strategy keeps remaining spot holdings explicit.",
@@ -1096,7 +1096,7 @@ export const manifests: PromotedManifest[] = [
       thesis:
         "Momentum and proxy-beta leadership remain strong enough to support a conviction long, but the shell keeps funding, unwind, and fallback rails explicit before activation.",
       whatThisDoes:
-        "Shows a directional long on MSTRx with an explicit funding sleeve and fail-closed venue context instead of pretending the route is live.",
+        "Shows a directional long on MSTRx with an explicit funding reserve and fail-closed venue context instead of pretending the route is live.",
       bestForUser:
         "Best for users who explicitly want a higher-conviction directional preview and are comfortable reading venue, funding, and unwind constraints before deposit.",
       howItChanges:
@@ -1117,9 +1117,9 @@ export const manifests: PromotedManifest[] = [
       ],
       bundle: {
         whatThisPortfolioDoes:
-          "Shows a directional long on MSTRx with an explicit funding sleeve and fail-closed venue context instead of pretending the route is live.",
+          "Shows a directional long on MSTRx with an explicit funding reserve and fail-closed venue context instead of pretending the route is live.",
         howItIsBuilt:
-          "The preview pairs a high-conviction MSTRx directional expression with a visible funding sleeve so route, unwind, and fallback constraints stay readable before any deposit decision.",
+          "The preview pairs a high-conviction MSTRx directional expression with a visible funding reserve so route, unwind, and fallback constraints stay readable before any deposit decision.",
         howItChanges:
           "The directional shell only changes when the promoted view updates and the route, funding, and unwind checks stay inside preview-safe bounds.",
         whatWouldTriggerNextRebalance:
@@ -1145,7 +1145,7 @@ export const manifests: PromotedManifest[] = [
             componentId: "usdc-funding-sleeve",
             kind: "cash_buffer",
             sleeve: "Collateral and fees",
-            title: "USDC funding sleeve",
+            title: "USDC funding reserve",
             rationale: "Cash reserve: held for risk management.",
             targetWeightPct: null,
             grossExposurePct: null,
@@ -1205,7 +1205,7 @@ export const manifests: PromotedManifest[] = [
       },
       {
         symbol: "USDC",
-        targetWeight: "Funding sleeve",
+        targetWeight: "Funding reserve",
         sleeve: "Collateral and fees",
         venue: "Smart account balance",
         multiplier: "Cash",
@@ -1226,7 +1226,7 @@ export const manifests: PromotedManifest[] = [
       state: "funding_required",
       routeLabel: "Funding required",
       routeSummary: "Directional route staged, fallback venue visible",
-      reserveLabel: "Funding sleeve pending",
+      reserveLabel: "Funding reserve pending",
       multiplierLabel: "1.35x preview band",
       proofOfReservesLabel: "PoR visible",
       pauseRule: "Pause freezes future actions and surfaces unwind guidance.",
@@ -1333,7 +1333,7 @@ export const blotter: BlotterData = {
       id: "hist_1",
       timestamp: "09:42 UTC",
       type: "Activation",
-      description: "AI Infra Leaders activated with reserve sleeve intact.",
+      description: "AI Infra Leaders activated with cash reserve intact.",
       venue: "Cow Swap",
       amount: "$2,500",
       status: "settled",
@@ -1390,7 +1390,7 @@ export const blotter: BlotterData = {
       strategyTitle: "AI Infra Leaders",
       window: "10:30 UTC quote check",
       trigger: "AVGOx spread widened above the replay band while reserve cash remains intact.",
-      action: "Trim AVGOx by one sleeve step and refill the USDC reserve buffer.",
+      action: "Trim AVGOx by one position step and refill the USDC reserve buffer.",
       route: "Cow Swap primary, 1inch backup",
       impact: "$420 rebalance clip",
       state: "monitor",
@@ -1411,7 +1411,7 @@ export const blotter: BlotterData = {
       manifestSlug: "mag7-cash-balance",
       strategyTitle: "Mag 7 Cash Balance",
       window: "16:00 UTC breadth pass",
-      trigger: "Breadth remains constructive, but the reserve sleeve can absorb more than usual.",
+      trigger: "Breadth remains constructive, but the cash reserve can absorb more than usual.",
       action: "Hold unless software breadth fades and cash needs redeployment.",
       route: "1inch primary, Cow Swap backup",
       impact: "No action unless breadth weakens",
@@ -1423,7 +1423,7 @@ export const blotter: BlotterData = {
       strategyTitle: "SPY Core Shield",
       window: "Daily close review",
       trigger: "Capital-preservation mandate remains intact and no route stress is visible.",
-      action: "Keep the reserve sleeve unchanged unless SPYx reserve coverage slips.",
+      action: "Keep the cash reserve unchanged unless SPYx reserve coverage slips.",
       route: "Cow Swap spot route",
       impact: "Stand pat",
       state: "none",

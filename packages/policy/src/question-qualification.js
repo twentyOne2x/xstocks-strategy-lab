@@ -188,7 +188,7 @@ export function buildOnboardingProfile(question_answers = {}) {
   const uncertaintyPath =
     certaintyRaw === "default_requested"
       ? "default_requested"
-      : certaintyRaw === "low"
+      : certaintyRaw === "low" || certaintyRaw === "unsure"
         ? "exploring"
         : [goal, expression, risk, rebalance, appetite, automation].filter(
               (value) => value === "unsure",

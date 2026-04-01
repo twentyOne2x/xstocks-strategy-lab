@@ -15,6 +15,7 @@ import {
   buildPolicyRouteStateFromFetchedAssets,
   createAusdBridgeAssetSnapshot,
   createCowSwapApiClient,
+  createOneInchFusionApiClient,
   createXStocksClientApiClient,
   createXStocksBoundaryRepository,
   deriveExecutionRouteTruth,
@@ -55,12 +56,24 @@ function createJsonResponse(body, status = 200) {
   });
 }
 
+function createBackedQuoteFixture(priceUsd, symbol = "UNKNOWN") {
+  const scaled = Number((priceUsd * 100).toFixed(6));
+
+  return {
+    symbol,
+    bid: scaled,
+    ask: scaled,
+    currency: "USD",
+    minOrderFiatValue: 1000,
+  };
+}
+
 function createBoundaryFetch(fixtures, overrides = {}) {
   const fixtureMap = new Map(fixtures.map((fixture) => [fixture.symbol, fixture]));
 
   return async function fetchImpl(input) {
     const url = new URL(typeof input === "string" ? input : input.toString());
-    const path = url.pathname.replace(/^\/api\/v2/, "");
+    const path = url.pathname.replace(/^\/api\/v2/u, "");
     const override = overrides[path];
 
     if (override) {
@@ -77,6 +90,20 @@ function createBoundaryFetch(fixtures, overrides = {}) {
     if (priceMatch) {
       const symbol = decodeURIComponent(priceMatch[1]);
       return createJsonResponse(fixtureMap.get(symbol).priceData);
+    }
+
+    const backedQuoteMatch = url.pathname.match(/^\/api\/v1\/quotes\/assets\/([^/]+)$/u);
+    if (backedQuoteMatch) {
+      const symbol = decodeURIComponent(backedQuoteMatch[1]);
+      const fixture = fixtureMap.get(symbol);
+
+      if (!fixture) {
+        return createJsonResponse({ error: `No fixture for ${url.pathname}` }, 404);
+      }
+
+      return createJsonResponse(
+        createBackedQuoteFixture(fixture.priceData.quote ?? 0, symbol),
+      );
     }
 
     const statusMatch = path.match(/^\/public\/system\/status\/([^/]+)$/u);
@@ -200,6 +227,45 @@ test("createXStocksBoundaryRepository loads basket boundary state and keeps AUSD
   );
 });
 
+test("createXStocksBoundaryRepository uses Backed quote midpoints for priceUsd on fetched assets", async () => {
+  const backedPriceUsd = 712.34;
+  const repository = createXStocksBoundaryRepository({
+    fetchImpl: createBoundaryFetch(
+      [CANONICAL_SPYX_LIVE_FIXTURE],
+      {
+        "/api/v1/quotes/assets/SPYx": createBackedQuoteFixture(backedPriceUsd, "SPYx"),
+      },
+    ),
+  });
+
+  const asset = await repository.fetchAssetSnapshot("SPYx");
+
+  assert.equal(asset.priceUsd, backedPriceUsd);
+  assert.equal(asset.priceData?.quoteUsd, CANONICAL_SPYX_LIVE_FIXTURE.priceData.quote);
+});
+
+test("createXStocksBoundaryRepository falls back to xStocks price data when Backed quotes fail", async () => {
+  const repository = createXStocksBoundaryRepository({
+    fetchImpl: createBoundaryFetch(
+      [CANONICAL_SPYX_LIVE_FIXTURE],
+      {
+        "/api/v1/quotes/assets/SPYx": () =>
+          new Response(JSON.stringify({ error: "upstream unavailable" }), {
+            status: 503,
+            headers: {
+              "content-type": "application/json",
+            },
+          }),
+      },
+    ),
+  });
+
+  const asset = await repository.fetchAssetSnapshot("SPYx");
+
+  assert.equal(asset.priceUsd, CANONICAL_SPYX_LIVE_FIXTURE.priceData.quote);
+  assert.match(asset.notes.join(" "), /Backed quote request failed with status 503/u);
+});
+
 test("buildPolicyRouteStateFromFetchedAssets derives Ethereum and Ink route availability from deployments", async () => {
   const fetchImpl = createBoundaryFetch([CANONICAL_SPYX_LIVE_FIXTURE, CANONICAL_MSTRX_LIVE_FIXTURE]);
   const repository = createXStocksBoundaryRepository({
@@ -234,7 +300,8 @@ test("createCowSwapApiClient requests quotes against the CoW API shape", async (
       requests.push({
         url: String(input),
         method: init.method,
-        body: init.body
+        body: init.body,
+        signal: init.signal,
       });
       return createJsonResponse({
         quote: {
@@ -275,6 +342,34 @@ test("createCowSwapApiClient requests quotes against the CoW API shape", async (
   assert.match(String(requests[0].body), /"sellAmountBeforeFee":"1000000"/);
   assert.equal(quote.id, 1126290448);
   assert.equal(quote.quote.signingScheme, "eip712");
+  assert.ok(requests[0].signal instanceof AbortSignal);
+});
+
+test("createCowSwapApiClient times out stalled quote requests after the configured wait", async () => {
+  const client = createCowSwapApiClient({
+    baseUrl: "https://cow.fi.test",
+    requestTimeoutMs: 10,
+    fetch: async (_input, init = {}) =>
+      await new Promise((resolve, reject) => {
+        init.signal?.addEventListener(
+          "abort",
+          () => reject(new DOMException("Aborted", "AbortError")),
+          { once: true },
+        );
+      }),
+  });
+
+  await assert.rejects(
+    client.requestQuote({
+      sellToken: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      buyToken: "0x1234000000000000000000000000000000000000",
+      owner: "0x00000000000000000000000000000000000000aa",
+      receiver: "0x00000000000000000000000000000000000000aa",
+      kind: "sell",
+      sellAmountBeforeFee: "1000000",
+    }),
+    /CoW request timed out after 10ms for \/quote/u,
+  );
 });
 
 test("createCowSwapApiClient fails closed on non-2xx order submission", async () => {
@@ -308,6 +403,124 @@ test("createCowSwapApiClient fails closed on non-2xx order submission", async ()
       signature: "0xabcdef"
     }),
     /CoW order submission failed with status 422/u
+  );
+});
+
+test("createOneInchFusionApiClient requests Fusion quotes with bearer auth", async () => {
+  const requests = [];
+  const client = createOneInchFusionApiClient({
+    authKey: "test-oneinch-key",
+    baseUrl: "https://api.1inch.dev/fusion",
+    networkId: 1,
+    fetch: async (input, init = {}) => {
+      requests.push({
+        url: String(input),
+        method: init.method,
+        headers: init.headers,
+        signal: init.signal,
+      });
+
+      return createJsonResponse({
+        quoteId: "quote_1",
+        fromTokenAmount: "20000000",
+        toTokenAmount: "113576036691965274",
+        feeToken: "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+        presets: {},
+        fee: {
+          receiver: "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+          bps: 0,
+          whitelistDiscountPercent: 0,
+        },
+        integratorFee: 0,
+        integratorFeeShare: 0,
+        settlementAddress: "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+        whitelist: [],
+        recommended_preset: "fast",
+        priceImpactPercent: 0.38,
+      });
+    },
+  });
+
+  const quote = await client.requestQuote({
+    fromTokenAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    toTokenAddress: "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+    amount: "20000000",
+    walletAddress: "0x1111111111111111111111111111111111111111",
+    enableEstimate: true,
+    source: "xstocks-strategy-lab",
+  });
+
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].method, "GET");
+  assert.equal(
+    requests[0].headers.authorization,
+    "Bearer test-oneinch-key",
+  );
+  assert.match(requests[0].url, /^https:\/\/api\.1inch\.dev\/fusion\//u);
+  assert.match(
+    requests[0].url,
+    /\/quoter\/v2\.0\/1\/quote\/receive\?/u,
+  );
+  assert.match(requests[0].url, /enableEstimate=true/u);
+  assert.match(requests[0].url, /source=xstocks-strategy-lab/u);
+  assert.ok(requests[0].signal instanceof AbortSignal);
+  assert.equal(quote.quoteId, "quote_1");
+  assert.equal(quote.recommended_preset, "fast");
+});
+
+test("createOneInchFusionApiClient times out stalled Fusion quotes", async () => {
+  const client = createOneInchFusionApiClient({
+    authKey: "test-oneinch-key",
+    requestTimeoutMs: 10,
+    fetch: async (_input, init = {}) =>
+      await new Promise((resolve, reject) => {
+        init.signal?.addEventListener(
+          "abort",
+          () => reject(new DOMException("Aborted", "AbortError")),
+          { once: true },
+        );
+      }),
+  });
+
+  await assert.rejects(
+    client.requestQuote({
+      fromTokenAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      toTokenAddress: "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+      amount: "20000000",
+      walletAddress: "0x1111111111111111111111111111111111111111",
+      enableEstimate: true,
+    }),
+    /1inch Fusion request timed out after 10ms/u,
+  );
+});
+
+test("createOneInchFusionApiClient fails closed on non-2xx Fusion quote responses", async () => {
+  const client = createOneInchFusionApiClient({
+    authKey: "test-oneinch-key",
+    fetch: async () =>
+      new Response(
+        JSON.stringify({
+          error: "Bad Request",
+          code: "CANNOT_FETCH_PRICE",
+        }),
+        {
+          status: 400,
+          headers: {
+            "content-type": "application/json",
+          },
+        },
+      ),
+  });
+
+  await assert.rejects(
+    client.requestQuote({
+      fromTokenAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      toTokenAddress: "0xdeadbeef00000000000000000000000000000000",
+      amount: "20000000",
+      walletAddress: "0x1111111111111111111111111111111111111111",
+      enableEstimate: true,
+    }),
+    /1inch Fusion quote request failed with status 400/u,
   );
 });
 

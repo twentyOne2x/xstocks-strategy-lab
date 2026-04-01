@@ -500,7 +500,7 @@ export function adaptManifestToFrontend(
           label: manifest.mode === "basket" && basketExplanationBundle ? "Why these weights" : "Why now",
           prompt:
             manifest.mode === "basket" && basketExplanationBundle
-              ? `Explain why ${manifest.frontend.title} uses its current basket weights and reserve sleeve.`
+              ? `Explain why ${manifest.frontend.title} uses its current basket weights and cash reserve.`
               : `Explain the current setup for ${manifest.frontend.title}.`,
         },
         {
@@ -524,10 +524,10 @@ export function adaptManifestToFrontend(
         ...(basketExplanationBundle
           ? [
               {
-                label: "Cash sleeve",
+                label: "Cash reserve",
                 value: `${basketExplanationBundle.cashWeightPct}% AUSD`,
                 tone: "neutral" as const,
-                note: "Keeps a visible reserve sleeve instead of forcing full equity exposure.",
+                note: "Keeps a visible cash reserve instead of forcing full equity exposure.",
               },
               {
                 label: "Rebalance trigger",

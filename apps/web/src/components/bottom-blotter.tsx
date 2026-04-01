@@ -6,6 +6,17 @@ import type { BlotterData } from "@/lib/contracts";
 
 type BlotterTab = "positions" | "history" | "rebalancing" | "activity";
 
+const stateTooltips: Record<string, string> = {
+  active: "This position is live and tracking the portfolio strategy.",
+  paused: "Temporarily paused. No trades will execute until resumed.",
+  watch: "Being monitored for potential changes.",
+  view_ready: "Preview is ready. Review before funding.",
+  blocked: "Action required before this can proceed.",
+  funding_required: "Deposit USDC to activate.",
+  settled: "Trade completed and settled on-chain.",
+  pending: "Waiting for confirmation.",
+};
+
 const tabLabels: Array<{ id: BlotterTab; label: string }> = [
   { id: "positions", label: "Positions" },
   { id: "history", label: "History" },
@@ -58,7 +69,7 @@ export function BottomBlotter({
           <tbody>
             {blotter.positions.map((row) => (
               <tr key={row.id}>
-                <td><span className={`status-pill status-pill-${row.state}`}>{row.state}</span></td>
+                <td><span className={`status-pill status-pill-${row.state}`} title={stateTooltips[row.state] ?? ""}>{row.state}</span></td>
                 <td>{row.symbol}</td>
                 <td>{row.sleeve}</td>
                 <td>{row.exposureUsd}</td>

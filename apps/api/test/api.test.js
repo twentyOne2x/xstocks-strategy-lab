@@ -17,6 +17,7 @@ import {
 } from "../../../packages/xstocks/dist/index.js";
 
 import { createLiveStateRepository } from "../src/repositories/live-state-repository.js";
+import { createResearchManifestRepository } from "../src/repositories/research-manifest-repository.js";
 import { createRuntimeStore } from "../src/repositories/runtime-store.js";
 import { createApiServer } from "../src/server.js";
 
@@ -440,18 +441,36 @@ function createJsonResponse(payload, status = 200) {
 function createFixtureFetch(fixturesBySymbol = { SPYx: CANONICAL_SPYX_LIVE_FIXTURE }) {
   return async function fetchFixture(input) {
     const url = new URL(typeof input === "string" ? input : input.toString());
+    const backedQuoteMatch = url.pathname.match(/^\/api\/v1\/quotes\/assets\/([^/]+)$/u);
     const priceMatch = url.pathname.match(/\/public\/assets\/([^/]+)\/price-data$/);
     const assetMatch = url.pathname.match(/\/public\/assets\/([^/]+)$/);
     const proofMatch = url.pathname.match(/\/public\/proof-of-reserves\/([^/]+)$/);
     const statusMatch = url.pathname.match(/\/public\/system\/status\/([^/]+)$/);
     const symbol =
       decodeURIComponent(
-        priceMatch?.[1] ?? assetMatch?.[1] ?? proofMatch?.[1] ?? statusMatch?.[1] ?? "",
+        backedQuoteMatch?.[1] ??
+          priceMatch?.[1] ??
+          assetMatch?.[1] ??
+          proofMatch?.[1] ??
+          statusMatch?.[1] ??
+          "",
       ) || null;
     const fixture = symbol ? fixturesBySymbol[symbol] : null;
 
     if (!fixture) {
       return createJsonResponse({ error: `No fixture for ${url.pathname}` }, 404);
+    }
+
+    if (backedQuoteMatch) {
+      const scaled = Number(((fixture.priceData.quote ?? 0) * 100).toFixed(6));
+
+      return createJsonResponse({
+        symbol,
+        bid: scaled,
+        ask: scaled,
+        currency: "USD",
+        minOrderFiatValue: 1000,
+      });
     }
 
     if (priceMatch) {
@@ -498,6 +517,162 @@ async function loadPromotedManifest(slotId) {
 
 const DEFAULT_MANIFEST = await loadPromotedManifest("onboarding.default_basket");
 
+function createSyntheticExecutableBasketManifest() {
+  const liveReadyBadges = [
+    "validated_strategy",
+    "promoted_manifest",
+    "basket_live_ready",
+  ];
+
+  return {
+    ...DEFAULT_MANIFEST,
+    frontend: {
+      ...DEFAULT_MANIFEST.frontend,
+      title: "Autopilot: CoW Core",
+      badges: liveReadyBadges,
+    },
+    targetAllocations: [
+      {
+        sleeve: "core_xstocks",
+        targetWeightPct: 47.5,
+        assetSymbol: "NVDAx",
+      },
+      {
+        sleeve: "core_xstocks",
+        targetWeightPct: 47.5,
+        assetSymbol: "TSLAx",
+      },
+      {
+        sleeve: "yield_buffer",
+        targetWeightPct: 5,
+        assetSymbol: "AUSD",
+        venueId: "flowdesk_ausd_rwa_strategy",
+      },
+    ],
+    requiredAssets: ["NVDAx", "TSLAx", "AUSD"],
+    requiredRoutes: [
+      {
+        routeId: "cow_swap.ethereum",
+        label: "Cow Swap on Ethereum",
+        routeKind: "execution",
+        requiredFor: "core_xstocks",
+      },
+      {
+        routeId: "flowdesk.ausd-rwa-strategy",
+        label: "Flowdesk AUSD RWA Strategy",
+        routeKind: "yield_vault",
+        requiredFor: "yield_buffer",
+      },
+    ],
+    executionBoundary: {
+      ...DEFAULT_MANIFEST.executionBoundary,
+      requiredAssets: ["NVDAx", "TSLAx", "AUSD"],
+      requiredRoutes: [
+        {
+          routeId: "cow_swap.ethereum",
+          label: "Cow Swap on Ethereum",
+          routeKind: "execution",
+          requiredFor: "core_xstocks",
+        },
+        {
+          routeId: "flowdesk.ausd-rwa-strategy",
+          label: "Flowdesk AUSD RWA Strategy",
+          routeKind: "yield_vault",
+          requiredFor: "yield_buffer",
+        },
+      ],
+      walletRequirements: {
+        ...DEFAULT_MANIFEST.executionBoundary.walletRequirements,
+        requiresSmartAccount: false,
+        minFundingUsd: 0,
+      },
+    },
+    routeValidation: {
+      executionEligibility: "executable",
+      surfaceTruth: "live",
+      routeTruthLabels: [
+        {
+          routeId: "cow_swap.ethereum",
+          label: "Cow Swap on Ethereum",
+          routeKind: "execution",
+          chain: "ethereum",
+          verificationTier: "public_verified",
+          truthState: "live",
+          availability: "available",
+          requiredFor: "core_xstocks",
+          reason:
+            "Synthetic API-test basket constrains the default lane to directly quoteable CoW core legs only.",
+        },
+        {
+          routeId: "flowdesk.ausd-rwa-strategy",
+          label: "Flowdesk AUSD RWA Strategy",
+          routeKind: "vault",
+          chain: "ethereum",
+          verificationTier: "public_verified",
+          truthState: "live",
+          availability: "available",
+          requiredFor: "yield_buffer",
+          reason: "Publicly verified rail is available.",
+        },
+      ],
+      proofNotes: [
+        "Synthetic API-test basket keeps the execution lane bound to direct-quoteable CoW core legs only.",
+      ],
+      validationBadges: liveReadyBadges,
+    },
+  };
+}
+
+function createSyntheticDefaultBasketManifestRepository() {
+  const baseRepository = createResearchManifestRepository({
+    repoRoot: REPO_ROOT,
+    slotRegistryPath: SLOT_REGISTRY_PATH,
+  });
+  const syntheticManifest = createSyntheticExecutableBasketManifest();
+
+  function maybeReplaceRecord(record) {
+    if (!record || record.slotId !== "onboarding.default_basket") {
+      return record;
+    }
+
+    return {
+      ...record,
+      manifest: syntheticManifest,
+    };
+  }
+
+  return {
+    async readSlotRegistry() {
+      return baseRepository.readSlotRegistry();
+    },
+    async getPromotedRecordById(manifestId) {
+      return maybeReplaceRecord(await baseRepository.getPromotedRecordById(manifestId));
+    },
+    async getPromotedRecordBySlot(slotId) {
+      return maybeReplaceRecord(await baseRepository.getPromotedRecordBySlot(slotId));
+    },
+    async listPromotedRecords() {
+      return (await baseRepository.listPromotedRecords()).map(maybeReplaceRecord);
+    },
+    async getPromotedManifestById(manifestId) {
+      return (await this.getPromotedRecordById(manifestId))?.manifest ?? null;
+    },
+    async getPromotedManifestBySlot(slotId) {
+      return (await this.getPromotedRecordBySlot(slotId))?.manifest ?? null;
+    },
+    async listPromotedManifests() {
+      return (await this.listPromotedRecords()).map((record) => record.manifest);
+    },
+  };
+}
+
+function startServerWithSyntheticExecutableDefaultBasket(overrides = {}) {
+  return startServer({
+    manifestRepository: createSyntheticDefaultBasketManifestRepository(),
+    ...overrides,
+  });
+}
+
 async function loadQualificationFixture(name) {
   const raw = await readFile(
     resolve(REPO_ROOT, `scripts/fixtures/qualification/${name}.json`),
@@ -540,6 +715,13 @@ async function startServer(overrides = {}) {
 
   if (!("liveStateRepository" in serverConfig) && !("fetchImpl" in serverConfig)) {
     serverConfig.liveStateRepository = createStaticLiveStateRepository();
+  }
+
+  if (
+    !("oneInchExecutionClient" in serverConfig) &&
+    !("oneInchApiKey" in serverConfig)
+  ) {
+    serverConfig.oneInchApiKey = null;
   }
 
   const server = createApiServer(serverConfig);
@@ -624,6 +806,57 @@ function createCowExecutionClientStub({
       return {
         ...orderStatus,
         uid,
+      };
+    },
+  };
+}
+
+function createOneInchExecutionClientStub({
+  quoteId = "oneinch_quote_1",
+  fromTokenAmount = "20000000",
+  toTokenAmount = "113576036691965274",
+  recommendedPreset = "fast",
+} = {}) {
+  return {
+    async requestQuote(input) {
+      return {
+        quoteId,
+        fromTokenAmount:
+          input.amount ?? fromTokenAmount,
+        toTokenAmount,
+        feeToken: input.toTokenAddress,
+        presets: {
+          [recommendedPreset]: {
+            auctionDuration: 180,
+            startAuctionIn: 0,
+            bankFee: "0",
+            initialRateBump: 0,
+            auctionStartAmount: toTokenAmount,
+            auctionEndAmount: toTokenAmount,
+            tokenFee: "0",
+            exclusiveResolver: null,
+            estP: 0,
+            allowPartialFills: false,
+            allowMultipleFills: false,
+            gasCost: {
+              gasBumpEstimate: 0,
+              gasPriceEstimate: "0",
+            },
+            points: [],
+            startAmount: toTokenAmount,
+          },
+        },
+        fee: {
+          receiver: "0x9999999999999999999999999999999999999999",
+          bps: 0,
+          whitelistDiscountPercent: 0,
+        },
+        integratorFee: 0,
+        integratorFeeShare: 0,
+        settlementAddress: "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+        whitelist: [],
+        recommended_preset: recommendedPreset,
+        priceImpactPercent: 0.12,
       };
     },
   };
@@ -767,8 +1000,14 @@ test("catalog read returns promoted-manifest-backed results from research", asyn
     assert.match(defaultItem.manifest.explanation.thesis, /xStocks basket|yield buffer/i);
     assert.ok(defaultItem.manifest.explanation.holdingRationales.length > 0);
     assert.ok(defaultItem.manifest.explanation.bundle.components.length > 0);
-    assert.equal(defaultItem.defaultRequestedNotionalUsd, 1000);
+    assert.equal(defaultItem.manifest.walletRequirements.requiresSmartAccount, false);
+    assert.equal(defaultItem.manifest.walletRequirements.minFundingUsd, 0);
+    assert.equal(defaultItem.defaultRequestedNotionalUsd, 0);
     assert.equal(defaultItem.executionPreview.surfaceTruth, "preview");
+    assert.match(
+      defaultItem.executionPreview.blockers[0] ?? "",
+      /Connect a wallet first/i,
+    );
     assert.ok(
       payload.data.items.every(
         (item) => item.manifest.source.type === "research_promoted_manifest",
@@ -886,6 +1125,36 @@ test("activation preview read stays fail-closed for preview-only directional man
   }
 });
 
+test("activation preview exports linked-wallet-first funding truth for the current basket lane", async () => {
+  const harness = await startServer();
+
+  try {
+    const response = await fetch(
+      `${harness.baseUrl}/api/activation-preview?slotId=onboarding.default_basket&userNotionalUsd=25&walletConnected=true&walletAddress=${TEST_WALLET_ADDRESS}&fundedNotionalUsd=25`,
+    );
+    const payload = await response.json();
+    const smartWalletStep = payload.data.executionPlan.steps.find(
+      (step) => step.stepId === "prepare_smart_account",
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.data.manifest.walletRequirements.requiresSmartAccount, false);
+    assert.equal(payload.data.manifest.walletRequirements.minFundingUsd, 0);
+    assert.equal(payload.data.executionPlan.executionState, "blocked");
+    assert.equal(payload.data.executionPlan.executionEligibility, "preview_only");
+    assert.equal(payload.data.executionPlan.smartAccount.readiness, "not_required");
+    assert.equal(payload.data.executionPlan.fundingPath.minRequiredUsd, 25);
+    assert.equal(smartWalletStep?.title, "Smart wallet optional");
+    assert.match(smartWalletStep?.detail ?? "", /optional/i);
+    assert.match(
+      payload.data.executionPlan.warnings.join(" "),
+      /MSFTx|cow_no_liquidity/i,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
 test("public agent handoff read returns a public-safe preview boundary", async () => {
   const harness = await startServer();
 
@@ -910,7 +1179,7 @@ test("public agent handoff read returns a public-safe preview boundary", async (
     );
     assert.equal(
       payload.data.readiness.executionPlanPreview.executionState,
-      "wallet_required",
+      "blocked",
     );
     assert.equal(
       payload.data.readiness.executionPlanPreview.executionEligibility,
@@ -919,7 +1188,7 @@ test("public agent handoff read returns a public-safe preview boundary", async (
     assert.equal(payload.data.handoff.publicSafeBridgeExists, true);
     assert.equal(payload.data.handoff.directAuthenticatedBridgeExists, false);
     assert.equal(payload.data.handoff.state, "stay_public_preview");
-    assert.match(payload.data.handoff.reason, /wallet readiness|public preview/i);
+    assert.match(payload.data.handoff.reason, /preview-only|cannot cross/i);
     assert.equal(
       payload.data.handoff.authenticatedApis.some(
         (surface) => surface.path === "/api/activations",
@@ -941,23 +1210,23 @@ test("public agent handoff read can mark a lane ready for authenticated activati
     const payload = await response.json();
 
     assert.equal(response.status, 200);
-    assert.equal(payload.data.readiness.executionPlanPreview.surfaceTruth, "live");
+    assert.equal(payload.data.readiness.executionPlanPreview.surfaceTruth, "preview");
     assert.equal(
       payload.data.readiness.executionPlanPreview.executionState,
-      "ready",
+      "blocked",
     );
     assert.equal(
       payload.data.readiness.executionPlanPreview.executionEligibility,
-      "executable",
+      "preview_only",
     );
     assert.equal(
       payload.data.handoff.state,
-      "ready_for_authenticated_activation",
+      "stay_public_preview",
     );
     assert.equal(payload.data.handoff.directAuthenticatedBridgeExists, false);
     assert.match(
-      payload.data.handoff.authenticatedBoundary,
-      /Privy-authenticated user context|authenticated ownership/i,
+      payload.data.handoff.reason,
+      /preview-only|cannot cross/i,
     );
     assert.equal(
       Object.hasOwn(payload.data, "latestActivation"),
@@ -1031,8 +1300,12 @@ test("activation save persists canonical activation and activity records", async
     const activationPayload = await activationResponse.json();
 
     assert.equal(activationResponse.status, 201);
-    assert.equal(activationPayload.data.activation.status, "ready");
-    assert.equal(activationPayload.data.activityEvents.length, 1);
+    assert.equal(activationPayload.data.activation.status, "blocked");
+    assert.equal(activationPayload.data.activityEvents.length, 2);
+    assert.equal(
+      activationPayload.data.executionPlan.executionEligibility,
+      "preview_only",
+    );
 
     const activityResponse = await fetch(
       `${harness.baseUrl}/api/activity?activationId=${activationPayload.data.activation.activationId}`,
@@ -1045,7 +1318,7 @@ test("activation save persists canonical activation and activity records", async
     const activityPayload = await activityResponse.json();
 
     assert.equal(activityResponse.status, 200);
-    assert.equal(activityPayload.data.items.length, 1);
+    assert.equal(activityPayload.data.items.length, 2);
     assert.equal(activityPayload.data.activations.length, 1);
     assert.equal(
       activityPayload.data.activations[0].manifestId,
@@ -1063,7 +1336,7 @@ test("activation save persists canonical activation and activity records", async
     const storedRaw = await readFile(harness.storePath, "utf8");
     const storedState = JSON.parse(storedRaw);
     assert.equal(storedState.activations.length, 1);
-    assert.equal(storedState.activityEvents.length, 1);
+    assert.equal(storedState.activityEvents.length, 2);
     assert.equal(storedState.rebalances.length, 0);
   } finally {
     await harness.close();
@@ -1206,7 +1479,7 @@ test("activity read remains compatible with the activity workspace boundary", as
 });
 
 test("workspace and activity surfaces expose a recommended rebalance when the slot baseline trails the promoted manifest", async () => {
-  const harness = await startServer();
+  const harness = await startServerWithSyntheticExecutableDefaultBasket();
   const runtimeStore = createRuntimeStore({
     storePath: harness.storePath,
     now: () => "2026-04-01T08:00:00.000Z",
@@ -1546,7 +1819,7 @@ test("directional preflight stays preview-only and fail-closed from research man
 });
 
 test("execution create persists an operator-manual execution request from a ready activation snapshot", async () => {
-  const harness = await startServer();
+  const harness = await startServerWithSyntheticExecutableDefaultBasket();
 
   try {
     const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
@@ -1605,7 +1878,7 @@ test("execution create persists an operator-manual execution request from a read
 });
 
 test("authenticated CoW activation can reach quote readiness at a small requested notional without a smart wallet", async () => {
-  const harness = await startServer({
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: createCowExecutionClientStub(),
   });
 
@@ -1704,6 +1977,192 @@ test("authenticated CoW activation can reach quote readiness at a small requeste
   }
 });
 
+test("execution dual-RFQs CoW and 1inch but keeps CoW selected when both venues quote", async () => {
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
+    cowExecutionClient: createCowExecutionClientStub(),
+    oneInchExecutionClient: createOneInchExecutionClientStub({
+      toTokenAmount: "223576036691965274",
+    }),
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 25,
+        walletState: {
+          walletConnected: true,
+          walletAddress: harness.auth.primary.walletAddress,
+          fundedNotionalUsd: 25,
+        },
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+      }),
+    });
+    const createPayload = await createResponse.json();
+    const quoteLeg = createPayload.data.executionRequest.legs.find(
+      (leg) => leg.state === "pending",
+    );
+
+    const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+      }),
+    });
+    const quotePayload = await quoteResponse.json();
+    const quotedLeg = quotePayload.data.executionRequest.legs.find(
+      (leg) => leg.legId === quoteLeg.legId,
+    );
+
+    assert.equal(quoteResponse.status, 200);
+    assert.equal(quotedLeg.state, "awaiting_approval");
+    assert.equal(quotedLeg.quote.kind, "cow_swap");
+    assert.equal(quotedLeg.adapterId, "cow_swap");
+    assert.equal(quotedLeg.venueId, "cow_swap.ethereum");
+    assert.equal(
+      quotedLeg.venueStatus.rawStatus.selectedAdapterId,
+      "cow_swap",
+    );
+    assert.equal(
+      quotedLeg.venueStatus.rawStatus.quoteAttempts.cow_swap.status,
+      "quoted",
+    );
+    assert.equal(
+      quotedLeg.venueStatus.rawStatus.quoteAttempts.oneinch_fusion.status,
+      "quoted",
+    );
+    assert.match(
+      quotedLeg.venueStatus.rawStatus.selectionReason,
+      /submission-capable venue/i,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("execution falls back to 1inch quote readiness when CoW returns no liquidity", async () => {
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
+    cowExecutionClient: {
+      async requestQuote() {
+        throw new Error(
+          'CoW quote request failed with status 404: {"errorType":"NoLiquidity","description":"no route found"}',
+        );
+      },
+      async submitOrder() {
+        return TEST_COW_ORDER_UID;
+      },
+      async getOrder() {
+        return null;
+      },
+    },
+    oneInchExecutionClient: createOneInchExecutionClientStub(),
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 25,
+        walletState: {
+          walletConnected: true,
+          walletAddress: harness.auth.primary.walletAddress,
+          fundedNotionalUsd: 25,
+        },
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+      }),
+    });
+    const createPayload = await createResponse.json();
+    const quoteLeg = createPayload.data.executionRequest.legs.find(
+      (leg) => leg.state === "pending",
+    );
+
+    const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+      }),
+    });
+    const quotePayload = await quoteResponse.json();
+    const quotedLeg = quotePayload.data.executionRequest.legs.find(
+      (leg) => leg.legId === quoteLeg.legId,
+    );
+
+    assert.equal(quoteResponse.status, 200);
+    assert.equal(quotePayload.data.executionRequest.state, "quote_ready");
+    assert.equal(quotedLeg.state, "quote_ready");
+    assert.equal(quotedLeg.quote.kind, "oneinch_fusion");
+    assert.equal(quotedLeg.adapterId, "oneinch_fusion");
+    assert.equal(quotedLeg.venueId, "1inch.ethereum");
+    assert.equal(quotedLeg.approval, null);
+    assert.notEqual(quotedLeg.receivingTokenAddress, quoteLeg.receivingTokenAddress);
+    assert.match(quotedLeg.receivingTokenAddress, /^0x1/u);
+    assert.equal(
+      quotedLeg.venueStatus.rawStatus.selectedAdapterId,
+      "oneinch_fusion",
+    );
+    assert.equal(
+      quotedLeg.venueStatus.rawStatus.quoteAttempts.cow_swap.blockerClass,
+      "cow_no_liquidity",
+    );
+    assert.equal(
+      quotedLeg.venueStatus.rawStatus.quoteAttempts.oneinch_fusion.status,
+      "quoted",
+    );
+    assert.match(
+      quotedLeg.warnings.join(" "),
+      /1inch Fusion quote capture is proven/i,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
 test("execution create fails closed for a foreign activation owner", async () => {
   const harness = await startServer();
 
@@ -1745,7 +2204,7 @@ test("execution create fails closed for a foreign activation owner", async () =>
 });
 
 test("execution quote, approval, submission, and receipt actions persist live CoW truth", async () => {
-  const harness = await startServer({
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: createCowExecutionClientStub(),
     ethereumRpcClient: createEthereumRpcClientStub(),
   });
@@ -1855,7 +2314,7 @@ test("execution quote, approval, submission, and receipt actions persist live Co
 });
 
 test("execution quote failures persist exact CoW request diagnostics instead of a generic blocker", async () => {
-  const harness = await startServer({
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: {
       async requestQuote() {
         throw new Error(
@@ -1925,26 +2384,145 @@ test("execution quote failures persist exact CoW request diagnostics instead of 
 
     assert.equal(quoteResponse.status, 200);
     assert.equal(blockedLeg.state, "blocked");
-    assert.match(blockedLeg.blockers[0], /sellAmountBeforeFee=4500000/i);
-    assert.match(blockedLeg.blockers[0], /targetNotionalUsd=4\.50/i);
+    const cowAttempt = blockedLeg.venueStatus.rawStatus.quoteAttempts.cow_swap;
+    assert.equal(
+      blockedLeg.blockers[0].includes(
+        `sellAmountBeforeFee=${cowAttempt.sellAmountBeforeFee}`,
+      ),
+      true,
+    );
+    assert.equal(
+      blockedLeg.blockers[0].includes(
+        `targetNotionalUsd=${Number(quoteLeg.targetNotionalUsd).toFixed(2)}`,
+      ),
+      true,
+    );
+    assert.match(blockedLeg.blockers[0], /blockerClass=cow_no_liquidity/i);
     assert.match(blockedLeg.blockers[0], /NoLiquidity/i);
     assert.equal(blockedLeg.venueStatus.status, "quote_failed");
     assert.equal(
-      blockedLeg.venueStatus.rawStatus.buyToken,
+      cowAttempt.buyToken,
       quoteLeg.receivingTokenAddress,
     );
+    assert.match(cowAttempt.sellAmountBeforeFee, /^[0-9]+$/u);
+    assert.equal(cowAttempt.errorStatusCode, 404);
+    assert.equal(cowAttempt.errorType, "NoLiquidity");
     assert.equal(
-      blockedLeg.venueStatus.rawStatus.sellAmountBeforeFee,
-      "4500000",
+      cowAttempt.errorDescription,
+      "no route found",
     );
-    assert.match(blockedLeg.venueStatus.rawStatus.error, /NoLiquidity/i);
+    assert.equal(
+      cowAttempt.blockerClass,
+      "cow_no_liquidity",
+    );
+    assert.match(cowAttempt.error, /NoLiquidity/i);
+  } finally {
+    await harness.close();
+  }
+});
+
+test("execution quote failures persist exact CoW internal-error diagnostics when the venue returns a 500 shell", async () => {
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
+    cowExecutionClient: {
+      async requestQuote() {
+        throw new Error(
+          'CoW quote request failed with status 500: {"errorType":"InternalServerError","description":""}',
+        );
+      },
+      async submitOrder() {
+        return TEST_COW_ORDER_UID;
+      },
+      async getOrder() {
+        return null;
+      },
+    },
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 25,
+        walletState: {
+          walletConnected: true,
+          walletAddress: harness.auth.primary.walletAddress,
+          fundedNotionalUsd: 25,
+        },
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+      }),
+    });
+    const createPayload = await createResponse.json();
+    const quoteLeg = createPayload.data.executionRequest.legs.find(
+      (leg) => leg.state === "pending",
+    );
+
+    const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+      }),
+    });
+    const quotePayload = await quoteResponse.json();
+    const blockedLeg = quotePayload.data.executionRequest.legs.find(
+      (leg) => leg.legId === quoteLeg.legId,
+    );
+
+    assert.equal(quoteResponse.status, 200);
+    assert.equal(blockedLeg.state, "blocked");
+    assert.match(
+      blockedLeg.blockers[0],
+      /blockerClass=cow_internal_server_error/i,
+    );
+    assert.match(
+      blockedLeg.blockers[0],
+      /venueErrorType=InternalServerError/i,
+    );
+    assert.equal(blockedLeg.venueStatus.status, "quote_failed");
+    const cowAttempt = blockedLeg.venueStatus.rawStatus.quoteAttempts.cow_swap;
+    assert.equal(cowAttempt.errorStatusCode, 500);
+    assert.equal(
+      cowAttempt.errorType,
+      "InternalServerError",
+    );
+    assert.equal(cowAttempt.errorDescription, null);
+    assert.equal(
+      cowAttempt.blockerClass,
+      "cow_internal_server_error",
+    );
+    assert.equal(
+      cowAttempt.errorBody,
+      '{"errorType":"InternalServerError","description":""}',
+    );
   } finally {
     await harness.close();
   }
 });
 
 test("execution submission fails closed when no user signature is supplied", async () => {
-  const harness = await startServer({
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: createCowExecutionClientStub(),
   });
 
@@ -2013,8 +2591,96 @@ test("execution submission fails closed when no user signature is supplied", asy
   }
 });
 
+test("execution submission fails closed when the selected quote is 1inch-only", async () => {
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
+    cowExecutionClient: {
+      async requestQuote() {
+        throw new Error(
+          'CoW quote request failed with status 404: {"errorType":"NoLiquidity","description":"no route found"}',
+        );
+      },
+      async submitOrder() {
+        return TEST_COW_ORDER_UID;
+      },
+      async getOrder() {
+        return null;
+      },
+    },
+    oneInchExecutionClient: createOneInchExecutionClientStub(),
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 25,
+        walletState: {
+          walletConnected: true,
+          walletAddress: harness.auth.primary.walletAddress,
+          fundedNotionalUsd: 25,
+        },
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+      }),
+    });
+    const createPayload = await createResponse.json();
+    const quoteLeg = createPayload.data.executionRequest.legs.find(
+      (leg) => leg.state === "pending",
+    );
+
+    await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+      }),
+    });
+
+    const submissionResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        action: "record_submission",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+        signature: TEST_COW_SIGNATURE,
+      }),
+    });
+    const submissionPayload = await submissionResponse.json();
+
+    assert.equal(submissionResponse.status, 409);
+    assert.match(
+      submissionPayload.error,
+      /1inch Fusion quote capture is proven/i,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
 test("execution submission succeeds with access-token auth when the signer is linked on the canonical Privy user", async () => {
-  const harness = await startServer({
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: createCowExecutionClientStub(),
   });
 
@@ -2090,7 +2756,7 @@ test("execution submission succeeds with access-token auth when the signer is li
 });
 
 test("execution records a failed CoW venue state when the venue invalidates the order", async () => {
-  const harness = await startServer({
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: createCowExecutionClientStub({
       orderStatus: {
         uid: TEST_COW_ORDER_UID,
@@ -2355,7 +3021,7 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
   const confirmedOrderUid = `0x${"c".repeat(112)}`;
   const failedOrderUid = `0x${"d".repeat(112)}`;
   let submissionCount = 0;
-  const harness = await startServer({
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
     reportingToken: TEST_REPORTING_TOKEN,
     cowExecutionClient: {
       requestQuote: quoteClient.requestQuote,

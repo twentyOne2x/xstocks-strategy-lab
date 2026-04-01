@@ -36,6 +36,7 @@ const fixtureNames = [
   "theme-tilt",
   "active-leaders",
   "directional-opt-in",
+  "skip-not-sure",
 ];
 
 for (const fixtureName of fixtureNames) {

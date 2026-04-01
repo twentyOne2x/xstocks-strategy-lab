@@ -27,11 +27,11 @@ This workstream does not:
 1. `https://equityterminal.app/` is live and reflects the latest deploy.
 2. the current landing is cleaner than before, but still too small and too much like an onboarding entry card.
 3. [privy-provider.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/privy-provider.tsx) mounts Privy when `NEXT_PUBLIC_PRIVY_APP_ID` exists.
-4. [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx) is still a stub and does not call real Privy hooks.
-5. [activation-screen.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/activation-screen.tsx) still hardcodes `next`/`locked` step state.
+4. [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx) now calls real Privy hooks and tracks the authenticated `wallet_connected` funnel stage.
+5. the served activation and terminal surfaces are still not fully truth-aligned: production API responses stay preview-only or manual at the current boundary while several served components still imply `Chainlink CRE` or `Status live`.
 6. [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js) already has CoW quote, approval, signed submission, venue-status, and receipt logic.
-7. no Privy JWT/JWKS verification exists in `apps/api`.
-8. there is no proven operator alerting/visibility layer for this activation lane yet.
+7. [privy-auth.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/privy-auth.js) now performs Privy JWT or JWKS verification, linked-account parsing, and authenticated owner binding.
+8. `/ops/xstocks` and `/api/reporting/xstocks` now exist as partial operator visibility surfaces, but hosted token configuration is still missing and no signed execution proof is visible there yet.
 
 ## Current Local Implementation Audit
 
@@ -39,31 +39,49 @@ This workstream does not:
 
 1. live landing deploy and Equity Terminal icon.
 2. frontend onboarding and activation routes.
-3. CoW adapter and API submission boundary.
-4. smart-account and funding readiness contracts.
+3. real Privy frontend connect code.
+4. backend Privy auth verification and authenticated owner binding.
+5. CoW adapter and API submission boundary.
+6. smart-account and funding readiness contracts.
 
 ### Partial
 
 1. homepage quality.
-2. frontend Privy integration.
-3. smart-account/funding state rendering.
-4. production visibility for the activation lane.
+2. served activation truth alignment.
+3. production visibility for the activation lane.
 
 ### Spec-only or unproven
 
-1. backend Privy auth verification.
-2. real authenticated user session binding.
-3. real EIP-712 user signature in the live flow.
-4. first live user-approved CoW proof.
-5. production alerting/visibility sufficient to call the lane prod-worthy.
+1. real EIP-712 user signature in the live flow.
+2. first live user-approved CoW proof.
+3. production alerting/visibility sufficient to call the lane prod-worthy.
+4. browser screenshot proof for the hosted homepage and activation surfaces.
+5. served-copy parity with the production activation truth boundary.
 
 ## Completion Reconciliation
 
 1. completion relative to spec = partial.
 2. completion relative to repeated thread asks = partial.
-3. completion relative to prior implementation claims = overclaimed if interpreted as end-to-end closure; accurate if constrained to backend CoW contract strength only.
-4. verified implementation and proof status = hosted landing deploy is real; CoW contract/runtime work is real; frontend connect, backend auth, and live signed proof are not.
-5. canonical frontend functioning status = partial and not yet truthful enough for production closure.
+3. completion relative to prior implementation claims = no longer missing frontend connect or backend auth, but still overclaimed if interpreted as an end-to-end live execution closure.
+4. verified implementation and proof status = hosted landing deploy is real; frontend connect is real; backend auth verification is real; the repo now carries one hosted linked-wallet activation plus partial CoW quote-boundary proof bundle; no real signed submission proof exists yet.
+5. canonical frontend functioning status = partial and not yet truthful enough for production closure because the served UI still outruns the current production API on live or automation copy.
+
+## 2026-04-01 Final Reconciliation Update
+
+This section supersedes stale planning-tranche assumptions elsewhere in this doc.
+
+Exact proofs reached:
+1. `pnpm --dir apps/web check`, `pnpm --dir apps/api check`, `pnpm --dir packages/policy check`, `pnpm --dir packages/shared check`, and `pnpm --dir packages/xstocks check` all passed.
+2. the repo now carries a hosted proof bundle under [tmp/proof/2026-04-01T17-25-58.460Z](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-01T17-25-58.460Z), while rerunning `node apps/api/scripts/privy-cow-proof.js` in a shell without `XSTOCKS_PRIVY_ACCESS_TOKEN` still fails closed before it can reproduce that hosted run.
+3. Production `GET /api/public-agent-handoff` returns `stay_public_preview`, `surfaceTruth: preview`, `executionState: wallet_required`, and `executionEligibility: preview_only`.
+4. A clean local API instance on `PORT=3011` confirms rebalance orchestration stays `preview_only`, `runtimeOwner: operator_manual`, and `providerTriggeredProven: false`.
+5. Hosted quote-boundary proof plus the bounded live quote sweep show no all-leg executable floor through `25`, `50`, `100`, `250`, or `500` USD gross; the current promoted basket is structurally incompatible with present CoW venue truth across five core legs in the tested band.
+
+Still open:
+1. no truthful signed-submission path exists for the current promoted basket because five core legs remain structurally blocked on present CoW venue truth across the tested `25` to `500` USD gross band,
+2. served frontend copy parity with the current production activation and automation truth,
+3. browser-proof closure for the hosted homepage and activation journey,
+4. hosted operator visibility configuration beyond token-missing fail-closed screens.
 
 ## Codebase Fit And Iteration-Speed Contract
 
@@ -302,12 +320,12 @@ Date: 2026-04-01
 6. live CoW quote attempts reach the real external venue boundary.
 7. no real user-approved signed CoW submission, `orderUid`, or `txHash` exists yet.
 
-### New Runtime Finding
+### Resolved Routing Finding
 
 1. the current execution leg builder uses the generic Ethereum `deployment.address` as the CoW buy token.
 2. the xStocks execution-route surface also exposes `wrapperAddress` for the verified Ethereum rail.
 3. live probing against CoW now shows NVDAx at the promoted basket's current `$4.50` leg fails with `NoLiquidity` when quoted against `deployment.address`, while the corresponding `wrapperAddress` returns a live quote at the same size.
-4. because of that mismatch, the current proof lane cannot truthfully classify the entire `$25` promoted basket as structurally unquoteable until route-correct token selection is applied and every actionable leg is rechecked.
+4. that mismatch blocked earlier classification until route-correct token selection was applied and every actionable leg was rechecked; production-host probing now confirms wrapper-correct selection is in place, so it is no longer the current blocker for this lane.
 
 ### Immediate Execution Contract
 
@@ -315,3 +333,28 @@ Date: 2026-04-01
 2. rerun the authenticated proof with the existing Privy session if still available on this machine.
 3. push only to the furthest truthful boundary reached after that rerun.
 4. submit only if auth, ownership, funding, quoteability, and explicit user signature all truly hold.
+
+### Hosted Proof Result
+
+1. production-host probing against `https://api-production-e70b.up.railway.app` confirms the current live basket lane is wrapper-correct for CoW token selection: `NVDAx` reaches `awaiting_approval` at the promoted basket's minimal `$25` proof notional.
+2. the authenticated linked-wallet proof saved activation `act_88d4997e-aa80-42a3-8580-8af877fcb3e7` and created execution request `execreq_1196c5af-f577-4428-a355-4e67b793b7da`.
+3. the current promoted basket is still not all-leg quoteable at `$25`: `1/6` core legs reached `awaiting_approval`, `5/6` core legs failed with exact venue blockers, and the `AUSD` yield-buffer leg remained deferred by design.
+4. exact core-leg venue blockers from the hosted run are `MSFTx: 404 NoLiquidity`, `METAx: 404 NoLiquidity`, `AMZNx: 404 NoLiquidity`, `AAPLx: 500 InternalServerError`, and `GOOGLx: 500 InternalServerError`.
+5. because the basket is not all-leg quoteable, the truthful stop point remains before signed submission. No `orderUid`, receipt, or `txHash` exists, and no autonomous submission was attempted.
+6. proof artifacts, including activation save, execution create, quoteability, approval boundary, submission boundary, receipt/blocker, runtime-store, and execution-request captures, live under [tmp/proof/2026-04-01T17-25-58.460Z](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-01T17-25-58.460Z).
+7. the strongest truthful production claim for this lane is: hosted linked-wallet activation and partial CoW quote boundary are proven at `$25`, but the promoted basket is not all-leg quoteable, so full user-approved submission remains unproven and correctly blocked at the external venue boundary.
+8. the remaining repo-local failures are no longer a blocker for this lane: the targeted API and policy verification suites now pass against the current linked-wallet-first, smart-account-not-required basket truth.
+9. failed CoW quote legs now persist structured venue diagnostics in `venueStatus.rawStatus`, including `errorStatusCode`, `errorType`, `errorDescription`, `errorBody`, and a truthful `blockerClass`, so future proof bundles do not collapse venue-returned `NoLiquidity` and `InternalServerError` responses into one opaque string-only class.
+10. direct public CoW quote probes on 2026-04-01 still return `500 InternalServerError` with an empty description for the affected 500-class legs, so there is no repo-local basis to reclassify those blockers beyond the venue-returned `InternalServerError` shell without a new upstream venue change.
+
+### Quote-Only Sweep Result
+
+1. reusing [privy-cow-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/privy-cow-proof.js) in `quote_sweep` mode against the current promoted basket produced a repo-local live-venue proof bundle under [tmp/proof/2026-04-01T18-54-21.188Z](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-01T18-54-21.188Z).
+2. the bounded ladder was exactly `25`, `50`, `100`, `250`, and `500` USD gross, and no signing or submission path was enabled during the sweep.
+3. no all-leg quoteable rung was observed, so `minimumExecutableGrossNotionalUsd = null` within the tested band.
+4. `NVDAx` remained `awaiting_approval` at every rung, which means the basket failure is not caused by dust-sized notionals alone.
+5. `MSFTx`, `AAPLx`, `METAx`, `AMZNx`, and `GOOGLx` were blocked at every rung. The low rungs surfaced a mix of venue-returned `InternalServerError` and `NoLiquidity`, but by `100`, `250`, and `500` USD gross all five persistently blocked core assets converged to exact `blockerClass=cow_no_liquidity` with venue `errorType=NoLiquidity`.
+6. because the same five core assets remain unquoteable after the sweep reaches materially larger per-leg notionals, the current promoted basket is structurally incompatible with present CoW venue truth in the tested `25` to `500` USD gross band rather than merely dust-sized at the minimal proof rung.
+7. a direct standalone USDC -> xStock scan against the full repo-owned Ethereum xStocks universe tightened the exact venue boundary further: only `NVDAx`, `TSLAx`, and `SPYx` quote across the tested `15, 25, 50, 100, 250, 500, 1000, 2500, 5000` USD ladder, while `AAPLx`, `AMDx`, `AMZNx`, `AVGOx`, `GOOGLx`, `METAx`, `MSFTx`, and `ORCLx` never quote directly and settle to exact `blockerClass=cow_no_liquidity`.
+8. no product-usable CoW-only onboarding basket exists under that universe truth. The direct quoteable set is only three xStocks, below the research minimum `holdings_count=4`, and the only fully intact repo basket is benchmark-only `sp500_core` / `SPYx`.
+9. no new policy or API floor guard was added from this result. The sweep did not discover a lower-bound executable floor to encode; it discovered current structural incompatibility for five core legs, so the truthful fail-closed boundary remains the live quote step rather than a newly hardcoded minimum.

@@ -27,11 +27,11 @@ As of 2026-04-01, current repo and hosted truth is:
 1. frontend is hosted on Vercel from `apps/web` via [.vercel/project.json](/Users/user/PycharmProjects/xstocks-strategy-lab/.vercel/project.json).
 2. backend is configured for Railway via [railway.json](/Users/user/PycharmProjects/xstocks-strategy-lab/railway.json).
 3. the live domain `https://equityterminal.app/` now reflects the latest Equity Terminal landing and icon.
-4. the current landing is still too small and intermediary-feeling relative to the user’s desired homepage.
-5. the frontend mounts Privy but the connect button is still a stub in [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx).
-6. the backend has CoW quote/submission contracts and a real adapter surface, but no real authenticated Privy session verification and no real signed live submission proof yet.
-7. the repo has no user/session/consent or partner-facing reporting dashboard.
-8. the repo has one local agent skill at [skills/xstocks-qualification/SKILL.md](/Users/user/PycharmProjects/xstocks-strategy-lab/skills/xstocks-qualification/SKILL.md), but no Hermes-specific operator runbook or public `skill.md` surface.
+4. the current landing is still too small and intermediary-feeling relative to the user’s desired homepage, and several served surfaces still overclaim live or automation truth relative to the production API.
+5. [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx) now uses real Privy hooks and emits `wallet_connected`, but the served activation state is not yet fully reconciled to the production API.
+6. the backend now has real Privy JWT or JWKS verification plus the CoW quote or submission boundary, and the repo carries one hosted linked-wallet quote-boundary proof bundle, but no signed submission proof exists yet.
+7. the repo now has a canonical funnel ledger, `/api/reporting/xstocks`, `/api/funnel-events/xstocks`, and `/ops/xstocks`, but hosted reporting tokens are still missing and the dashboard remains operator-internal.
+8. the repo now has the public `skill.md`, `GET /api/public-agent-handoff`, the internal agent skill chain, and operator smoke runbooks; hosted `skill.md` now matches the repo-owned public-safe copy on key public-safe points, but no Hermes remote proof pack exists yet.
 
 ## Current Local Implementation Audit
 
@@ -40,23 +40,42 @@ As of 2026-04-01, current repo and hosted truth is:
 1. landing/favicon deploy closure on Vercel.
 2. qualification, recommendation, activation-readiness, and CoW execution contracts.
 3. Railway and Vercel deployment wiring.
-4. one repo-local qualification skill usable by Codex-like agents.
+4. real Privy frontend connect code and backend auth verification.
+5. public-safe handoff, reporting routes, funnel-event persistence, and the ops dashboard route.
+6. repo-owned internal agent skills plus concise smoke or proof runbooks.
 
 ### Partial
 
 1. homepage quality and explanatory depth.
-2. frontend Privy integration.
-3. smart-account/funding readiness truth.
-4. backend CoW execution lane.
-5. operational visibility.
+2. served frontend truth alignment to the production activation and automation boundary.
+3. backend CoW authenticated proof.
+4. hosted reporting-token configuration.
+5. Hermes remote smoke and funded-proof capture.
 
 ### Spec-only or unproven
 
-1. real authenticated Privy backend session verification.
-2. first real user-approved CoW execution proof.
-3. partner-visible reporting dashboard.
-4. Hermes-operated testing with wallet/treasury boundaries.
-5. public-facing `skill.md` for xstocks.
+1. first real user-approved CoW execution proof.
+2. hosted partner-visible reporting access beyond operator-token-gated proof.
+3. Hermes-operated testing with wallet/treasury proof artifacts.
+4. browser-proof closure for the served homepage and activation path.
+
+## 2026-04-01 Final Reconciliation Update
+
+This section supersedes stale planning-tranche assumptions in the tables below.
+
+Owner-lane snapshot:
+1. `XSL-009`: partial. Checks and route existence are proven, but browser proof and served-truth alignment are still open.
+2. `XSL-014`: partial. Real Privy connect and backend auth exist, and a hosted linked-wallet quote-boundary proof bundle exists, but the current promoted basket is structurally incompatible with present CoW venue truth for five core legs in the tested band, so signed submission remains unproven.
+3. `XSL-015`: partial. Reporting and funnel routes exist, but hosted tokens are missing and `funding_required` remains lower-bound.
+4. `XSL-016`: partial. Internal skill and runbook surfaces exist, but Hermes remote smoke and funded-proof capture are still missing.
+5. `XSL-016A`: closed. The public-safe handoff bridge exists.
+6. `XSL-016B`: partial. Local docs align, hosted `skill.md` parity is now closed on key public-safe points, and the remaining blocker is default-port local smoke contamination from a pre-existing `localhost:3001` process on this machine.
+
+Ordered residual backlog from this control plane:
+1. fix served UI truth and capture browser proof,
+2. keep `XSL-014` partial only until basket or venue truth changes, because the current promoted basket is structurally incompatible with present CoW venue truth for five core legs in the tested `25` to `500` USD gross band,
+3. configure hosted reporting tokens and reverify `/ops/xstocks` plus `/api/reporting/xstocks`,
+4. run the Hermes remote smoke plus real user-token-backed authenticated/funded proof path.
 
 ## Existing-Spec Inventory
 

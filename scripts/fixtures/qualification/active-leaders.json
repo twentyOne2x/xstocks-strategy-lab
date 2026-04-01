@@ -27,7 +27,7 @@
     "starterBasketId": "us-tech-leaders",
     "selectionType": "theme",
     "selectionKey": "us-tech-leaders",
-    "executionState": "funding_required",
+    "executionState": "blocked",
     "executionEligibility": "preview_only",
     "directionalPreviewOnly": false,
     "activationReady": false

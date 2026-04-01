@@ -14,6 +14,8 @@ import {
   targetAllocationSchema,
   targetDirectionalExpressionSchema,
 } from "./shared-contracts.js";
+import { deriveCowExecutionSurfaceForManifest } from "../../research/src/cow-execution-truth.js";
+import { deriveCanonicalWalletRequirements } from "./wallet-requirements.js";
 
 const DEFAULT_TOP_UP_ASSET = "USDC";
 const DEFAULT_FUNDING_PROVIDER = "privy";
@@ -199,14 +201,20 @@ function buildLegacyExecutionBoundary(manifest) {
     },
     requiredAssets,
     requiredRoutes,
-    walletRequirements: {
-      requiresWallet: true,
-      requiresSmartAccount: true,
-      minFundingUsd: manifest.mode === "directional" ? 1500 : 1000,
-      preferredFundingProvider: DEFAULT_FUNDING_PROVIDER,
-      preferredBridgeProvider: DEFAULT_BRIDGE_PROVIDER,
-      topUpAsset: DEFAULT_TOP_UP_ASSET,
-    },
+    walletRequirements: deriveCanonicalWalletRequirements(
+      {
+        ...manifest,
+        requiredRoutes,
+      },
+      {
+        requiresWallet: true,
+        requiresSmartAccount: true,
+        minFundingUsd: manifest.mode === "directional" ? 1500 : 1000,
+        preferredFundingProvider: DEFAULT_FUNDING_PROVIDER,
+        preferredBridgeProvider: DEFAULT_BRIDGE_PROVIDER,
+        topUpAsset: DEFAULT_TOP_UP_ASSET,
+      },
+    ),
     signalRefs: buildFallbackSignalRefs(manifest),
   };
 }
@@ -572,10 +580,16 @@ function normalizeExecutionBoundaryFromSource(manifest, rawManifest) {
         },
       requiredAssets,
       requiredRoutes,
-      walletRequirements: normalizeBoundaryWalletRequirements(
-        firstDefined(
-          providedBoundary.walletRequirements,
-          providedBoundary.wallet_requirements,
+      walletRequirements: deriveCanonicalWalletRequirements(
+        {
+          ...manifest,
+          requiredRoutes,
+        },
+        normalizeBoundaryWalletRequirements(
+          firstDefined(
+            providedBoundary.walletRequirements,
+            providedBoundary.wallet_requirements,
+          ),
         ),
       ),
       signalRefs,
@@ -630,7 +644,13 @@ function normalizeExecutionBoundaryFromSource(manifest, rawManifest) {
       },
       requiredAssets,
       requiredRoutes,
-      walletRequirements: normalizeBoundaryWalletRequirements(canonicalWalletRequirements),
+      walletRequirements: deriveCanonicalWalletRequirements(
+        {
+          ...manifest,
+          requiredRoutes,
+        },
+        normalizeBoundaryWalletRequirements(canonicalWalletRequirements),
+      ),
       signalRefs: buildFallbackSignalRefs(
         manifest,
         firstDefined(rawManifest?.signal_refs, []),
@@ -860,10 +880,41 @@ function buildNormalizedPromotedManifest(
     researchTuningSummary: _manifestResearchTuningSummary,
     ...normalizedManifest
   } = manifest;
+  const cowExecutionSurface = deriveCowExecutionSurfaceForManifest(
+    {
+      ...normalizedManifest,
+      targetAllocations,
+    },
+    normalizedManifest.frontend?.badges ?? [],
+  );
+  const constrainedRouteValidation =
+    manifest.mode === "basket" && routeValidation
+      ? {
+          ...routeValidation,
+          executionEligibility: cowExecutionSurface.executionEligibility,
+          surfaceTruth: cowExecutionSurface.surfaceTruth,
+          routeTruthLabels: routeValidation.routeTruthLabels.map((routeTruthLabel) =>
+            routeTruthLabel.routeId === "cow_swap.ethereum"
+              ? {
+                  ...routeTruthLabel,
+                  truthState: cowExecutionSurface.cowRouteTruthState,
+                  availability: cowExecutionSurface.cowRouteAvailability,
+                  reason: cowExecutionSurface.cowRouteReason,
+                }
+              : routeTruthLabel,
+          ),
+          proofNotes: cowExecutionSurface.proofNotes,
+          validationBadges: cowExecutionSurface.frontendBadges,
+        }
+      : routeValidation;
 
   return {
     ...normalizedManifest,
     promoted: true,
+    frontend: {
+      ...normalizedManifest.frontend,
+      badges: cowExecutionSurface.frontendBadges,
+    },
     executionBoundary,
     requiredAssets: executionBoundary.requiredAssets,
     requiredRoutes: executionBoundary.requiredRoutes,
@@ -872,7 +923,7 @@ function buildNormalizedPromotedManifest(
     targetAllocations,
     targetDirectionalExpressions,
     targetDirectionalExpression,
-    routeValidation,
+    routeValidation: constrainedRouteValidation,
     permissions,
     ...(explanationBundle ? { explanationBundle } : {}),
     ...(rawExplanationBundle ? { rawExplanationBundle } : {}),

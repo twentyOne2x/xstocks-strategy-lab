@@ -24,6 +24,9 @@ The product direction is:
    - `blocked`
 4. If the user wants to continue beyond qualification, hand off to [xstocks-activation-truth](/Users/user/PycharmProjects/xstocks-strategy-lab/skills/xstocks-activation-truth/SKILL.md).
 
+Canonical smoke runbook:
+[xstocks-agent-smoke-matrix](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/runbooks/xstocks-agent-smoke-matrix.md)
+
 ## Inputs
 
 The agent-safe surface accepts either:
@@ -74,6 +77,13 @@ Use these fields as the canonical qualification surface:
 - `explanationSurface`: the explanation bundle used for the recommendation
 - `activationTruth`: deposit gap, execution state, readiness, blockers, and warnings
 
+These are the exact stage boundaries owned by qualification:
+
+- qualification: `selection`, `manifestRef`, and `recommendation`
+- explanation: `explanationSurface`
+- deposit boundary: `activationTruth.depositRequired`, `activationTruth.fundingGapUsd`, and `activationTruth.minFundingUsd`
+- handoff boundary: `activationTruth.activationReady` determines whether to stay preview-only or continue to activation-truth checks
+
 Return one of these operator-facing states:
 
 - `preview_only`: the user is still exploring, the lane is still preview-only, or `activationTruth.activationReady` is false
@@ -85,7 +95,9 @@ Treat the output as guidance for a self-custody user path. The agent can explain
 ## Hard Boundaries
 
 - `funding_required` means the user is still in guided onboarding and has not yet met the funding requirement.
+- `depositRequired === true` means the deposit boundary has not been crossed and activation save must not be implied.
 - `activationReady` must be read from `activationTruth`; do not imply live activation if it is false.
 - `activation_truth_check` is not execution proof. It only means the next step is activation-truth verification.
 - `activationTruth.directionalPreviewOnly === true` is a hard product constraint. The current directional lane stays preview-only unless route proof changes.
+- If `executionState` is `wallet_required`, `funding_required`, `smart_account_required`, or `smart_account_pending`, keep the lane preview-only and stop before activation save.
 - Do not expose private hosts, auth material, wallet secrets, or treasury details in this step.

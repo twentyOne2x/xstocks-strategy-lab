@@ -70,6 +70,18 @@ button { font: inherit; }
   padding: 20px;
 }
 
+.app-frame::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='250'%3E%3Ctext x='0' y='140' transform='rotate(-12, 350, 125)' font-family='Arial Black,sans-serif' font-size='100' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.03)' letter-spacing='-0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 700px 250px;
+}
+
 /* ── Shared Surface Styles ── */
 
 .topbar,
@@ -886,10 +898,11 @@ button { font: inherit; }
 
 .progress-track {
   width: 100%;
-  height: 4px;
+  height: 6px;
   overflow: hidden;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--gray-200);
+  border: 1px solid var(--border);
 }
 
 .progress-track span {
@@ -942,7 +955,7 @@ button { font: inherit; }
 .brand-lockup {
   display: flex;
   flex-direction: column;
-  line-height: 0.85;
+  line-height: 0.78;
 }
 
 .brand-247 {
@@ -978,7 +991,7 @@ button { font: inherit; }
   color: var(--black);
   text-shadow: 3px 3px 0px var(--white);
   font-style: italic;
-  margin-top: -0.5rem;
+  margin-top: -0.8rem;
 }
 
 /* ── App Brand Bar ── */
@@ -1191,11 +1204,11 @@ button { font: inherit; }
 
 .onboarding-flow {
   max-width: 720px;
-  margin: 80px auto 40px;
-  padding: 40px;
+  margin: 48px auto 24px;
+  padding: 28px 32px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
   background: var(--white);
   border: var(--border-w) solid var(--black);
   box-shadow: var(--shadow);
@@ -1203,7 +1216,7 @@ button { font: inherit; }
 
 .onboarding-flow-question {
   display: grid;
-  gap: 24px;
+  gap: 16px;
 }
 
 .onboarding-question-head {
@@ -1220,6 +1233,7 @@ button { font: inherit; }
   line-height: 1.05;
   letter-spacing: -0.025em;
   color: var(--text);
+  white-space: nowrap;
 }
 
 .onboarding-flow-question p {
@@ -1608,7 +1622,8 @@ button { font: inherit; }
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 10, 0.12);
+  border: 1px solid rgba(10, 10, 10, 0.2);
   flex-shrink: 0;
   transition: background 300ms ease;
 }
@@ -1856,7 +1871,7 @@ button { font: inherit; }
 }
 
 .landing-hero {
-  padding: 48px 32px 40px;
+  padding: 32px 32px 28px;
   background: var(--red);
   text-align: center;
 }
@@ -1879,8 +1894,8 @@ button { font: inherit; }
   font-size: 1rem;
   border: 2px solid var(--white);
   box-shadow: var(--shadow-sm);
-  margin-top: 16px;
-  margin-bottom: 24px;
+  margin-top: 10px;
+  margin-bottom: 16px;
 }
 
 .landing-kicker {
@@ -1904,7 +1919,7 @@ button { font: inherit; }
 }
 
 .landing-hero-sub {
-  margin: 0 0 32px;
+  margin: 0 0 20px;
   max-width: 48ch;
   color: var(--white);
   font-size: 1.3rem;
@@ -1917,7 +1932,7 @@ button { font: inherit; }
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .landing-proof-row {
@@ -2708,6 +2723,24 @@ button { font: inherit; }
 .pq-workspace {
   min-height: 100vh;
   background: var(--gray-100);
+  position: relative;
+}
+
+.pq-workspace::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='250'%3E%3Ctext x='0' y='140' transform='rotate(-12, 350, 125)' font-family='Arial Black,sans-serif' font-size='100' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.03)' letter-spacing='-0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 700px 250px;
+}
+
+.pq-workspace > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Preview bar ── */
@@ -2749,7 +2782,9 @@ button { font: inherit; }
   opacity: 1 !important;
   pointer-events: auto;
   box-shadow: 0 0 0 4px var(--red), 8px 8px 0px var(--black);
-  transition: opacity 300ms ease, box-shadow 300ms ease;
+  border: var(--border-w) solid var(--red);
+  background: rgba(255, 24, 0, 0.04);
+  transition: opacity 300ms ease, box-shadow 300ms ease, background 300ms ease;
 }
 
 .pq-tour-bar {
@@ -2790,12 +2825,13 @@ button { font: inherit; }
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 10, 0.15);
+  border: 1px solid rgba(10, 10, 10, 0.25);
   transition: background 200ms ease;
 }
 
-.pq-tour-dot-active { background: var(--accent); }
-.pq-tour-dot-done { background: rgba(31, 213, 154, 0.4); }
+.pq-tour-dot-active { background: var(--red); border-color: var(--red); }
+.pq-tour-dot-done { background: rgba(31, 213, 154, 0.6); border-color: rgba(31, 213, 154, 0.8); }
 
 .pq-tour-actions {
   display: flex;
@@ -3002,6 +3038,21 @@ button { font: inherit; }
   background: var(--accent);
   pointer-events: none;
   opacity: 0.6;
+}
+
+.pq-chart-hover-label {
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  background: var(--black);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono), monospace;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
 }
 
 .pq-chart-legend {

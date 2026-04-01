@@ -388,3 +388,21 @@ To close this workstream, the proof pack must include:
 6. autoresearch proof showing the operator-readable interpretation path for the promoted incumbent.
 
 Verification commands remain the existing research, API, and frontend checks, plus browser proof of the explanation layer.
+
+## Progress Log
+
+### 2026-04-01 Focused Tranche: Universal Skip UX + Canonical Explainability
+
+What changed:
+1. Added one consistent skip/not-sure action across the questionnaire and aligned the web catalog with the canonical policy catalog so product-safe questions resolve through explicit `unsure` or `unset` answers instead of ad hoc omission.
+2. Kept qualification deterministic and fail closed: `q_certainty=unsure` resolves to the exploring path, while `q_certainty=default_requested` remains the stronger safest-default request; directional eligibility and low-certainty downshifts were left intact.
+3. Strengthened the promoted-manifest explanation path on the onboarding gate, onboarding workspace, comparison, detail, activation, and shared spotlight surfaces by surfacing `why this fits`, `how it is built`, holdings rationale, replay interpretation, and `what changes next` blocks.
+
+Proof collected:
+1. `pnpm --filter @xstocks-strategy-lab/web build` passed on 2026-04-01.
+2. `node --test packages/policy/test/policy.test.js` passed on 2026-04-01, including the new `skip-not-sure` qualification fixture.
+3. `pnpm --filter @xstocks-strategy-lab/web test` passed on 2026-04-01.
+4. Browser screenshots were captured to `/tmp/xsl-010-browser` for onboarding entry, onboarding gate, onboarding workspace, comparison, and detail.
+
+Residual blocker for full lane closure:
+1. The landing-hook rewrite and the operator-facing autoresearch tuning rubric / proof path are still open, so the owner lane should stay active even though this UX tranche is locally closed.

@@ -14,6 +14,11 @@ import {
 import { slotRegistrySchema } from "../../../shared/dist/contracts/research.js";
 import { readJson } from "../fs.js";
 import {
+  COW_ETHEREUM_XSTOCKS_EXECUTION_TRUTH,
+  deriveCowOnlyBasketCandidateAssessment,
+  getCowQuoteabilityAssessmentForManifest,
+} from "../cow-execution-truth.js";
+import {
   loadIncumbentForSlot,
   projectSharedPromotedManifest,
   projectSharedSlotRegistry,
@@ -103,10 +108,22 @@ test("promoted manifests validate against canonical/shared projections and match
     promotedActivationManifestSchema.parse(projectSharedPromotedManifest(manifest));
     assert.equal(versionedManifest.manifestId, manifest.manifestId);
     assertRuntimeCompleteness(manifest);
-    assert.deepEqual(
-      adaptResearchPromotedManifest(manifest).executionBoundary,
-      manifest.executionBoundary,
-    );
+    const adaptedManifest = adaptResearchPromotedManifest(manifest);
+    assert.deepEqual(adaptedManifest.requiredAssets, manifest.executionBoundary.requiredAssets);
+    assert.deepEqual(adaptedManifest.requiredRoutes, manifest.executionBoundary.requiredRoutes);
+    assert.deepEqual(adaptedManifest.signalRefs, manifest.executionBoundary.signalRefs);
+    if (manifest.mode === "basket") {
+      assert.deepEqual(adaptedManifest.walletRequirements, {
+        ...manifest.executionBoundary.walletRequirements,
+        requiresSmartAccount: false,
+        minFundingUsd: 0,
+      });
+    } else {
+      assert.deepEqual(
+        adaptedManifest.walletRequirements,
+        manifest.executionBoundary.walletRequirements,
+      );
+    }
   }
 });
 
@@ -157,42 +174,67 @@ test("promoted incumbents still parse through shared helpers", () => {
   }
 });
 
-test("basket manifest is execution-boundary complete and live-ready", () => {
-  const manifest = readCurrentPromotedManifestDocumentBySlot("onboarding.default_basket");
+test("current onboarding basket manifests stay execution-boundary complete but preview-only on current CoW truth", () => {
+  const slotIds = [
+    "onboarding.default_basket",
+    "onboarding.alt_basket_1",
+    "onboarding.alt_basket_2",
+  ];
 
   assert.equal(validatePromotedBoundary().status, "ok");
-  assert.equal(manifest.mode, "basket");
-  assert.equal(manifest.promoted, true);
-  assertRuntimeCompleteness(manifest);
-  assert.ok(manifest.signal_refs.length > 0);
-  assert.ok(manifest.signalRefs.length > 0);
-  assert.ok(manifest.target_allocations.length > 0);
-  assert.equal(manifest.target_directional_expressions.length, 0);
-  assert.ok(manifest.requiredAssets.includes("AUSD"));
-  assert.ok(
-    manifest.required_routes.some((route) => route.route_id === "cow_swap.ethereum"),
-  );
-  assert.ok(
-    manifest.required_routes.some(
-      (route) => route.route_id === "flowdesk.ausd-rwa-strategy",
-    ),
-  );
-  assert.ok(
-    manifest.requiredRoutes.some((route) => route.routeId === "cow_swap.ethereum"),
-  );
-  assert.ok(
-    manifest.requiredRoutes.some(
-      (route) => route.routeId === "flowdesk.ausd-rwa-strategy",
-    ),
-  );
-  assert.equal(manifest.walletRequirements.minFundingUsd, 1000);
-  assert.equal(manifest.wallet_requirements.min_funding_usd, 1000);
-  assert.equal(manifest.routeValidation.executionEligibility, "executable");
-  assert.equal(manifest.routeValidation.surfaceTruth, "live");
-  assert.equal(manifest.route_validation.execution_eligibility, "executable");
-  assert.equal(manifest.route_validation.surface_truth, "live");
-  assert.ok(manifest.routeValidation.validationBadges.includes("basket_live_ready"));
-  assert.ok(manifest.executionBoundary.requiredAssets.includes("AUSD"));
+  for (const slotId of slotIds) {
+    const manifest = readCurrentPromotedManifestDocumentBySlot(slotId);
+    const assessment = getCowQuoteabilityAssessmentForManifest(
+      adaptResearchPromotedManifest(manifest),
+    );
+
+    assert.equal(manifest.mode, "basket");
+    assert.equal(manifest.promoted, true);
+    assertRuntimeCompleteness(manifest);
+    assert.ok(manifest.signal_refs.length > 0);
+    assert.ok(manifest.signalRefs.length > 0);
+    assert.ok(manifest.target_allocations.length > 0);
+    assert.equal(manifest.target_directional_expressions.length, 0);
+    assert.ok(manifest.requiredAssets.includes("AUSD"));
+    assert.ok(
+      manifest.required_routes.some((route) => route.route_id === "cow_swap.ethereum"),
+    );
+    assert.ok(
+      manifest.required_routes.some(
+        (route) => route.route_id === "flowdesk.ausd-rwa-strategy",
+      ),
+    );
+    assert.ok(
+      manifest.requiredRoutes.some((route) => route.routeId === "cow_swap.ethereum"),
+    );
+    assert.ok(
+      manifest.requiredRoutes.some(
+        (route) => route.routeId === "flowdesk.ausd-rwa-strategy",
+      ),
+    );
+    assert.equal(manifest.walletRequirements.minFundingUsd, 1000);
+    assert.equal(manifest.wallet_requirements.min_funding_usd, 1000);
+    assert.equal(assessment.allCoreSymbolsQuoteable, false);
+    assert.equal(manifest.routeValidation.executionEligibility, "preview_only");
+    assert.equal(manifest.routeValidation.surfaceTruth, "preview");
+    assert.equal(manifest.route_validation.execution_eligibility, "preview_only");
+    assert.equal(manifest.route_validation.surface_truth, "preview");
+    assert.ok(manifest.routeValidation.validationBadges.includes("preview_only"));
+    assert.equal(manifest.routeValidation.validationBadges.includes("basket_live_ready"), false);
+    assert.ok(manifest.executionBoundary.requiredAssets.includes("AUSD"));
+  }
+});
+
+test("current CoW-only executable universe remains too narrow for a product-usable onboarding basket", () => {
+  const candidate = deriveCowOnlyBasketCandidateAssessment();
+
+  assert.deepEqual(COW_ETHEREUM_XSTOCKS_EXECUTION_TRUTH.quoteableSymbols, [
+    "NVDAx",
+    "TSLAx",
+    "SPYx",
+  ]);
+  assert.equal(candidate.isViable, false);
+  assert.match(candidate.reason, /holdings_count=4/i);
 });
 
 test("basket manifests expose derived explanation bundles and tuning summaries without raw leakage", () => {

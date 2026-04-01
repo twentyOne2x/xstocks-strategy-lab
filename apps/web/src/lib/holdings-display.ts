@@ -36,6 +36,21 @@ const venueMap: Record<string, { label: string; href?: string }> = {
   "flowdesk_ausd_rwa_strategy": { label: "Morpho vault", href: "https://app.morpho.org" },
 };
 
+const assetDescriptions: Record<string, string> = {
+  NVDAx: "NVIDIA Corporation — AI chip leader. Designs GPUs powering AI training and inference worldwide.",
+  AVGOx: "Broadcom Inc — Semiconductor and infrastructure software. Supplies networking and custom AI chips.",
+  MSFTx: "Microsoft Corporation — Cloud and AI platform. Azure, Office 365, and enterprise software leader.",
+  AAPLx: "Apple Inc — Consumer electronics and services. iPhone, Mac, and growing services revenue.",
+  GOOGLx: "Alphabet Inc — Search, advertising, and cloud. Owns Google, YouTube, and Waymo.",
+  SPYx: "S&P 500 ETF — Broad US equity market exposure. Tracks the 500 largest US companies.",
+  MSTRx: "MicroStrategy — Business intelligence and Bitcoin treasury company.",
+  USDC: "USD Coin — Stablecoin pegged 1:1 to the US dollar. Used as the cash reserve in portfolios.",
+};
+
+export function getAssetDescription(symbol: string): string | null {
+  return assetDescriptions[symbol] ?? null;
+}
+
 export function getAssetHref(symbol: string): string | null {
   return assetLinks[symbol] ?? null;
 }
@@ -74,19 +89,19 @@ export function getCleanRationale(rationale: string | undefined, sleeve: string)
 
 function formatSleeve(sleeve: string): string {
   const mapped: Record<string, string> = {
-    "Core leader": "Core holding: drives portfolio upside",
-    "Throughput kicker": "Growth complement: adds breadth",
-    "Quality ballast": "Stability anchor: reduces drawdown",
-    "Reserve buffer": "Cash reserve: liquidity for rebalances",
-    "core_leader": "Core holding: drives portfolio upside",
-    "throughput_kicker": "Growth complement: adds breadth",
-    "quality_ballast": "Stability anchor: reduces drawdown",
-    "reserve_buffer": "Cash reserve: liquidity for rebalances",
-    "cash_buffer": "Cash reserve: liquidity for rebalances",
-    "Core holding": "Core holding: drives portfolio upside",
+    "Core leader": "Core holding: drives portfolio growth",
+    "Throughput kicker": "Growth driver: adds revenue breadth",
+    "Quality ballast": "Stability anchor: reduces overall risk",
+    "Reserve buffer": "Cash reserve: available for rebalancing or withdrawal",
+    "core_leader": "Core holding: drives portfolio growth",
+    "throughput_kicker": "Growth driver: adds revenue breadth",
+    "quality_ballast": "Stability anchor: reduces overall risk",
+    "reserve_buffer": "Cash reserve: available for rebalancing or withdrawal",
+    "cash_buffer": "Cash reserve: available for rebalancing or withdrawal",
+    "Core holding": "Core holding: drives portfolio growth",
     "Core beta": "Core index exposure",
-    "Quality growth": "Quality growth: balances the basket",
-    "Cash buffer": "Cash reserve: liquidity for rebalances",
+    "Quality growth": "Quality growth: balances the portfolio",
+    "Cash buffer": "Cash reserve: available for rebalancing or withdrawal",
   };
   return mapped[sleeve] ?? sleeve.replace(/_/g, " ");
 }

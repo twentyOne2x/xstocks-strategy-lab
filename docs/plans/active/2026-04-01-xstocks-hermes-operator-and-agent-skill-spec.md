@@ -24,39 +24,53 @@ This workstream does not:
 ## Current Live Truth
 
 1. the user has an operator-managed Hermes host and interactive chat entrypoint available outside the repo.
-2. the repo already contains one local skill at [skills/xstocks-qualification/SKILL.md](/Users/user/PycharmProjects/xstocks-strategy-lab/skills/xstocks-qualification/SKILL.md).
-3. that skill currently covers qualification and activation readiness only, not Hermes operations or real execution proof.
-4. the repo now serves a minimal public `skill.md` surface from `apps/web/public/skill.md`, separate from any private Hermes/operator guidance.
-5. no Hermes-specific proof pack, operator runbook, or wallet/treasury contract exists in repo truth.
+2. the repo now contains the internal skill chain at [xstocks-qualification](/Users/user/PycharmProjects/xstocks-strategy-lab/skills/xstocks-qualification/SKILL.md), [xstocks-agent-start](/Users/user/PycharmProjects/xstocks-strategy-lab/skills/xstocks-agent-start/SKILL.md), and [xstocks-activation-truth](/Users/user/PycharmProjects/xstocks-strategy-lab/skills/xstocks-activation-truth/SKILL.md).
+3. the repo now has concise operator runbooks at [xstocks-agent-smoke-matrix](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/runbooks/xstocks-agent-smoke-matrix.md) and [xstocks-operator-execution-proof](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/runbooks/xstocks-operator-execution-proof.md).
+4. the repo serves a public `skill.md` surface from `apps/web/public/skill.md`, separate from the private Hermes/operator guidance, and the hosted `skill.md` now matches that public-safe truth on the key public-safe points.
+5. no Hermes remote proof pack, funded wallet/treasury proof bundle, or real user-token-backed remote transcript exists in repo truth yet.
 
 ## Current Local Implementation Audit
 
 ### Shipped
 
-1. repo-owned qualification skill.
+1. repo-owned qualification, handoff, and activation-truth skills.
 2. qualification CLI and API surfaces.
-3. hosted web and backend surfaces that Hermes could query once properly instructed.
+3. concise operator smoke and proof runbooks.
+4. hosted web and backend surfaces that Hermes could query once properly instructed.
 
 ### Partial
 
-1. agent-safe qualification guidance.
-2. activation-readiness interpretation.
+1. Hermes remote smoke and transcript capture.
+2. funded-test proof capture and wallet/treasury approval evidence.
+3. real user-token-backed authenticated/funded proof handoff into the Hermes lane.
 
 ### Spec-only or unproven
 
-1. Hermes-to-repo runbook,
-2. remote-agent proof contract,
-3. treasury-funded test boundaries,
-4. agent-readable execution handoff,
-5. any public agent-facing `skill.md` beyond the current minimal public-safe surface.
+1. Hermes remote proof artifacts,
+2. a funded-test proof bundle or exact blocker,
+3. any public agent-facing `skill.md` stronger than the current public-safe boundary.
 
 ## Completion Reconciliation
 
-1. completion relative to spec = not started.
-2. completion relative to repeated thread asks = newly requested and unimplemented.
-3. completion relative to prior implementation claims = the repo-owned qualification skill exists, but it should not be interpreted as Hermes closure.
-4. verified implementation and proof status = local skill exists; Hermes runbook, remote proof, and treasury boundary do not.
+1. completion relative to spec = partial.
+2. completion relative to repeated thread asks = materially advanced for the repo-owned local lane, but not yet remotely proven on Hermes.
+3. completion relative to prior implementation claims = the repo-owned surface now extends well beyond qualification-only, but that still does not count as Hermes closure.
+4. verified implementation and proof status = local skills and runbooks exist and local smoke passes; Hermes remote proof and funded boundary execution do not.
 5. canonical frontend functioning status = not applicable; this is an operator/agent lane.
+
+## 2026-04-01 Final Reconciliation Update
+
+This section supersedes stale planning-tranche assumptions elsewhere in this doc.
+
+Exact proofs reached:
+1. `node scripts/qualify.mjs --fixture broad-cautious` passes.
+2. `node scripts/verify-qualification-fixtures.mjs` passes.
+3. the repo-owned internal skill chain and smoke runbooks now describe the same public-to-internal boundary.
+
+Still open:
+1. Hermes remote smoke and transcript capture,
+2. funded wallet or treasury proof with explicit approval owner and notional,
+3. a real user-token-backed authenticated/funded proof artifact to hand off into the Hermes lane beyond the current partial quote-boundary proof.
 
 ## Codebase Fit And Iteration-Speed Contract
 

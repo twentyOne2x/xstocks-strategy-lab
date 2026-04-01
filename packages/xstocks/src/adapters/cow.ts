@@ -9,11 +9,13 @@ import type {
 
 export const DEFAULT_COW_SWAP_API_BASE_URL =
   "https://api.cow.fi/mainnet/api/v1"
+export const DEFAULT_COW_SWAP_REQUEST_TIMEOUT_MS = 20_000
 
 export interface CowSwapApiClientConfig {
   readonly baseUrl?: string
   readonly fetch?: XStocksFetch
   readonly headers?: HeadersInit
+  readonly requestTimeoutMs?: number
 }
 
 export interface CowSwapApiClient {
@@ -96,20 +98,43 @@ export function createCowSwapApiClient(
   const fetchImpl = resolveFetch(config.fetch)
   const baseUrl = config.baseUrl ?? DEFAULT_COW_SWAP_API_BASE_URL
   const baseHeaders = config.headers
+  const requestTimeoutMs =
+    config.requestTimeoutMs ?? DEFAULT_COW_SWAP_REQUEST_TIMEOUT_MS
 
   async function request(
     path: string,
     init: RequestInit = {},
   ): Promise<Response> {
-    return await fetchImpl(`${baseUrl}${path}`, {
-      ...init,
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        ...baseHeaders,
-        ...(init.headers ?? {}),
-      },
-    })
+    const controller = new AbortController()
+    const timeoutId =
+      requestTimeoutMs > 0
+        ? setTimeout(() => controller.abort(), requestTimeoutMs)
+        : null
+
+    try {
+      return await fetchImpl(`${baseUrl}${path}`, {
+        ...init,
+        signal: controller.signal,
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          ...baseHeaders,
+          ...(init.headers ?? {}),
+        },
+      })
+    } catch (error) {
+      if (controller.signal.aborted) {
+        throw new Error(
+          `CoW request timed out after ${requestTimeoutMs}ms for ${path}`,
+        )
+      }
+
+      throw error
+    } finally {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId)
+      }
+    }
   }
 
   return {

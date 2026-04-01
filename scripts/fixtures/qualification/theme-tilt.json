@@ -28,7 +28,7 @@
     "starterBasketId": "ai-infra",
     "selectionType": "theme",
     "selectionKey": "ai-infra",
-    "executionState": "funding_required",
+    "executionState": "blocked",
     "executionEligibility": "preview_only",
     "directionalPreviewOnly": false,
     "activationReady": false

@@ -427,6 +427,84 @@ export interface CowSwapOrderStatus {
   readonly raw?: Record<string, unknown> | null;
 }
 
+export interface OneInchFusionQuoteRequest {
+  readonly fromTokenAddress: string;
+  readonly toTokenAddress: string;
+  readonly amount: string;
+  readonly walletAddress?: string;
+  readonly enableEstimate?: boolean;
+  readonly source?: string;
+  readonly permit?: string;
+  readonly isPermit2?: boolean;
+  readonly slippage?: number;
+}
+
+export interface OneInchFusionQuotePresetGasCost {
+  readonly gasBumpEstimate: number | string;
+  readonly gasPriceEstimate: string;
+}
+
+export interface OneInchFusionQuotePresetPoint {
+  readonly delay: number;
+  readonly coefficient: number | string;
+}
+
+export interface OneInchFusionQuotePreset {
+  readonly auctionDuration: number;
+  readonly startAuctionIn: number;
+  readonly bankFee: string;
+  readonly initialRateBump: number | string;
+  readonly auctionStartAmount: string;
+  readonly auctionEndAmount: string;
+  readonly tokenFee: string;
+  readonly exclusiveResolver: string | null;
+  readonly estP: number | string;
+  readonly allowPartialFills: boolean;
+  readonly allowMultipleFills: boolean;
+  readonly gasCost: OneInchFusionQuotePresetGasCost;
+  readonly points: readonly OneInchFusionQuotePresetPoint[];
+  readonly startAmount: string;
+}
+
+export interface OneInchFusionQuoteResponse {
+  readonly quoteId: string | null;
+  readonly fromTokenAmount: string;
+  readonly toTokenAmount: string;
+  readonly feeToken: string;
+  readonly presets: Record<string, OneInchFusionQuotePreset>;
+  readonly fee: {
+    readonly receiver: string;
+    readonly bps: number;
+    readonly whitelistDiscountPercent: number;
+  };
+  readonly integratorFee: number;
+  readonly integratorFeeShare: number;
+  readonly settlementAddress: string;
+  readonly whitelist: readonly string[];
+  readonly recommended_preset: string;
+  readonly prices?: {
+    readonly usd?: {
+      readonly fromToken: string;
+      readonly toToken: string;
+    };
+  };
+  readonly volume?: {
+    readonly usd?: {
+      readonly fromToken: string;
+      readonly toToken: string;
+    };
+  };
+  readonly suggested?: boolean;
+  readonly priceImpactPercent?: number | string | null;
+  readonly autoK?: number | string;
+  readonly k?: number | string;
+  readonly mxK?: number | string;
+  readonly gas?: number | string;
+  readonly pfGas?: number | string;
+  readonly marketAmount?: string;
+  readonly surplusFee?: number | string;
+}
+
 export interface XStocksExecutionRoute {
   readonly id: XStocksExecutionRailId;
   readonly label: string;

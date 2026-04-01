@@ -24,40 +24,56 @@ This workstream does not:
 
 ## Current Live Truth
 
-1. the repo has no user/session/auth model today.
-2. the repo has no event ledger for onboarding, funding, connect, or execution state transitions.
-3. the repo has no partner-facing dashboard route or report export.
-4. `apps/api` persists runtime execution state but not a canonical funnel/partner reporting history.
-5. `apps/web` has no dashboard route specifically for xstocks partner reporting.
+1. the repo still has no partner self-serve auth model today.
+2. the repo now has a canonical funnel-event ledger in `runtime-store` plus `POST /api/funnel-events/xstocks` and narrow `apps/web` emission hooks for `landing_viewed`, `onboarding_started`, `qualification_completed`, `portfolio_recommended`, `activation_viewed`, and `wallet_connected`.
+3. `GET /api/reporting/xstocks` now exists and reconciles submitted or confirmed USD volume to stored execution-request truth.
+4. `apps/web` now has `/ops/xstocks` as an operator-safe reporting route.
+5. hosted reporting remains partial because production `XSTOCKS_REPORTING_TOKEN` and `XSTOCKS_OPS_DASHBOARD_TOKEN` are still missing, and `funding_required` remains lower-bound.
 
 ## Current Local Implementation Audit
 
 ### Shipped
 
 1. activity and execution state contracts exist.
-2. runtime execution requests and activity events already exist in the API layer.
-3. hosted web and backend surfaces exist for future dashboard consumption.
+2. canonical funnel-event and reporting contracts now exist in shared plus API layers.
+3. runtime execution requests, funnel events, and reporting reads now exist in the API layer.
+4. hosted web and backend surfaces exist for operator-internal dashboard consumption.
 
 ### Partial
 
-1. activity/state persistence for single-lane execution.
-2. runtime-store posture for lightweight dev truth.
+1. hosted token configuration for the operator-facing dashboard.
+2. `funding_required` stage truth, which remains lower-bound until a pre-save funding event exists.
+3. partner self-serve auth beyond the operator token gate.
 
 ### Spec-only or unproven
 
-1. canonical partner event ledger,
-2. user funnel metrics,
-3. partner dashboard UI,
-4. partner-safe export surface,
-5. privacy boundary for identity and wallet data.
+1. partner-shareable auth and access controls beyond operator-first delivery.
+2. a pre-save funding-state ledger.
+3. broader export surfaces beyond the first operator-safe route and dashboard.
+4. any identity continuity stronger than browser-scoped anonymous subjects plus authenticated wallet subjects.
 
 ## Completion Reconciliation
 
-1. completion relative to spec = not started.
-2. completion relative to repeated thread asks = newly requested and unimplemented.
-3. completion relative to prior implementation claims = no prior implementation claim should be interpreted as dashboard closure.
-4. verified implementation and proof status = execution/activity primitives exist, but no reporting layer exists.
-5. canonical frontend functioning status = no partner-visible dashboard route exists.
+1. completion relative to spec = partial.
+2. completion relative to repeated thread asks = materially advanced but not yet externally reviewable on the hosted surface.
+3. completion relative to prior implementation claims = local reporting closure is real; hosted partner-review closure is still overcalled if tokens or lower-bound fields are ignored.
+4. verified implementation and proof status = canonical funnel ledger, reporting route, and ops dashboard route exist; hosted backend and web both still fail closed when the required reporting tokens are absent.
+5. canonical frontend functioning status = operator-safe dashboard route exists, but hosted access is still gated and not yet partner-self-serve.
+
+## 2026-04-01 Final Reconciliation Update
+
+This section supersedes stale planning-tranche assumptions elsewhere in this doc.
+
+Exact proofs reached:
+1. `/api/reporting/xstocks` exists and is backed by canonical funnel events plus execution-request reconciliation.
+2. `/ops/xstocks` exists and serves the operator-safe gate on the hosted web app.
+3. production `GET /api/reporting/xstocks` fails closed with `Operator reporting token is not configured on this backend.`
+4. production `https://equityterminal.app/ops/xstocks` tells the operator to configure `XSTOCKS_OPS_DASHBOARD_TOKEN` or `XSTOCKS_REPORTING_TOKEN` first.
+
+Still open:
+1. hosted token configuration for truthful external review,
+2. `funding_required` beyond lower-bound activation snapshots,
+3. partner self-serve auth and access control beyond operator-first delivery.
 
 ## Codebase Fit And Iteration-Speed Contract
 

@@ -17,7 +17,7 @@ import {
   isDirectionalPreviewOnly,
 } from "@/lib/portfolio-ui";
 import { formatCurrency, formatPercent, getWorkspaceSpotlightData } from "@/lib/data-source";
-import { getAssetHref, getCleanRationale } from "@/lib/holdings-display";
+import { getAssetDescription, getAssetHref, getCleanRationale } from "@/lib/holdings-display";
 
 function humanizeState(state: string): string {
   const map: Record<string, string> = {
@@ -34,6 +34,23 @@ function humanizeState(state: string): string {
     pending: "Pending",
   };
   return map[state] ?? state.replaceAll("_", " ");
+}
+
+function stateTooltip(state: string): string {
+  const tips: Record<string, string> = {
+    active: "This position is live and tracking the portfolio strategy.",
+    paused: "This position is temporarily paused. No trades will execute until resumed.",
+    watch: "This position is being monitored for potential changes.",
+    view_ready: "Your portfolio preview is ready. Review it before funding.",
+    blocked: "Action required before this position can proceed.",
+    funding_required: "Deposit USDC to activate this portfolio.",
+    connect_required: "Connect your wallet to continue.",
+    activation_ready: "Everything is set. Ready to activate.",
+    explore: "Exploring potential portfolio configurations.",
+    settled: "This trade has been completed and settled on-chain.",
+    pending: "Waiting for confirmation or processing.",
+  };
+  return tips[state] ?? "";
 }
 
 const HIDDEN_OPTION_IDS = new Set(["unsure", "unset"]);
@@ -313,11 +330,11 @@ function AnalysisTransition({
     prefersReducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion.current) { onComplete(); return; }
 
-    const durations = [700, 800, 700, 600, 500];
+    const durations = [2500, 2500, 2500, 2000, 2000];
     let step = 0;
     function advance() {
       step++;
-      if (step >= steps.length) { timerRef.current = setTimeout(onComplete, 400); return; }
+      if (step >= steps.length) { timerRef.current = setTimeout(onComplete, 600); return; }
       setActiveStep(step);
       timerRef.current = setTimeout(advance, durations[step]);
     }
@@ -393,6 +410,7 @@ function RecommendationGate({
   const keyDrivers = qualification.whyRecommended.slice(0, 3);
   const fitNotes = qualification.fitNotes.slice(0, 2);
   const leadComponents = bundle.components.slice(0, 4);
+  const [gateChartHover, setGateChartHover] = useState<{ x: number; value: number } | null>(null);
 
   return (
     <div className="pq-gate">
@@ -401,8 +419,18 @@ function RecommendationGate({
         <h1 className="pq-gate-title">{recommendation.title}</h1>
         <p className="pq-gate-sub">{qualification.summary}</p>
 
-        {/* Mini replay chart */}
-        <div className="pq-gate-chart" aria-hidden="true">
+        {/* Mini replay chart with hover */}
+        <div
+          className="pq-gate-chart"
+          style={{ position: "relative", cursor: "crosshair" }}
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const xPct = (e.clientX - rect.left) / rect.width;
+            const idx = Math.min(Math.round(xPct * (values.length - 1)), values.length - 1);
+            setGateChartHover({ x: xPct * 100, value: values[idx] });
+          }}
+          onMouseLeave={() => setGateChartHover(null)}
+        >
           <svg viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
               <linearGradient id="gateLine" x1="0%" x2="100%" y1="0%" y2="0%">
@@ -413,13 +441,25 @@ function RecommendationGate({
             <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
             <path className="workspace-chart-line" d={path} style={{ stroke: "url(#gateLine)" }} />
           </svg>
+          {gateChartHover && (
+            <div className="pq-chart-cursor" style={{ left: `${gateChartHover.x}%` }} />
+          )}
+          {gateChartHover && (
+            <div className="pq-chart-hover-label" style={{ left: `${gateChartHover.x}%` }}>
+              {formatCurrency(gateChartHover.value)}
+            </div>
+          )}
         </div>
 
         {/* Stat chips */}
         <div className="pq-gate-stats">
           <div className="pq-gate-stat">
             <span>30-day return</span>
-            <strong>{formatPercent(manifest.replay.netReturnPct)}</strong>
+            <strong>
+              {gateChartHover
+                ? formatPercent(((gateChartHover.value - manifest.replay.startingCapital) / manifest.replay.startingCapital) * 100)
+                : formatPercent(manifest.replay.netReturnPct)}
+            </strong>
           </div>
           <div className="pq-gate-stat">
             <span>Max drawdown</span>
@@ -494,18 +534,21 @@ function RecommendationGate({
 
         <div className="pq-gate-holdings">
           {leadComponents.map((component) => (
-            <div className="pq-gate-holding" key={component.componentId}>
+            <div className="pq-gate-holding" key={component.componentId} title={getAssetDescription(component.title) ?? getCleanRationale(undefined, component.sleeve)}>
               <strong>{component.title}</strong>
-              <span>{component.sleeve}</span>
+              <span>{getCleanRationale(undefined, component.sleeve)}</span>
             </div>
           ))}
         </div>
 
-        {/* Policy chips */}
+        {/* Policy chips — use actual holdings count from manifest */}
         <div className="pq-gate-chips">
-          {recommendation.behavior_chips.slice(0, 4).map((chip) => (
-            <span className="token-pill" key={chip}>{chip}</span>
-          ))}
+          {recommendation.behavior_chips.slice(0, 4).map((chip, i) => {
+            const displayChip = i === 0
+              ? `${manifest.allocations.length} holdings`
+              : chip;
+            return <span className="token-pill" key={chip}>{displayChip}</span>;
+          })}
         </div>
 
         <div className="pq-gate-cta">
@@ -763,9 +806,10 @@ function SimulatedWorkspace({
               <tbody>
                 {manifest.allocations.map((row) => {
                   const assetHref = getAssetHref(row.symbol);
+                  const assetDesc = getAssetDescription(row.symbol);
                   return (
                     <tr key={`${row.symbol}-${row.sleeve}`}>
-                      <td>{assetHref ? <a className="table-link" href={assetHref} target="_blank" rel="noopener noreferrer">{row.symbol}</a> : <strong>{row.symbol}</strong>}</td>
+                      <td>{assetHref ? <a className="table-link" href={assetHref} target="_blank" rel="noopener noreferrer" title={assetDesc ?? undefined}>{row.symbol}</a> : <strong title={assetDesc ?? undefined}>{row.symbol}</strong>}</td>
                       <td>{row.targetWeight}</td>
                       <td>{getCleanRationale(row.rationale, row.sleeve)}</td>
                     </tr>
@@ -802,7 +846,7 @@ function SimulatedWorkspace({
                               <td>{row.symbol}</td>
                               <td>{row.exposureUsd}</td>
                               <td>{pct}%</td>
-                              <td><span className={`status-pill status-pill-${row.state}`}>{humanizeState(row.state)}</span></td>
+                              <td><span className={`status-pill status-pill-${row.state}`} title={stateTooltip(row.state)}>{humanizeState(row.state)}</span></td>
                             </tr>
                           );
                         })}
@@ -820,7 +864,7 @@ function SimulatedWorkspace({
                     <div className="pq-event" key={event.id}>
                       <div className="pq-event-meta">
                         <span className="pq-event-time">{event.time}</span>
-                        <span className={`status-pill status-pill-${event.state}`}>{humanizeState(event.state)}</span>
+                        <span className={`status-pill status-pill-${event.state}`} title={stateTooltip(event.state)}>{humanizeState(event.state)}</span>
                       </div>
                       <strong>{event.title}</strong>
                     </div>

@@ -8,7 +8,8 @@ import { getXStocksAsset } from "../adapters/assets.js";
 import { getXStocksPriceData } from "../adapters/price-data.js";
 import { getXStocksProofOfReserves } from "../adapters/proof-of-reserves.js";
 import { getXStocksSystemStatus } from "../adapters/system-status.js";
-import { createXStocksPublicClient, type XStocksPublicClient, type XStocksPublicClientConfig } from "../http.js";
+import { BACKED_API_BASE_URL, BACKED_PUBLIC_PATHS } from "../constants.js";
+import { createXStocksPublicClient, type XStocksFetch, type XStocksPublicClient, type XStocksPublicClientConfig } from "../http.js";
 import {
   ROUTE_TRUTH,
   XSTOCKS_RAIL_PROOF_SOURCE,
@@ -151,6 +152,7 @@ export interface LoadXStocksBoundaryStateInput {
 export interface XStocksBoundaryRepositoryConfig extends XStocksPublicClientConfig {
   readonly client?: XStocksPublicClient;
   readonly fetchImpl?: XStocksPublicClientConfig["fetch"];
+  readonly backedBaseUrl?: string;
   readonly now?: () => string;
   readonly additionalRoutes?: readonly XStocksPolicyRouteStateRoute[];
 }
@@ -162,6 +164,78 @@ export interface XStocksBoundaryRepository {
 }
 
 const AUSD_SYMBOL = "AUSD";
+
+interface BackedAssetQuoteRaw {
+  readonly symbol?: string;
+  readonly bid?: number | null;
+  readonly ask?: number | null;
+}
+
+interface BackedQuoteRequestConfig {
+  readonly baseUrl?: string;
+  readonly fetchImpl?: XStocksFetch;
+}
+
+function resolveFetch(fetchImpl?: XStocksFetch): XStocksFetch {
+  if (fetchImpl) {
+    return fetchImpl;
+  }
+
+  if (typeof fetch !== "function") {
+    throw new Error("No fetch implementation was provided for Backed quotes.");
+  }
+
+  return fetch;
+}
+
+function buildBackedQuoteUrl(
+  symbol: string,
+  baseUrl = BACKED_API_BASE_URL,
+): URL {
+  const base = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  const path = BACKED_PUBLIC_PATHS.assetQuote(symbol).replace(/^\/+/u, "");
+  return new URL(path, base);
+}
+
+function normalizeBackedQuotePrice(raw: BackedAssetQuoteRaw): number | null {
+  const bidValue = typeof raw.bid === "number" ? raw.bid : null;
+  const askValue = typeof raw.ask === "number" ? raw.ask : null;
+
+  if (
+    bidValue === null ||
+    askValue === null ||
+    !Number.isFinite(bidValue) ||
+    !Number.isFinite(askValue)
+  ) {
+    return null;
+  }
+
+  return Number((((bidValue + askValue) / 2) / 100).toFixed(6));
+}
+
+async function getBackedQuotePriceUsd(
+  assetSymbol: string,
+  config: BackedQuoteRequestConfig = {},
+): Promise<number | null> {
+  const fetchImpl = resolveFetch(config.fetchImpl);
+  const url = buildBackedQuoteUrl(assetSymbol, config.baseUrl);
+  const response = await fetchImpl(url, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Backed quote request failed with status ${response.status}: ${await response.text()}`,
+    );
+  }
+
+  return normalizeBackedQuotePrice(
+    (await response.json()) as BackedAssetQuoteRaw,
+  );
+}
 
 function toBoundaryDeployments(asset: XStocksAsset): XStocksBoundaryDeploymentMap {
   return Object.fromEntries(
@@ -286,7 +360,8 @@ export function createAusdBridgeAssetSnapshot(): XStocksFetchedBoundaryAsset {
 export async function fetchXStocksBoundaryAsset(
   client: XStocksPublicClient,
   assetSymbol: string,
-  _options: FetchXStocksBoundaryAssetOptions = {}
+  _options: FetchXStocksBoundaryAssetOptions = {},
+  backedQuoteConfig: BackedQuoteRequestConfig = {},
 ): Promise<XStocksFetchedBoundaryAsset> {
   if (assetSymbol === AUSD_SYMBOL) {
     return createAusdBridgeAssetSnapshot();
@@ -300,13 +375,36 @@ export async function fetchXStocksBoundaryAsset(
       getXStocksProofOfReserves(client, assetSymbol)
     ]);
     const executionRoutes = buildExecutionRoutes(asset, systemStatus);
+    const notes: string[] = [];
+    let priceUsd = priceData.quoteUsd;
+
+    try {
+      const backedQuotePriceUsd = await getBackedQuotePriceUsd(
+        assetSymbol,
+        backedQuoteConfig,
+      );
+
+      if (backedQuotePriceUsd !== null) {
+        priceUsd = backedQuotePriceUsd;
+      } else {
+        notes.push(
+          `Backed quote response for ${assetSymbol} did not include a usable bid/ask pair; falling back to xStocks price data.`,
+        );
+      }
+    } catch (error) {
+      notes.push(
+        error instanceof Error
+          ? `${error.message} Falling back to xStocks price data for ${assetSymbol}.`
+          : `Backed quote request failed for ${assetSymbol}. Falling back to xStocks price data.`,
+      );
+    }
 
     return {
       assetSymbol,
       source: XSTOCKS_BOUNDARY_ASSET_SOURCE.XSTOCKS,
       chain: "ethereum",
       status: toBoundaryStatus(asset, systemStatus),
-      priceUsd: priceData.quoteUsd,
+      priceUsd,
       proofOfReserves: toProofState(proofOfReserves),
       deployments: toBoundaryDeployments(asset),
       executionRoutes,
@@ -315,7 +413,7 @@ export async function fetchXStocksBoundaryAsset(
       priceData,
       proofOfReservesDetail: proofOfReserves,
       systemStatus,
-      notes: []
+      notes
     };
   } catch (error) {
     return {
@@ -340,9 +438,14 @@ export async function fetchXStocksBoundaryAsset(
 export async function fetchXStocksBoundaryAssets(
   client: XStocksPublicClient,
   assetSymbols: readonly string[],
-  options: FetchXStocksBoundaryAssetOptions = {}
+  options: FetchXStocksBoundaryAssetOptions = {},
+  backedQuoteConfig: BackedQuoteRequestConfig = {},
 ): Promise<readonly XStocksFetchedBoundaryAsset[]> {
-  return Promise.all(assetSymbols.map((assetSymbol) => fetchXStocksBoundaryAsset(client, assetSymbol, options)));
+  return Promise.all(
+    assetSymbols.map((assetSymbol) =>
+      fetchXStocksBoundaryAsset(client, assetSymbol, options, backedQuoteConfig),
+    ),
+  );
 }
 
 export function buildPolicyLiveXStocksStatePayload(
@@ -481,20 +584,31 @@ export function createXStocksBoundaryRepository(
     createXStocksPublicClient(clientConfig);
   const now = config.now ?? (() => new Date().toISOString());
   const additionalRoutes = config.additionalRoutes ?? [];
+  const backedQuoteConfig: BackedQuoteRequestConfig = {
+    ...(config.backedBaseUrl === undefined
+      ? {}
+      : { baseUrl: config.backedBaseUrl }),
+    ...(fetchImpl === undefined ? {} : { fetchImpl }),
+  };
 
   return {
     async fetchAssetSnapshot(symbol: string, options: FetchXStocksBoundaryAssetOptions = {}) {
-      return fetchXStocksBoundaryAsset(client, symbol, options);
+      return fetchXStocksBoundaryAsset(client, symbol, options, backedQuoteConfig);
     },
     async fetchRequiredAssets(symbols: readonly string[], options: FetchXStocksBoundaryAssetOptions = {}) {
-      return fetchXStocksBoundaryAssets(client, symbols, options);
+      return fetchXStocksBoundaryAssets(
+        client,
+        symbols,
+        options,
+        backedQuoteConfig,
+      );
     },
     async loadBoundaryState(input: LoadXStocksBoundaryStateInput): Promise<XStocksPolicyBoundaryStatePayload> {
       const asOf = input.asOf ?? now();
       const requiredAssets = resolveRequiredAssets(input);
       const fetchedAssets = await fetchXStocksBoundaryAssets(client, requiredAssets, {
         fetchedAt: asOf
-      });
+      }, backedQuoteConfig);
 
       return composePolicyBoundaryStateFromFetchedAssets(fetchedAssets, {
         asOf,
