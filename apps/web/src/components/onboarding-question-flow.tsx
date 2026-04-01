@@ -294,6 +294,9 @@ function PostQuestionnaireWorkspace({
         if (tourStep < tourSteps.length - 1) setTourStep(tourStep + 1);
         else setTourDismissed(true);
       }}
+      onTourPrev={() => {
+        if (tourStep > 0) setTourStep(tourStep - 1);
+      }}
       onTourDismiss={() => setTourDismissed(true)}
       previewStatus={previewStatus}
     />
@@ -420,7 +423,12 @@ function RecommendationGate({
   return (
     <div className="pq-gate">
       <div className="pq-gate-inner">
-        <span className="landing-kicker">Your portfolio is ready</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+          <span className="landing-kicker">Your portfolio is ready</span>
+          <button className="button button-primary button-lg" onClick={onEnterWorkspace} type="button">
+            See my portfolio
+          </button>
+        </div>
         <h1 className="pq-gate-title">{recommendation.title}</h1>
         <p className="pq-gate-sub">{qualification.summary}</p>
 
@@ -587,6 +595,7 @@ function SimulatedWorkspace({
   tourStep,
   tourDismissed,
   onTourNext,
+  onTourPrev,
   onTourDismiss,
   previewStatus,
 }: {
@@ -599,6 +608,7 @@ function SimulatedWorkspace({
   tourStep: number;
   tourDismissed: boolean;
   onTourNext: () => void;
+  onTourPrev: () => void;
   onTourDismiss: () => void;
   previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
@@ -654,6 +664,9 @@ function SimulatedWorkspace({
               <span className="pq-tour-caption">{currentTour.caption}</span>
             </div>
             <div className="pq-tour-actions">
+              {tourStep > 0 && (
+                <button className="button button-ghost button-sm" onClick={onTourPrev} type="button">Previous</button>
+              )}
               <button className="button button-primary button-sm" onClick={onTourNext} type="button">
                 {tourStep < tourSteps.length - 1 ? "Next" : "Done"}
               </button>
@@ -666,9 +679,9 @@ function SimulatedWorkspace({
       )}
 
       {/* ── Portfolio summary with performance surface ── */}
-      <div className="pq-grid">
+      <div className={`pq-grid ${highlightId === "pq-summary" ? "pq-highlight" : ""}`} id="pq-summary">
         <div className="pq-main">
-          <section className={`pq-summary ${highlightId === "pq-summary" ? "pq-highlight" : ""}`} id="pq-summary">
+          <section className="pq-summary">
             <div className="pq-summary-head">
               <div>
                 <span className="section-kicker">Your portfolio</span>
