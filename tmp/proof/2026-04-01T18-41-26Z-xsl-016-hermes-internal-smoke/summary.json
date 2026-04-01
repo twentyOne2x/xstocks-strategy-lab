@@ -1,0 +1,54 @@
+{
+  "proofGeneratedAt": "2026-04-01T18:41:30.089Z",
+  "qualification": {
+    "slotId": "onboarding.default_basket",
+    "mode": "basket",
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "recommendationId": "rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "executionState": "funding_required",
+    "activationReady": false,
+    "depositRequired": true,
+    "fundingGapUsd": 0
+  },
+  "manifestWalletRequirements": {
+    "requiresWallet": true,
+    "requiresSmartAccount": false,
+    "minFundingUsd": 0,
+    "preferredFundingProvider": "privy",
+    "topUpAsset": "USDC"
+  },
+  "previewNoWallet": {
+    "surfaceTruth": "preview",
+    "executionState": "wallet_required",
+    "executionEligibility": "preview_only",
+    "blockers": [
+      "Connect a wallet first so the correct deposit destination can be derived."
+    ],
+    "warnings": []
+  },
+  "handoffNoWallet": {
+    "state": "stay_public_preview",
+    "reason": "Public preview can explain the lane, but wallet readiness has not been supplied yet.",
+    "nextAction": "Stay on public preview until the user reaches the authenticated wallet-connect step."
+  },
+  "previewReady": {
+    "surfaceTruth": "live",
+    "executionState": "ready",
+    "executionEligibility": "executable",
+    "blockers": [],
+    "warnings": []
+  },
+  "handoffReady": {
+    "state": "ready_for_authenticated_activation",
+    "reason": "Public-safe preview has reached a truthful executable readiness snapshot, but activation save and execution still require authenticated ownership.",
+    "nextAction": "Hand off to the authenticated internal activation surface and save the activation from a verified user context."
+  },
+  "authenticatedBoundary": {
+    "activationCreateStatus": "503",
+    "activationCreateError": "Privy auth verification requires PRIVY_APP_ID, PRIVY_APP_SECRET, and PRIVY_JWKS_URL.",
+    "activityReadStatus": "503",
+    "activityReadError": "Privy auth verification requires PRIVY_APP_ID, PRIVY_APP_SECRET, and PRIVY_JWKS_URL.",
+    "executionsReadStatus": "503",
+    "executionsReadError": "Privy auth verification requires PRIVY_APP_ID, PRIVY_APP_SECRET, and PRIVY_JWKS_URL."
+  }
+}

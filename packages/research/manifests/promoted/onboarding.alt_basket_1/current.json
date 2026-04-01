@@ -313,7 +313,7 @@
         "truthLabel": "preview",
         "availability": "preview_only",
         "requiredFor": "core_xstocks",
-        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, and SPYx; required core legs AMDx, AVGOx, MSFTx, and AAPLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs AMDx, AVGOx, MSFTx, AAPLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
       },
       {
         "routeId": "flowdesk.ausd-rwa-strategy",
@@ -328,8 +328,8 @@
       }
     ],
     "proofNotes": [
-      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, and SPYx.",
-      "This basket still requires AMDx, AVGOx, MSFTx, and AAPLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
+      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, SPYx.",
+      "This basket still requires AMDx, AVGOx, MSFTx, AAPLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
     ],
     "validationBadges": [
       "validated_strategy",
@@ -350,7 +350,7 @@
         "truth_label": "preview",
         "availability": "preview_only",
         "required_for": "core_xstocks",
-        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, and SPYx; required core legs AMDx, AVGOx, MSFTx, and AAPLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs AMDx, AVGOx, MSFTx, AAPLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
       },
       {
         "route_id": "flowdesk.ausd-rwa-strategy",
@@ -365,13 +365,157 @@
       }
     ],
     "proof_notes": [
-      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, and SPYx.",
-      "This basket still requires AMDx, AVGOx, MSFTx, and AAPLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
+      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, SPYx.",
+      "This basket still requires AMDx, AVGOx, MSFTx, AAPLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
     ],
     "validation_badges": [
       "validated_strategy",
       "promoted_manifest",
       "preview_only"
+    ]
+  },
+  "replay": {
+    "startingCapital": 1000,
+    "endingCapital": 1237.93,
+    "netReturnPct": 23.7933,
+    "maxDrawdownPct": -12.9752,
+    "turnoverPct": 3.3476,
+    "winRatePct": 72.7273,
+    "points": [
+      {
+        "label": "Open",
+        "date": "2025-01-31",
+        "value": 1000
+      },
+      {
+        "label": "03-31",
+        "date": "2025-03-31",
+        "value": 1094.71
+      },
+      {
+        "label": "04-30",
+        "date": "2025-04-30",
+        "value": 1135.19
+      },
+      {
+        "label": "06-30",
+        "date": "2025-06-30",
+        "value": 1194.66
+      },
+      {
+        "label": "07-31",
+        "date": "2025-07-31",
+        "value": 1112.29
+      },
+      {
+        "label": "09-30",
+        "date": "2025-09-30",
+        "value": 1100.48
+      },
+      {
+        "label": "10-31",
+        "date": "2025-10-31",
+        "value": 1188.85
+      },
+      {
+        "label": "Now",
+        "date": "2025-12-31",
+        "value": 1237.93
+      }
+    ]
+  },
+  "marketIntelligence": {
+    "currentView": "Core Low Cash + Lower Rebalance Threshold. 5-name core universe basket with 2% in AUSD. NVDAx is the largest sleeve at 22%. Under the authoritative path-dependent rebalance scorer, after costs it outperformed basket.sp500_core_v1 by 13.09% in the frozen window.",
+    "horizon": "Validation window 2025-01-31 to 2025-12-31",
+    "whatChanged": [
+      "Selection universe: starter basket only -> core universe; Cash sleeve: 8% AUSD -> 2% AUSD; Rebalance trigger: 325 bps -> 275 bps",
+      "NVDAx is the largest sleeve at 22% against a 22% single-name cap.",
+      "Authoritative rebalance simulation implies 3.35% turnover and 12.08 bps of annualized costs across 1 rebalance events."
+    ],
+    "drivers": [
+      {
+        "label": "Selection universe",
+        "value": "core universe",
+        "tone": "positive",
+        "note": "Widens the eligible pool beyond the starter basket without changing slot identity."
+      },
+      {
+        "label": "Holdings breadth",
+        "value": "5 names",
+        "tone": "positive",
+        "note": "Changes how many names survive ranking into the target basket."
+      },
+      {
+        "label": "Cash sleeve",
+        "value": "2%",
+        "tone": "neutral",
+        "note": "Changes how much capital stays in AUSD instead of xStocks exposure."
+      },
+      {
+        "label": "Rebalance trigger",
+        "value": "275 bps",
+        "tone": "neutral",
+        "note": "Skips smaller drifts to reduce churn."
+      },
+      {
+        "label": "Benchmark edge",
+        "value": "+13.09%",
+        "tone": "positive",
+        "note": "After estimated costs versus the pinned benchmark in the promoted research window."
+      },
+      {
+        "label": "Replay drawdown",
+        "value": "12.98%",
+        "tone": "warning",
+        "note": "Authoritative replay max drawdown with 3.35% annualized turnover."
+      }
+    ]
+  },
+  "market_intelligence": {
+    "current_view": "Core Low Cash + Lower Rebalance Threshold. 5-name core universe basket with 2% in AUSD. NVDAx is the largest sleeve at 22%. Under the authoritative path-dependent rebalance scorer, after costs it outperformed basket.sp500_core_v1 by 13.09% in the frozen window.",
+    "horizon": "Validation window 2025-01-31 to 2025-12-31",
+    "what_changed": [
+      "Selection universe: starter basket only -> core universe; Cash sleeve: 8% AUSD -> 2% AUSD; Rebalance trigger: 325 bps -> 275 bps",
+      "NVDAx is the largest sleeve at 22% against a 22% single-name cap.",
+      "Authoritative rebalance simulation implies 3.35% turnover and 12.08 bps of annualized costs across 1 rebalance events."
+    ],
+    "drivers": [
+      {
+        "label": "Selection universe",
+        "value": "core universe",
+        "tone": "positive",
+        "note": "Widens the eligible pool beyond the starter basket without changing slot identity."
+      },
+      {
+        "label": "Holdings breadth",
+        "value": "5 names",
+        "tone": "positive",
+        "note": "Changes how many names survive ranking into the target basket."
+      },
+      {
+        "label": "Cash sleeve",
+        "value": "2%",
+        "tone": "neutral",
+        "note": "Changes how much capital stays in AUSD instead of xStocks exposure."
+      },
+      {
+        "label": "Rebalance trigger",
+        "value": "275 bps",
+        "tone": "neutral",
+        "note": "Skips smaller drifts to reduce churn."
+      },
+      {
+        "label": "Benchmark edge",
+        "value": "+13.09%",
+        "tone": "positive",
+        "note": "After estimated costs versus the pinned benchmark in the promoted research window."
+      },
+      {
+        "label": "Replay drawdown",
+        "value": "12.98%",
+        "tone": "warning",
+        "note": "Authoritative replay max drawdown with 3.35% annualized turnover."
+      }
     ]
   },
   "explanationBundle": {

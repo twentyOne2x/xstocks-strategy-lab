@@ -1,0 +1,109 @@
+{
+  "reached": true,
+  "count": 1,
+  "executionRequestId": "execreq_1f023d5b-1972-4beb-a926-13a6763d7066",
+  "executionRequestState": "blocked",
+  "legs": [
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:1",
+      "sequence": 1,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "NVDAx",
+      "adapterId": "cow_swap",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 18,
+      "targetNotionalUsd": 9,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "awaiting_approval",
+      "blockers": [],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ],
+      "quote": {
+        "kind": "cow_swap",
+        "quoteId": "1126589828",
+        "quotedAt": "2026-04-01T18:44:22.887Z",
+        "expiration": "2026-04-01T18:46:19.374090242Z",
+        "verified": true,
+        "protocolFeeBps": "2",
+        "order": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "sellAmount": "8684862",
+          "buyAmount": "49537572594737713",
+          "validTo": 1775070859,
+          "appData": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "feeAmount": "315138",
+          "kind": "sell",
+          "partiallyFillable": false,
+          "sellTokenBalance": "erc20",
+          "buyTokenBalance": "erc20",
+          "signingScheme": "eip712",
+          "gasAmount": "282553",
+          "gasPrice": "524643703",
+          "sellTokenPrice": "470396112.43209350109100341796875"
+        },
+        "owner": "0x1111111111111111111111111111111111111111"
+      },
+      "approval": {
+        "approvalType": "eip712_signature",
+        "status": "awaiting_user",
+        "signerAddress": "0x1111111111111111111111111111111111111111",
+        "approvalTarget": "cow_order",
+        "orderToSign": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "sellAmount": "8684862",
+          "buyAmount": "49537572594737713",
+          "validTo": 1775070859,
+          "appData": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "feeAmount": "315138",
+          "gasAmount": "282553",
+          "gasPrice": "524643703",
+          "sellTokenPrice": "470396112.43209350109100341796875",
+          "kind": "sell",
+          "partiallyFillable": false,
+          "sellTokenBalance": "erc20",
+          "buyTokenBalance": "erc20",
+          "signingScheme": "eip712",
+          "from": "0x1111111111111111111111111111111111111111"
+        },
+        "signature": null,
+        "approvedAt": null,
+        "submittedAt": null,
+        "venueOrderId": null,
+        "notes": [
+          "The user must sign this CoW order via an EIP-712-compatible wallet flow before backend submission."
+        ]
+      },
+      "venueStatus": {
+        "venueId": "cow_swap",
+        "venueOrderId": null,
+        "status": "quote_ready",
+        "settlementTxHash": null,
+        "lastCheckedAt": null,
+        "updatedAt": "2026-04-01T18:44:22.887Z",
+        "rawStatus": {
+          "quoteId": "1126589828",
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "kind": "sell",
+          "sellAmountBeforeFee": "9000000",
+          "targetNotionalUsd": 9
+        }
+      },
+      "receipt": null,
+      "trade": null
+    }
+  ]
+}

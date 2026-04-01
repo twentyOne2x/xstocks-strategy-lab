@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-04-01T18:53:55.532Z",
+  "backendPrivyConfigAvailable": true,
+  "appIdSource": "apps/web/.env.local",
+  "backendSecretSource": "~/.config/attn/shared.env",
+  "blocker": "Privy access token is required.",
+  "activationCreateStatus": "401",
+  "activityReadStatus": "401",
+  "executionsReadStatus": "401",
+  "activationCreateError": "Privy access token is required.",
+  "activityReadError": "Privy access token is required.",
+  "executionsReadError": "Privy access token is required."
+}

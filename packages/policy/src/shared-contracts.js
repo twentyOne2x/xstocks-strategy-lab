@@ -84,6 +84,42 @@ export const portfolioExplanationBundleSchema = z.object({
   components: z.array(portfolioExplanationComponentSchema).min(1),
 });
 
+export const replayPointSchema = z.object({
+  label: nonEmptyStringSchema,
+  value: z.number().finite().nonnegative(),
+  date: nonEmptyStringSchema.optional(),
+});
+
+export const replaySurfaceSchema = z.object({
+  startingCapital: z.number().finite().positive(),
+  endingCapital: z.number().finite().nonnegative(),
+  netReturnPct: z.number().finite(),
+  maxDrawdownPct: z.number().finite(),
+  turnoverPct: z.number().finite().nonnegative(),
+  winRatePct: z.number().finite().min(0).max(100),
+  points: z.array(replayPointSchema).min(2),
+});
+
+export const marketDriverToneSchema = z.enum([
+  "positive",
+  "neutral",
+  "warning",
+]);
+
+export const marketDriverSchema = z.object({
+  label: nonEmptyStringSchema,
+  value: nonEmptyStringSchema,
+  tone: marketDriverToneSchema,
+  note: nonEmptyStringSchema,
+});
+
+export const marketIntelligenceSurfaceSchema = z.object({
+  currentView: nonEmptyStringSchema,
+  horizon: nonEmptyStringSchema,
+  whatChanged: z.array(nonEmptyStringSchema).min(1),
+  drivers: z.array(marketDriverSchema).min(1),
+});
+
 export const basketRecommendationSchema =
   baseBasketRecommendationSchema.extend({
     explanationBundle: portfolioExplanationBundleSchema,

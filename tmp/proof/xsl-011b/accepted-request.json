@@ -1,0 +1,20 @@
+{
+  "endpoint": "https://api-production-e70b.up.railway.app/api/internal/rebalances/provider-events",
+  "requestPayload": {
+    "version": "1",
+    "providerId": "chainlink_cre",
+    "deliveryId": "accepted_probe_delivery_e8d75bd4-6d7d-4476-9965-fa73fe89dc0f",
+    "eventId": "accepted_probe_event_e8d75bd4-6d7d-4476-9965-fa73fe89dc0f",
+    "eventType": "rebalance_review_requested",
+    "triggerMode": "review_only",
+    "chain": "ethereum",
+    "slotId": "onboarding.default_basket",
+    "activationId": "activation_provider_probe_baseline_20260401",
+    "triggeredAt": "2026-04-01T19:21:01.685Z",
+    "summary": "Accepted-path deployed signed-event probe for XSL-011B with baseline runtime activation.",
+    "requestDigest": "sha256:97888419a183aeba41cd0484d0bfa08a0d7e4e4b95528f918ae4d7ca619c81c5"
+  },
+  "kid": "deployed-proof-key-20260401",
+  "iss": "0x5555555555555555555555555555555555555555",
+  "audience": "xstocks-provider-rebalance-review"
+}

@@ -4,6 +4,7 @@ import {
   buildMethodologyBadges,
   getDetailScreenData,
   getFeaturedManifest,
+  getWorkspaceSpotlightData,
   getTerminalChrome,
 } from "./data-source";
 
@@ -34,5 +35,21 @@ describe("data source", () => {
     expect(() => getDetailScreenData("lab-only-view")).toThrow(
       /not found/,
     );
+  });
+
+  it("uses replay points carried on the manifest instead of a slug template", () => {
+    const manifest = {
+      ...getFeaturedManifest(),
+      replay: {
+        ...getFeaturedManifest().replay,
+        points: [
+          { label: "Open", value: 1000 },
+          { label: "Now", value: 1450 },
+        ],
+      },
+    };
+    const spotlight = getWorkspaceSpotlightData(manifest);
+
+    expect(spotlight.points).toEqual(manifest.replay.points);
   });
 });

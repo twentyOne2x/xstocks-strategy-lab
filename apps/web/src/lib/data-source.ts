@@ -96,20 +96,23 @@ export function formatPercent(value: number): string {
 
 /* ── Replay points ── */
 
-const replayTemplates: Record<string, number[]> = {
-  "ai-infra-autopilot": [0, 5.2, 9.8, 7.4, 15.9, 21.6, 25.1, 28.4],
-  "mag7-cash-balance": [0, 2.4, 5.1, 6.8, 10.2, 12.8, 15.3, 17.6],
-  "spy-core-shield": [0, 1.8, 2.6, 3.9, 5.1, 6.7, 7.8, 8.9],
-  "mstr-conviction-long": [0, 8.2, -4.6, 12.8, 20.4, 17.2, 30.6, 39.6],
-};
-
 function buildReplayPointsFromManifest(manifest: PromotedManifest): ReplayPoint[] {
-  const template = replayTemplates[manifest.slug]
-    ?? Object.values(replayTemplates)[0];
+  if (manifest.replay.points && manifest.replay.points.length > 0) {
+    return manifest.replay.points.map((point) => ({
+      label: point.label,
+      value: point.value,
+    }));
+  }
+
   const labels = ["Open", "W1", "W2", "W3", "W4", "W5", "W6", "Now"];
-  return template.map((pct, i) => ({
-    label: labels[i] ?? `T${i + 1}`,
-    value: manifest.replay.startingCapital * (1 + pct / 100),
+  const start = manifest.replay.startingCapital;
+  const end = manifest.replay.endingCapital;
+
+  return labels.map((label, index) => ({
+    label,
+    value:
+      start +
+      ((end - start) * index) / Math.max(labels.length - 1, 1),
   }));
 }
 

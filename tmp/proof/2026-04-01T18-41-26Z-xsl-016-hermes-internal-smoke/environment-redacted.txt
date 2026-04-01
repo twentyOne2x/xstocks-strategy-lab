@@ -1,0 +1,22 @@
+Redacted environment presence
+PRIVY_APP_ID=missing
+NEXT_PUBLIC_PRIVY_APP_ID=missing
+PRIVY_APP_SECRET=missing
+PRIVY_JWKS_URL=missing
+ETHEREUM_RPC_URL=missing
+XSTOCKS_REPORTING_TOKEN=missing
+AUTORESEARCH_PROOF_TOKEN=missing
+XSTOCKS_PROVIDER_REBALANCE_JWT_AUDIENCE=missing
+HERMES_HOST=missing
+HERMES_URL=missing
+HERMES_TOKEN=missing
+
+Redacted file-backed config presence
+.vercel/.env.production.local=present
+apps/web/.env.local=present
+.env=missing
+.env.local=missing
+
+Interesting file-backed keys
+.vercel/.env.production.local: no interesting keys present
+apps/web/.env.local: NEXT_PUBLIC_PRIVY_APP_ID

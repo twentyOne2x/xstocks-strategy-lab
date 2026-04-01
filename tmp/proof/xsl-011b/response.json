@@ -1,0 +1,50 @@
+{
+  "data": {
+    "version": "1",
+    "generatedAt": "2026-04-01T18:48:33.780Z",
+    "accepted": false,
+    "receipt": {
+      "version": "1",
+      "receiptId": "provider_receipt_894b58a2-9871-46e3-9f87-ae338ecca55e",
+      "decision": "rejected",
+      "statusCode": 503,
+      "providerId": "chainlink_cre",
+      "deliveryId": "deployed_probe_delivery_1",
+      "eventId": "deployed_probe_event_1",
+      "triggerSource": "provider_triggered",
+      "routePath": "/api/internal/rebalances/provider-events",
+      "receivedAt": "2026-04-01T18:48:33.744Z",
+      "processedAt": "2026-04-01T18:48:33.746Z",
+      "requestDigest": "sha256:0966282e5a0f75ff2bc0c007d8a7ef5f7d3a70d119c8682ee558f1a80cff3304",
+      "rawBodyDigest": "sha256:65d819a703b885f529b08d6f5ad4f0470a411bd3a00c05f3c37fc234a87ca181",
+      "signerAddress": null,
+      "reasonCodes": [
+        "provider_auth_not_configured"
+      ],
+      "reasonDetail": "Provider-triggered rebalance auth requires XSTOCKS_PROVIDER_REBALANCE_JWT_AUDIENCE and XSTOCKS_PROVIDER_REBALANCE_SIGNER_ALLOWLIST_JSON.",
+      "duplicateOfReceiptId": null,
+      "stateChanged": false,
+      "rebalanceId": null,
+      "rebalanceState": null,
+      "targetManifestId": null,
+      "baselineManifestId": null,
+      "rebalanceBlockers": [],
+      "request": {
+        "version": "1",
+        "providerId": "chainlink_cre",
+        "deliveryId": "deployed_probe_delivery_1",
+        "eventId": "deployed_probe_event_1",
+        "eventType": "rebalance_review_requested",
+        "triggerMode": "review_only",
+        "chain": "ethereum",
+        "slotId": "onboarding.default_basket",
+        "activationId": "activation_provider_1",
+        "triggeredAt": "2026-04-01T18:48:33.248Z",
+        "requestDigest": "sha256:0966282e5a0f75ff2bc0c007d8a7ef5f7d3a70d119c8682ee558f1a80cff3304",
+        "summary": "Deployed signed-event probe for XSL-011B."
+      },
+      "jwt": null
+    },
+    "rebalanceOrchestration": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "endpoint": "https://api-production-e70b.up.railway.app/api/internal/rebalances/provider-events",
+  "requestPayload": {
+    "version": "1",
+    "providerId": "chainlink_cre",
+    "deliveryId": "deployed_probe_delivery_1",
+    "eventId": "deployed_probe_event_1",
+    "eventType": "rebalance_review_requested",
+    "triggerMode": "review_only",
+    "chain": "ethereum",
+    "slotId": "onboarding.default_basket",
+    "activationId": "activation_provider_1",
+    "triggeredAt": "2026-04-01T18:48:33.248Z",
+    "summary": "Deployed signed-event probe for XSL-011B.",
+    "requestDigest": "sha256:0966282e5a0f75ff2bc0c007d8a7ef5f7d3a70d119c8682ee558f1a80cff3304"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "data": {
+    "status": "ok",
+    "endpoints": {
+      "recommendation_fetch": {
+        "method": "GET",
+        "path": "/api/recommendations",
+        "query": [
+          "manifestId? | slotId?",
+          "userNotionalUsd?",
+          "wallet*?"
+        ],
+        "response": "recommendation_fetch_v1"
+      },
+      "qualification_read": {
+        "method": "POST",
+        "path": "/api/qualify",
+        "body": [
+          "answers",
+          "userNotionalUsd?",
+          "walletState?"
+        ],
+        "response": "qualification_read_v1"
+      },
+      "catalog_read": {
+        "method": "GET",
+        "path": "/api/catalog",
+        "query": [
+          "surface?",
+          "mode?"
+        ],
+        "response": "catalog_read_v1"
+      },
+      "workspace_read": {
+        "method": "GET",
+        "path": "/api/workspace",
+        "query": [
+          "manifestId? | slotId?",
+          "userNotionalUsd?",
+          "wallet*?"
+        ],
+        "response": "workspace_read_v1"
+      },
+      "activation_preview_read": {
+        "method": "GET",
+        "path": "/api/activation-preview",
+        "query": [
+          "manifestId? | slotId?",
+          "userNotionalUsd?",
+          "wallet*?"
+        ],
+        "response": "activation_preview_read_v1"
+      },
+      "public_agent_handoff_read": {
+        "method": "GET",
+        "path": "/api/public-agent-handoff",
+        "query": [
+          "manifestId? | slotId?",
+          "userNotionalUsd?",
+          "wallet*?"
+        ],
+        "response": "public_agent_handoff_read_v1"
+      },
+      "manifest_preflight": {
+        "method": "POST",
+        "path": "/api/manifests/preflight",
+        "body": [
+          "manifestId? | slotId?",
+          "userNotionalUsd",
+          "walletState?"
+        ],
+        "response": "manifest_preflight_v1"
+      },
+      "activation_save": {
+        "method": "POST",
+        "path": "/api/activations",
+        "body": [
+          "manifestId? | slotId?",
+          "userNotionalUsd",
+          "walletState?"
+        ],
+        "response": "activation_save_v1"
+      },
+      "activity_read": {
+        "method": "GET",
+        "path": "/api/activity",
+        "query": [
+          "activationId?",
+          "manifestId?",
+          "slotId?",
+          "limit?"
+        ],
+        "response": "activity_read_v1"
+      },
+      "execution_write": {
+        "method": "POST",
+        "path": "/api/executions",
+        "body": [
+          "action",
+          "activationId?",
+          "executionRequestId?",
+          "legId?",
+          "signature?",
+          "txHash?"
+        ],
+        "response": "execution_write_v1"
+      },
+      "execution_read": {
+        "method": "GET",
+        "path": "/api/executions",
+        "query": [
+          "executionRequestId?",
+          "activationId?",
+          "manifestId?",
+          "slotId?",
+          "limit?"
+        ],
+        "response": "execution_read_v1"
+      },
+      "provider_rebalance_event_ingest": {
+        "method": "POST",
+        "path": "/api/internal/rebalances/provider-events",
+        "body": [
+          "provider review event JSON",
+          "Authorization: Bearer <ES256K ETH-JWT>"
+        ],
+        "response": "provider_rebalance_event_ingest_v1"
+      },
+      "autoresearch_runtime_read": {
+        "method": "GET",
+        "path": "/api/runtime/autoresearch",
+        "query": [
+          "limit?"
+        ],
+        "response": "autoresearch_runtime_read_v1"
+      },
+      "autoresearch_runtime_receipt_write": {
+        "method": "POST",
+        "path": "/api/internal/autoresearch/receipts",
+        "body": [
+          "runtime",
+          "run"
+        ],
+        "response": "autoresearch_runtime_receipt_write_v1"
+      },
+      "xstocks_funnel_event_ingest": {
+        "method": "POST",
+        "path": "/api/funnel-events/xstocks",
+        "body": [
+          "stage",
+          "subjectId?",
+          "manifestId? | slotId?"
+        ],
+        "response": "xstocks_funnel_event_ingest_v1"
+      },
+      "xstocks_reporting_read": {
+        "method": "GET",
+        "path": "/api/reporting/xstocks",
+        "query": [
+          "limit?"
+        ],
+        "response": "xstocks_reporting_read_v1"
+      }
+    }
+  }
+}

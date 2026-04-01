@@ -1,0 +1,154 @@
+{
+  "generatedAt": "2026-04-01T21:36:43.280Z",
+  "walletAddress": "0x1111111111111111111111111111111111111111",
+  "notionalLadderUsd": [
+    20,
+    25,
+    50,
+    100
+  ],
+  "symbols": [
+    "NVDAx",
+    "AAPLx",
+    "MSFTx",
+    "METAx",
+    "AMZNx",
+    "GOOGLx",
+    "TSLAx",
+    "SPYx",
+    "AMDx",
+    "AVGOx",
+    "ORCLx"
+  ],
+  "successfulSymbols": [
+    "NVDAx",
+    "AAPLx",
+    "MSFTx",
+    "METAx",
+    "AMZNx",
+    "GOOGLx",
+    "TSLAx",
+    "SPYx",
+    "AVGOx",
+    "ORCLx"
+  ],
+  "failedSymbols": [
+    "AMDx"
+  ],
+  "signerBoundary": "Live 1inch Fusion quotes are proven. Real submission still requires an explicit xStocks user wallet signer/private-key path; this runner does not submit orders.",
+  "bySymbol": [
+    {
+      "symbol": "NVDAx",
+      "ethereumDeploymentAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "e3c161aa-c11f-4dd4-a30a-7e2fe39ad6c8",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "AAPLx",
+      "ethereumDeploymentAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "87f3840f-978c-431c-b948-ba14fd2fddf7",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "MSFTx",
+      "ethereumDeploymentAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "04a910d7-57d2-49c4-b341-bb98dd75255c",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "METAx",
+      "ethereumDeploymentAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "99d2b684-24df-4036-968e-db135c1d1a5c",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "AMZNx",
+      "ethereumDeploymentAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "98aebd7d-4e6e-45e7-acd5-1a27e096bf45",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "GOOGLx",
+      "ethereumDeploymentAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "5bbfcc04-b6c3-4d95-ac8b-690d5d6af25e",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "TSLAx",
+      "ethereumDeploymentAddress": "0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "44ce4b79-4f1d-4e24-a00e-c64937f296fa",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "SPYx",
+      "ethereumDeploymentAddress": "0x90a2a4c76b5d8c0bc892a69ea28aa775a8f2dd48",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "a702fae7-8d0e-473c-9f51-a9bb1d07170f",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "AMDx",
+      "ethereumDeploymentAddress": "0x3522513e5f146a2006e2901b05f16b2821485e19",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 500,
+          "code": "PATHFINDER_UNKNOWN",
+          "description": "pathfinder error"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 500,
+          "code": "PATHFINDER_UNKNOWN",
+          "description": "pathfinder error"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 500,
+          "code": "PATHFINDER_UNKNOWN",
+          "description": "pathfinder error"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 500,
+          "code": "PATHFINDER_UNKNOWN",
+          "description": "pathfinder error"
+        }
+      ]
+    },
+    {
+      "symbol": "AVGOx",
+      "ethereumDeploymentAddress": "0x38bac69cbbd28156796e4163b2b6dcb81e336565",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "61922331-1ccf-4e2e-91de-a3ee764b3ac1",
+      "successfulAttemptCount": 4,
+      "failures": []
+    },
+    {
+      "symbol": "ORCLx",
+      "ethereumDeploymentAddress": "0x548308e91ec9f285c7bff05295badbd56a6e4971",
+      "firstSuccessfulNotionalUsd": 20,
+      "firstQuoteId": "f3feeee4-7442-4478-a914-9be0245c3101",
+      "successfulAttemptCount": 4,
+      "failures": []
+    }
+  ]
+}

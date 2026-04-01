@@ -404,6 +404,43 @@ export function adaptManifestToFrontend(
     basketExplanationBundle?.summaries.rebalance ??
     explanationBundle.howItChanges;
   const watchpoints = tuningSummary?.watchpoints ?? [];
+  const apiReplay = manifest.replay;
+  const apiMarketIntelligence = manifest.marketIntelligence;
+  const replay = apiReplay
+    ? {
+        startingCapital: apiReplay.startingCapital,
+        endingCapital: apiReplay.endingCapital,
+        netReturnPct: apiReplay.netReturnPct,
+        maxDrawdownPct: apiReplay.maxDrawdownPct,
+        turnoverPct: apiReplay.turnoverPct,
+        winRatePct: apiReplay.winRatePct,
+        monthlyEdgePct: basketExplanationBundle
+          ? Number(
+              (
+                basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct / 12
+              ).toFixed(4),
+            )
+          : 0,
+        points: apiReplay.points.map((point) => ({
+          label: point.label,
+          value: point.value,
+        })),
+      }
+    : {
+        startingCapital: 1000,
+        endingCapital: 1000,
+        netReturnPct: 0,
+        maxDrawdownPct: 0,
+        turnoverPct: basketExplanationBundle?.portfolioMetrics.turnoverAnnPct ?? 0,
+        winRatePct: 0,
+        monthlyEdgePct: basketExplanationBundle
+          ? Number(
+              (
+                basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct / 12
+              ).toFixed(4),
+            )
+          : 0,
+      };
 
   // Map target allocations to frontend AllocationRow
   const allocations: AllocationRow[] = manifest.targetAllocations.map((a) => ({
@@ -486,15 +523,25 @@ export function adaptManifestToFrontend(
     },
     market_intelligence: {
       scopeLabel: "Market Intelligence",
-      currentView: constructionSummary,
-      confidence: `${Math.round(manifest.validation.score * 10)} / 100`,
-      horizon: manifest.mode === "directional" ? "10 to 30 trading days" : "15 to 60 trading days",
-      implication: tuningSummary?.headline ?? explanationBundle.bestFor,
-      whatChanged: [
-        rebalanceSummary,
-        ...watchpoints.slice(0, 2),
-        ...(rv?.proofNotes ?? ["Route truth loaded from live API."]),
-      ],
+      currentView: apiMarketIntelligence?.currentView ?? constructionSummary,
+      confidence: basketExplanationBundle
+        ? `${basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct >= 0 ? "+" : ""}${basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct.toFixed(2)}% edge`
+        : `Score ${manifest.validation.score.toFixed(3)}`,
+      horizon:
+        apiMarketIntelligence?.horizon ??
+        (manifest.mode === "directional"
+          ? "10 to 30 trading days"
+          : "15 to 60 trading days"),
+      implication:
+        apiMarketIntelligence?.whatChanged[0] ??
+        tuningSummary?.headline ??
+        explanationBundle.bestFor,
+      whatChanged:
+        apiMarketIntelligence?.whatChanged ?? [
+          rebalanceSummary,
+          ...watchpoints.slice(0, 2),
+          ...(rv?.proofNotes ?? ["Route truth loaded from live API."]),
+        ],
       promptQueue: [
         {
           label: manifest.mode === "basket" && basketExplanationBundle ? "Why these weights" : "Why now",
@@ -514,45 +561,46 @@ export function adaptManifestToFrontend(
               : "Show route verification status for this portfolio.",
         },
       ],
-      drivers: [
-        {
-          label: "Surface truth",
-          value: surfaceTruth,
-          tone: surfaceTruth === "live" ? "positive" as const : "neutral" as const,
-          note: `Current truth state from API: ${surfaceTruth}`,
-        },
-        ...(basketExplanationBundle
-          ? [
-              {
-                label: "Cash reserve",
-                value: `${basketExplanationBundle.cashWeightPct}% AUSD`,
-                tone: "neutral" as const,
-                note: "Keeps a visible cash reserve instead of forcing full equity exposure.",
-              },
-              {
-                label: "Rebalance trigger",
-                value: `${basketExplanationBundle.rebalanceThresholdBps} bps`,
-                tone: "warning" as const,
-                note: `Review starts only when drift clears ${basketExplanationBundle.rebalanceThresholdPct}%`,
-              },
-              {
-                label: "Benchmark edge",
-                value: `${basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct >= 0 ? "+" : ""}${basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct.toFixed(2)}%`,
-                tone:
-                  basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct >= 0
-                    ? "positive" as const
-                    : "warning" as const,
-                note: `After estimated costs versus ${basketExplanationBundle.benchmarkDelta.benchmarkId ?? "the benchmark"}`,
-              },
-            ]
-          : []),
-        {
-          label: "Execution eligibility",
-          value: rv?.executionEligibility ?? "preview_only",
-          tone: rv?.executionEligibility === "executable" ? "positive" as const : "warning" as const,
-          note: `Eligibility: ${rv?.executionEligibility ?? "preview_only"}`,
-        },
-      ],
+      drivers:
+        apiMarketIntelligence?.drivers ?? [
+          {
+            label: "Surface truth",
+            value: surfaceTruth,
+            tone: surfaceTruth === "live" ? "positive" as const : "neutral" as const,
+            note: `Current truth state from API: ${surfaceTruth}`,
+          },
+          ...(basketExplanationBundle
+            ? [
+                {
+                  label: "Cash reserve",
+                  value: `${basketExplanationBundle.cashWeightPct}% AUSD`,
+                  tone: "neutral" as const,
+                  note: "Keeps a visible cash reserve instead of forcing full equity exposure.",
+                },
+                {
+                  label: "Rebalance trigger",
+                  value: `${basketExplanationBundle.rebalanceThresholdBps} bps`,
+                  tone: "warning" as const,
+                  note: `Review starts only when drift clears ${basketExplanationBundle.rebalanceThresholdPct}%`,
+                },
+                {
+                  label: "Benchmark edge",
+                  value: `${basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct >= 0 ? "+" : ""}${basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct.toFixed(2)}%`,
+                  tone:
+                    basketExplanationBundle.benchmarkDelta.excessReturnAfterCostPct >= 0
+                      ? "positive" as const
+                      : "warning" as const,
+                  note: `After estimated costs versus ${basketExplanationBundle.benchmarkDelta.benchmarkId ?? "the benchmark"}`,
+                },
+              ]
+            : []),
+          {
+            label: "Execution eligibility",
+            value: rv?.executionEligibility ?? "preview_only",
+            tone: rv?.executionEligibility === "executable" ? "positive" as const : "warning" as const,
+            note: `Eligibility: ${rv?.executionEligibility ?? "preview_only"}`,
+          },
+        ],
       routeState: {
         chain: manifest.chain === "ethereum" ? "Ethereum" : manifest.chain,
         primaryVenue,
@@ -598,15 +646,7 @@ export function adaptManifestToFrontend(
       })),
       bundle: explanationBundle,
     },
-    replay: {
-      startingCapital: 1000,
-      endingCapital: 1000 + Math.round(manifest.validation.score * 50),
-      netReturnPct: Math.round(manifest.validation.score * 5 * 10) / 10,
-      maxDrawdownPct: -(Math.round(manifest.validation.score * 2 * 10) / 10),
-      turnoverPct: manifest.mode === "directional" ? 16 : 10,
-      winRatePct: 60 + Math.round(manifest.validation.score * 2),
-      monthlyEdgePct: Math.round(manifest.validation.score * 0.5 * 10) / 10,
-    },
+    replay,
     comparison: [],
     allocations,
     route_notes: rv?.proofNotes ?? ["Route truth loaded from live API."],

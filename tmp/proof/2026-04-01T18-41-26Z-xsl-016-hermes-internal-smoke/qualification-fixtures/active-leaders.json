@@ -1,0 +1,592 @@
+{
+  "fixture": {
+    "scenarioId": "active-leaders",
+    "label": "Active leaders basket",
+    "description": "Leader-first active basket user who should land on the active leaders basket slot.",
+    "answers": {
+      "q_goal_preference": "leaders",
+      "q_expression_preference": "active",
+      "q_risk_level": "high",
+      "q_drawdown_sensitivity": "low",
+      "q_rebalance_preference": "active",
+      "q_directional_appetite": "long_only",
+      "q_automation_comfort": "high",
+      "q_certainty": "high"
+    },
+    "walletState": {
+      "walletConnected": true,
+      "walletAddress": "0x00000000000000000000000000000000000000b3",
+      "fundedNotionalUsd": 0,
+      "smartAccount": {
+        "status": "ready",
+        "address": "0x0000000000000000000000000000000000000b33"
+      }
+    },
+    "expected": {
+      "slotId": "onboarding.alt_basket_2",
+      "mode": "basket",
+      "starterBasketId": "us-tech-leaders",
+      "selectionType": "theme",
+      "selectionKey": "us-tech-leaders",
+      "executionState": "funding_required",
+      "executionEligibility": "preview_only",
+      "directionalPreviewOnly": false,
+      "activationReady": false
+    }
+  },
+  "result": {
+    "version": "1",
+    "generatedAt": "2026-04-01T18:41:27.181Z",
+    "qualification": {
+      "version": "1",
+      "normalizedAnswers": {
+        "version": "1",
+        "preferredChain": "ethereum",
+        "modePreference": "basket",
+        "initialSelection": {
+          "type": "theme",
+          "key": "us-tech-leaders"
+        },
+        "selectedStarterSlotId": "onboarding.alt_basket_2",
+        "selectedStarterBasketId": "us-tech-leaders",
+        "directionalOptIn": false,
+        "submittedAt": "2026-04-01T18:41:27.178Z"
+      },
+      "userProfile": {
+        "version": "1",
+        "preferredChain": "ethereum",
+        "modePreference": "basket",
+        "selectedScope": {
+          "type": "theme",
+          "key": "us-tech-leaders"
+        },
+        "activeSlotId": "onboarding.alt_basket_2",
+        "starterBasketId": "us-tech-leaders",
+        "directionalAllowed": false,
+        "yieldBufferAllowed": true,
+        "updatedAt": "2026-04-01T18:41:27.178Z"
+      },
+      "selection": {
+        "slotId": "onboarding.alt_basket_2",
+        "mode": "basket",
+        "starterBasketId": "us-tech-leaders",
+        "safeFallbackApplied": false,
+        "reasonCodes": [
+          "mode_preference:basket",
+          "slot_from_selected_starter_slot:onboarding.alt_basket_2"
+        ]
+      },
+      "manifestId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+      "manifestRef": {
+        "manifestId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+        "slotId": "onboarding.alt_basket_2",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c1-cap17-a0-r275-v1"
+      },
+      "recommendation": {
+        "version": "1",
+        "recommendationId": "rec_onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+        "slotId": "onboarding.alt_basket_2",
+        "portfolioMode": "basket",
+        "activationManifestRef": {
+          "manifestId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+          "slotId": "onboarding.alt_basket_2",
+          "mode": "basket",
+          "strategyVersion": "basket-starter-h6-p100-c1-cap17-a0-r275-v1"
+        },
+        "targetAllocations": [
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 17.01,
+            "assetSymbol": "MSFTx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 17,
+            "assetSymbol": "NVDAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 16.89,
+            "assetSymbol": "AAPLx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 16.52,
+            "assetSymbol": "METAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.98,
+            "assetSymbol": "AMZNx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.6,
+            "assetSymbol": "GOOGLx"
+          },
+          {
+            "sleeve": "yield_buffer",
+            "targetWeightPct": 1,
+            "assetSymbol": "AUSD",
+            "venueId": "flowdesk_ausd_rwa_strategy"
+          }
+        ],
+        "cashOrYieldBufferTarget": {
+          "assetSymbol": "AUSD",
+          "venueId": "flowdesk_ausd_rwa_strategy",
+          "targetWeightPct": 1
+        },
+        "explanationSummary": "Broader US tech basket that stays basket-first while diversifying away from a pure Mag 7 concentration profile.",
+        "explanationBundle": {
+          "whatThisPortfolioDoes": "Broader US tech basket that stays basket-first while diversifying away from a pure Mag 7 concentration profile. It keeps 1% in AUSD as a yield buffer instead of forcing full equity exposure.",
+          "howItIsBuilt": "99% stays in xStocks across 6 names. 1% remains in AUSD. Largest sleeves: MSFTx 17%, NVDAx 17%, AAPLx 16.9%. Starts from the pinned US Tech Leaders basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.",
+          "howItChanges": "Rebalance only when drift clears 275 bps. Authoritative path-dependent scoring implies 3.07% annualized turnover, 11.98 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 99% turnover and 44.65 bps total costs with 1% parked in AUSD.",
+          "whatWouldTriggerNextRebalance": "A rebalance only becomes actionable when drift clears 2.8% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.",
+          "howToReadReplay": "After estimated costs, the pinned run delivered 24.08% versus 13.16% for basket.sp500_core_v1, an excess of +10.92%. Treat replay as validation, not a promise of future returns.",
+          "bestFor": "Best for someone who wants US Tech Leaders exposure through a curated xStocks basket with a visible 1% AUSD buffer and can accept moderate risk with roughly 17% in the largest name.",
+          "components": [
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:MSFTx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "MSFTx lead holding",
+              "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.",
+              "targetWeightPct": 17,
+              "grossExposurePct": null,
+              "assetSymbol": "MSFTx",
+              "basketId": "us_tech_leaders",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:NVDAx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "NVDAx core holding",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+              "targetWeightPct": 17,
+              "grossExposurePct": null,
+              "assetSymbol": "NVDAx",
+              "basketId": "us_tech_leaders",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:AAPLx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "AAPLx core holding",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+              "targetWeightPct": 16.9,
+              "grossExposurePct": null,
+              "assetSymbol": "AAPLx",
+              "basketId": "us_tech_leaders",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:yield_buffer",
+              "kind": "yield_buffer",
+              "sleeve": "yield_buffer",
+              "title": "AUSD yield buffer",
+              "rationale": "A 1% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.",
+              "targetWeightPct": 1,
+              "grossExposurePct": null,
+              "assetSymbol": "AUSD",
+              "basketId": null,
+              "venueId": "flowdesk_ausd_rwa_strategy"
+            }
+          ]
+        },
+        "signalRefs": [
+          {
+            "signalId": "manifest:onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+            "scopeType": "basket",
+            "scopeKey": "us_tech_leaders"
+          }
+        ],
+        "rebalanceDecision": {
+          "state": "monitor",
+          "rationale": "No notional was supplied, so the recommendation stays in preview-monitor mode.",
+          "signalFresh": true,
+          "routeChecksPassed": true,
+          "mandateChecksPassed": true
+        },
+        "validationBadges": [
+          "validated_strategy",
+          "promoted_manifest",
+          "basket_live_ready"
+        ]
+      },
+      "explanationSurface": {
+        "surfaceId": "recommendation.explanationBundle",
+        "summary": "Broader US tech basket that stays basket-first while diversifying away from a pure Mag 7 concentration profile.",
+        "bundle": {
+          "whatThisPortfolioDoes": "Broader US tech basket that stays basket-first while diversifying away from a pure Mag 7 concentration profile. It keeps 1% in AUSD as a yield buffer instead of forcing full equity exposure.",
+          "howItIsBuilt": "99% stays in xStocks across 6 names. 1% remains in AUSD. Largest sleeves: MSFTx 17%, NVDAx 17%, AAPLx 16.9%. Starts from the pinned US Tech Leaders basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.",
+          "howItChanges": "Rebalance only when drift clears 275 bps. Authoritative path-dependent scoring implies 3.07% annualized turnover, 11.98 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 99% turnover and 44.65 bps total costs with 1% parked in AUSD.",
+          "whatWouldTriggerNextRebalance": "A rebalance only becomes actionable when drift clears 2.8% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.",
+          "howToReadReplay": "After estimated costs, the pinned run delivered 24.08% versus 13.16% for basket.sp500_core_v1, an excess of +10.92%. Treat replay as validation, not a promise of future returns.",
+          "bestFor": "Best for someone who wants US Tech Leaders exposure through a curated xStocks basket with a visible 1% AUSD buffer and can accept moderate risk with roughly 17% in the largest name.",
+          "components": [
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:MSFTx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "MSFTx lead holding",
+              "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.",
+              "targetWeightPct": 17,
+              "grossExposurePct": null,
+              "assetSymbol": "MSFTx",
+              "basketId": "us_tech_leaders",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:NVDAx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "NVDAx core holding",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+              "targetWeightPct": 17,
+              "grossExposurePct": null,
+              "assetSymbol": "NVDAx",
+              "basketId": "us_tech_leaders",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:AAPLx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "AAPLx core holding",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+              "targetWeightPct": 16.9,
+              "grossExposurePct": null,
+              "assetSymbol": "AAPLx",
+              "basketId": "us_tech_leaders",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted:component:yield_buffer",
+              "kind": "yield_buffer",
+              "sleeve": "yield_buffer",
+              "title": "AUSD yield buffer",
+              "rationale": "A 1% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.",
+              "targetWeightPct": 1,
+              "grossExposurePct": null,
+              "assetSymbol": "AUSD",
+              "basketId": null,
+              "venueId": "flowdesk_ausd_rwa_strategy"
+            }
+          ]
+        },
+        "matchSummary": {
+          "truthMode": "questionnaire_and_promoted_manifest_only",
+          "slotId": "onboarding.alt_basket_2",
+          "mode": "basket",
+          "safeFallbackApplied": false,
+          "summary": "Qualification matched you to Autopilot alternate basket 2 because you selected the basket path, so qualification stayed on the promoted onboarding basket lane.",
+          "reasons": [
+            {
+              "code": "mode_preference:basket",
+              "label": "Mode preference",
+              "rationale": "You selected the basket path, so qualification stayed on the promoted onboarding basket lane."
+            },
+            {
+              "code": "slot_from_selected_starter_slot:onboarding.alt_basket_2",
+              "label": "Selected starter slot",
+              "rationale": "The selected starter slot already points to Autopilot alternate basket 2."
+            }
+          ]
+        },
+        "researchTruth": {
+          "explanationSource": "promoted_research_bundle",
+          "promotedManifestId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+          "slotId": "onboarding.alt_basket_2",
+          "researchBackedSurfacesBlocked": false
+        },
+        "researchExplanationBundle": {
+          "truthMode": "promoted_incumbent_and_run_summary_only",
+          "incumbentState": "kept_promoted_run",
+          "reasonCodes": [
+            {
+              "code": "starter_basket:us_tech_leaders",
+              "kind": "starter_basket",
+              "value": "us_tech_leaders",
+              "label": "Starts from the pinned US Tech Leaders basket membership."
+            },
+            {
+              "code": "selection_universe:starter_only",
+              "kind": "selection_universe",
+              "value": "starter_only",
+              "label": "Selects names from the starter basket only."
+            },
+            {
+              "code": "holdings_count:6",
+              "kind": "holdings_count",
+              "value": "6",
+              "label": "Keeps the basket at 6 names."
+            },
+            {
+              "code": "starter_bias:0pct",
+              "kind": "starter_bias",
+              "value": "0pct",
+              "label": "Applies a 0% score boost to starter-basket names inside broader selection."
+            },
+            {
+              "code": "ranking:baseline_signal_score",
+              "kind": "ranking",
+              "value": "baseline_signal_score",
+              "label": "Ranks names by baseline signal score."
+            },
+            {
+              "code": "weighting_curve:signal_score_proportional",
+              "kind": "weighting_curve",
+              "value": "signal_score_proportional",
+              "label": "Weights names with the signal score proportional curve."
+            },
+            {
+              "code": "signal_power:1x",
+              "kind": "signal_power",
+              "value": "1x",
+              "label": "Raises ranking scores to the 1x power before weights are normalized."
+            },
+            {
+              "code": "cash_weight:1pct",
+              "kind": "cash_weight",
+              "value": "1pct",
+              "label": "Keeps 1% in the AUSD yield buffer."
+            },
+            {
+              "code": "concentration_cap:17pct",
+              "kind": "concentration_cap",
+              "value": "17pct",
+              "label": "Limits any single name to 17%."
+            },
+            {
+              "code": "rebalance_threshold:275bps",
+              "kind": "rebalance_threshold",
+              "value": "275bps",
+              "label": "Only rebalances after 275 bps of drift."
+            }
+          ],
+          "targetWeights": [
+            {
+              "rank": 1,
+              "symbol": "MSFTx",
+              "assetName": "Microsoft",
+              "targetWeightPct": 17
+            },
+            {
+              "rank": 2,
+              "symbol": "NVDAx",
+              "assetName": "NVIDIA",
+              "targetWeightPct": 17
+            },
+            {
+              "rank": 3,
+              "symbol": "AAPLx",
+              "assetName": "Apple",
+              "targetWeightPct": 16.9
+            },
+            {
+              "rank": 4,
+              "symbol": "METAx",
+              "assetName": "Meta",
+              "targetWeightPct": 16.5286
+            },
+            {
+              "rank": 5,
+              "symbol": "AMZNx",
+              "assetName": "Amazon",
+              "targetWeightPct": 15.9714
+            },
+            {
+              "rank": 6,
+              "symbol": "GOOGLx",
+              "assetName": "Alphabet",
+              "targetWeightPct": 15.6
+            }
+          ],
+          "cashWeightPct": 1,
+          "rebalanceThresholdBps": 275,
+          "rebalanceThresholdPct": 2.75,
+          "benchmarkDelta": {
+            "benchmarkId": "basket.sp500_core_v1",
+            "returnAnnPct": 24.2007,
+            "benchmarkReturnAnnPct": 13.1599,
+            "afterCostReturnAnnPct": 24.0809,
+            "benchmarkAfterCostReturnAnnPct": 13.1599,
+            "excessReturnAfterCostPct": 10.921,
+            "score": 1.487483,
+            "deltaVsIncumbent": 0.057446
+          },
+          "portfolioMetrics": {
+            "constituentCount": 6,
+            "concentrationPct": 17,
+            "concentrationCapPct": 17,
+            "turnoverAnnPct": 3.0728,
+            "costsTotalBps": 11.9846
+          },
+          "summaries": {
+            "construction": "99% stays in xStocks across 6 names. 1% remains in AUSD. Largest sleeves: MSFTx 17%, NVDAx 17%, AAPLx 16.9%.",
+            "benchmark": "After estimated costs, the pinned run delivered 24.08% versus 13.16% for basket.sp500_core_v1, an excess of +10.92%.",
+            "rebalance": "Rebalance only when drift clears 275 bps. Authoritative path-dependent scoring implies 3.07% annualized turnover, 11.98 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 99% turnover and 44.65 bps total costs with 1% parked in AUSD."
+          }
+        },
+        "researchTuningSummary": {
+          "headline": "99% invested across 6 names selected from the starter basket only with 1% in AUSD and a 275 bps rebalance trigger.",
+          "currentKnobs": [
+            {
+              "knobId": "candidate_family",
+              "label": "Candidate family",
+              "currentValue": "Starter Breadth Trim + Low Cash",
+              "tuningImpact": "Keeps the trimmed starter-only basket shape and lowers the AUSD sleeve so the current local winner can compete with more xStocks exposure."
+            },
+            {
+              "knobId": "starter_basket",
+              "label": "Starter basket",
+              "currentValue": "US Tech Leaders",
+              "tuningImpact": "Changes basket membership before weights are assigned."
+            },
+            {
+              "knobId": "selection_universe",
+              "label": "Selection universe",
+              "currentValue": "starter basket only",
+              "tuningImpact": "Widens the eligible pool beyond the starter basket without changing slot identity."
+            },
+            {
+              "knobId": "holdings_count",
+              "label": "Holdings breadth",
+              "currentValue": "6",
+              "tuningImpact": "Changes how many names survive ranking into the target basket."
+            },
+            {
+              "knobId": "starter_bias",
+              "label": "Starter anchor bias",
+              "currentValue": "0%",
+              "tuningImpact": "Keeps the slot anchored to its starter basket even when broader selection is enabled."
+            },
+            {
+              "knobId": "ranking_signal",
+              "label": "Ranking signal",
+              "currentValue": "baseline signal score",
+              "tuningImpact": "Changes which names rise or fall inside the current basket."
+            },
+            {
+              "knobId": "weighting_curve",
+              "label": "Weighting curve",
+              "currentValue": "signal score proportional",
+              "tuningImpact": "Changes how aggressively higher-ranked names dominate the basket."
+            },
+            {
+              "knobId": "signal_power",
+              "label": "Signal power",
+              "currentValue": "1x",
+              "tuningImpact": "Makes the weighting curve flatter or more conviction-heavy without changing the underlying signal."
+            },
+            {
+              "knobId": "cash_weight",
+              "label": "Cash sleeve",
+              "currentValue": "1%",
+              "tuningImpact": "Changes how much capital stays in AUSD instead of xStocks exposure."
+            },
+            {
+              "knobId": "concentration_cap",
+              "label": "Single-name cap",
+              "currentValue": "17%",
+              "tuningImpact": "Limits the maximum weight of one name."
+            },
+            {
+              "knobId": "rebalance_threshold",
+              "label": "Rebalance trigger",
+              "currentValue": "275 bps",
+              "tuningImpact": "Skips smaller drifts to reduce churn."
+            }
+          ],
+          "watchpoints": [
+            "MSFTx is the largest sleeve at 17% against a 17% single-name cap.",
+            "Authoritative rebalance simulation implies 3.07% turnover and 11.98 bps of annualized costs across 1 rebalance events.",
+            "Authoritative turnover is 3.07% with 11.98 bps of total costs.",
+            "Legacy static proxy would have printed 99% turnover and 44.65 bps of total costs.",
+            "6 names are selected from the starter basket only.",
+            "Benchmark edge after costs is 10.92% versus basket.sp500_core_v1."
+          ]
+        },
+        "researchExplanationAvailable": true,
+        "researchTuningSummaryAvailable": true
+      },
+      "activationTruth": {
+        "surfaceTruth": "preview",
+        "executionState": "funding_required",
+        "executionEligibility": "preview_only",
+        "requestedNotionalUsd": 0,
+        "fundedNotionalUsd": 0,
+        "fundingGapUsd": 0,
+        "fundingAssetSymbol": "USDC",
+        "minFundingUsd": 0,
+        "depositRequired": true,
+        "activationReady": false,
+        "directionalPreviewOnly": false,
+        "blockers": [
+          "Choose a USDC notional first so the funding target can be derived."
+        ],
+        "warnings": []
+      }
+    }
+  },
+  "summary": {
+    "normalizedAnswers": {
+      "version": "1",
+      "preferredChain": "ethereum",
+      "modePreference": "basket",
+      "initialSelection": {
+        "type": "theme",
+        "key": "us-tech-leaders"
+      },
+      "selectedStarterSlotId": "onboarding.alt_basket_2",
+      "selectedStarterBasketId": "us-tech-leaders",
+      "directionalOptIn": false,
+      "submittedAt": "2026-04-01T18:41:27.178Z"
+    },
+    "userProfile": {
+      "version": "1",
+      "preferredChain": "ethereum",
+      "modePreference": "basket",
+      "selectedScope": {
+        "type": "theme",
+        "key": "us-tech-leaders"
+      },
+      "activeSlotId": "onboarding.alt_basket_2",
+      "starterBasketId": "us-tech-leaders",
+      "directionalAllowed": false,
+      "yieldBufferAllowed": true,
+      "updatedAt": "2026-04-01T18:41:27.178Z"
+    },
+    "selectedSlotId": "onboarding.alt_basket_2",
+    "selectedMode": "basket",
+    "recommendationId": "rec_onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+    "manifestRef": {
+      "manifestId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+      "slotId": "onboarding.alt_basket_2",
+      "mode": "basket",
+      "strategyVersion": "basket-starter-h6-p100-c1-cap17-a0-r275-v1"
+    },
+    "explanationSurface": "recommendation.explanationBundle",
+    "activationTruth": {
+      "surfaceTruth": "preview",
+      "executionState": "funding_required",
+      "executionEligibility": "preview_only",
+      "requestedNotionalUsd": 0,
+      "fundedNotionalUsd": 0,
+      "fundingGapUsd": 0,
+      "fundingAssetSymbol": "USDC",
+      "minFundingUsd": 0,
+      "depositRequired": true,
+      "activationReady": false,
+      "directionalPreviewOnly": false,
+      "blockers": [
+        "Choose a USDC notional first so the funding target can be derived."
+      ],
+      "warnings": []
+    },
+    "directionalPreviewOnly": false
+  }
+}

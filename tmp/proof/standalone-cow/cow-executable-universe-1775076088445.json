@@ -1,0 +1,2804 @@
+{
+  "generatedAt": "2026-04-01T20:41:28.445Z",
+  "owner": "0x2222222222222222222222222222222222222222",
+  "truthReference": {
+    "routeId": "cow_swap.ethereum",
+    "quoteAssetSymbol": "USDC",
+    "testedUsdLadder": [
+      15,
+      25,
+      50,
+      100,
+      250,
+      500,
+      1000,
+      2500,
+      5000
+    ]
+  },
+  "repoOwnedUniverseSymbols": [
+    "AAPLx",
+    "AMDx",
+    "AMZNx",
+    "AVGOx",
+    "GOOGLx",
+    "METAx",
+    "MSFTx",
+    "NVDAx",
+    "ORCLx",
+    "SPYx",
+    "TSLAx"
+  ],
+  "quoteableSymbols": [
+    "NVDAx",
+    "SPYx",
+    "TSLAx"
+  ],
+  "neverQuoteableSymbols": [
+    {
+      "symbol": "AAPLx",
+      "blockerClass": "cow_no_liquidity",
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "AMDx",
+      "blockerClass": "cow_no_liquidity",
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "AMZNx",
+      "blockerClass": "missing_ethereum_route_metadata",
+      "exactVenueResponses": [
+        "404:NoLiquidity",
+        "na:missing_ethereum_route_metadata"
+      ]
+    },
+    {
+      "symbol": "AVGOx",
+      "blockerClass": "cow_no_liquidity",
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "GOOGLx",
+      "blockerClass": "cow_no_liquidity",
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "METAx",
+      "blockerClass": "cow_quote_error",
+      "exactVenueResponses": [
+        "404:NoLiquidity",
+        "na:CoW request timed out after 5000ms for /quote"
+      ]
+    },
+    {
+      "symbol": "MSFTx",
+      "blockerClass": "cow_no_liquidity",
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "ORCLx",
+      "blockerClass": "cow_no_liquidity",
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    }
+  ],
+  "symbolMatrix": [
+    {
+      "symbol": "AAPLx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "cow_no_liquidity",
+      "blockerClasses": [
+        "cow_no_liquidity"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "AMDx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "cow_no_liquidity",
+      "blockerClasses": [
+        "cow_no_liquidity"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "AMZNx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "missing_ethereum_route_metadata",
+      "blockerClasses": [
+        "cow_no_liquidity",
+        "missing_ethereum_route_metadata"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity",
+        "na:missing_ethereum_route_metadata"
+      ]
+    },
+    {
+      "symbol": "AVGOx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "cow_no_liquidity",
+      "blockerClasses": [
+        "cow_no_liquidity"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "GOOGLx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "cow_no_liquidity",
+      "blockerClasses": [
+        "cow_no_liquidity"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "METAx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "cow_quote_error",
+      "blockerClasses": [
+        "cow_no_liquidity",
+        "cow_quote_error"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity",
+        "na:CoW request timed out after 5000ms for /quote"
+      ]
+    },
+    {
+      "symbol": "MSFTx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "cow_no_liquidity",
+      "blockerClasses": [
+        "cow_no_liquidity"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "NVDAx",
+      "quotedAtUsd": [
+        15,
+        25,
+        50,
+        100,
+        250,
+        500,
+        1000,
+        2500,
+        5000
+      ],
+      "quotesAtEveryRung": true,
+      "neverQuotes": false,
+      "blockerClass": null,
+      "blockerClasses": [],
+      "exactVenueResponses": []
+    },
+    {
+      "symbol": "ORCLx",
+      "quotedAtUsd": [],
+      "quotesAtEveryRung": false,
+      "neverQuotes": true,
+      "blockerClass": "cow_no_liquidity",
+      "blockerClasses": [
+        "cow_no_liquidity"
+      ],
+      "exactVenueResponses": [
+        "404:NoLiquidity"
+      ]
+    },
+    {
+      "symbol": "SPYx",
+      "quotedAtUsd": [
+        15,
+        25,
+        50,
+        100,
+        250,
+        500,
+        1000,
+        2500,
+        5000
+      ],
+      "quotesAtEveryRung": true,
+      "neverQuotes": false,
+      "blockerClass": null,
+      "blockerClasses": [],
+      "exactVenueResponses": []
+    },
+    {
+      "symbol": "TSLAx",
+      "quotedAtUsd": [
+        15,
+        25,
+        50,
+        100,
+        250,
+        500,
+        1000,
+        2500,
+        5000
+      ],
+      "quotesAtEveryRung": true,
+      "neverQuotes": false,
+      "blockerClass": null,
+      "blockerClasses": [],
+      "exactVenueResponses": []
+    }
+  ],
+  "starterBasketCoverage": {
+    "mag7": {
+      "kind": "starter",
+      "members": [
+        "AAPLx",
+        "AMZNx",
+        "GOOGLx",
+        "METAx",
+        "MSFTx",
+        "NVDAx",
+        "TSLAx"
+      ],
+      "quoteableMembers": [
+        "NVDAx",
+        "TSLAx"
+      ],
+      "blockedMembers": [
+        "AAPLx",
+        "AMZNx",
+        "GOOGLx",
+        "METAx",
+        "MSFTx"
+      ],
+      "fullyExecutable": false
+    },
+    "ai_infra": {
+      "kind": "starter",
+      "members": [
+        "AMDx",
+        "AVGOx",
+        "MSFTx",
+        "NVDAx",
+        "ORCLx"
+      ],
+      "quoteableMembers": [
+        "NVDAx"
+      ],
+      "blockedMembers": [
+        "AMDx",
+        "AVGOx",
+        "MSFTx",
+        "ORCLx"
+      ],
+      "fullyExecutable": false
+    },
+    "us_tech_leaders": {
+      "kind": "starter",
+      "members": [
+        "AAPLx",
+        "AMZNx",
+        "GOOGLx",
+        "METAx",
+        "MSFTx",
+        "NVDAx",
+        "ORCLx"
+      ],
+      "quoteableMembers": [
+        "NVDAx"
+      ],
+      "blockedMembers": [
+        "AAPLx",
+        "AMZNx",
+        "GOOGLx",
+        "METAx",
+        "MSFTx",
+        "ORCLx"
+      ],
+      "fullyExecutable": false
+    },
+    "sp500_core": {
+      "kind": "benchmark",
+      "members": [
+        "SPYx"
+      ],
+      "quoteableMembers": [
+        "SPYx"
+      ],
+      "blockedMembers": [],
+      "fullyExecutable": true
+    }
+  },
+  "currentPromotedBasket": {
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "coreSymbols": [
+      "NVDAx",
+      "MSFTx",
+      "AAPLx",
+      "METAx",
+      "AMZNx",
+      "GOOGLx"
+    ],
+    "blockedCoreSymbols": [
+      "MSFTx",
+      "AAPLx",
+      "METAx",
+      "AMZNx",
+      "GOOGLx"
+    ],
+    "executionReady": false,
+    "reason": "The current promoted basket is not execution-ready because required core legs MSFTx, AAPLx, METAx, AMZNx, GOOGLx never quote directly on CoW in the tested ladder."
+  },
+  "proposedCowOnlyBasket": {
+    "status": "not_viable",
+    "coreSymbols": [
+      "NVDAx",
+      "SPYx",
+      "TSLAx"
+    ],
+    "reason": "Only 3 xStocks currently quote directly on CoW, below the research minimum holdings_count=4. The only fully intact repo basket is benchmark-only sp500_core/SPYx, so no product-usable CoW-only onboarding basket exists right now."
+  },
+  "results": [
+    {
+      "symbol": "AAPLx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 15,
+      "ok": true,
+      "quoteId": 1126657103,
+      "buyAmount": "84386696038525906",
+      "sellAmount": "14795155",
+      "feeAmount": "204845",
+      "validTo": 1775077798
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 15,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 15,
+      "ok": true,
+      "quoteId": 1126657104,
+      "buyAmount": "22469396595022894",
+      "sellAmount": "14781670",
+      "feeAmount": "218330",
+      "validTo": 1775077798
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 15,
+      "ok": true,
+      "quoteId": 1126657105,
+      "buyAmount": "38641840585261887",
+      "sellAmount": "14794815",
+      "feeAmount": "205185",
+      "validTo": 1775077798
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 25,
+      "ok": true,
+      "quoteId": 1126657223,
+      "buyAmount": "141284959726444265",
+      "sellAmount": "24780348",
+      "feeAmount": "219652",
+      "validTo": 1775077810
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 25,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 25,
+      "ok": true,
+      "quoteId": 1126657225,
+      "buyAmount": "37655849410075080",
+      "sellAmount": "24773872",
+      "feeAmount": "226128",
+      "validTo": 1775077810
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 25,
+      "ok": true,
+      "quoteId": 1126657216,
+      "buyAmount": "64737298183304378",
+      "sellAmount": "24787854",
+      "feeAmount": "212146",
+      "validTo": 1775077809
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 50,
+      "ok": true,
+      "quoteId": 1126657282,
+      "buyAmount": "283903553742303440",
+      "sellAmount": "49787174",
+      "feeAmount": "212826",
+      "validTo": 1775077815
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 50,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 50,
+      "ok": true,
+      "quoteId": 1126657284,
+      "buyAmount": "75641547053380633",
+      "sellAmount": "49773159",
+      "feeAmount": "226841",
+      "validTo": 1775077816
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 50,
+      "ok": true,
+      "quoteId": 1126657283,
+      "buyAmount": "130003487091549269",
+      "sellAmount": "49787568",
+      "feeAmount": "212432",
+      "validTo": 1775077815
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 100,
+      "ok": true,
+      "quoteId": 1126657322,
+      "buyAmount": "568833535197128615",
+      "sellAmount": "99787523",
+      "feeAmount": "212477",
+      "validTo": 1775077820
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 100,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 100,
+      "ok": true,
+      "quoteId": 1126657327,
+      "buyAmount": "151572801414864554",
+      "sellAmount": "99770642",
+      "feeAmount": "229358",
+      "validTo": 1775077820
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 100,
+      "ok": true,
+      "quoteId": 1126657328,
+      "buyAmount": "260463866321977076",
+      "sellAmount": "99787571",
+      "feeAmount": "212429",
+      "validTo": 1775077821
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 250,
+      "ok": true,
+      "quoteId": 1126657531,
+      "buyAmount": "1422411969407690764",
+      "sellAmount": "249775232",
+      "feeAmount": "224768",
+      "validTo": 1775077836
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 250,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 250,
+      "ok": true,
+      "quoteId": 1126657389,
+      "buyAmount": "379055229472341112",
+      "sellAmount": "249760494",
+      "feeAmount": "239506",
+      "validTo": 1775077825
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 250,
+      "ok": true,
+      "quoteId": 1126657382,
+      "buyAmount": "651226863333391735",
+      "sellAmount": "249775640",
+      "feeAmount": "224360",
+      "validTo": 1775077825
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "message": "missing_ethereum_route_metadata"
+      },
+      "blockerClass": "missing_ethereum_route_metadata"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 500,
+      "ok": true,
+      "quoteId": 1126657588,
+      "buyAmount": "2841391562810226621",
+      "sellAmount": "499776279",
+      "feeAmount": "223721",
+      "validTo": 1775077841
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 500,
+      "ok": true,
+      "quoteId": 1126657589,
+      "buyAmount": "757198313357824028",
+      "sellAmount": "499761550",
+      "feeAmount": "238450",
+      "validTo": 1775077841
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 500,
+      "ok": true,
+      "quoteId": 1126657590,
+      "buyAmount": "1300602049359133404",
+      "sellAmount": "499776305",
+      "feeAmount": "223695",
+      "validTo": 1775077841
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 1000,
+      "ok": true,
+      "quoteId": 1126657697,
+      "buyAmount": "5665272082003129759",
+      "sellAmount": "999776462",
+      "feeAmount": "223538",
+      "validTo": 1775077852
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 1000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 1000,
+      "ok": true,
+      "quoteId": 1126657696,
+      "buyAmount": "1509673130768893184",
+      "sellAmount": "999761335",
+      "feeAmount": "238665",
+      "validTo": 1775077852
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 1000,
+      "ok": true,
+      "quoteId": 1126657715,
+      "buyAmount": "2592084485439640015",
+      "sellAmount": "999776059",
+      "feeAmount": "223941",
+      "validTo": 1775077853
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 2500,
+      "ok": true,
+      "quoteId": 1126657834,
+      "buyAmount": "14026003828659525686",
+      "sellAmount": "2499772604",
+      "feeAmount": "227396",
+      "validTo": 1775077864
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 2500,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 2500,
+      "ok": true,
+      "quoteId": 1126657835,
+      "buyAmount": "3737051119192198609",
+      "sellAmount": "2499732875",
+      "feeAmount": "267125",
+      "validTo": 1775077864
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 2500,
+      "ok": true,
+      "quoteId": 1126657836,
+      "buyAmount": "6409380506831385001",
+      "sellAmount": "2499773404",
+      "feeAmount": "226596",
+      "validTo": 1775077864
+    },
+    {
+      "symbol": "AAPLx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMDx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AMZNx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "AVGOx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "GOOGLx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "METAx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": null,
+        "errorType": null,
+        "description": null,
+        "rawBody": null,
+        "message": "CoW request timed out after 5000ms for /quote"
+      },
+      "blockerClass": "cow_quote_error"
+    },
+    {
+      "symbol": "MSFTx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "NVDAx",
+      "usd": 5000,
+      "ok": true,
+      "quoteId": 1126657972,
+      "buyAmount": "27601755734218838997",
+      "sellAmount": "4999785161",
+      "feeAmount": "214839",
+      "validTo": 1775077884
+    },
+    {
+      "symbol": "ORCLx",
+      "usd": 5000,
+      "ok": false,
+      "error": {
+        "statusCode": 404,
+        "errorType": "NoLiquidity",
+        "description": "no route found",
+        "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+        "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      },
+      "blockerClass": "cow_no_liquidity"
+    },
+    {
+      "symbol": "SPYx",
+      "usd": 5000,
+      "ok": true,
+      "quoteId": 1126657973,
+      "buyAmount": "7353566553531625205",
+      "sellAmount": "4999693479",
+      "feeAmount": "306521",
+      "validTo": 1775077884
+    },
+    {
+      "symbol": "TSLAx",
+      "usd": 5000,
+      "ok": true,
+      "quoteId": 1126657974,
+      "buyAmount": "12587298990711959639",
+      "sellAmount": "4999784443",
+      "feeAmount": "215557",
+      "validTo": 1775077884
+    }
+  ],
+  "bySymbol": {
+    "AAPLx": [
+      {
+        "symbol": "AAPLx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AAPLx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      }
+    ],
+    "AMDx": [
+      {
+        "symbol": "AMDx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMDx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      }
+    ],
+    "AMZNx": [
+      {
+        "symbol": "AMZNx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "message": "missing_ethereum_route_metadata"
+        },
+        "blockerClass": "missing_ethereum_route_metadata"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AMZNx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      }
+    ],
+    "AVGOx": [
+      {
+        "symbol": "AVGOx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "AVGOx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      }
+    ],
+    "GOOGLx": [
+      {
+        "symbol": "GOOGLx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "GOOGLx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      }
+    ],
+    "METAx": [
+      {
+        "symbol": "METAx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "METAx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": null,
+          "errorType": null,
+          "description": null,
+          "rawBody": null,
+          "message": "CoW request timed out after 5000ms for /quote"
+        },
+        "blockerClass": "cow_quote_error"
+      }
+    ],
+    "MSFTx": [
+      {
+        "symbol": "MSFTx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "MSFTx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      }
+    ],
+    "NVDAx": [
+      {
+        "symbol": "NVDAx",
+        "usd": 15,
+        "ok": true,
+        "quoteId": 1126657103,
+        "buyAmount": "84386696038525906",
+        "sellAmount": "14795155",
+        "feeAmount": "204845",
+        "validTo": 1775077798
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 25,
+        "ok": true,
+        "quoteId": 1126657223,
+        "buyAmount": "141284959726444265",
+        "sellAmount": "24780348",
+        "feeAmount": "219652",
+        "validTo": 1775077810
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 50,
+        "ok": true,
+        "quoteId": 1126657282,
+        "buyAmount": "283903553742303440",
+        "sellAmount": "49787174",
+        "feeAmount": "212826",
+        "validTo": 1775077815
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 100,
+        "ok": true,
+        "quoteId": 1126657322,
+        "buyAmount": "568833535197128615",
+        "sellAmount": "99787523",
+        "feeAmount": "212477",
+        "validTo": 1775077820
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 250,
+        "ok": true,
+        "quoteId": 1126657531,
+        "buyAmount": "1422411969407690764",
+        "sellAmount": "249775232",
+        "feeAmount": "224768",
+        "validTo": 1775077836
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 500,
+        "ok": true,
+        "quoteId": 1126657588,
+        "buyAmount": "2841391562810226621",
+        "sellAmount": "499776279",
+        "feeAmount": "223721",
+        "validTo": 1775077841
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 1000,
+        "ok": true,
+        "quoteId": 1126657697,
+        "buyAmount": "5665272082003129759",
+        "sellAmount": "999776462",
+        "feeAmount": "223538",
+        "validTo": 1775077852
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 2500,
+        "ok": true,
+        "quoteId": 1126657834,
+        "buyAmount": "14026003828659525686",
+        "sellAmount": "2499772604",
+        "feeAmount": "227396",
+        "validTo": 1775077864
+      },
+      {
+        "symbol": "NVDAx",
+        "usd": 5000,
+        "ok": true,
+        "quoteId": 1126657972,
+        "buyAmount": "27601755734218838997",
+        "sellAmount": "4999785161",
+        "feeAmount": "214839",
+        "validTo": 1775077884
+      }
+    ],
+    "ORCLx": [
+      {
+        "symbol": "ORCLx",
+        "usd": 15,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 25,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 50,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 100,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 250,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 1000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 2500,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      },
+      {
+        "symbol": "ORCLx",
+        "usd": 5000,
+        "ok": false,
+        "error": {
+          "statusCode": 404,
+          "errorType": "NoLiquidity",
+          "description": "no route found",
+          "rawBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "message": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+        },
+        "blockerClass": "cow_no_liquidity"
+      }
+    ],
+    "SPYx": [
+      {
+        "symbol": "SPYx",
+        "usd": 15,
+        "ok": true,
+        "quoteId": 1126657104,
+        "buyAmount": "22469396595022894",
+        "sellAmount": "14781670",
+        "feeAmount": "218330",
+        "validTo": 1775077798
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 25,
+        "ok": true,
+        "quoteId": 1126657225,
+        "buyAmount": "37655849410075080",
+        "sellAmount": "24773872",
+        "feeAmount": "226128",
+        "validTo": 1775077810
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 50,
+        "ok": true,
+        "quoteId": 1126657284,
+        "buyAmount": "75641547053380633",
+        "sellAmount": "49773159",
+        "feeAmount": "226841",
+        "validTo": 1775077816
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 100,
+        "ok": true,
+        "quoteId": 1126657327,
+        "buyAmount": "151572801414864554",
+        "sellAmount": "99770642",
+        "feeAmount": "229358",
+        "validTo": 1775077820
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 250,
+        "ok": true,
+        "quoteId": 1126657389,
+        "buyAmount": "379055229472341112",
+        "sellAmount": "249760494",
+        "feeAmount": "239506",
+        "validTo": 1775077825
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 500,
+        "ok": true,
+        "quoteId": 1126657589,
+        "buyAmount": "757198313357824028",
+        "sellAmount": "499761550",
+        "feeAmount": "238450",
+        "validTo": 1775077841
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 1000,
+        "ok": true,
+        "quoteId": 1126657696,
+        "buyAmount": "1509673130768893184",
+        "sellAmount": "999761335",
+        "feeAmount": "238665",
+        "validTo": 1775077852
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 2500,
+        "ok": true,
+        "quoteId": 1126657835,
+        "buyAmount": "3737051119192198609",
+        "sellAmount": "2499732875",
+        "feeAmount": "267125",
+        "validTo": 1775077864
+      },
+      {
+        "symbol": "SPYx",
+        "usd": 5000,
+        "ok": true,
+        "quoteId": 1126657973,
+        "buyAmount": "7353566553531625205",
+        "sellAmount": "4999693479",
+        "feeAmount": "306521",
+        "validTo": 1775077884
+      }
+    ],
+    "TSLAx": [
+      {
+        "symbol": "TSLAx",
+        "usd": 15,
+        "ok": true,
+        "quoteId": 1126657105,
+        "buyAmount": "38641840585261887",
+        "sellAmount": "14794815",
+        "feeAmount": "205185",
+        "validTo": 1775077798
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 25,
+        "ok": true,
+        "quoteId": 1126657216,
+        "buyAmount": "64737298183304378",
+        "sellAmount": "24787854",
+        "feeAmount": "212146",
+        "validTo": 1775077809
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 50,
+        "ok": true,
+        "quoteId": 1126657283,
+        "buyAmount": "130003487091549269",
+        "sellAmount": "49787568",
+        "feeAmount": "212432",
+        "validTo": 1775077815
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 100,
+        "ok": true,
+        "quoteId": 1126657328,
+        "buyAmount": "260463866321977076",
+        "sellAmount": "99787571",
+        "feeAmount": "212429",
+        "validTo": 1775077821
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 250,
+        "ok": true,
+        "quoteId": 1126657382,
+        "buyAmount": "651226863333391735",
+        "sellAmount": "249775640",
+        "feeAmount": "224360",
+        "validTo": 1775077825
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 500,
+        "ok": true,
+        "quoteId": 1126657590,
+        "buyAmount": "1300602049359133404",
+        "sellAmount": "499776305",
+        "feeAmount": "223695",
+        "validTo": 1775077841
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 1000,
+        "ok": true,
+        "quoteId": 1126657715,
+        "buyAmount": "2592084485439640015",
+        "sellAmount": "999776059",
+        "feeAmount": "223941",
+        "validTo": 1775077853
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 2500,
+        "ok": true,
+        "quoteId": 1126657836,
+        "buyAmount": "6409380506831385001",
+        "sellAmount": "2499773404",
+        "feeAmount": "226596",
+        "validTo": 1775077864
+      },
+      {
+        "symbol": "TSLAx",
+        "usd": 5000,
+        "ok": true,
+        "quoteId": 1126657974,
+        "buyAmount": "12587298990711959639",
+        "sellAmount": "4999784443",
+        "feeAmount": "215557",
+        "validTo": 1775077884
+      }
+    ]
+  }
+}

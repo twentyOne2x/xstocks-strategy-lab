@@ -4,6 +4,8 @@ import {
   CONTRACT_VERSION,
   directionalExpressionSchema,
   executionEligibilitySchema,
+  marketIntelligenceSurfaceSchema,
+  replaySurfaceSchema,
   promotedBasketExplanationBundleSchema,
   promotedBasketTuningSummarySchema,
   routeRequirementSchema,
@@ -818,6 +820,66 @@ function normalizeResearchTuningSummary(manifest, rawManifest) {
   );
 }
 
+function normalizeReplaySurface(manifest, rawManifest) {
+  if (manifest?.replay) {
+    return replaySurfaceSchema.parse(manifest.replay);
+  }
+
+  if (rawManifest?.replay) {
+    return replaySurfaceSchema.parse(rawManifest.replay);
+  }
+
+  return null;
+}
+
+function normalizeMarketIntelligenceSurfaceValue(value) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  if (
+    typeof value.currentView === "string" &&
+    typeof value.horizon === "string" &&
+    Array.isArray(value.whatChanged) &&
+    Array.isArray(value.drivers)
+  ) {
+    return marketIntelligenceSurfaceSchema.parse(value);
+  }
+
+  if (
+    typeof value.current_view !== "string" ||
+    typeof value.horizon !== "string" ||
+    !Array.isArray(value.what_changed) ||
+    !Array.isArray(value.drivers)
+  ) {
+    return null;
+  }
+
+  return marketIntelligenceSurfaceSchema.parse({
+    currentView: value.current_view,
+    horizon: value.horizon,
+    whatChanged: value.what_changed,
+    drivers: value.drivers.map((driver) => ({
+      label: driver.label,
+      value: driver.value,
+      tone: driver.tone,
+      note: driver.note,
+    })),
+  });
+}
+
+function normalizeMarketIntelligenceSurface(manifest, rawManifest) {
+  if (manifest?.marketIntelligence) {
+    return marketIntelligenceSurfaceSchema.parse(manifest.marketIntelligence);
+  }
+
+  if (rawManifest?.marketIntelligence) {
+    return marketIntelligenceSurfaceSchema.parse(rawManifest.marketIntelligence);
+  }
+
+  return normalizeMarketIntelligenceSurfaceValue(rawManifest?.market_intelligence ?? null);
+}
+
 function stripNonCanonicalExplanationBundle(rawManifest) {
   if (!rawManifest || typeof rawManifest !== "object") {
     return rawManifest;
@@ -862,6 +924,11 @@ function buildNormalizedPromotedManifest(
     rawManifest,
   );
   const researchTuningSummary = normalizeResearchTuningSummary(
+    manifest,
+    rawManifest,
+  );
+  const replay = normalizeReplaySurface(manifest, rawManifest);
+  const marketIntelligence = normalizeMarketIntelligenceSurface(
     manifest,
     rawManifest,
   );
@@ -929,6 +996,8 @@ function buildNormalizedPromotedManifest(
     ...(rawExplanationBundle ? { rawExplanationBundle } : {}),
     ...(researchExplanationBundle ? { researchExplanationBundle } : {}),
     ...(researchTuningSummary ? { researchTuningSummary } : {}),
+    ...(replay ? { replay } : {}),
+    ...(marketIntelligence ? { marketIntelligence } : {}),
     legacyFallback,
   };
 }

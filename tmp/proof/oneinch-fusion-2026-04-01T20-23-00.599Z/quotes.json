@@ -1,0 +1,460 @@
+[
+  {
+    "symbol": "NVDAx",
+    "ethereumDeploymentAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "303cc89b-f08e-4a26-83d2-22f9b25c262d",
+        "toTokenAmount": "113593488548612021",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.4,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "946c9037-999a-4f0b-a708-2137861b9ad4",
+        "toTokenAmount": "141991860685765026",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.39,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "b77e9e42-8481-42a2-b5ac-26a98cdb5f45",
+        "toTokenAmount": "283983721371530052",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "fda344fd-1293-4289-a69d-bd909e0803b2",
+        "toTokenAmount": "567967442743060105",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "AAPLx",
+    "ethereumDeploymentAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "575f1e0b-df12-49ef-a0fe-021294e16f81",
+        "toTokenAmount": "78091079187477939",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "73a4bc34-9633-4c7a-93bf-d1c945d6ddb9",
+        "toTokenAmount": "97613848984347424",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "87ac8963-6c60-4ad2-92e7-15d0953d1edd",
+        "toTokenAmount": "195227697968694848",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "2f8fe1ef-cf4b-42d8-b4e3-648f25d50eab",
+        "toTokenAmount": "390455395937389696",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "MSFTx",
+    "ethereumDeploymentAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "cd16f3ef-1556-4b20-a858-a8d7dfaba289",
+        "toTokenAmount": "54060419157027450",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "23fc0da2-77a4-4a08-a248-1f4425f97f27",
+        "toTokenAmount": "67575523946284313",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "b0031b3f-6cb0-429e-ac63-b26a236faa6f",
+        "toTokenAmount": "135151047892568626",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.4,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "b568d17a-ec9e-4f21-94c5-a6f01ed7a217",
+        "toTokenAmount": "270302095785137253",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.4,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "METAx",
+    "ethereumDeploymentAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "2d874116-0738-413e-8761-85e3e2a77bb0",
+        "toTokenAmount": "34461463812706079",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "46d12b0d-bfb2-4879-a7db-6519bc5fc6e1",
+        "toTokenAmount": "43076829765882599",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.35,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "b3271528-2cd4-4268-bc3f-2f505987497e",
+        "toTokenAmount": "86153659531765198",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "33c73c3e-e4b8-4173-8db9-fb40366d4b1f",
+        "toTokenAmount": "172307319063530397",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "AMZNx",
+    "ethereumDeploymentAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "b630137a-1c16-4bf5-b323-f6f7ab8db774",
+        "toTokenAmount": "94750199389950841",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.61,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "42311ce5-36af-4293-90e7-0a4cf39a1593",
+        "toTokenAmount": "118437749237438551",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.61,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "7deffaa6-cfc6-44fd-836f-5332f4bd725e",
+        "toTokenAmount": "236875498474877103",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.61,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "d5caf8ed-1663-45b2-a88b-213b432375e6",
+        "toTokenAmount": "473750996949754206",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.61,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "GOOGLx",
+    "ethereumDeploymentAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "f51eb38d-df73-47fa-b3a0-013374c7720a",
+        "toTokenAmount": "67115265098585612",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "c0301c07-613e-4a21-9111-8d6b6bb661bb",
+        "toTokenAmount": "83894081373232016",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "2bc8993b-579a-499a-9a5e-a10ed7d7aad6",
+        "toTokenAmount": "167788162746464032",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "4f879a46-15a3-4017-a3b9-635bc5a43a55",
+        "toTokenAmount": "335576325492928064",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.38,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "TSLAx",
+    "ethereumDeploymentAddress": "0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "dd565220-e80e-4f2d-b258-704dce5c2467",
+        "toTokenAmount": "52376700964135122",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.39,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "29bb72b7-75b1-47dc-bd10-48e83003d23a",
+        "toTokenAmount": "65470876205168902",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "77299c03-528f-4a8e-a855-e057d243bc67",
+        "toTokenAmount": "130941752410337805",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.42,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "749fa8be-1af6-4281-906d-c684ab2c9e7c",
+        "toTokenAmount": "261883504820675610",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.39,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "SPYx",
+    "ethereumDeploymentAddress": "0x90a2a4c76b5d8c0bc892a69ea28aa775a8f2dd48",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "0b1df086-8bc5-4a1f-a79f-b27b19062d27",
+        "toTokenAmount": "30454713046831351",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.42,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "6a39cdf3-c848-4b5b-b7e1-2b7d330ae866",
+        "toTokenAmount": "38068391308539189",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "65f9f0d6-d5df-4722-8576-c7d866340350",
+        "toTokenAmount": "76136782617078378",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "cf32e3f1-7bba-476c-96e9-9ed1586f954e",
+        "toTokenAmount": "152273565234156756",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.41,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "AMDx",
+    "ethereumDeploymentAddress": "0x3522513e5f146a2006e2901b05f16b2821485e19",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": false,
+        "statusCode": 500,
+        "code": "PATHFINDER_UNKNOWN",
+        "description": "pathfinder error",
+        "message": "1inch Fusion quote request failed with status 500: {\"error\":\"Internal Server Error\",\"description\":\"pathfinder error\",\"statusCode\":500,\"code\":\"PATHFINDER_UNKNOWN\"}"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": false,
+        "statusCode": 500,
+        "code": "PATHFINDER_UNKNOWN",
+        "description": "pathfinder error",
+        "message": "1inch Fusion quote request failed with status 500: {\"error\":\"Internal Server Error\",\"description\":\"pathfinder error\",\"statusCode\":500,\"code\":\"PATHFINDER_UNKNOWN\"}"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": false,
+        "statusCode": 500,
+        "code": "PATHFINDER_UNKNOWN",
+        "description": "pathfinder error",
+        "message": "1inch Fusion quote request failed with status 500: {\"error\":\"Internal Server Error\",\"description\":\"pathfinder error\",\"statusCode\":500,\"code\":\"PATHFINDER_UNKNOWN\"}"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": false,
+        "statusCode": 500,
+        "code": "PATHFINDER_UNKNOWN",
+        "description": "pathfinder error",
+        "message": "1inch Fusion quote request failed with status 500: {\"error\":\"Internal Server Error\",\"description\":\"pathfinder error\",\"statusCode\":500,\"code\":\"PATHFINDER_UNKNOWN\"}"
+      }
+    ]
+  },
+  {
+    "symbol": "AVGOx",
+    "ethereumDeploymentAddress": "0x38bac69cbbd28156796e4163b2b6dcb81e336565",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "fd54c51b-d3e4-4b21-95ef-7dab5f01d62f",
+        "toTokenAmount": "63826956440623394",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.5,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "c3c90b84-6c46-414c-aefd-056b9900a813",
+        "toTokenAmount": "79783695550779242",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.59,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "4b15238a-b81b-4ac4-b969-785a10e7aa66",
+        "toTokenAmount": "159567391101558485",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.52,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "371c9e49-acbc-4441-89ad-ea30ebfdf590",
+        "toTokenAmount": "319134782203116970",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.61,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  },
+  {
+    "symbol": "ORCLx",
+    "ethereumDeploymentAddress": "0x548308e91ec9f285c7bff05295badbd56a6e4971",
+    "attempts": [
+      {
+        "notionalUsd": 20,
+        "ok": true,
+        "quoteId": "0160d0cf-4eaf-4d2c-b856-56f39476a010",
+        "toTokenAmount": "137211881462216526",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.62,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 25,
+        "ok": true,
+        "quoteId": "c45acf40-9330-419e-b17c-e49a37c394c2",
+        "toTokenAmount": "171514851827770658",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.62,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 50,
+        "ok": true,
+        "quoteId": "2d6f944a-7a19-4b99-bfa8-3e93f2d127ef",
+        "toTokenAmount": "343029703655541316",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.61,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      },
+      {
+        "notionalUsd": 100,
+        "ok": true,
+        "quoteId": "5c5c65d1-3049-4eb9-88d1-960279c99daf",
+        "toTokenAmount": "686059407311082633",
+        "recommendedPreset": "fast",
+        "priceImpactPercent": 0.62,
+        "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e"
+      }
+    ]
+  }
+]

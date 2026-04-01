@@ -352,6 +352,47 @@ test("default basket explanation bundle exposes the promoted tuning truth operat
   assert.match(manifest.tuningSummary.incumbentInterpretation, /After costs it/i);
 });
 
+test("default basket promoted manifest carries replay and market intelligence surfaces", () => {
+  const manifest = readCurrentPromotedManifestDocumentBySlot("onboarding.default_basket");
+  const incumbent = loadIncumbentForSlot("onboarding.default_basket");
+  const summary = readRunSummary(incumbent.runId);
+  const expectedEndingCapital = Number(
+    (summary.metrics.rebalanceSimulation.netNavFinal * 1000).toFixed(2),
+  );
+
+  assert.equal(manifest.replay.startingCapital, 1000);
+  assert.equal(manifest.replay.endingCapital, expectedEndingCapital);
+  assert.equal(
+    manifest.replay.maxDrawdownPct,
+    -summary.metrics.rebalanceSimulation.netMaxDrawdownPct,
+  );
+  assert.equal(manifest.replay.turnoverPct, summary.metrics.turnoverAnnPct);
+  assert.ok(manifest.replay.winRatePct > 0);
+  assert.ok(manifest.replay.points.length >= 2);
+  assert.equal(manifest.replay.points[0].value, 1000);
+  assert.equal(
+    manifest.marketIntelligence.whatChanged[0],
+    summary.tuningSummary.operatorSummary.changedFromBaseline,
+  );
+  assert.match(manifest.marketIntelligence.currentView, /frozen window/i);
+  assert.match(manifest.marketIntelligence.horizon, /Validation window/i);
+  assert.equal(
+    manifest.marketIntelligence.drivers.some(
+      (driver) => driver.label === "Benchmark edge" && driver.tone === "positive",
+    ),
+    true,
+  );
+  assert.deepEqual(
+    manifest.market_intelligence,
+    {
+      current_view: manifest.marketIntelligence.currentView,
+      horizon: manifest.marketIntelligence.horizon,
+      what_changed: manifest.marketIntelligence.whatChanged,
+      drivers: manifest.marketIntelligence.drivers,
+    },
+  );
+});
+
 test("directional preview manifest is execution-boundary complete, preview-only, and fail-closed", () => {
   const manifest = readCurrentPromotedManifestDocumentBySlot("advanced.default_directional");
   const disableConditions = new Set(manifest.fallback.disable_conditions);

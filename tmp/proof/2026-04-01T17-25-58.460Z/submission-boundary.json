@@ -1,0 +1,137 @@
+{
+  "reached": false,
+  "state": "not_reached",
+  "reason": "basket_not_all_leg_quoteable",
+  "blockedLegs": [
+    {
+      "legId": "act_88d4997e-aa80-42a3-8580-8af877fcb3e7:leg:2",
+      "assetSymbol": "MSFTx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x63ad27614231767c8c489745b9145272de50d09b",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0xa28d...71b2",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x63ad27614231767c8c489745b9145272de50d09b",
+      "sellAmountBeforeFee": "4110000",
+      "targetNotionalUsd": 4.11,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=4110000 targetNotionalUsd=4.11 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=4110000 targetNotionalUsd=4.11 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_88d4997e-aa80-42a3-8580-8af877fcb3e7:leg:3",
+      "assetSymbol": "AAPLx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0xa28d...71b2",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+      "sellAmountBeforeFee": "3940000",
+      "targetNotionalUsd": 3.94,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for AAPLx. buyToken=0x5aa7649fdbda47de64a07ac81d64b682af9c0724 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3940000 targetNotionalUsd=3.94 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 500: {\"errorType\":\"InternalServerError\",\"description\":\"\"}",
+      "blockers": [
+        "CoW quote request failed for AAPLx. buyToken=0x5aa7649fdbda47de64a07ac81d64b682af9c0724 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3940000 targetNotionalUsd=3.94 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 500: {\"errorType\":\"InternalServerError\",\"description\":\"\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_88d4997e-aa80-42a3-8580-8af877fcb3e7:leg:4",
+      "assetSymbol": "METAx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0xa28d...71b2",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+      "sellAmountBeforeFee": "3850000",
+      "targetNotionalUsd": 3.85,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for METAx. buyToken=0x4e41a262caa93c6575d336e0a4eb79f3c67caa06 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3850000 targetNotionalUsd=3.85 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for METAx. buyToken=0x4e41a262caa93c6575d336e0a4eb79f3c67caa06 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3850000 targetNotionalUsd=3.85 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_88d4997e-aa80-42a3-8580-8af877fcb3e7:leg:5",
+      "assetSymbol": "AMZNx",
+      "state": "blocked",
+      "receivingTokenAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0xa28d...71b2",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+      "sellAmountBeforeFee": "3720000",
+      "targetNotionalUsd": 3.72,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for AMZNx. buyToken=0xac85d37acbadca37545e21ab0fb991bce8c1187c sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3720000 targetNotionalUsd=3.72 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for AMZNx. buyToken=0xac85d37acbadca37545e21ab0fb991bce8c1187c sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3720000 targetNotionalUsd=3.72 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_88d4997e-aa80-42a3-8580-8af877fcb3e7:leg:6",
+      "assetSymbol": "GOOGLx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0xa28d...71b2",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+      "sellAmountBeforeFee": "3630000",
+      "targetNotionalUsd": 3.63,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for GOOGLx. buyToken=0x1630f08370917e79df0b7572395a5e907508bbbc sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3630000 targetNotionalUsd=3.63 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 500: {\"errorType\":\"InternalServerError\",\"description\":\"\"}",
+      "blockers": [
+        "CoW quote request failed for GOOGLx. buyToken=0x1630f08370917e79df0b7572395a5e907508bbbc sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=3630000 targetNotionalUsd=3.63 receiver=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2 reason=CoW quote request failed with status 500: {\"errorType\":\"InternalServerError\",\"description\":\"\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "ladder": [
+    25,
+    50,
+    100,
+    250,
+    500
+  ],
+  "minimumExecutableGrossNotionalUsd": null,
+  "structurallyBlockedAssets": [
+    {
+      "assetSymbol": "MSFTx",
+      "blockerClasses": [],
+      "errorTypes": []
+    },
+    {
+      "assetSymbol": "AAPLx",
+      "blockerClasses": [],
+      "errorTypes": []
+    },
+    {
+      "assetSymbol": "METAx",
+      "blockerClasses": [],
+      "errorTypes": []
+    },
+    {
+      "assetSymbol": "AMZNx",
+      "blockerClasses": [],
+      "errorTypes": []
+    },
+    {
+      "assetSymbol": "GOOGLx",
+      "blockerClasses": [],
+      "errorTypes": []
+    }
+  ],
+  "quoteSweepMatrix": [
+    {
+      "requestedNotionalUsd": 25,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": null,
+          "errorType": null
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 50,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": null,
+          "errorType": null
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 100,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": null,
+          "errorType": null
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 250,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": null,
+          "errorType": null
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 500,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": null,
+          "errorType": null
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": null,
+          "errorType": null
+        }
+      ]
+    }
+  ]
+}

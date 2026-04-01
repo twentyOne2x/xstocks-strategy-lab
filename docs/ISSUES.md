@@ -295,31 +295,39 @@ Last updated: 2026-04-01
 ### XSL-010A API-Backed Replay And Market Intelligence Surface
 
 - Type: backend/frontend/integration
-- Status: active
+- Status: completed
 - Canonical owner lane: `XSL-010`
 - Date opened: 2026-04-01
 - Context: The onboarding post-questionnaire gate and workspace surfaces already render replay stats, allocation rows, and market-intelligence cards, but the current web adapter still synthesizes several of those values locally from validation score and hard-coded copy instead of reading one truthful backend surface.
-- Suspected cause: `apps/api` exposes the promoted manifest explanation and tuning bundles, but it does not yet publish a server-derived replay snapshot or market-intelligence view; `apps/web/src/lib/api-adapter.ts` therefore backfills those fields with local heuristics and canned strings.
-- Fix intent: Make the manifest API return real replay performance data, real allocation weights, and real market-intelligence signals derived from the promoted manifest research output so onboarding and workspace render backend truth instead of local mock fallbacks.
+- Suspected cause: the promoted manifest generation path in `packages/research` and normalization path in `packages/policy` never carried replay snapshots, replay curves, or explicit market-intelligence signal objects forward into the API contract, so `apps/web/src/lib/api-adapter.ts` and `apps/web/src/lib/data-source.ts` filled the gap with formulas, templates, and canned strings.
+- Fix intent: Make promoted manifests carry real replay performance data, replay points, and market-intelligence signals derived from the research evaluation output, pass them through the API, and have onboarding/workspace render that backend truth instead of local mock fallbacks.
 - Acceptance criteria:
-  1. `apps/api` manifest responses for catalog, workspace, activation-preview, and activity include a replay snapshot derived from promoted research outputs rather than score-based placeholders.
-  2. `apps/api` manifest responses include a market-intelligence surface derived from promoted explanation, tuning, route-validation, and wallet-readiness truth rather than frontend-local canned strings.
-  3. `apps/web/src/lib/api-client.ts` and `apps/web/src/lib/api-adapter.ts` consume the new API fields and stop synthesizing replay, driver, what-changed, current-view, horizon, and risk-label-adjacent stats locally for API-backed manifests.
-  4. Allocation rows shown on onboarding/workspace remain driven by manifest target allocations plus live-state enrichment, with no local mock allocation fallback when API data is present.
-  5. Verification includes targeted API tests and targeted web adapter tests proving the server-derived replay and intelligence values round-trip into the frontend contract.
+  1. `packages/research/**` promoted manifests carry a replay surface with real starting capital, ending capital, net return, max drawdown, turnover, win rate, and replay points derived from the research evaluation output.
+  2. `packages/research/**` and `packages/policy/**` carry a market-intelligence surface with real current-view, horizon, what-changed, and driver rows derived from promoted research output rather than local frontend stubs.
+  3. `apps/api` manifest responses for catalog, workspace, activation-preview, and activity pass those replay and market-intelligence fields through in `buildManifestView()`.
+  4. `apps/web/src/lib/api-client.ts`, `apps/web/src/lib/api-adapter.ts`, and `apps/web/src/lib/data-source.ts` consume the new API fields and stop synthesizing replay stats, replay curve templates, turnover, driver rows, what-changed, current-view, and horizon locally for API-backed manifests.
+  5. Allocation rows shown on onboarding/workspace remain driven by manifest target allocations plus live-state enrichment, with no local mock allocation fallback when API data is present.
+  6. Verification includes focused research or policy contract checks, targeted API tests, and targeted web tests proving the server-derived replay and intelligence values round-trip into the frontend contract.
 - Complexity: medium
-- Plan: [2026-04-01-xstocks-api-backed-replay-and-market-intelligence-surface.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-api-backed-replay-and-market-intelligence-surface.md)
 - Executor prompt:
-  - Touch only `apps/api/**`, `apps/web/**`, and the issue/plan artifacts needed for this slice.
-  - Keep the source of truth on the backend: derive replay and intelligence from promoted manifest research output, route validation, and wallet requirements rather than duplicating heuristics in the browser.
+  - Touch `packages/research/**`, `packages/policy/**`, `apps/api/**`, `apps/web/**`, and the issue or plan artifacts needed for this slice.
+  - Keep the source of truth in the promoted manifest and API: derive replay and intelligence from promoted research output, route validation, and wallet requirements rather than duplicating heuristics in the browser.
   - Do not widen this slice into landing redesign, activation copy churn, execution-path changes, or new research generation logic.
-  - Add focused tests that prove catalog/workspace manifests and the frontend adapter expose the same replay and intelligence truth.
+  - Add focused tests that prove promoted manifests, catalog/workspace manifests, and the frontend adapter expose the same replay and intelligence truth.
 - Checklist:
   - [x] report captured
   - [x] context added
-  - [ ] fix applied
-  - [ ] tests run
+  - [x] fix applied
+  - [x] tests run
   - [ ] visual/screenshot verification
+- Plan: [2026-04-01-xstocks-api-backed-replay-and-market-intelligence-surface.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-api-backed-replay-and-market-intelligence-surface.md)
+- Resolution note:
+  - `packages/research/src/evaluate.js` and `packages/research/src/incumbents.js` now derive a real `replay` surface plus `marketIntelligence` surface from research evaluation output, and the regenerated onboarding promoted manifests now differ by portfolio instead of sharing canned replay stats. Current ending-capital examples are `1212.52` for `onboarding.default_basket`, `1237.93` for `onboarding.alt_basket_1`, and `1218.44` for `onboarding.alt_basket_2`.
+  - `packages/policy/**` now validates and preserves replay points, turnover, win rate, and market-intelligence drivers or narratives, while `apps/api/src/services/api-service.js` passes those fields through in `buildManifestView()` for catalog and workspace consumers.
+  - `apps/web/src/lib/api-adapter.ts` now reads API replay metrics, replay points, turnover, and market-intelligence text directly, and `apps/web/src/lib/data-source.ts` now builds charts from `manifest.replay.points` instead of slug-based replay templates.
+  - Verification passed with `node --test packages/research/src/__tests__/promoted-manifests.test.js`, `node --test packages/policy/test/policy.test.js`, `node --test apps/api/test/api.test.js`, `pnpm --filter @xstocks-strategy-lab/web test`, `pnpm --dir apps/web build`, and `pnpm --dir apps/web exec tsc --noEmit` after the build populated `.next/types`. The web build still emits the pre-existing non-blocking `@privy-io/react-auth` optional-module warning and existing unused-import warnings in `apps/web/src/components/onboarding-terminal-experience.tsx`.
+- Visual verification note:
+  - Browser or screenshot proof was not captured in this turn, so the data-surface closure is backed by manifest, API, adapter, test, build, and typecheck verification rather than UI screenshots.
 
 ### XSL-011 Rebalance Automation And Execution Orchestration
 

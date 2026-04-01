@@ -1,0 +1,271 @@
+{
+  "fixture": {
+    "scenarioId": "directional-opt-in",
+    "label": "Directional opt-in",
+    "description": "Explicit directional opt-in user who should be routed to the preview-only directional slot.",
+    "answers": {
+      "q_goal_preference": "leaders",
+      "q_expression_preference": "active",
+      "q_risk_level": "high",
+      "q_drawdown_sensitivity": "low",
+      "q_rebalance_preference": "active",
+      "q_directional_appetite": "directional",
+      "q_automation_comfort": "high",
+      "q_certainty": "high"
+    },
+    "walletState": {
+      "walletConnected": true,
+      "walletAddress": "0x00000000000000000000000000000000000000b4",
+      "fundedNotionalUsd": 0,
+      "smartAccount": {
+        "status": "ready",
+        "address": "0x0000000000000000000000000000000000000b44"
+      }
+    },
+    "expected": {
+      "slotId": "advanced.default_directional",
+      "mode": "directional",
+      "selectionType": "hero_asset",
+      "selectionKey": "SPYx",
+      "executionState": "blocked",
+      "executionEligibility": "preview_only",
+      "directionalPreviewOnly": true,
+      "activationReady": false
+    }
+  },
+  "result": {
+    "version": "1",
+    "generatedAt": "2026-04-01T17:17:02.829Z",
+    "qualification": {
+      "version": "1",
+      "normalizedAnswers": {
+        "version": "1",
+        "preferredChain": "ethereum",
+        "modePreference": "directional",
+        "initialSelection": {
+          "type": "hero_asset",
+          "key": "SPYx"
+        },
+        "selectedStarterSlotId": "advanced.default_directional",
+        "directionalOptIn": true,
+        "submittedAt": "2026-04-01T17:17:02.826Z"
+      },
+      "userProfile": {
+        "version": "1",
+        "preferredChain": "ethereum",
+        "modePreference": "directional",
+        "selectedScope": {
+          "type": "hero_asset",
+          "key": "SPYx"
+        },
+        "activeSlotId": "advanced.default_directional",
+        "directionalAllowed": true,
+        "yieldBufferAllowed": false,
+        "updatedAt": "2026-04-01T17:17:02.826Z"
+      },
+      "selection": {
+        "slotId": "advanced.default_directional",
+        "mode": "directional",
+        "safeFallbackApplied": false,
+        "reasonCodes": [
+          "mode_preference:directional",
+          "slot_from_directional_opt_in"
+        ]
+      },
+      "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+      "manifestRef": {
+        "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+        "slotId": "advanced.default_directional",
+        "mode": "directional",
+        "strategyVersion": "directional-preview-v1"
+      },
+      "recommendation": {
+        "version": "1",
+        "recommendationId": "rec_advanced.default_directional:directional-preview-v1:promoted",
+        "slotId": "advanced.default_directional",
+        "portfolioMode": "directional",
+        "activationManifestRef": {
+          "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+          "slotId": "advanced.default_directional",
+          "mode": "directional",
+          "strategyVersion": "directional-preview-v1"
+        },
+        "targetDirectionalExpression": {
+          "view": "conviction_long",
+          "assetSymbol": "SPYx",
+          "grossExposurePct": 60,
+          "netExposurePct": 60,
+          "targetLtvPct": 35
+        },
+        "explanationSummary": "Preview-only SPYx directional incumbent that stays blocked for execution until exact live xStocks-on-Euler proof is independently verified.",
+        "explanationBundle": {
+          "whatThisPortfolioDoes": "Preview-only SPYx directional incumbent that stays blocked for execution until exact live xStocks-on-Euler proof is independently verified. The current promoted lane expresses its view through SPYx while the live activation path remains preview-only.",
+          "howItIsBuilt": "The manifest defines one directional expression in SPYx at 60% gross exposure and keeps activation blocked until the exact live route is verified.",
+          "howItChanges": "This lane does not auto-rotate live. It only changes when a newer promoted directional manifest replaces it, and it remains preview-only until route proof changes.",
+          "whatWouldTriggerNextRebalance": "Directional remains preview-only until exact live route proof exists, so no live automated rebalance trigger is surfaced beyond a future promoted-manifest change.",
+          "howToReadReplay": "Read the replay as a validation view of the promoted directional thesis under the pinned research bundle, not as a guarantee that live execution is available now.",
+          "bestFor": "Best for someone who wants to inspect a higher-risk directional preview and is comfortable waiting for verified live execution proof before acting.",
+          "components": [
+            {
+              "componentId": "advanced.default_directional:directional-preview-v1:promoted:component:SPYx",
+              "kind": "directional_expression",
+              "sleeve": "directional",
+              "title": "SPYx directional expression",
+              "rationale": "The promoted lane expresses a Conviction Long view in SPYx at 60% gross exposure with a 35% target LTV.",
+              "targetWeightPct": null,
+              "grossExposurePct": 60,
+              "assetSymbol": "SPYx",
+              "basketId": null,
+              "venueId": null
+            }
+          ]
+        },
+        "signalRefs": [
+          {
+            "signalId": "manifest:advanced.default_directional:directional-preview-v1:promoted",
+            "scopeType": "asset",
+            "scopeKey": "SPYx"
+          }
+        ],
+        "rebalanceDecision": {
+          "state": "full_rebalance",
+          "rationale": "The requested notional assumes a fresh activation from the promoted manifest.",
+          "signalFresh": true,
+          "routeChecksPassed": false,
+          "mandateChecksPassed": true
+        }
+      },
+      "explanationSurface": {
+        "surfaceId": "recommendation.explanationBundle",
+        "summary": "Preview-only SPYx directional incumbent that stays blocked for execution until exact live xStocks-on-Euler proof is independently verified.",
+        "bundle": {
+          "whatThisPortfolioDoes": "Preview-only SPYx directional incumbent that stays blocked for execution until exact live xStocks-on-Euler proof is independently verified. The current promoted lane expresses its view through SPYx while the live activation path remains preview-only.",
+          "howItIsBuilt": "The manifest defines one directional expression in SPYx at 60% gross exposure and keeps activation blocked until the exact live route is verified.",
+          "howItChanges": "This lane does not auto-rotate live. It only changes when a newer promoted directional manifest replaces it, and it remains preview-only until route proof changes.",
+          "whatWouldTriggerNextRebalance": "Directional remains preview-only until exact live route proof exists, so no live automated rebalance trigger is surfaced beyond a future promoted-manifest change.",
+          "howToReadReplay": "Read the replay as a validation view of the promoted directional thesis under the pinned research bundle, not as a guarantee that live execution is available now.",
+          "bestFor": "Best for someone who wants to inspect a higher-risk directional preview and is comfortable waiting for verified live execution proof before acting.",
+          "components": [
+            {
+              "componentId": "advanced.default_directional:directional-preview-v1:promoted:component:SPYx",
+              "kind": "directional_expression",
+              "sleeve": "directional",
+              "title": "SPYx directional expression",
+              "rationale": "The promoted lane expresses a Conviction Long view in SPYx at 60% gross exposure with a 35% target LTV.",
+              "targetWeightPct": null,
+              "grossExposurePct": 60,
+              "assetSymbol": "SPYx",
+              "basketId": null,
+              "venueId": null
+            }
+          ]
+        },
+        "matchSummary": {
+          "truthMode": "questionnaire_and_promoted_manifest_only",
+          "slotId": "advanced.default_directional",
+          "mode": "directional",
+          "safeFallbackApplied": false,
+          "summary": "Qualification matched you to Directional default preview because you explicitly opted into the directional lane, so qualification stayed on the preview-only directional path.",
+          "reasons": [
+            {
+              "code": "mode_preference:directional",
+              "label": "Mode preference",
+              "rationale": "You explicitly opted into the directional lane, so qualification stayed on the preview-only directional path."
+            },
+            {
+              "code": "slot_from_directional_opt_in",
+              "label": "Directional opt-in",
+              "rationale": "Directional remained an explicit opt-in, so qualification only selected the directional slot after that consent was present."
+            }
+          ]
+        },
+        "researchTruth": {
+          "explanationSource": "canonical_promoted_manifest_only",
+          "promotedManifestId": "advanced.default_directional:directional-preview-v1:promoted",
+          "slotId": "advanced.default_directional",
+          "researchBackedSurfacesBlocked": true
+        },
+        "researchExplanationBundle": null,
+        "researchTuningSummary": null,
+        "researchExplanationAvailable": false,
+        "researchTuningSummaryAvailable": false
+      },
+      "activationTruth": {
+        "surfaceTruth": "preview",
+        "executionState": "blocked",
+        "executionEligibility": "preview_only",
+        "requestedNotionalUsd": 1500,
+        "fundedNotionalUsd": 0,
+        "fundingGapUsd": 1500,
+        "fundingAssetSymbol": "USDC",
+        "minFundingUsd": 1500,
+        "depositRequired": true,
+        "activationReady": false,
+        "directionalPreviewOnly": true,
+        "blockers": [
+          "Fund USDC with at least 1500 additional USD-equivalent before execution can become live."
+        ],
+        "warnings": [
+          "Euler Directional: Unverified rails fail closed."
+        ]
+      }
+    }
+  },
+  "summary": {
+    "normalizedAnswers": {
+      "version": "1",
+      "preferredChain": "ethereum",
+      "modePreference": "directional",
+      "initialSelection": {
+        "type": "hero_asset",
+        "key": "SPYx"
+      },
+      "selectedStarterSlotId": "advanced.default_directional",
+      "directionalOptIn": true,
+      "submittedAt": "2026-04-01T17:17:02.826Z"
+    },
+    "userProfile": {
+      "version": "1",
+      "preferredChain": "ethereum",
+      "modePreference": "directional",
+      "selectedScope": {
+        "type": "hero_asset",
+        "key": "SPYx"
+      },
+      "activeSlotId": "advanced.default_directional",
+      "directionalAllowed": true,
+      "yieldBufferAllowed": false,
+      "updatedAt": "2026-04-01T17:17:02.826Z"
+    },
+    "selectedSlotId": "advanced.default_directional",
+    "selectedMode": "directional",
+    "recommendationId": "rec_advanced.default_directional:directional-preview-v1:promoted",
+    "manifestRef": {
+      "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+      "slotId": "advanced.default_directional",
+      "mode": "directional",
+      "strategyVersion": "directional-preview-v1"
+    },
+    "explanationSurface": "recommendation.explanationBundle",
+    "activationTruth": {
+      "surfaceTruth": "preview",
+      "executionState": "blocked",
+      "executionEligibility": "preview_only",
+      "requestedNotionalUsd": 1500,
+      "fundedNotionalUsd": 0,
+      "fundingGapUsd": 1500,
+      "fundingAssetSymbol": "USDC",
+      "minFundingUsd": 1500,
+      "depositRequired": true,
+      "activationReady": false,
+      "directionalPreviewOnly": true,
+      "blockers": [
+        "Fund USDC with at least 1500 additional USD-equivalent before execution can become live."
+      ],
+      "warnings": [
+        "Euler Directional: Unverified rails fail closed."
+      ]
+    },
+    "directionalPreviewOnly": true
+  }
+}

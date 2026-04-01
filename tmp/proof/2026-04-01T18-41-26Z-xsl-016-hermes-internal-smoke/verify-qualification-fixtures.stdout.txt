@@ -1,0 +1,5 @@
+broad-cautious: slot=onboarding.default_basket mode=basket execution=funding_required recommendation=rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted directionalPreviewOnly=false
+theme-tilt: slot=onboarding.alt_basket_1 mode=basket execution=funding_required recommendation=rec_onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1:promoted directionalPreviewOnly=false
+active-leaders: slot=onboarding.alt_basket_2 mode=basket execution=funding_required recommendation=rec_onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted directionalPreviewOnly=false
+directional-opt-in: slot=advanced.default_directional mode=directional execution=blocked recommendation=rec_advanced.default_directional:directional-preview-v1:promoted directionalPreviewOnly=true
+proof_dir=/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-01T18-41-26Z-xsl-016-hermes-internal-smoke/qualification-fixtures

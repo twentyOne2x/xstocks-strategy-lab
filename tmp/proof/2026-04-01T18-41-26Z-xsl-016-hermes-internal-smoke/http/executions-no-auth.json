@@ -1,0 +1,4 @@
+{
+  "error": "Privy auth verification requires PRIVY_APP_ID, PRIVY_APP_SECRET, and PRIVY_JWKS_URL.",
+  "details": null
+}

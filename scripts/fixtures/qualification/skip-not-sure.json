@@ -1,0 +1,35 @@
+{
+  "scenarioId": "skip-not-sure",
+  "label": "Universal skip / not sure path",
+  "description": "User skips the whole questionnaire and should fail closed to the broad onboarding basket with flexible confidence.",
+  "answers": {
+    "q_goal_preference": "unsure",
+    "q_expression_preference": "unsure",
+    "q_risk_level": "unsure",
+    "q_drawdown_sensitivity": "unset",
+    "q_rebalance_preference": "unsure",
+    "q_directional_appetite": "unsure",
+    "q_automation_comfort": "unsure",
+    "q_certainty": "unsure"
+  },
+  "walletState": {
+    "walletConnected": true,
+    "walletAddress": "0x00000000000000000000000000000000000000b5",
+    "fundedNotionalUsd": 0,
+    "smartAccount": {
+      "status": "ready",
+      "address": "0x0000000000000000000000000000000000000b15"
+    }
+  },
+  "expected": {
+    "slotId": "onboarding.default_basket",
+    "mode": "basket",
+    "starterBasketId": "mag-7",
+    "selectionType": "public_strategy",
+    "selectionKey": "onboarding.default_basket",
+    "executionState": "blocked",
+    "executionEligibility": "preview_only",
+    "directionalPreviewOnly": false,
+    "activationReady": false
+  }
+}

@@ -138,6 +138,7 @@ export interface ReplaySnapshot {
   turnoverPct: number;
   winRatePct: number;
   monthlyEdgePct: number;
+  points?: ReplayPoint[];
 }
 
 export interface ComparisonEntry {

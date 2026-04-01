@@ -749,6 +749,8 @@ function buildManifestView(manifest) {
     explanation: buildManifestExplanationView(manifest),
     explanationBundle: manifest.researchExplanationBundle ?? null,
     tuningSummary: manifest.researchTuningSummary ?? null,
+    replay: manifest.replay ?? null,
+    marketIntelligence: manifest.marketIntelligence ?? null,
     validation: {
       datasetVersion: manifest.validation.datasetVersion,
       evaluatorVersion: manifest.validation.evaluatorVersion,

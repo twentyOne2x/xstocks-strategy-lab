@@ -1,0 +1,403 @@
+{
+  "generatedAt": "2026-04-01T20:22:23.966Z",
+  "walletAddress": "0x1111111111111111111111111111111111111111",
+  "notionalLadderUsd": [
+    20,
+    25,
+    50,
+    100
+  ],
+  "symbols": [
+    "NVDAx",
+    "AAPLx",
+    "MSFTx",
+    "METAx",
+    "AMZNx",
+    "GOOGLx",
+    "TSLAx",
+    "SPYx",
+    "AMDx",
+    "AVGOx",
+    "ORCLx"
+  ],
+  "successfulSymbols": [],
+  "failedSymbols": [
+    "NVDAx",
+    "AAPLx",
+    "MSFTx",
+    "METAx",
+    "AMZNx",
+    "GOOGLx",
+    "TSLAx",
+    "SPYx",
+    "AMDx",
+    "AVGOx",
+    "ORCLx"
+  ],
+  "signerBoundary": "Live 1inch Fusion quotes are proven. Real submission still requires an explicit xStocks user wallet signer/private-key path; this runner does not submit orders.",
+  "bySymbol": [
+    {
+      "symbol": "NVDAx",
+      "ethereumDeploymentAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "AAPLx",
+      "ethereumDeploymentAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "MSFTx",
+      "ethereumDeploymentAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "METAx",
+      "ethereumDeploymentAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "AMZNx",
+      "ethereumDeploymentAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "GOOGLx",
+      "ethereumDeploymentAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "TSLAx",
+      "ethereumDeploymentAddress": "0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "SPYx",
+      "ethereumDeploymentAddress": "0x90a2a4c76b5d8c0bc892a69ea28aa775a8f2dd48",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "AMDx",
+      "ethereumDeploymentAddress": "0x3522513e5f146a2006e2901b05f16b2821485e19",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "AVGOx",
+      "ethereumDeploymentAddress": "0x38bac69cbbd28156796e4163b2b6dcb81e336565",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    },
+    {
+      "symbol": "ORCLx",
+      "ethereumDeploymentAddress": "0x548308e91ec9f285c7bff05295badbd56a6e4971",
+      "firstSuccessfulNotionalUsd": null,
+      "firstQuoteId": null,
+      "successfulAttemptCount": 0,
+      "failures": [
+        {
+          "notionalUsd": 20,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 25,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 50,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        },
+        {
+          "notionalUsd": 100,
+          "statusCode": 404,
+          "code": null,
+          "description": "1inch Fusion quote request failed with status 404: No proxy config found"
+        }
+      ]
+    }
+  ]
+}

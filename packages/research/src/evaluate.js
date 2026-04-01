@@ -164,6 +164,8 @@ function computePathDependentRebalanceMetrics(bundle, plan, points) {
         Math.max(...plan.targetWeights.map((entry) => entry.weight * 100), plan.cashWeight * 100),
         4,
       ),
+      pointDates: points.map((point) => point.date),
+      netNavSeries: [1],
     };
   }
 
@@ -294,6 +296,73 @@ function computePathDependentRebalanceMetrics(bundle, plan, points) {
     maxDrawdownPct: computeMaxDrawdown(grossNavSeries),
     netMaxDrawdownPct: computeMaxDrawdown(netNavSeries),
     observedWeightMaxPct,
+    pointDates: points.map((point) => point.date),
+    netNavSeries: netNavSeries.map((value) => round(value, 6)),
+  };
+}
+
+function buildReplayPointIndices(length, maxPoints) {
+  if (length <= maxPoints) {
+    return Array.from({ length }, (_, index) => index);
+  }
+
+  const indices = new Set([0, length - 1]);
+  const interiorPointCount = Math.max(maxPoints - 2, 0);
+
+  for (let position = 1; position <= interiorPointCount; position += 1) {
+    indices.add(Math.round((position * (length - 1)) / (interiorPointCount + 1)));
+  }
+
+  return [...indices].sort((left, right) => left - right);
+}
+
+function labelReplayPoint(date, index, lastIndex) {
+  if (index === 0) {
+    return "Open";
+  }
+
+  if (index === lastIndex) {
+    return "Now";
+  }
+
+  return typeof date === "string" && date.length >= 10 ? date.slice(5) : `T${index + 1}`;
+}
+
+export function deriveBasketReplaySurface(summary, options = {}) {
+  const bundle = options.bundle ?? loadResearchBundle();
+  const startingCapitalUsd = Number(options.startingCapitalUsd ?? 1000);
+  const maxPoints = Number(options.maxPoints ?? 8);
+  const plan = summary?.candidate?.plan;
+
+  if (!plan) {
+    throw new Error("Basket replay surface requires summary.candidate.plan.");
+  }
+
+  const validationPoints = filterValidationPoints(bundle);
+  const replayMetrics = computePathDependentRebalanceMetrics(
+    bundle,
+    plan,
+    validationPoints,
+  );
+  const navSeries = replayMetrics.netNavSeries ?? [1];
+  const pointDates = replayMetrics.pointDates ?? validationPoints.map((point) => point.date);
+  const replayIndices = buildReplayPointIndices(navSeries.length, maxPoints);
+  const replayPoints = replayIndices.map((index) => ({
+    label: labelReplayPoint(pointDates[index], index, navSeries.length - 1),
+    date: pointDates[index],
+    value: round(startingCapitalUsd * navSeries[index], 2),
+  }));
+  const winningPeriods = navSeries.slice(1).filter((value, index) => value > navSeries[index]).length;
+  const periodCount = Math.max(navSeries.length - 1, 0);
+
+  return {
+    startingCapital: round(startingCapitalUsd, 2),
+    endingCapital: round(startingCapitalUsd * navSeries.at(-1), 2),
+    netReturnPct: round((navSeries.at(-1) - 1) * 100, 4),
+    maxDrawdownPct: round(-(replayMetrics.netMaxDrawdownPct ?? replayMetrics.maxDrawdownPct ?? 0), 4),
+    turnoverPct: round(replayMetrics.turnoverAnnPct ?? summary?.metrics?.turnoverAnnPct ?? 0, 4),
+    winRatePct: round(periodCount === 0 ? 0 : (winningPeriods / periodCount) * 100, 4),
+    points: replayPoints,
   };
 }
 

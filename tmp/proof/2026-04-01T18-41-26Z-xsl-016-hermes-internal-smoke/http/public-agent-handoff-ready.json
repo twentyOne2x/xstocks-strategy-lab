@@ -1,0 +1,124 @@
+{
+  "data": {
+    "version": "1",
+    "generatedAt": "2026-04-01T18:41:30.019Z",
+    "slot": {
+      "chain": "ethereum",
+      "surface": "onboarding",
+      "position": 0,
+      "title": "Autopilot: Mag 7 Core",
+      "description": "Default onboarding basket anchored to the pinned Mag 7 baseline.",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "starterBasketId": "mag7"
+    },
+    "manifestRef": {
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+    },
+    "publicSurface": {
+      "skillPath": "/skill.md",
+      "publicRoutes": [
+        "/onboarding",
+        "/workspace/comparison",
+        "/workspace/detail/[manifestSlug]",
+        "/activate/[manifestSlug]"
+      ],
+      "publicApis": [
+        {
+          "method": "POST",
+          "path": "/api/qualify",
+          "purpose": "Qualify the user into a promoted xstocks lane."
+        },
+        {
+          "method": "GET",
+          "path": "/api/workspace",
+          "purpose": "Inspect public workspace truth and route labels for the selected lane."
+        },
+        {
+          "method": "GET",
+          "path": "/api/activation-preview",
+          "purpose": "Read the public readiness preview for the selected lane."
+        },
+        {
+          "method": "GET",
+          "path": "/api/public-agent-handoff",
+          "purpose": "Read the explicit public-to-internal handoff boundary."
+        }
+      ]
+    },
+    "readiness": {
+      "requestedNotionalUsd": 25,
+      "executionPlanPreview": {
+        "surfaceTruth": "live",
+        "executionState": "ready",
+        "executionEligibility": "executable",
+        "routeTruthLabels": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "core_xstocks",
+            "reason": "Publicly verified rail is available."
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "yield_buffer",
+            "reason": "Publicly verified rail is available."
+          }
+        ],
+        "blockers": [],
+        "warnings": []
+      }
+    },
+    "handoff": {
+      "publicSafeBridgeExists": true,
+      "directAuthenticatedBridgeExists": false,
+      "state": "ready_for_authenticated_activation",
+      "reason": "Public-safe preview has reached a truthful executable readiness snapshot, but activation save and execution still require authenticated ownership.",
+      "nextAction": "Hand off to the authenticated internal activation surface and save the activation from a verified user context.",
+      "authenticatedBoundary": "Verified Privy-authenticated user context and user-approved wallet or signature steps remain required after this point.",
+      "authenticatedApis": [
+        {
+          "method": "POST",
+          "path": "/api/activations",
+          "purpose": "Save activation from a verified authenticated user context."
+        },
+        {
+          "method": "GET",
+          "path": "/api/activity",
+          "purpose": "Read activation activity for the authenticated owner."
+        },
+        {
+          "method": "GET",
+          "path": "/api/executions",
+          "purpose": "Read execution request state for the authenticated owner."
+        },
+        {
+          "method": "POST",
+          "path": "/api/executions",
+          "purpose": "Create or advance execution requests from the authenticated owner context."
+        }
+      ],
+      "privateDetailsWithheld": [
+        "private operator hosts",
+        "auth tokens",
+        "wallet secrets",
+        "treasury details",
+        "hidden custody internals"
+      ]
+    }
+  }
+}

@@ -160,6 +160,88 @@ function parseNullableString(value) {
   return nonEmptyStringSchema.parse(value);
 }
 
+function parseReplayPoint(value, label) {
+  const point = assertRecord(value, label);
+  normalizeRequiredString(point.label, `${label}.label`);
+  normalizeRequiredFiniteNumber(point.value, `${label}.value`);
+
+  if (point.value < 0) {
+    throw new Error(`${label}.value must be non-negative.`);
+  }
+
+  if (point.date !== undefined) {
+    normalizeRequiredString(point.date, `${label}.date`);
+  }
+
+  return point;
+}
+
+function parseReplaySurface(value, label) {
+  const replay = assertRecord(value, label);
+  normalizeRequiredFiniteNumber(replay.startingCapital, `${label}.startingCapital`);
+  normalizeRequiredFiniteNumber(replay.endingCapital, `${label}.endingCapital`);
+  normalizeRequiredFiniteNumber(replay.netReturnPct, `${label}.netReturnPct`);
+  normalizeRequiredFiniteNumber(replay.maxDrawdownPct, `${label}.maxDrawdownPct`);
+  normalizeRequiredFiniteNumber(replay.turnoverPct, `${label}.turnoverPct`);
+  normalizeRequiredFiniteNumber(replay.winRatePct, `${label}.winRatePct`);
+
+  if (replay.startingCapital <= 0) {
+    throw new Error(`${label}.startingCapital must be positive.`);
+  }
+
+  if (replay.endingCapital < 0) {
+    throw new Error(`${label}.endingCapital must be non-negative.`);
+  }
+
+  if (replay.turnoverPct < 0) {
+    throw new Error(`${label}.turnoverPct must be non-negative.`);
+  }
+
+  if (replay.winRatePct < 0 || replay.winRatePct > 100) {
+    throw new Error(`${label}.winRatePct must stay between 0 and 100.`);
+  }
+
+  if (!Array.isArray(replay.points) || replay.points.length < 2) {
+    throw new Error(`${label}.points must contain at least two replay points.`);
+  }
+
+  replay.points.forEach((point, index) =>
+    parseReplayPoint(point, `${label}.points[${index}]`),
+  );
+
+  return replay;
+}
+
+function parseMarketIntelligenceDriver(value, label) {
+  const driver = assertRecord(value, label);
+  normalizeRequiredString(driver.label, `${label}.label`);
+  normalizeRequiredString(driver.value, `${label}.value`);
+  normalizeRequiredString(driver.note, `${label}.note`);
+
+  if (!["positive", "neutral", "warning"].includes(driver.tone)) {
+    throw new Error(`${label}.tone must be positive, neutral, or warning.`);
+  }
+
+  return driver;
+}
+
+function parseMarketIntelligenceSurface(value, label) {
+  const surface = assertRecord(value, label);
+  normalizeRequiredString(surface.currentView, `${label}.currentView`);
+  normalizeRequiredString(surface.horizon, `${label}.horizon`);
+  parseStringArray(surface.whatChanged, `${label}.whatChanged`, { required: true });
+
+  if (!Array.isArray(surface.drivers) || surface.drivers.length === 0) {
+    throw new Error(`${label}.drivers must be a non-empty array.`);
+  }
+
+  surface.drivers.forEach((driver, index) =>
+    parseMarketIntelligenceDriver(driver, `${label}.drivers[${index}]`),
+  );
+
+  return surface;
+}
+
 function parseRuntimeRequiredRoutes(value, label) {
   if (!Array.isArray(value) || value.length === 0) {
     throw new Error(`${label} must be a non-empty array.`);
@@ -880,6 +962,15 @@ export function parseCanonicalPromotedManifestDocument(value) {
     document.mode === "basket"
       ? parseBasketTuningSummary(document.tuningSummary, "tuningSummary")
       : null;
+  const replay =
+    document.mode === "basket" ? parseReplaySurface(document.replay, "replay") : null;
+  const marketIntelligence =
+    document.mode === "basket"
+      ? parseMarketIntelligenceSurface(
+          document.marketIntelligence ?? document.market_intelligence,
+          document.marketIntelligence ? "marketIntelligence" : "market_intelligence",
+        )
+      : null;
   parseActivationManifest(document);
   promotedActivationManifestSchema.parse(projectSharedPromotedManifest(document));
   activationManifestFrontendSchema.parse(document.frontend);
@@ -1002,6 +1093,17 @@ export function parseCanonicalPromotedManifestDocument(value) {
   );
 
   if (document.mode === "basket") {
+    if (!replay) {
+      throw new Error("Basket promoted manifests must include replay.");
+    }
+    if (!marketIntelligence || !document.market_intelligence) {
+      throw new Error("Basket promoted manifests must include marketIntelligence and market_intelligence.");
+    }
+    assertAliasEqual(
+      stableJson(toSnakeKeys(marketIntelligence)),
+      stableJson(document.market_intelligence),
+      "marketIntelligence",
+    );
     assertAliasEqual(
       stableJson(toSnakeKeys(explanationBundle)),
       stableJson(document.explanation_bundle),

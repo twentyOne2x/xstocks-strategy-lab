@@ -32,11 +32,13 @@ import {
 import {
   basketRecommendationSchema,
   directionalRecommendationSchema,
+  marketIntelligenceSurfaceSchema,
   directionalExpressionSchema,
   portfolioExplanationBundleSchema,
   portfolioTargetAllocationSchema,
   promotedBasketExplanationBundleSchema,
   promotedBasketTuningSummarySchema,
+  replaySurfaceSchema,
   strategySlotSchema,
 } from "../../../packages/policy/src/shared-contracts.js";
 import { agentQualificationSchema } from "../../../packages/shared/dist/contracts/qualification.js";
@@ -166,6 +168,8 @@ const manifestViewSchema = z.object({
   explanation: manifestExplanationViewSchema,
   explanationBundle: promotedBasketExplanationBundleSchema.nullable(),
   tuningSummary: promotedBasketTuningSummarySchema.nullable(),
+  replay: replaySurfaceSchema.nullable(),
+  marketIntelligence: marketIntelligenceSurfaceSchema.nullable(),
   validation: manifestValidationViewSchema,
   fallback: manifestFallbackViewSchema,
   activationTemplate: manifestActivationTemplateViewSchema,

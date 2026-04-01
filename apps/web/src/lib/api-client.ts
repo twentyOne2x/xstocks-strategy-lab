@@ -154,6 +154,36 @@ export interface ApiManifestValidation {
   promotedAt: string;
 }
 
+export interface ApiManifestReplayPoint {
+  label: string;
+  value: number;
+  date?: string;
+}
+
+export interface ApiManifestReplay {
+  startingCapital: number;
+  endingCapital: number;
+  netReturnPct: number;
+  maxDrawdownPct: number;
+  turnoverPct: number;
+  winRatePct: number;
+  points: ApiManifestReplayPoint[];
+}
+
+export interface ApiManifestMarketDriver {
+  label: string;
+  value: string;
+  tone: "positive" | "neutral" | "warning";
+  note: string;
+}
+
+export interface ApiManifestMarketIntelligence {
+  currentView: string;
+  horizon: string;
+  whatChanged: string[];
+  drivers: ApiManifestMarketDriver[];
+}
+
 export interface ApiManifestView {
   manifestId: string;
   slotId: string;
@@ -166,6 +196,8 @@ export interface ApiManifestView {
   explanation: ApiManifestExplanation;
   explanationBundle: ApiBasketExplanationBundle | null;
   tuningSummary: ApiBasketTuningSummary | null;
+  replay: ApiManifestReplay | null;
+  marketIntelligence: ApiManifestMarketIntelligence | null;
   validation: ApiManifestValidation;
   fallback: { previousIncumbentId: string | null; disableConditions: string[] };
   activationTemplate: {

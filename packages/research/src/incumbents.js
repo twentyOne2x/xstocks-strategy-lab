@@ -24,6 +24,8 @@ import {
   SLOT_REGISTRY_VERSION,
   YIELD_BUFFER_ASSET_SYMBOL,
 } from "./constants.js";
+import { loadResearchBundle } from "./bundle.js";
+import { deriveBasketReplaySurface } from "./evaluate.js";
 import { fileExists, readJson, writeJson } from "./fs.js";
 import {
   assertPromotedBasketSummaryMatchesIncumbent,
@@ -60,6 +62,10 @@ function uniqueStrings(values) {
 
 function stableJson(value) {
   return JSON.stringify(value);
+}
+
+function round(value, places = 4) {
+  return Number(Number(value).toFixed(places));
 }
 
 function deriveBasketExecutionSurfaceForAllocations(frontendBadges, targetAllocations) {
@@ -438,12 +444,124 @@ function readPromotedRunSummary(incumbent) {
   return summary;
 }
 
-function buildBasketExplanationSurface(incumbent) {
-  const summary = readPromotedRunSummary(incumbent);
-  assertPromotedBasketSummaryMatchesIncumbent(incumbent, summary);
-  const { explanationBundle, tuningSummary } = deriveBasketSummaryArtifacts(summary);
+function resolvePrimaryValidationWindow(bundle) {
+  const validationWindows = bundle.validationWindows.windows ?? [];
+  const primaryWindowId =
+    bundle.validationWindows.primary_window_id ?? validationWindows[0]?.window_id;
+  return validationWindows.find((window) => window.window_id === primaryWindowId) ?? null;
+}
+
+function toDriverTone(value, { positiveWhen = null, warningWhen = null } = {}) {
+  if (typeof warningWhen === "function" && warningWhen(value)) {
+    return "warning";
+  }
+
+  if (typeof positiveWhen === "function" && positiveWhen(value)) {
+    return "positive";
+  }
+
+  return "neutral";
+}
+
+function findKnob(summary, knobId) {
+  return (summary?.tuningSummary?.currentKnobs ?? []).find((knob) => knob.knobId === knobId) ?? null;
+}
+
+function buildBasketMarketIntelligenceSurface(summary, bundle) {
+  const operatorSummary = summary?.tuningSummary?.operatorSummary ?? {};
+  const benchmarkEdge =
+    summary?.explanationBundle?.benchmarkDelta?.excessReturnAfterCostPct ?? 0;
+  const turnoverPct = summary?.metrics?.turnoverAnnPct ?? 0;
+  const maxDrawdownPct = summary?.metrics?.maxDrawdownPct ?? 0;
+  const validationWindow = resolvePrimaryValidationWindow(bundle);
+  const selectionUniverseKnob = findKnob(summary, "selection_universe");
+  const holdingsBreadthKnob = findKnob(summary, "holdings_count");
+  const cashSleeveKnob = findKnob(summary, "cash_weight");
+  const rebalanceTriggerKnob = findKnob(summary, "rebalance_threshold");
+  const whatChanged = uniqueStrings(
+    [
+      operatorSummary.changedFromBaseline,
+      ...(summary?.tuningSummary?.watchpoints ?? []).slice(0, 2),
+    ].filter(Boolean),
+  );
+  const drivers = [
+    selectionUniverseKnob && {
+      label: selectionUniverseKnob.label,
+      value: selectionUniverseKnob.currentValue ?? "unchanged",
+      tone: toDriverTone(selectionUniverseKnob.currentValue, {
+        positiveWhen: (value) => /core universe/i.test(String(value ?? "")),
+      }),
+      note: selectionUniverseKnob.tuningImpact,
+    },
+    holdingsBreadthKnob && {
+      label: holdingsBreadthKnob.label,
+      value: holdingsBreadthKnob.currentValue
+        ? `${holdingsBreadthKnob.currentValue} names`
+        : "unchanged",
+      tone: toDriverTone(Number(holdingsBreadthKnob.currentValue), {
+        warningWhen: (value) => Number.isFinite(value) && value <= 4,
+        positiveWhen: (value) => Number.isFinite(value) && value >= 5,
+      }),
+      note: holdingsBreadthKnob.tuningImpact,
+    },
+    cashSleeveKnob && {
+      label: cashSleeveKnob.label,
+      value: cashSleeveKnob.currentValue ?? "unchanged",
+      tone: toDriverTone(Number.parseFloat(String(cashSleeveKnob.currentValue ?? "0")), {
+        warningWhen: (value) => Number.isFinite(value) && value >= 10,
+      }),
+      note: cashSleeveKnob.tuningImpact,
+    },
+    rebalanceTriggerKnob && {
+      label: rebalanceTriggerKnob.label,
+      value: rebalanceTriggerKnob.currentValue ?? "unchanged",
+      tone: "neutral",
+      note: rebalanceTriggerKnob.tuningImpact,
+    },
+    {
+      label: "Benchmark edge",
+      value: `${benchmarkEdge >= 0 ? "+" : ""}${round(benchmarkEdge, 2)}%`,
+      tone: benchmarkEdge >= 0 ? "positive" : "warning",
+      note: "After estimated costs versus the pinned benchmark in the promoted research window.",
+    },
+    {
+      label: "Replay drawdown",
+      value: `${round(maxDrawdownPct, 2)}%`,
+      tone: maxDrawdownPct >= 12 ? "warning" : "neutral",
+      note: `Authoritative replay max drawdown with ${round(turnoverPct, 2)}% annualized turnover.`,
+    },
+  ].filter(Boolean);
 
   return {
+    currentView:
+      operatorSummary.whyThisIncumbent ??
+      summary?.tuningSummary?.incumbentInterpretation ??
+      summary?.explanationBundle?.summaries?.operator ??
+      summary?.tuningSummary?.headline,
+    horizon:
+      validationWindow === null
+        ? "Frozen validation window"
+        : `Validation window ${validationWindow.start} to ${validationWindow.end}`,
+    whatChanged:
+      whatChanged.length > 0
+        ? whatChanged
+        : [summary?.explanationBundle?.summaries?.rebalance ?? "Promoted research view updated."],
+    drivers,
+  };
+}
+
+function buildBasketExplanationSurface(incumbent) {
+  const summary = readPromotedRunSummary(incumbent);
+  const bundle = loadResearchBundle();
+  assertPromotedBasketSummaryMatchesIncumbent(incumbent, summary);
+  const { explanationBundle, tuningSummary } = deriveBasketSummaryArtifacts(summary);
+  const replay = deriveBasketReplaySurface(summary, { bundle });
+  const marketIntelligence = buildBasketMarketIntelligenceSurface(summary, bundle);
+
+  return {
+    replay,
+    marketIntelligence,
+    market_intelligence: toSnakeKeys(marketIntelligence),
     explanationBundle,
     explanation_bundle: toSnakeKeys(explanationBundle),
     tuningSummary,

@@ -1,0 +1,547 @@
+{
+  "ladder": [
+    25,
+    50,
+    100,
+    250,
+    500
+  ],
+  "minimumExecutableGrossNotionalUsd": null,
+  "structurallyBlockedAssets": [
+    {
+      "assetSymbol": "MSFTx",
+      "blockerClasses": [
+        "cow_internal_server_error",
+        "cow_no_liquidity"
+      ],
+      "errorTypes": [
+        "InternalServerError",
+        "NoLiquidity"
+      ]
+    },
+    {
+      "assetSymbol": "AAPLx",
+      "blockerClasses": [
+        "cow_internal_server_error",
+        "cow_no_liquidity"
+      ],
+      "errorTypes": [
+        "InternalServerError",
+        "NoLiquidity"
+      ]
+    },
+    {
+      "assetSymbol": "METAx",
+      "blockerClasses": [
+        "cow_internal_server_error",
+        "cow_no_liquidity"
+      ],
+      "errorTypes": [
+        "InternalServerError",
+        "NoLiquidity"
+      ]
+    },
+    {
+      "assetSymbol": "AMZNx",
+      "blockerClasses": [
+        "cow_internal_server_error",
+        "cow_no_liquidity"
+      ],
+      "errorTypes": [
+        "InternalServerError",
+        "NoLiquidity"
+      ]
+    },
+    {
+      "assetSymbol": "GOOGLx",
+      "blockerClasses": [
+        "cow_internal_server_error",
+        "cow_no_liquidity"
+      ],
+      "errorTypes": [
+        "InternalServerError",
+        "NoLiquidity"
+      ]
+    }
+  ],
+  "quoteSweepMatrix": [
+    {
+      "requestedNotionalUsd": 25,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 50,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": "cow_internal_server_error",
+          "errorType": "InternalServerError"
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 100,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 250,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        }
+      ]
+    },
+    {
+      "requestedNotionalUsd": 500,
+      "allActionableLegsQuoteable": false,
+      "approvalReadyAssets": [
+        "NVDAx"
+      ],
+      "blockedAssets": [
+        {
+          "assetSymbol": "MSFTx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "METAx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "blockerClass": "cow_no_liquidity",
+          "errorType": "NoLiquidity"
+        }
+      ]
+    }
+  ],
+  "generatedAt": "2026-04-01T18:56:04.549Z",
+  "proofMode": "hosted_quote_sweep",
+  "apiBaseUrl": "https://api-production-e70b.up.railway.app",
+  "slotId": "onboarding.default_basket",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "quoteabilityByAsset": [
+    {
+      "assetSymbol": "NVDAx",
+      "rungs": [
+        {
+          "requestedNotionalUsd": 25,
+          "state": "awaiting_approval",
+          "targetNotionalUsd": 4.5,
+          "blockerClass": null,
+          "errorStatusCode": null,
+          "errorType": null,
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 50,
+          "state": "awaiting_approval",
+          "targetNotionalUsd": 9,
+          "blockerClass": null,
+          "errorStatusCode": null,
+          "errorType": null,
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 100,
+          "state": "awaiting_approval",
+          "targetNotionalUsd": 18,
+          "blockerClass": null,
+          "errorStatusCode": null,
+          "errorType": null,
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 250,
+          "state": "awaiting_approval",
+          "targetNotionalUsd": 45,
+          "blockerClass": null,
+          "errorStatusCode": null,
+          "errorType": null,
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 500,
+          "state": "awaiting_approval",
+          "targetNotionalUsd": 90,
+          "blockerClass": null,
+          "errorStatusCode": null,
+          "errorType": null,
+          "errorDescription": null
+        }
+      ]
+    },
+    {
+      "assetSymbol": "MSFTx",
+      "rungs": [
+        {
+          "requestedNotionalUsd": 25,
+          "state": "blocked",
+          "targetNotionalUsd": 4.11,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 50,
+          "state": "blocked",
+          "targetNotionalUsd": 8.21,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 100,
+          "state": "blocked",
+          "targetNotionalUsd": 16.43,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 250,
+          "state": "blocked",
+          "targetNotionalUsd": 41.08,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 500,
+          "state": "blocked",
+          "targetNotionalUsd": 82.15,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        }
+      ]
+    },
+    {
+      "assetSymbol": "AAPLx",
+      "rungs": [
+        {
+          "requestedNotionalUsd": 25,
+          "state": "blocked",
+          "targetNotionalUsd": 3.94,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 50,
+          "state": "blocked",
+          "targetNotionalUsd": 7.87,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 100,
+          "state": "blocked",
+          "targetNotionalUsd": 15.74,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 250,
+          "state": "blocked",
+          "targetNotionalUsd": 39.35,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 500,
+          "state": "blocked",
+          "targetNotionalUsd": 78.7,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        }
+      ]
+    },
+    {
+      "assetSymbol": "METAx",
+      "rungs": [
+        {
+          "requestedNotionalUsd": 25,
+          "state": "blocked",
+          "targetNotionalUsd": 3.85,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 50,
+          "state": "blocked",
+          "targetNotionalUsd": 7.7,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 100,
+          "state": "blocked",
+          "targetNotionalUsd": 15.4,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 250,
+          "state": "blocked",
+          "targetNotionalUsd": 38.5,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 500,
+          "state": "blocked",
+          "targetNotionalUsd": 77,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        }
+      ]
+    },
+    {
+      "assetSymbol": "AMZNx",
+      "rungs": [
+        {
+          "requestedNotionalUsd": 25,
+          "state": "blocked",
+          "targetNotionalUsd": 3.72,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 50,
+          "state": "blocked",
+          "targetNotionalUsd": 7.45,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 100,
+          "state": "blocked",
+          "targetNotionalUsd": 14.89,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 250,
+          "state": "blocked",
+          "targetNotionalUsd": 37.23,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 500,
+          "state": "blocked",
+          "targetNotionalUsd": 74.45,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        }
+      ]
+    },
+    {
+      "assetSymbol": "GOOGLx",
+      "rungs": [
+        {
+          "requestedNotionalUsd": 25,
+          "state": "blocked",
+          "targetNotionalUsd": 3.63,
+          "blockerClass": "cow_internal_server_error",
+          "errorStatusCode": 500,
+          "errorType": "InternalServerError",
+          "errorDescription": null
+        },
+        {
+          "requestedNotionalUsd": 50,
+          "state": "blocked",
+          "targetNotionalUsd": 7.27,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 100,
+          "state": "blocked",
+          "targetNotionalUsd": 14.54,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 250,
+          "state": "blocked",
+          "targetNotionalUsd": 36.35,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        },
+        {
+          "requestedNotionalUsd": 500,
+          "state": "blocked",
+          "targetNotionalUsd": 72.7,
+          "blockerClass": "cow_no_liquidity",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found"
+        }
+      ]
+    }
+  ],
+  "strongestClaim": "Hosted linked-wallet quote-only sweep across 25, 50, 100, 250, 500 USD gross proves the promoted basket does not become all-leg quoteable in the tested band; structurally blocked assets on current CoW venue truth are MSFTx, AAPLx, METAx, AMZNx, GOOGLx."
+}

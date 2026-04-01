@@ -1,0 +1,118 @@
+{
+  "data": {
+    "version": "1",
+    "generatedAt": "2026-04-01T19:21:03.065Z",
+    "accepted": true,
+    "receipt": {
+      "version": "1",
+      "receiptId": "provider_receipt_c3a08c54-28ba-4fbe-91ee-13d729cefb0f",
+      "decision": "accepted",
+      "statusCode": 202,
+      "providerId": "chainlink_cre",
+      "deliveryId": "accepted_probe_delivery_e8d75bd4-6d7d-4476-9965-fa73fe89dc0f",
+      "eventId": "accepted_probe_event_e8d75bd4-6d7d-4476-9965-fa73fe89dc0f",
+      "triggerSource": "provider_triggered",
+      "routePath": "/api/internal/rebalances/provider-events",
+      "receivedAt": "2026-04-01T19:21:02.065Z",
+      "processedAt": "2026-04-01T19:21:03.056Z",
+      "requestDigest": "sha256:97888419a183aeba41cd0484d0bfa08a0d7e4e4b95528f918ae4d7ca619c81c5",
+      "rawBodyDigest": "sha256:85365cb204f4f81727f458f42fa1adad9758fd76bb18ab20c238dd99c15ed7c3",
+      "signerAddress": "0x5555555555555555555555555555555555555555",
+      "reasonCodes": [
+        "accepted_review_only"
+      ],
+      "reasonDetail": "Validated provider event opened operator review only; the manual CoW boundary remains unchanged.",
+      "duplicateOfReceiptId": null,
+      "stateChanged": true,
+      "rebalanceId": "rebalance_onboarding_default_basket",
+      "rebalanceState": "awaiting_operator",
+      "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "baselineManifestId": "onboarding.default_basket:basket-baseline-v1",
+      "rebalanceBlockers": [],
+      "request": {
+        "version": "1",
+        "providerId": "chainlink_cre",
+        "deliveryId": "accepted_probe_delivery_e8d75bd4-6d7d-4476-9965-fa73fe89dc0f",
+        "eventId": "accepted_probe_event_e8d75bd4-6d7d-4476-9965-fa73fe89dc0f",
+        "eventType": "rebalance_review_requested",
+        "triggerMode": "review_only",
+        "chain": "ethereum",
+        "slotId": "onboarding.default_basket",
+        "activationId": "activation_provider_probe_baseline_20260401",
+        "triggeredAt": "2026-04-01T19:21:01.685Z",
+        "requestDigest": "sha256:97888419a183aeba41cd0484d0bfa08a0d7e4e4b95528f918ae4d7ca619c81c5",
+        "summary": "Accepted-path deployed signed-event probe for XSL-011B with baseline runtime activation."
+      },
+      "jwt": {
+        "alg": "ES256K",
+        "kid": "deployed-proof-key-20260401",
+        "issuer": "0x5555555555555555555555555555555555555555",
+        "subject": "chainlink-cre-provider",
+        "audience": [
+          "xstocks-provider-rebalance-review"
+        ],
+        "jwtId": "accepted_probe_jti_e8d75bd4-6d7d-4476-9965-fa73fe89dc0f",
+        "issuedAt": "2026-04-01T19:21:01.000Z",
+        "expiresAt": "2026-04-01T20:21:01.000Z",
+        "notBefore": null,
+        "digest": "sha256:97888419a183aeba41cd0484d0bfa08a0d7e4e4b95528f918ae4d7ca619c81c5"
+      }
+    },
+    "rebalanceOrchestration": {
+      "rebalanceId": "rebalance_onboarding_default_basket",
+      "slotId": "onboarding.default_basket",
+      "chain": "ethereum",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "baselineActivationId": "activation_provider_probe_baseline_20260401",
+      "baselineManifestId": "onboarding.default_basket:basket-baseline-v1",
+      "baselineManifestMatchesTarget": false,
+      "state": "awaiting_operator",
+      "runtimeOwner": "operator_manual",
+      "triggerSource": "provider_triggered",
+      "summary": "Rebalance is awaiting operator confirmation.",
+      "rationale": "Execution remains manual-first and requires an explicit operator confirmation step before it can begin.",
+      "scheduledFor": null,
+      "allowedTransitions": [
+        "scheduled",
+        "executing",
+        "paused",
+        "failed"
+      ],
+      "recommendationState": "full_rebalance",
+      "executionState": "ready",
+      "executionEligibility": "executable",
+      "surfaceTruth": "live",
+      "blockers": [],
+      "warnings": [],
+      "automationTruth": {
+        "operatorManualRequired": true,
+        "autonomousExecutionProven": false,
+        "providerTriggeredProven": true,
+        "supportedTriggerSources": [
+          "operator_manual",
+          "scheduled_cron",
+          "provider_triggered"
+        ],
+        "notes": [
+          "Operator confirmation remains required before any rebalance execution claim.",
+          "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+          "Provider-triggered review is proven only for validated signed ingress events and still stops at awaiting_operator.",
+          "Validated provider-triggered review is review-only and cannot create, sign, submit, or settle CoW orders autonomously."
+        ]
+      },
+      "nextAction": {
+        "title": "Approve or reject manual rebalance",
+        "detail": "The worker shell will not submit execution without an explicit operator-driven state transition.",
+        "status": "pending"
+      },
+      "createdAt": "2026-04-01T19:21:03.048Z",
+      "updatedAt": "2026-04-01T19:21:03.048Z"
+    }
+  }
+}

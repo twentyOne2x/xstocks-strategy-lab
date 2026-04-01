@@ -1,0 +1,552 @@
+{
+  "executionRequestId": "execreq_1f023d5b-1972-4beb-a926-13a6763d7066",
+  "executionRequestState": "blocked",
+  "actionableLegCount": 6,
+  "approvalReadyLegCount": 1,
+  "blockedLegCount": 5,
+  "deferredLegCount": 1,
+  "allActionableLegsQuoteable": false,
+  "approvalReadyLegs": [
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:1",
+      "assetSymbol": "NVDAx",
+      "state": "awaiting_approval",
+      "receivingTokenAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+      "quoteId": "1126589828",
+      "quoteVerified": true,
+      "approvalStatus": "awaiting_user",
+      "signerAddress": "0x1111...1111",
+      "receiverAddress": "0x2222...2222",
+      "venueOrderId": null,
+      "venueStatus": "quote_ready",
+      "quoteBuyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+      "sellAmountBeforeFee": "9000000",
+      "targetNotionalUsd": 9,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": null,
+      "blockers": [],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    }
+  ],
+  "blockedLegs": [
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:2",
+      "assetSymbol": "MSFTx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x63ad27614231767c8c489745b9145272de50d09b",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0x2222...2222",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x63ad27614231767c8c489745b9145272de50d09b",
+      "sellAmountBeforeFee": "8210000",
+      "targetNotionalUsd": 8.21,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=8210000 targetNotionalUsd=8.21 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=8210000 targetNotionalUsd=8.21 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:3",
+      "assetSymbol": "AAPLx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0x2222...2222",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+      "sellAmountBeforeFee": "7870000",
+      "targetNotionalUsd": 7.87,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for AAPLx. buyToken=0x5aa7649fdbda47de64a07ac81d64b682af9c0724 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7870000 targetNotionalUsd=7.87 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for AAPLx. buyToken=0x5aa7649fdbda47de64a07ac81d64b682af9c0724 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7870000 targetNotionalUsd=7.87 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:4",
+      "assetSymbol": "METAx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0x2222...2222",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+      "sellAmountBeforeFee": "7700000",
+      "targetNotionalUsd": 7.7,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for METAx. buyToken=0x4e41a262caa93c6575d336e0a4eb79f3c67caa06 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7700000 targetNotionalUsd=7.70 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for METAx. buyToken=0x4e41a262caa93c6575d336e0a4eb79f3c67caa06 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7700000 targetNotionalUsd=7.70 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:5",
+      "assetSymbol": "AMZNx",
+      "state": "blocked",
+      "receivingTokenAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0x2222...2222",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+      "sellAmountBeforeFee": "7450000",
+      "targetNotionalUsd": 7.45,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for AMZNx. buyToken=0xac85d37acbadca37545e21ab0fb991bce8c1187c sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7450000 targetNotionalUsd=7.45 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for AMZNx. buyToken=0xac85d37acbadca37545e21ab0fb991bce8c1187c sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7450000 targetNotionalUsd=7.45 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:6",
+      "assetSymbol": "GOOGLx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": "0x2222...2222",
+      "venueOrderId": null,
+      "venueStatus": "quote_failed",
+      "quoteBuyToken": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+      "sellAmountBeforeFee": "7270000",
+      "targetNotionalUsd": 7.27,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "CoW quote request failed for GOOGLx. buyToken=0x1630f08370917e79df0b7572395a5e907508bbbc sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7270000 targetNotionalUsd=7.27 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+      "blockers": [
+        "CoW quote request failed for GOOGLx. buyToken=0x1630f08370917e79df0b7572395a5e907508bbbc sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7270000 targetNotionalUsd=7.27 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ]
+    }
+  ],
+  "legs": [
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:1",
+      "sequence": 1,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "NVDAx",
+      "adapterId": "cow_swap",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 18,
+      "targetNotionalUsd": 9,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "awaiting_approval",
+      "blockers": [],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ],
+      "quote": {
+        "kind": "cow_swap",
+        "quoteId": "1126589828",
+        "quotedAt": "2026-04-01T18:44:22.887Z",
+        "expiration": "2026-04-01T18:46:19.374090242Z",
+        "verified": true,
+        "protocolFeeBps": "2",
+        "order": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "sellAmount": "8684862",
+          "buyAmount": "49537572594737713",
+          "validTo": 1775070859,
+          "appData": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "feeAmount": "315138",
+          "kind": "sell",
+          "partiallyFillable": false,
+          "sellTokenBalance": "erc20",
+          "buyTokenBalance": "erc20",
+          "signingScheme": "eip712",
+          "gasAmount": "282553",
+          "gasPrice": "524643703",
+          "sellTokenPrice": "470396112.43209350109100341796875"
+        },
+        "owner": "0x1111111111111111111111111111111111111111"
+      },
+      "approval": {
+        "approvalType": "eip712_signature",
+        "status": "awaiting_user",
+        "signerAddress": "0x1111111111111111111111111111111111111111",
+        "approvalTarget": "cow_order",
+        "orderToSign": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "sellAmount": "8684862",
+          "buyAmount": "49537572594737713",
+          "validTo": 1775070859,
+          "appData": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "feeAmount": "315138",
+          "gasAmount": "282553",
+          "gasPrice": "524643703",
+          "sellTokenPrice": "470396112.43209350109100341796875",
+          "kind": "sell",
+          "partiallyFillable": false,
+          "sellTokenBalance": "erc20",
+          "buyTokenBalance": "erc20",
+          "signingScheme": "eip712",
+          "from": "0x1111111111111111111111111111111111111111"
+        },
+        "signature": null,
+        "approvedAt": null,
+        "submittedAt": null,
+        "venueOrderId": null,
+        "notes": [
+          "The user must sign this CoW order via an EIP-712-compatible wallet flow before backend submission."
+        ]
+      },
+      "venueStatus": {
+        "venueId": "cow_swap",
+        "venueOrderId": null,
+        "status": "quote_ready",
+        "settlementTxHash": null,
+        "lastCheckedAt": null,
+        "updatedAt": "2026-04-01T18:44:22.887Z",
+        "rawStatus": {
+          "quoteId": "1126589828",
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "kind": "sell",
+          "sellAmountBeforeFee": "9000000",
+          "targetNotionalUsd": 9
+        }
+      },
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:2",
+      "sequence": 2,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "MSFTx",
+      "adapterId": "cow_swap",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 16.43,
+      "targetNotionalUsd": 8.21,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x63ad27614231767c8c489745b9145272de50d09b",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "blocked",
+      "blockers": [
+        "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=8210000 targetNotionalUsd=8.21 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": {
+        "venueId": "cow_swap",
+        "venueOrderId": null,
+        "status": "quote_failed",
+        "settlementTxHash": null,
+        "lastCheckedAt": null,
+        "updatedAt": "2026-04-01T18:44:22.944Z",
+        "rawStatus": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x63ad27614231767c8c489745b9145272de50d09b",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "kind": "sell",
+          "sellAmountBeforeFee": "8210000",
+          "targetNotionalUsd": 8.21,
+          "error": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found",
+          "errorBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "blockerClass": "cow_no_liquidity"
+        }
+      },
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:3",
+      "sequence": 3,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "AAPLx",
+      "adapterId": "cow_swap",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 15.74,
+      "targetNotionalUsd": 7.87,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "blocked",
+      "blockers": [
+        "CoW quote request failed for AAPLx. buyToken=0x5aa7649fdbda47de64a07ac81d64b682af9c0724 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7870000 targetNotionalUsd=7.87 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": {
+        "venueId": "cow_swap",
+        "venueOrderId": null,
+        "status": "quote_failed",
+        "settlementTxHash": null,
+        "lastCheckedAt": null,
+        "updatedAt": "2026-04-01T18:44:22.980Z",
+        "rawStatus": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "kind": "sell",
+          "sellAmountBeforeFee": "7870000",
+          "targetNotionalUsd": 7.87,
+          "error": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found",
+          "errorBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "blockerClass": "cow_no_liquidity"
+        }
+      },
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:4",
+      "sequence": 4,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "METAx",
+      "adapterId": "cow_swap",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 15.4,
+      "targetNotionalUsd": 7.7,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "blocked",
+      "blockers": [
+        "CoW quote request failed for METAx. buyToken=0x4e41a262caa93c6575d336e0a4eb79f3c67caa06 sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7700000 targetNotionalUsd=7.70 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": {
+        "venueId": "cow_swap",
+        "venueOrderId": null,
+        "status": "quote_failed",
+        "settlementTxHash": null,
+        "lastCheckedAt": null,
+        "updatedAt": "2026-04-01T18:44:23.018Z",
+        "rawStatus": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "kind": "sell",
+          "sellAmountBeforeFee": "7700000",
+          "targetNotionalUsd": 7.7,
+          "error": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found",
+          "errorBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "blockerClass": "cow_no_liquidity"
+        }
+      },
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:5",
+      "sequence": 5,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "AMZNx",
+      "adapterId": "cow_swap",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 14.89,
+      "targetNotionalUsd": 7.45,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "blocked",
+      "blockers": [
+        "CoW quote request failed for AMZNx. buyToken=0xac85d37acbadca37545e21ab0fb991bce8c1187c sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7450000 targetNotionalUsd=7.45 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": {
+        "venueId": "cow_swap",
+        "venueOrderId": null,
+        "status": "quote_failed",
+        "settlementTxHash": null,
+        "lastCheckedAt": null,
+        "updatedAt": "2026-04-01T18:44:23.062Z",
+        "rawStatus": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "kind": "sell",
+          "sellAmountBeforeFee": "7450000",
+          "targetNotionalUsd": 7.45,
+          "error": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found",
+          "errorBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "blockerClass": "cow_no_liquidity"
+        }
+      },
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:6",
+      "sequence": 6,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "GOOGLx",
+      "adapterId": "cow_swap",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 14.54,
+      "targetNotionalUsd": 7.27,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "blocked",
+      "blockers": [
+        "CoW quote request failed for GOOGLx. buyToken=0x1630f08370917e79df0b7572395a5e907508bbbc sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=7270000 targetNotionalUsd=7.27 receiver=0x2222222222222222222222222222222222222222 blockerClass=cow_no_liquidity venueErrorType=NoLiquidity venueErrorDescription=no route found reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": {
+        "venueId": "cow_swap",
+        "venueOrderId": null,
+        "status": "quote_failed",
+        "settlementTxHash": null,
+        "lastCheckedAt": null,
+        "updatedAt": "2026-04-01T18:44:23.099Z",
+        "rawStatus": {
+          "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "buyToken": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+          "receiver": "0x2222222222222222222222222222222222222222",
+          "owner": "0x1111111111111111111111111111111111111111",
+          "kind": "sell",
+          "sellAmountBeforeFee": "7270000",
+          "targetNotionalUsd": 7.27,
+          "error": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "errorStatusCode": 404,
+          "errorType": "NoLiquidity",
+          "errorDescription": "no route found",
+          "errorBody": "{\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+          "blockerClass": "cow_no_liquidity"
+        }
+      },
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_fc2f75e3-f66d-4045-9fa9-66be5c5d1f19:leg:7",
+      "sequence": 7,
+      "sleeve": "yield_buffer",
+      "assetSymbol": "AUSD",
+      "venueId": "flowdesk_ausd_rwa_strategy",
+      "adapterId": "flowdesk_ausd_rwa_strategy",
+      "requiredRouteId": "flowdesk.ausd-rwa-strategy",
+      "targetWeightPct": 5,
+      "targetNotionalUsd": 2.5,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": null,
+      "paymentTokenDecimals": null,
+      "receivingTokenAddress": null,
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "deferred",
+      "blockers": [],
+      "warnings": [
+        "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    }
+  ]
+}

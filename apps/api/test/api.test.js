@@ -996,6 +996,30 @@ test("catalog read returns promoted-manifest-backed results from research", asyn
       defaultItem.manifest.tuningSummary?.currentKnobs.length > 0,
       true,
     );
+    assert.equal(defaultItem.manifest.replay?.startingCapital, 1000);
+    assert.equal(
+      defaultItem.manifest.replay?.endingCapital,
+      DEFAULT_MANIFEST.replay.endingCapital,
+    );
+    assert.equal(
+      defaultItem.manifest.replay?.turnoverPct,
+      DEFAULT_MANIFEST.replay.turnoverPct,
+    );
+    assert.equal(defaultItem.manifest.replay?.points.length > 1, true);
+    assert.equal(
+      defaultItem.manifest.marketIntelligence?.currentView,
+      DEFAULT_MANIFEST.marketIntelligence.currentView,
+    );
+    assert.equal(
+      defaultItem.manifest.marketIntelligence?.whatChanged[0],
+      DEFAULT_MANIFEST.marketIntelligence.whatChanged[0],
+    );
+    assert.equal(
+      defaultItem.manifest.marketIntelligence?.drivers.some(
+        (driver) => driver.label === "Benchmark edge",
+      ),
+      true,
+    );
     assert.equal(Object.hasOwn(defaultItem.manifest, "rawExplanationBundle"), false);
     assert.match(defaultItem.manifest.explanation.thesis, /xStocks basket|yield buffer/i);
     assert.ok(defaultItem.manifest.explanation.holdingRationales.length > 0);
@@ -1042,6 +1066,23 @@ test("workspace read returns manifest-driven workspace data", async () => {
     assert.equal(
       payload.data.manifest.tuningSummary?.headline,
       DEFAULT_MANIFEST.researchTuningSummary.headline,
+    );
+    assert.equal(payload.data.manifest.replay?.startingCapital, 1000);
+    assert.equal(
+      payload.data.manifest.replay?.endingCapital,
+      DEFAULT_MANIFEST.replay.endingCapital,
+    );
+    assert.equal(
+      payload.data.manifest.replay?.points.at(-1)?.value,
+      DEFAULT_MANIFEST.replay.points.at(-1)?.value,
+    );
+    assert.equal(
+      payload.data.manifest.marketIntelligence?.currentView,
+      DEFAULT_MANIFEST.marketIntelligence.currentView,
+    );
+    assert.equal(
+      payload.data.manifest.marketIntelligence?.drivers[0]?.label,
+      DEFAULT_MANIFEST.marketIntelligence.drivers[0]?.label,
     );
     assert.match(payload.data.manifest.explanation.whatThisDoes, /tokenized equities|basket/i);
     assert.equal(
