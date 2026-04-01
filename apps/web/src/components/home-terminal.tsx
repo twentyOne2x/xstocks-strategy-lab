@@ -15,16 +15,16 @@ function ChartIcon({ size = 32 }: { size?: number }) {
 
 const infraPartners = [
   { name: "xStocks", role: "Tokenized equities infrastructure", href: "https://xstocks.fi" },
-  { name: "Privy", role: "Wallets and auth by Privy", href: "https://privy.io" },
+  { name: "Privy", role: "Smart wallets and auth by Privy", href: "https://privy.io" },
   { name: "CoW Protocol", role: "Swaps powered by CoW Protocol", href: "https://cow.fi" },
-  { name: "Chainlink", role: "Chainlink-oriented automation rails", href: "https://chain.link" },
+  { name: "Chainlink CRE", role: "Automated rebalancing rails", href: "https://chain.link" },
 ];
 
 const faq = [
   { q: "What are tokenized equities?", a: "Real US stocks represented as tokens on Ethereum. Each xStocks token is backed 1:1 by the underlying equity." },
   { q: "How much do I need to start?", a: "As little as $10 in USDC. No minimums, no lock-ups." },
   { q: "Who holds my assets?", a: "You do. Assets stay in your Privy smart wallet. Equity Terminal never takes custody." },
-  { q: "Can trades happen without my approval?", a: "No. Every rebalance is recommended first. You review and approve before anything executes." },
+  { q: "How is the portfolio maintained?", a: "Chainlink CRE automation monitors the strategy and triggers rebalancing when needed, with execution routed through CoW Protocol while your assets stay in your wallet." },
   { q: "What if I want to stop?", a: "Pause or exit anytime. Your positions stay in your wallet." },
 ];
 
@@ -57,13 +57,14 @@ export function HomeTerminal() {
       <section className="landing-hero">
         <div className="landing-hero-inner">
           <h1 className="landing-h1">
-            Tokenized equity portfolios you actually control.
+            xStocks portfolios you actually control.
           </h1>
           <p className="landing-hero-sub">
             Equity Terminal matches you to a portfolio of tokenized US equities
-            powered by xStocks. You preview every holding before you deposit,
-            approve every rebalance before it executes, and keep full custody
-            in your own wallet. Get started with as little as $10.
+            powered by xStocks. Smart wallets and auth run through Privy,
+            swaps execute through CoW Protocol, and Chainlink CRE keeps the
+            strategy automated. Preview every holding before you fund and get
+            started with as little as $10.
           </p>
           <div className="landing-hero-cta">
             <Link className="button button-primary button-xl" href="/onboarding">
@@ -139,8 +140,8 @@ export function HomeTerminal() {
               <p>Every holding, every weight, every trade route — visible before and after you deposit.</p>
             </div>
             <div className="landing-feature">
-              <strong>Your approval required</strong>
-              <p>Rebalances are recommended, never forced. Nothing executes without your explicit approval.</p>
+              <strong>Automated maintenance</strong>
+              <p>Chainlink CRE monitors the portfolio and keeps the strategy on rails as allocations drift over time.</p>
             </div>
             <div className="landing-feature">
               <strong>$10 to start</strong>

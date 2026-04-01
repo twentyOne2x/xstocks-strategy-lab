@@ -75,7 +75,7 @@ export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
             </div>
             <div>
               <span>Rebalancing</span>
-              <strong>{describeRebalanceState(orchestration)} · requires your approval</strong>
+              <strong>{describeRebalanceState(orchestration)} · Chainlink CRE</strong>
             </div>
             <div>
               <span>Route</span>

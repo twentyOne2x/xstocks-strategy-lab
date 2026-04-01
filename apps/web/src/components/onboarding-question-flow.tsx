@@ -546,7 +546,7 @@ function SimulatedWorkspace({
           {/* How it works — concise */}
           <section className="panel-card pq-how">
             <div className="pq-how-row">
-              <div><span className="section-kicker">Rebalance</span><strong>Scheduled with your approval</strong></div>
+              <div><span className="section-kicker">Rebalance</span><strong>Automated via Chainlink CRE</strong></div>
               <div><span className="section-kicker">Custody</span><strong>Self-custody via Privy</strong></div>
               <div><span className="section-kicker">Execution</span><strong>CoW Protocol</strong></div>
             </div>

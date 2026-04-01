@@ -34,18 +34,26 @@ This page complements the repo-owned operator surface. It does not replace it.
 - CoW Protocol and 1inch are the current verified Ethereum execution surfaces described in repo truth
 - Morpho `SPYx/AUSD` is the current truthful lending-proof path described in repo truth
 - exact live xStocks-on-Euler execution is not claimed here
-- Chainlink automation is still target-state only, not a live autonomy claim
+- Chainlink CRE is the automation/rebalancing layer on the public product surface
 
 ## Public-Safe Handoff Helper
 
-Use this helper when you need one explicit bridge between public preview and the authenticated internal lane:
+Use this helper when you need one explicit bridge between public preview and the authenticated internal lane.
+
+The API runs on a separate host from the frontend. The canonical base is the Railway-deployed API:
+
+```text
+https://api-production-e70b.up.railway.app
+```
+
+Endpoints:
 
 ```text
 GET /api/public-agent-handoff?slotId=<slotId>&userNotionalUsd=<usd>
 GET /api/public-agent-handoff?manifestId=<manifestId>&userNotionalUsd=<usd>
 ```
 
-Optional public-safe wallet readiness inputs may also be supplied:
+Optional public-safe wallet readiness inputs:
 
 ```text
 &walletConnected=true&walletAddress=<0x...>&fundedNotionalUsd=<usd>
@@ -58,6 +66,8 @@ This helper returns only:
 - the exact authenticated surfaces that begin after the public boundary
 
 It does not save activation, read private activity, create executions, expose private hosts, or reveal hidden custody details.
+
+Note: The frontend at `equityterminal.app` does not proxy API requests. All API calls require the Railway host above.
 
 ## Public And Private Boundary
 
