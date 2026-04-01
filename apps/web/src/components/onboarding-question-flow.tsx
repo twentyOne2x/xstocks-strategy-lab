@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { BrandLockup } from "@/components/home-terminal";
+
 import type {
   BlotterData,
   OnboardingProfile,
@@ -143,13 +145,14 @@ export function OnboardingQuestionFlow({
   const skipOption = getSkipQuestionOption(questionToShow);
 
   return (
+    <div className="onboarding-flow-wrapper">
     <div className="onboarding-flow">
       <div className="onboarding-progress">
         <div className="onboarding-progress-meta">
           <span className="section-kicker">
             {displayStep} of {primaryQuestions.length}
           </span>
-          {onFastPath && answeredPrimaryCount <= 1 && (
+          {onFastPath && (
             <button className="ob-skip-btn" onClick={onFastPath} type="button">
               Skip — pick for me
             </button>
@@ -166,15 +169,6 @@ export function OnboardingQuestionFlow({
             <h2>{questionToShow.prompt}</h2>
             <p>{questionToShow.helper}</p>
           </div>
-          {skipOption ? (
-            <button
-              className="ob-skip-btn"
-              onClick={() => onAnswer(questionToShow.id, skipOption.id)}
-              type="button"
-            >
-              Skip / not sure
-            </button>
-          ) : null}
         </div>
         <div className="onboarding-option-grid">
           {visibleOptions.map((option) => (
@@ -189,12 +183,23 @@ export function OnboardingQuestionFlow({
             </button>
           ))}
         </div>
+        {skipOption && (
+          <button
+            className="onboarding-option onboarding-option-skip"
+            onClick={() => onAnswer(questionToShow.id, skipOption.id)}
+            type="button"
+          >
+            <strong>Skip / not sure</strong>
+            <span>We will pick sensible defaults for you.</span>
+          </button>
+        )}
       </div>
 
       <div className="onboarding-back-row">
         <button className="button button-ghost" onClick={onBack} type="button">Back</button>
         <button className="button button-ghost" onClick={onReset} type="button">Start over</button>
       </div>
+    </div>
     </div>
   );
 }
@@ -613,7 +618,7 @@ function SimulatedWorkspace({
     if (!highlightId) return;
     const el = document.getElementById(highlightId);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.scrollIntoView({ behavior: "smooth", block: highlightId === "pq-rail" ? "start" : "center" });
     }
   }, [highlightId]);
 
@@ -877,6 +882,21 @@ function SimulatedWorkspace({
       </section>
 
       {previewStatus && previewStatus.tone === "loading" ? <p className="panel-note" style={{ padding: "16px", textAlign: "center" }}>{previewStatus.message}</p> : null}
+
+      {/* Footer */}
+      <footer className="pq-footer">
+        <div className="pq-footer-brand">
+          <BrandLockup size="sm" />
+          <span style={{ color: '#999', fontSize: '0.78rem' }}>Powered by xStocks</span>
+        </div>
+        <div className="pq-footer-links">
+          <a href="https://xstocks.fi" target="_blank" rel="noopener noreferrer">xStocks</a>
+          <a href="https://privy.io" target="_blank" rel="noopener noreferrer">Privy</a>
+          <a href="https://cow.fi" target="_blank" rel="noopener noreferrer">CoW Protocol</a>
+          <a href="https://1inch.io" target="_blank" rel="noopener noreferrer">1inch</a>
+          <a href="https://chain.link" target="_blank" rel="noopener noreferrer">Chainlink</a>
+        </div>
+      </footer>
     </div>
   );
 }

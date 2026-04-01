@@ -130,11 +130,11 @@ export function HomeTerminal() {
             <div className="landing-stack-detail">Monitors drift. Triggers rebalancing. Automation rails.</div>
           </div>
           <div className="landing-stack-layer">
-            <div className="landing-stack-label">CoW Protocol</div>
-            <div className="landing-stack-detail">MEV-protected swaps. Best execution routing.</div>
+            <div className="landing-stack-label">CoW Protocol + 1inch</div>
+            <div className="landing-stack-detail">MEV-protected swaps. DEX aggregation. Best execution routing.</div>
           </div>
           <div className="landing-stack-layer landing-stack-layer-bottom">
-            <div className="landing-stack-label">xStocks + Ethereum</div>
+            <div className="landing-stack-label">xStocks</div>
             <div className="landing-stack-detail">Tokenized US equities. On-chain settlement. 1:1 backed.</div>
           </div>
         </div>

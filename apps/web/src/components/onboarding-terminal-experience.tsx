@@ -231,6 +231,7 @@ export function OnboardingTerminalExperience({
             <span>xStocks</span>
             <span>Privy</span>
             <span>CoW</span>
+            <span>1inch</span>
             <span>Chainlink</span>
           </div>
         </div>
