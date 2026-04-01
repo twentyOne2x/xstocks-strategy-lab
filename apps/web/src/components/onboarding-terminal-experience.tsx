@@ -145,36 +145,27 @@ export function OnboardingTerminalExperience({
     setStarted(true);
   }
 
-  // Entry screen
+  // Entry screen — bigger, more visual
   if (!started) {
     return (
       <div className="onboarding-entry">
         <div className="onboarding-entry-card">
-          <div className="onboarding-entry-kicker">
-            <span>Equity Terminal</span>
+          <span className="landing-kicker">Equity Terminal</span>
+          <h1>Build your portfolio.</h1>
+          <p>7 questions. Under a minute. Preview everything before you fund.</p>
+          <div className="ob-entry-cta-row">
+            <button className="button button-primary button-xl" onClick={() => setStarted(true)} type="button">
+              Answer 7 questions
+            </button>
+            <button className="button button-ghost button-lg" onClick={handleFastPath} type="button">
+              Pick for me
+            </button>
           </div>
-          <h1>A few questions, then your portfolio.</h1>
-          <p>We match you to a portfolio of tokenized equities. Preview every holding before you commit anything.</p>
-          <button
-            className="onboarding-entry-cta"
-            onClick={() => setStarted(true)}
-            type="button"
-          >
-            Answer 7 questions
-          </button>
-          <button
-            className="onboarding-entry-fast"
-            onClick={handleFastPath}
-            type="button"
-          >
-            Pick a starter portfolio for me
-          </button>
-          <div className="onboarding-entry-proof">
-            <span>Under 60 seconds</span>
-            <span className="onboarding-entry-dot" />
-            <span>Preview before deposit</span>
-            <span className="onboarding-entry-dot" />
-            <span>Refine anytime</span>
+          <div className="ob-entry-infra">
+            <span>xStocks</span>
+            <span>Privy</span>
+            <span>CoW</span>
+            <span>Chainlink</span>
           </div>
         </div>
       </div>
