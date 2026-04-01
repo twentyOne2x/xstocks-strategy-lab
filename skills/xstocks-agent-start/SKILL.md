@@ -17,6 +17,7 @@ The public surface may orient a user through:
 - `/workspace/comparison`
 - `/workspace/detail/[manifestSlug]`
 - `/activate/[manifestSlug]`
+- `GET /api/public-agent-handoff`
 
 The public surface must stop before:
 
@@ -35,6 +36,8 @@ The public surface must stop before:
 ## Current Repo Truth
 
 - qualification is repo-owned today through `node scripts/qualify.mjs` and `POST /api/qualify`
+- the public-safe handoff helper now exists at `GET /api/public-agent-handoff`
+- the helper can return `stay_public_preview`, `ready_for_authenticated_activation`, or `blocked` without exposing private infrastructure
 - activation truth is repo-owned through the API surface, not through prompt text
 - saved activation, activity reads, and execution proof require internal authenticated context
 - the public surface and the internal proof surface are intentionally separate
@@ -48,4 +51,4 @@ The public surface must stop before:
 
 ## Exact Current Blocker For One-Surface Start
 
-There is no public-safe handoff from the public `skill.md` into the authenticated internal activation, activity, and execution surfaces. Public orientation and qualification can start without secrets, but activation save and execution proof still require internal authenticated context.
+A public-safe handoff bridge now exists, but a direct one-surface public-to-execution path still cannot exist safely. `POST /api/activations`, `GET /api/activity`, `GET /api/executions`, and `POST /api/executions` remain authenticated surfaces bound to verified user ownership and user-approved wallet or signature steps.

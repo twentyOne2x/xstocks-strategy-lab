@@ -877,6 +877,88 @@ test("activation preview read stays fail-closed for preview-only directional man
   }
 });
 
+test("public agent handoff read returns a public-safe preview boundary", async () => {
+  const harness = await startServer();
+
+  try {
+    const response = await fetch(
+      `${harness.baseUrl}/api/public-agent-handoff?slotId=onboarding.default_basket&userNotionalUsd=1000`,
+    );
+    const payload = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.data.slot.slotId, "onboarding.default_basket");
+    assert.match(
+      payload.data.manifestRef.manifestId,
+      /^onboarding\.default_basket:.*:promoted$/u,
+    );
+    assert.equal(payload.data.publicSurface.skillPath, "/skill.md");
+    assert.equal(
+      payload.data.publicSurface.publicApis.some(
+        (surface) => surface.path === "/api/public-agent-handoff",
+      ),
+      true,
+    );
+    assert.equal(
+      payload.data.readiness.executionPlanPreview.executionState,
+      "wallet_required",
+    );
+    assert.equal(
+      payload.data.readiness.executionPlanPreview.executionEligibility,
+      "preview_only",
+    );
+    assert.equal(payload.data.handoff.publicSafeBridgeExists, true);
+    assert.equal(payload.data.handoff.directAuthenticatedBridgeExists, false);
+    assert.equal(payload.data.handoff.state, "stay_public_preview");
+    assert.match(payload.data.handoff.reason, /wallet readiness|public preview/i);
+    assert.equal(
+      payload.data.handoff.authenticatedApis.some(
+        (surface) => surface.path === "/api/activations",
+      ),
+      true,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("public agent handoff read can mark a lane ready for authenticated activation without exposing private details", async () => {
+  const harness = await startServer();
+
+  try {
+    const response = await fetch(
+      `${harness.baseUrl}/api/public-agent-handoff?slotId=onboarding.default_basket&userNotionalUsd=1000&walletConnected=true&walletAddress=0x1111111111111111111111111111111111111111&fundedNotionalUsd=1000`,
+    );
+    const payload = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.data.readiness.executionPlanPreview.surfaceTruth, "live");
+    assert.equal(
+      payload.data.readiness.executionPlanPreview.executionState,
+      "ready",
+    );
+    assert.equal(
+      payload.data.readiness.executionPlanPreview.executionEligibility,
+      "executable",
+    );
+    assert.equal(
+      payload.data.handoff.state,
+      "ready_for_authenticated_activation",
+    );
+    assert.equal(payload.data.handoff.directAuthenticatedBridgeExists, false);
+    assert.match(
+      payload.data.handoff.authenticatedBoundary,
+      /Privy-authenticated user context|authenticated ownership/i,
+    );
+    assert.equal(
+      Object.hasOwn(payload.data, "latestActivation"),
+      false,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
 test("activation preview can use the package-owned live-state path and stays fail-closed", async () => {
   const harness = await startServer({
     fetchImpl: createFixtureFetch(),

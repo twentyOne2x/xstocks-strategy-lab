@@ -363,3 +363,39 @@ Last updated: 2026-04-01
 - Complexity: high
 - Plan links:
   - [2026-04-01-xstocks-hermes-operator-and-agent-skill-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-hermes-operator-and-agent-skill-spec.md)
+
+### XSL-016A Public-Safe Agent Handoff Boundary
+
+- Type: ops/product/api
+- Status: completed
+- Canonical owner lane: `XSL-016`
+- Date opened: 2026-04-01
+- Context: the public `apps/web/public/skill.md` surface and the internal repo-owned activation/execution skill chain were both landed, but external agents still had to infer the public-to-internal boundary from a mix of static markdown and broader API payloads. The missing piece was one explicit public-safe handoff contract stating whether to stay in public preview, stop blocked, or hand off into authenticated activation.
+- Suspected cause: existing public preview routes and APIs already exposed truthful readiness data, but no dedicated boundary contract made the handoff explicit without also exposing owner-specific activity or execution surfaces.
+- Fix intent: add the narrowest public-safe readiness and handoff helper possible, then align the public skill and internal handoff docs to the same boundary language.
+- Acceptance criteria:
+  1. The exact public-safe boundary is explicit and tied to repo-owned routes or API contracts.
+  2. No secrets, private hosts, treasury details, or hidden custody internals are exposed.
+  3. The public-safe bridge is limited to readiness and handoff truth and does not bypass authenticated activation or execution ownership checks.
+  4. The final verification states whether a real bridge now exists and what exact blocker remains for direct public follow-through.
+- Complexity: medium
+- Plan: [2026-04-01-xstocks-public-safe-agent-handoff-boundary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-public-safe-agent-handoff-boundary.md)
+- Executor prompt:
+  - Audit the public skill, internal handoff docs, and current unauthenticated versus authenticated API boundaries.
+  - Add `apps/api/**` only if one narrow public-safe helper/readiness endpoint is actually justified.
+  - Keep the bridge public-safe and explicit about where authenticated activation, activity, and execution still begin.
+  - Run the smallest truthful verification set for the touched public and API surfaces, then report whether the bridge now exists.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] visual/screenshot verification not applicable because this slice changed a static public markdown surface plus API and skill/runbook contracts, not an interactive rendered UI flow
+- Verification note:
+  - Added `GET /api/public-agent-handoff` as the explicit public-safe boundary contract. It accepts the same public-safe promoted-manifest and optional wallet-readiness inputs as preview reads, but returns only readiness preview plus handoff-state output: `stay_public_preview`, `ready_for_authenticated_activation`, or `blocked`.
+  - The helper exposes only public routes and authenticated endpoint contracts; it does not save activations, read private activity, create executions, or expose private hosts, auth material, wallet secrets, treasury details, or hidden custody internals.
+  - Updated `apps/web/public/skill.md`, `skills/xstocks-agent-start/SKILL.md`, `skills/xstocks-activation-truth/SKILL.md`, and `docs/runbooks/xstocks-operator-execution-proof.md` so the public and internal surfaces now describe the same boundary.
+  - `pnpm --filter @xstocks/api check` passed with 31/31 API tests green, including the new public handoff coverage and the authenticated activation/execution ownership regressions.
+  - `pnpm --filter @xstocks-strategy-lab/web build` passed. Existing build warning remains from `@privy-io/react-auth` optional Farcaster mini-app dependency resolution in `apps/web/src/components/privy-provider.tsx`.
+  - `git diff --check` passed.
+  - Real bridge result: yes, a public-safe readiness and handoff bridge now exists. Exact remaining blocker for a direct public one-surface flow: `POST /api/activations`, `GET /api/activity`, `GET /api/executions`, and `POST /api/executions` still require verified authenticated user ownership and user-approved wallet or signature steps, so direct public follow-through cannot exist safely.

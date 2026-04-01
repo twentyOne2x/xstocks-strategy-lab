@@ -20,7 +20,7 @@ import {
   normalizeWalletState,
 } from "../../../../packages/policy/src/index.js";
 
-import { parseApiResponse } from "../contracts.js";
+import { API_ENDPOINTS, parseApiResponse } from "../contracts.js";
 import { HttpError } from "../errors.js";
 import { buildXStocksReportingSnapshot } from "./reporting-service.js";
 
@@ -47,6 +47,64 @@ const BLOCKED_REQUEST_FIELDS = [
   "raw_strategy_candidate",
   "candidate_result",
 ];
+const PUBLIC_SKILL_PATH = "/skill.md";
+const PUBLIC_AGENT_ROUTES = Object.freeze([
+  "/onboarding",
+  "/workspace/comparison",
+  "/workspace/detail/[manifestSlug]",
+  "/activate/[manifestSlug]",
+]);
+const PUBLIC_AGENT_APIS = Object.freeze([
+  {
+    method: "POST",
+    path: API_ENDPOINTS.QUALIFY,
+    purpose: "Qualify the user into a promoted xstocks lane.",
+  },
+  {
+    method: "GET",
+    path: API_ENDPOINTS.WORKSPACE,
+    purpose: "Inspect public workspace truth and route labels for the selected lane.",
+  },
+  {
+    method: "GET",
+    path: API_ENDPOINTS.ACTIVATION_PREVIEW,
+    purpose: "Read the public readiness preview for the selected lane.",
+  },
+  {
+    method: "GET",
+    path: API_ENDPOINTS.PUBLIC_AGENT_HANDOFF,
+    purpose: "Read the explicit public-to-internal handoff boundary.",
+  },
+]);
+const AUTHENTICATED_AGENT_APIS = Object.freeze([
+  {
+    method: "POST",
+    path: API_ENDPOINTS.ACTIVATIONS,
+    purpose: "Save activation from a verified authenticated user context.",
+  },
+  {
+    method: "GET",
+    path: API_ENDPOINTS.ACTIVITY,
+    purpose: "Read activation activity for the authenticated owner.",
+  },
+  {
+    method: "GET",
+    path: API_ENDPOINTS.EXECUTIONS,
+    purpose: "Read execution request state for the authenticated owner.",
+  },
+  {
+    method: "POST",
+    path: API_ENDPOINTS.EXECUTIONS,
+    purpose: "Create or advance execution requests from the authenticated owner context.",
+  },
+]);
+const PRIVATE_DETAILS_WITHHELD = Object.freeze([
+  "private operator hosts",
+  "auth tokens",
+  "wallet secrets",
+  "treasury details",
+  "hidden custody internals",
+]);
 
 function firstDefined(...values) {
   return values.find((value) => value !== undefined);
@@ -78,6 +136,100 @@ function normalizeTxHash(value) {
 
   const normalized = value.trim();
   return /^0x([A-Fa-f0-9]{64})$/u.test(normalized) ? normalized : null;
+}
+
+function buildPublicAgentSurface() {
+  return {
+    skillPath: PUBLIC_SKILL_PATH,
+    publicRoutes: [...PUBLIC_AGENT_ROUTES],
+    publicApis: PUBLIC_AGENT_APIS.map((surface) => ({ ...surface })),
+  };
+}
+
+function derivePublicAgentHandoffBoundary(executionPlan) {
+  if (
+    executionPlan.executionEligibility === "executable" &&
+    executionPlan.executionState === "ready"
+  ) {
+    return {
+      publicSafeBridgeExists: true,
+      directAuthenticatedBridgeExists: false,
+      state: "ready_for_authenticated_activation",
+      reason:
+        "Public-safe preview has reached a truthful executable readiness snapshot, but activation save and execution still require authenticated ownership.",
+      nextAction:
+        "Hand off to the authenticated internal activation surface and save the activation from a verified user context.",
+      authenticatedBoundary:
+        "Verified Privy-authenticated user context and user-approved wallet or signature steps remain required after this point.",
+      authenticatedApis: AUTHENTICATED_AGENT_APIS.map((surface) => ({
+        ...surface,
+      })),
+      privateDetailsWithheld: [...PRIVATE_DETAILS_WITHHELD],
+    };
+  }
+
+  if (executionPlan.executionEligibility === "blocked") {
+    return {
+      publicSafeBridgeExists: true,
+      directAuthenticatedBridgeExists: false,
+      state: "blocked",
+      reason:
+        executionPlan.blockers[0] ??
+        "The lane is blocked at the public-safe handoff boundary.",
+      nextAction:
+        "Stop at the public boundary and report the exact blocker without implying activation or execution.",
+      authenticatedBoundary:
+        "Authenticated surfaces still exist, but they must not be used to bypass a blocked readiness state.",
+      authenticatedApis: AUTHENTICATED_AGENT_APIS.map((surface) => ({
+        ...surface,
+      })),
+      privateDetailsWithheld: [...PRIVATE_DETAILS_WITHHELD],
+    };
+  }
+
+  const previewReasonByState = {
+    wallet_required:
+      "Public preview can explain the lane, but wallet readiness has not been supplied yet.",
+    funding_required:
+      "Public preview can explain the lane, but funding readiness is still incomplete.",
+    smart_account_required:
+      "Public preview can explain the lane, but the smart-account bootstrap step is still incomplete.",
+    smart_account_pending:
+      "Public preview can explain the lane, but the smart-account bootstrap step is still pending.",
+    blocked:
+      "This lane remains preview-only on the public surface and cannot cross into authenticated activation yet.",
+  };
+
+  const previewNextActionByState = {
+    wallet_required:
+      "Stay on public preview until the user reaches the authenticated wallet-connect step.",
+    funding_required:
+      "Stay on public preview until wallet funding is truthfully ready.",
+    smart_account_required:
+      "Stay on public preview until the authenticated smart-account step is completed.",
+    smart_account_pending:
+      "Stay on public preview until the authenticated smart-account step finishes.",
+    blocked:
+      "Keep the lane preview-only and stop before activation save.",
+  };
+
+  return {
+    publicSafeBridgeExists: true,
+    directAuthenticatedBridgeExists: false,
+    state: "stay_public_preview",
+    reason:
+      previewReasonByState[executionPlan.executionState] ??
+      "Public preview can continue, but the authenticated activation boundary has not been reached yet.",
+    nextAction:
+      previewNextActionByState[executionPlan.executionState] ??
+      "Keep the lane on public preview and stop before activation save.",
+    authenticatedBoundary:
+      "Authenticated activation, activity, and execution surfaces begin only after verified user context is available.",
+    authenticatedApis: AUTHENTICATED_AGENT_APIS.map((surface) => ({
+      ...surface,
+    })),
+    privateDetailsWithheld: [...PRIVATE_DETAILS_WITHHELD],
+  };
 }
 
 function normalizeSignature(value) {
@@ -2425,6 +2577,41 @@ export function createApiService({
         }),
         rebalanceOrchestration,
         latestActivation,
+      });
+    },
+
+    async getPublicAgentHandoff(query = {}) {
+      assertNoRawCandidatePayload(query);
+      const record = await resolvePromotedRecord(query);
+      const manifest = record.manifest;
+      const { liveXStocksState, liveRouteState } = await loadLiveState(manifest);
+      const requestedNotionalUsd = resolveRequestedNotionalUsd(
+        getRequestedNotionalUsd(query),
+        manifest.walletRequirements.minFundingUsd,
+      );
+      const boundaryPayload = deriveBoundaryPayload({
+        manifest,
+        liveXStocksState,
+        liveRouteState,
+        requestedNotionalUsd,
+        walletState: getWalletState(query),
+      });
+
+      return parseApiResponse("public_agent_handoff_read", {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        slot: record.slot,
+        manifestRef: boundaryPayload.manifestRef,
+        publicSurface: buildPublicAgentSurface(),
+        readiness: {
+          requestedNotionalUsd: boundaryPayload.requestedNotionalUsd,
+          executionPlanPreview: buildExecutionPlanPreview(
+            boundaryPayload.executionPlan,
+          ),
+        },
+        handoff: derivePublicAgentHandoffBoundary(
+          boundaryPayload.executionPlan,
+        ),
       });
     },
 

@@ -199,6 +199,17 @@ export function createApiServer(overrides = {}) {
       }
 
       if (
+        request.method === "GET" &&
+        url.pathname === API_ENDPOINTS.PUBLIC_AGENT_HANDOFF
+      ) {
+        const result = await service.getPublicAgentHandoff(
+          Object.fromEntries(url.searchParams),
+        );
+        sendJson(response, 200, { data: result });
+        return;
+      }
+
+      if (
         request.method === "POST" &&
         url.pathname === API_ENDPOINTS.MANIFEST_PREFLIGHT
       ) {

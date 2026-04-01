@@ -502,6 +502,35 @@ const activitySurfaceSchema = z
     nextAction: activitySummaryNextActionSchema,
   })
   .nullable();
+const apiSurfaceSchema = z.object({
+  method: z.enum(["GET", "POST"]),
+  path: nonEmptyStringSchema,
+  purpose: nonEmptyStringSchema,
+});
+const publicAgentHandoffStateSchema = z.enum([
+  "stay_public_preview",
+  "ready_for_authenticated_activation",
+  "blocked",
+]);
+const publicAgentSurfaceSchema = z.object({
+  skillPath: nonEmptyStringSchema,
+  publicRoutes: z.array(nonEmptyStringSchema).min(1),
+  publicApis: z.array(apiSurfaceSchema).min(1),
+});
+const publicAgentHandoffReadinessSchema = z.object({
+  requestedNotionalUsd: z.number().finite().nonnegative(),
+  executionPlanPreview: executionPlanPreviewSchema,
+});
+const publicAgentHandoffBoundarySchema = z.object({
+  publicSafeBridgeExists: z.literal(true),
+  directAuthenticatedBridgeExists: z.literal(false),
+  state: publicAgentHandoffStateSchema,
+  reason: nonEmptyStringSchema,
+  nextAction: nonEmptyStringSchema,
+  authenticatedBoundary: nonEmptyStringSchema,
+  authenticatedApis: z.array(apiSurfaceSchema).min(1),
+  privateDetailsWithheld: z.array(nonEmptyStringSchema).min(1),
+});
 
 export const API_ENDPOINTS = Object.freeze({
   HEALTH: "/health",
@@ -510,6 +539,7 @@ export const API_ENDPOINTS = Object.freeze({
   CATALOG: "/api/catalog",
   WORKSPACE: "/api/workspace",
   ACTIVATION_PREVIEW: "/api/activation-preview",
+  PUBLIC_AGENT_HANDOFF: "/api/public-agent-handoff",
   MANIFEST_PREFLIGHT: "/api/manifests/preflight",
   ACTIVATIONS: "/api/activations",
   ACTIVITY: "/api/activity",
@@ -548,6 +578,12 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
     path: API_ENDPOINTS.ACTIVATION_PREVIEW,
     query: ["manifestId? | slotId?", "userNotionalUsd?", "wallet*?"],
     response: "activation_preview_read_v1",
+  },
+  public_agent_handoff_read: {
+    method: "GET",
+    path: API_ENDPOINTS.PUBLIC_AGENT_HANDOFF,
+    query: ["manifestId? | slotId?", "userNotionalUsd?", "wallet*?"],
+    response: "public_agent_handoff_read_v1",
   },
   manifest_preflight: {
     method: "POST",
@@ -644,6 +680,15 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     liveState: liveStateViewSchema,
     rebalanceOrchestration: rebalanceOrchestrationSchema,
     latestActivation: activationViewSchema.nullable(),
+  }),
+  public_agent_handoff_read: z.object({
+    version: apiContractVersionSchema,
+    generatedAt: timestampSchema,
+    slot: strategySlotSchema,
+    manifestRef: activationManifestRefSchema,
+    publicSurface: publicAgentSurfaceSchema,
+    readiness: publicAgentHandoffReadinessSchema,
+    handoff: publicAgentHandoffBoundarySchema,
   }),
   activity_read: z.object({
     version: apiContractVersionSchema,
