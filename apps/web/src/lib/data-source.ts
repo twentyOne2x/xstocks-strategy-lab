@@ -1,0 +1,470 @@
+import type {
+  ActivationScreenProps,
+  ActivityWorkspaceProps,
+  BlotterData,
+  ComparisonWorkspaceProps,
+  DetailScreenProps,
+  HomeTerminalProps,
+  MethodologyBadge,
+  PromotedManifest,
+  RebalanceState,
+  ReplayPoint,
+  RouteId,
+  SmartAccountPanelData,
+  TerminalChromeProps,
+  WorkspaceSpotlightData,
+} from "@/lib/contracts";
+import {
+  fetchActivationPreview,
+  fetchActivity,
+  fetchCatalog,
+  fetchWorkspace,
+} from "@/lib/api-client";
+import {
+  adaptActivityToBlotter,
+  attachPreviewTruthToManifest,
+  adaptLiveStateToStrip,
+  adaptManifestToFrontend,
+  describeRebalanceAutomationTruth,
+  enrichAllocationsWithLiveState,
+} from "@/lib/api-adapter";
+import {
+  blotter as mockBlotter,
+  featuredManifestSlug,
+  manifests as mockManifests,
+  onboardingQuestions,
+  publicStrategies,
+  stateStrip as mockStateStrip,
+  themes,
+} from "@/lib/mock-data";
+import { buildManifestContractBundle, findManifestRebalance } from "@/lib/shared-contract-adapter";
+
+/* ── Local manifest map (fallback) ── */
+
+const mockManifestMap = new Map(mockManifests.map((m) => [m.slug, m]));
+
+/* ── API-backed catalog fetch ── */
+
+async function fetchApiManifests(): Promise<PromotedManifest[] | null> {
+  try {
+    const catalog = await fetchCatalog();
+    if (!catalog || catalog.items.length === 0) return null;
+
+    return catalog.items.map((item) =>
+      adaptManifestToFrontend(item.manifest, item.slot),
+    );
+  } catch {
+    return null;
+  }
+}
+
+/* ── Manifest getters (sync fallback, async preferred) ── */
+
+export function getPromotedManifest(slug: string): PromotedManifest | undefined {
+  return mockManifestMap.get(slug);
+}
+
+export function getFeaturedManifest(): PromotedManifest {
+  const manifest = getPromotedManifest(featuredManifestSlug);
+  if (!manifest) throw new Error(`Featured manifest "${featuredManifestSlug}" is missing.`);
+  return manifest;
+}
+
+/* ── Formatting ── */
+
+export function buildMethodologyBadges(manifest: PromotedManifest): MethodologyBadge[] {
+  return [
+    ...manifest.frontend.badges,
+    { label: "Dataset", detail: manifest.validation.dataset_version, tone: "methodology" },
+    { label: "Evaluator", detail: manifest.validation.evaluator_version, tone: "methodology" },
+    { label: "Objective", detail: manifest.validation.objective_id, tone: "neutral" },
+  ];
+}
+
+export function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+export function formatPercent(value: number): string {
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(1)}%`;
+}
+
+/* ── Replay points ── */
+
+const replayTemplates: Record<string, number[]> = {
+  "ai-infra-autopilot": [0, 5.2, 9.8, 7.4, 15.9, 21.6, 25.1, 28.4],
+  "mag7-cash-balance": [0, 2.4, 5.1, 6.8, 10.2, 12.8, 15.3, 17.6],
+  "spy-core-shield": [0, 1.8, 2.6, 3.9, 5.1, 6.7, 7.8, 8.9],
+  "mstr-conviction-long": [0, 8.2, -4.6, 12.8, 20.4, 17.2, 30.6, 39.6],
+};
+
+function buildReplayPointsFromManifest(manifest: PromotedManifest): ReplayPoint[] {
+  const template = replayTemplates[manifest.slug]
+    ?? Object.values(replayTemplates)[0];
+  const labels = ["Open", "W1", "W2", "W3", "W4", "W5", "W6", "Now"];
+  return template.map((pct, i) => ({
+    label: labels[i] ?? `T${i + 1}`,
+    value: manifest.replay.startingCapital * (1 + pct / 100),
+  }));
+}
+
+export function getWorkspaceSpotlightData(
+  manifest: PromotedManifest,
+  blotter: BlotterData = mockBlotter,
+): WorkspaceSpotlightData {
+  const orchestration = manifest.preview?.rebalanceOrchestration ?? null;
+  const apiBackedRebalance = orchestration
+    ? {
+        id: orchestration.rebalanceId,
+        manifestSlug: manifest.slug,
+        strategyTitle: manifest.frontend.title,
+        window:
+          orchestration.state === "rebalance_recommended"
+            ? "Review recommended"
+            : orchestration.state === "rebalance_deferred"
+              ? "No review queued"
+              : orchestration.state === "scheduled"
+                ? "Scheduled review"
+                : orchestration.state.replaceAll("_", " "),
+        trigger: orchestration.summary,
+        action: orchestration.nextAction?.detail ?? orchestration.rationale,
+        route:
+          orchestration.runtimeOwner === "worker_offchain_scheduler"
+            ? "Scheduled check"
+            : "You approve changes",
+        impact: describeRebalanceAutomationTruth(orchestration),
+        state: (
+          orchestration.state === "blocked" || orchestration.state === "failed"
+            ? "act"
+            : orchestration.state === "rebalance_recommended" ||
+                orchestration.state === "awaiting_operator"
+              ? "consider"
+              : orchestration.state === "scheduled" ||
+                  orchestration.state === "rebalance_deferred" ||
+                  orchestration.state === "paused" ||
+                  orchestration.state === "executing" ||
+                  orchestration.state === "rebalanced"
+                ? "monitor"
+                : "none"
+        ) as RebalanceState,
+      }
+    : null;
+
+  return {
+    points: buildReplayPointsFromManifest(manifest),
+    rebalance: apiBackedRebalance ?? findManifestRebalance(blotter, manifest.slug),
+  };
+}
+
+/* ── Smart account (sync fallback) ── */
+
+export function getSmartAccountPanelData(manifest: PromotedManifest): SmartAccountPanelData {
+  const bundle = buildManifestContractBundle(manifest);
+  const maxLeverage = bundle.activationPayload.permissions.maxLeverage;
+  const orchestration = manifest.preview?.rebalanceOrchestration ?? null;
+  const automationLabel = describeRebalanceAutomationTruth(orchestration);
+
+  return {
+    readinessLabel: "Preview — deposit opens activation",
+    readinessState: manifest.live_state.state === "view_ready" ? "view_ready"
+      : manifest.live_state.state === "connect_required" ? "connect_required"
+      : manifest.live_state.state === "funding_required" ? "funding_required"
+      : "activation_ready",
+    addressLabel: "Provision on wallet link",
+    ownerLabel: "Preview until deposit",
+    fundingAsset: bundle.activationPayload.fundingAssetSymbol,
+    buyingPower: `$${bundle.activationPayload.fundingAmountUsd.toLocaleString()}`,
+    policyLabel: `${manifest.mode} preview with pause controls`,
+    syncLabel: `Refreshed ${new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC`,
+    automationLabel,
+    nextAction: orchestration?.nextAction?.title ?? "Review the preview before deposit.",
+    actionLinks: [
+      { label: "Open detail", href: `/workspace/detail/${manifest.slug}`, tone: "ghost" },
+      {
+        label: "Deposit to activate",
+        href: `/activate/${manifest.slug}`,
+        tone: manifest.live_state.state === "funding_required" || manifest.live_state.state === "activation_ready"
+          ? "primary" : "secondary",
+      },
+    ],
+    permissions: [
+      {
+        label: "Pause",
+        value: bundle.activationPayload.permissions.canPause ? "Enabled" : "Review",
+        note: manifest.live_state.pauseRule,
+      },
+      {
+        label: "Turn off",
+        value: bundle.activationPayload.permissions.canTurnOff ? "Enabled" : "Not exposed",
+        note: manifest.activation_template.reversible ? "Reversible." : "Your review required.",
+      },
+      {
+        label: "Slippage",
+        value: `${bundle.activationPayload.permissions.maxSlippageBps} bps`,
+        note: `Via ${manifest.live_state.routeSummary}`,
+      },
+      {
+        label: "Exposure",
+        value: maxLeverage ? `${maxLeverage.toFixed(2)}x max` : "Spot only",
+        note: `Borrow: ${manifest.market_intelligence.vaultState.borrowAsset}`,
+      },
+    ],
+  };
+}
+
+/* ── Async API-backed terminal chrome ── */
+
+export async function getTerminalChromeAsync(
+  currentRoute: RouteId,
+  slugOrSlot = featuredManifestSlug,
+  options: {
+    allowMockFallback?: boolean;
+  } = {},
+): Promise<TerminalChromeProps> {
+  const allowMockFallback = options.allowMockFallback ?? true;
+  // Try to load manifests from API
+  const apiManifests = await fetchApiManifests();
+  if (!apiManifests && !allowMockFallback) {
+    throw new Error("Catalog API is unavailable. The canonical preview path stayed fail-closed instead of falling back to local mock data.");
+  }
+  const allManifests = apiManifests ?? mockManifests;
+
+  // Find selected manifest
+  const selectedManifest = allManifests.find(
+    (m) => m.slug === slugOrSlot || m.slot_id === slugOrSlot,
+  )
+    ?? allManifests[0]
+    ?? getFeaturedManifest();
+
+  // Try to load workspace for live state enrichment
+  const workspace = await fetchWorkspace(selectedManifest.slot_id);
+  if (!workspace && !allowMockFallback) {
+    throw new Error(`Workspace API is unavailable for ${selectedManifest.slot_id}. The canonical preview path did not fall back silently.`);
+  }
+  let enrichedManifest = selectedManifest;
+  let manifestsForUi = allManifests;
+  let stateStrip = mockStateStrip;
+  let blotter: BlotterData = mockBlotter;
+
+  if (workspace) {
+    const workspaceManifest = adaptManifestToFrontend(
+      workspace.manifest,
+      workspace.slot,
+    );
+    enrichedManifest = enrichAllocationsWithLiveState(
+      workspaceManifest,
+      workspace.workspace.liveState,
+    );
+    enrichedManifest = attachPreviewTruthToManifest(enrichedManifest, {
+      recommendation: workspace.workspace.recommendation,
+      rebalanceOrchestration: workspace.workspace.rebalanceOrchestration,
+    });
+    manifestsForUi = allManifests.map((manifest) =>
+      manifest.slot_id === enrichedManifest.slot_id ? enrichedManifest : manifest,
+    );
+    // Build state strip from live state
+    stateStrip = adaptLiveStateToStrip(workspace.workspace.liveState, manifestsForUi);
+  }
+
+  // Try to load activity for blotter
+  const activityData = await fetchActivity(selectedManifest.slot_id);
+  if (!activityData && !allowMockFallback) {
+    throw new Error(`Activity API is unavailable for ${selectedManifest.slot_id}. The canonical preview path did not fall back silently.`);
+  }
+  if (activityData) {
+    if (activityData.rebalanceOrchestration) {
+      enrichedManifest = attachPreviewTruthToManifest(enrichedManifest, {
+        rebalanceOrchestration: activityData.rebalanceOrchestration,
+      });
+      manifestsForUi = manifestsForUi.map((manifest) =>
+        manifest.slot_id === enrichedManifest.slot_id ? enrichedManifest : manifest,
+      );
+    }
+    blotter = adaptActivityToBlotter(activityData, manifestsForUi);
+  }
+
+  return {
+    currentRoute,
+    stateStrip,
+    themes,
+    publicStrategies,
+    promotedWinners: manifestsForUi,
+    selectedManifest: enrichedManifest,
+    blotter,
+  };
+}
+
+/* ── Sync fallback (for non-async contexts) ── */
+
+export function getTerminalChrome(
+  currentRoute: RouteId,
+  slugOrSlot = featuredManifestSlug,
+): TerminalChromeProps {
+  const selectedManifest = getPromotedManifest(slugOrSlot)
+    ?? mockManifests.find((manifest) => manifest.slot_id === slugOrSlot)
+    ?? getFeaturedManifest();
+  return {
+    currentRoute,
+    stateStrip: mockStateStrip,
+    themes,
+    publicStrategies,
+    promotedWinners: mockManifests,
+    selectedManifest,
+    blotter: mockBlotter,
+  };
+}
+
+/* ── Async page data loaders ── */
+
+export async function getHomeTerminalDataAsync(): Promise<{
+  props: HomeTerminalProps;
+  chrome: TerminalChromeProps;
+  apiSourced: boolean;
+}> {
+  const chrome = await getTerminalChromeAsync("home");
+  const apiSourced = chrome.stateStrip !== mockStateStrip;
+
+  return {
+    props: {
+      featuredManifest: chrome.selectedManifest,
+      highlightedTheme: themes[0],
+      blotter: chrome.blotter,
+      modeEntries: [
+        {
+          title: "xStocks basket portfolios",
+          description: "Tokenized equity portfolios with rules-based rebalancing. Preview before deposit.",
+          href: "/workspace/comparison",
+          stats: [`${chrome.promotedWinners.length} portfolios`, "Preview until deposit"],
+        },
+        {
+          title: "Directional xStocks preview",
+          description: "Directional xStocks position with explicit funding and unwind controls. Preview-only.",
+          href: `/workspace/detail/${chrome.promotedWinners.find((m) => m.mode === "directional")?.slug ?? "directional-preview"}`,
+          stats: ["Preview-only", "Deposit gate explicit"],
+        },
+      ],
+    },
+    chrome,
+    apiSourced,
+  };
+}
+
+export async function getDetailScreenDataAsync(slug: string): Promise<{
+  props: DetailScreenProps;
+  chrome: TerminalChromeProps;
+  apiSourced: boolean;
+}> {
+  const chrome = await getTerminalChromeAsync("detail", slug);
+  return {
+    props: { manifest: chrome.selectedManifest, blotter: chrome.blotter },
+    chrome,
+    apiSourced: chrome.stateStrip !== mockStateStrip,
+  };
+}
+
+export async function getComparisonWorkspaceDataAsync(slug?: string): Promise<{
+  props: ComparisonWorkspaceProps;
+  chrome: TerminalChromeProps;
+}> {
+  const chrome = await getTerminalChromeAsync("comparison", slug ?? featuredManifestSlug);
+  return {
+    props: { focusManifest: chrome.selectedManifest, blotter: chrome.blotter },
+    chrome,
+  };
+}
+
+export async function getActivationScreenDataAsync(slug: string): Promise<{
+  props: ActivationScreenProps;
+  chrome: TerminalChromeProps;
+  executionPlan: unknown | null;
+}> {
+  const chrome = await getTerminalChromeAsync("activation", slug);
+  const preview = await fetchActivationPreview(chrome.selectedManifest.slot_id);
+  const manifest = preview
+    ? attachPreviewTruthToManifest(
+        enrichAllocationsWithLiveState(
+          adaptManifestToFrontend(preview.manifest, preview.slot),
+          preview.liveState,
+        ),
+        {
+          recommendation: preview.recommendation,
+          rebalanceOrchestration: preview.rebalanceOrchestration,
+        },
+      )
+    : chrome.selectedManifest;
+  const activationChrome = {
+    ...chrome,
+    selectedManifest: manifest,
+  };
+  return {
+    props: { manifest },
+    chrome: activationChrome,
+    executionPlan: preview?.executionPlan ?? null,
+  };
+}
+
+export async function getActivityWorkspaceDataAsync(slug?: string): Promise<{
+  props: ActivityWorkspaceProps;
+  chrome: TerminalChromeProps;
+}> {
+  const chrome = await getTerminalChromeAsync("activity", slug ?? featuredManifestSlug);
+  return {
+    props: { manifest: chrome.selectedManifest, blotter: chrome.blotter },
+    chrome,
+  };
+}
+
+/* ── Sync page data loaders (retained for compatibility) ── */
+
+export function getHomeTerminalData(): HomeTerminalProps {
+  return {
+    featuredManifest: getFeaturedManifest(),
+    highlightedTheme: themes[0],
+    blotter: mockBlotter,
+    modeEntries: [
+      {
+        title: "xStocks basket portfolios",
+        description: "Tokenized equity portfolios with rules-based rebalancing. Preview before deposit.",
+        href: "/workspace/comparison",
+        stats: ["4 portfolios", "Preview until deposit"],
+      },
+      {
+        title: "Directional xStocks preview",
+        description: "Directional xStocks position with explicit funding and unwind controls. Preview-only.",
+        href: "/workspace/detail/mstr-conviction-long",
+        stats: ["Preview-only", "Deposit gate explicit"],
+      },
+    ],
+  };
+}
+
+export function getOnboardingQuestionFlowData() {
+  return { questions: onboardingQuestions, recommendedStrategies: publicStrategies };
+}
+
+export function getComparisonWorkspaceData(slug = featuredManifestSlug): ComparisonWorkspaceProps {
+  return { focusManifest: getPromotedManifest(slug) ?? getFeaturedManifest(), blotter: mockBlotter };
+}
+
+export function getDetailScreenData(slug: string): DetailScreenProps {
+  const manifest = getPromotedManifest(slug);
+  if (!manifest) throw new Error(`Manifest "${slug}" not found.`);
+  return { manifest, blotter: mockBlotter };
+}
+
+export function getActivationScreenData(slug: string): ActivationScreenProps {
+  const detail = getDetailScreenData(slug);
+  return { manifest: detail.manifest };
+}
+
+export function getActivityWorkspaceData(slug = featuredManifestSlug): ActivityWorkspaceProps {
+  return {
+    manifest: getPromotedManifest(slug) ?? getFeaturedManifest(),
+    blotter: mockBlotter,
+  };
+}

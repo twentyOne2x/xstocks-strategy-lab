@@ -1,0 +1,94 @@
+import type { DetailScreenProps } from "@/lib/contracts";
+import {
+  describeRebalanceState,
+  getManifestExplanationBundle,
+  getPrimaryActionLabel,
+  getRebalanceOrchestration,
+  isDirectionalPreviewOnly,
+} from "@/lib/portfolio-ui";
+
+import { WorkspaceSpotlight } from "@/components/workspace-spotlight";
+
+export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
+  const bundle = getManifestExplanationBundle(manifest);
+  const orchestration = getRebalanceOrchestration(manifest);
+  const directionalPreviewOnly = isDirectionalPreviewOnly(manifest);
+
+  return (
+    <div className="screen-stack">
+      <WorkspaceSpotlight
+        manifest={manifest}
+        blotter={blotter}
+        contextLabel="Portfolio detail"
+        title={manifest.frontend.title}
+        description={bundle.whatThisPortfolioDoes}
+        primaryAction={{
+          href: `/activate/${manifest.slug}`,
+          label: getPrimaryActionLabel(manifest),
+        }}
+        secondaryAction={{
+          href: "/workspace/comparison",
+          label: "Compare portfolios",
+        }}
+      />
+
+      <section className="panel-grid panel-grid-two">
+        <article className="panel-card">
+          <span className="section-kicker">Holdings</span>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Weight</th>
+                <th>Role</th>
+                <th>Venue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {manifest.allocations.map((row) => (
+                <tr key={`${row.symbol}-${row.sleeve}`}>
+                  <td>{row.symbol}</td>
+                  <td>{row.targetWeight}</td>
+                  <td>{row.rationale || row.sleeve}</td>
+                  <td>{row.venue}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </article>
+
+        <article className="panel-card">
+          <span className="section-kicker">How it works</span>
+          <div className="info-stack">
+            <div>
+              <span>What changes</span>
+              <strong>{bundle.howItChanges}</strong>
+            </div>
+            <div>
+              <span>What triggers a refresh</span>
+              <strong>{bundle.whatWouldTriggerNextRebalance}</strong>
+            </div>
+            <div>
+              <span>Rebalancing</span>
+              <strong>{describeRebalanceState(orchestration)} · requires your approval</strong>
+            </div>
+            <div>
+              <span>Route</span>
+              <strong>{manifest.live_state.routeSummary}</strong>
+            </div>
+            <div>
+              <span>Pause behavior</span>
+              <strong>{manifest.live_state.pauseRule}</strong>
+            </div>
+            {directionalPreviewOnly && (
+              <div>
+                <span>Directional</span>
+                <strong>Preview only — you keep full custody</strong>
+              </div>
+            )}
+          </div>
+        </article>
+      </section>
+    </div>
+  );
+}
