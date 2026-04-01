@@ -13,51 +13,39 @@ function ChartIcon({ size = 32 }: { size?: number }) {
   );
 }
 
-/* Visual flow diagram — replaces text-heavy "how it works" */
-function FlowDiagram() {
-  const nodes = [
-    { label: "Profile", sub: "7 questions" },
-    { label: "Match", sub: "AI-optimized" },
-    { label: "Preview", sub: "Full transparency" },
-    { label: "Fund", sub: "$10 min" },
-  ];
-  return (
-    <div className="flow-diagram">
-      {nodes.map((n, i) => (
-        <div className="flow-node" key={n.label}>
-          <div className="flow-node-circle">
-            <span className="flow-node-num">{String(i + 1).padStart(2, "0")}</span>
-          </div>
-          <strong>{n.label}</strong>
-          <span>{n.sub}</span>
-          {i < nodes.length - 1 && <div className="flow-connector" />}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const infraPartners = [
-  { name: "xStocks", role: "Tokenized equities" },
-  { name: "Privy", role: "Smart wallets" },
-  { name: "CoW Protocol", role: "Trade execution" },
-  { name: "Chainlink", role: "Automation rails" },
+  { name: "xStocks", role: "Tokenized US equities on Ethereum", href: "https://xstocks.fi" },
+  { name: "Privy", role: "Embedded smart wallets — no seed phrase", href: "https://privy.io" },
+  { name: "CoW Protocol", role: "MEV-protected trade execution", href: "https://cow.fi" },
+  { name: "Chainlink", role: "Automated rebalance triggers", href: "https://chain.link" },
+];
+
+const faq = [
+  { q: "What are tokenized equities?", a: "Real US stocks represented as tokens on Ethereum. Each xStocks token is backed 1:1 by the underlying equity." },
+  { q: "How much do I need to start?", a: "As little as $10 in USDC. No minimums, no lock-ups." },
+  { q: "Who holds my assets?", a: "You do. Assets stay in your Privy smart wallet. Equity Terminal never takes custody." },
+  { q: "Can trades happen without my approval?", a: "No. Every rebalance is recommended first. You review and approve before anything executes." },
+  { q: "What if I want to stop?", a: "Pause or exit anytime. Your positions stay in your wallet." },
 ];
 
 export function HomeTerminal() {
   return (
     <div className="landing">
       <XStocksFunnelStageTracker stage="landing_viewed" />
+
       {/* ── Header ── */}
       <header className="landing-header">
         <div className="landing-header-inner">
           <Link className="landing-brand" href="/">
-            <ChartIcon />
-            <span className="landing-brand-name">Equity Terminal</span>
-            <span className="landing-brand-powered">Powered by xStocks</span>
+            <ChartIcon size={36} />
+            <div className="landing-brand-text">
+              <span className="landing-brand-name">Equity Terminal</span>
+              <span className="landing-brand-powered">Powered by xStocks</span>
+            </div>
           </Link>
           <nav className="landing-header-nav">
-            <a className="landing-header-link" href="#infra">Infrastructure</a>
+            <a className="landing-header-link" href="#how-it-works">How it works</a>
+            <a className="landing-header-link" href="#faq">FAQ</a>
             <Link className="button button-primary button-lg" href="/onboarding">
               Find my portfolio
             </Link>
@@ -72,61 +60,108 @@ export function HomeTerminal() {
             Tokenized equity portfolios you actually control.
           </h1>
           <p className="landing-hero-sub">
-            Matched to your profile. Preview every holding.
-            Fund with $10. Self-custody the whole way.
+            Equity Terminal matches you to a portfolio of tokenized US equities
+            powered by xStocks. You preview every holding before you deposit,
+            approve every rebalance before it executes, and keep full custody
+            in your own wallet. Get started with as little as $10.
           </p>
           <div className="landing-hero-cta">
             <Link className="button button-primary button-xl" href="/onboarding">
               Find my portfolio
             </Link>
-            <Link className="button button-ghost button-lg" href="/workspace/comparison">
-              Browse portfolios
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Built on top of ── */}
+      {/* ── Infrastructure partners ── */}
       <section className="landing-infra-band" id="infra">
         <div className="landing-infra-band-inner">
-          <span className="landing-section-kicker">Built on top of</span>
+          <div className="landing-infra-label">
+            <span className="landing-section-kicker">Built on top of</span>
+            <p>Every layer is an independent, verifiable system.</p>
+          </div>
           <div className="landing-infra-cards">
             {infraPartners.map((p) => (
-              <div className="landing-infra-card" key={p.name}>
+              <a className="landing-infra-card" href={p.href} key={p.name} rel="noopener noreferrer" target="_blank">
                 <strong>{p.name}</strong>
                 <span>{p.role}</span>
-              </div>
+              </a>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── How it works — visual flow ── */}
-      <section className="landing-section">
+      {/* ── How it works ── */}
+      <section className="landing-section" id="how-it-works">
         <div className="landing-section-inner landing-section-center">
           <span className="landing-section-kicker">How it works</span>
-          <h2 className="landing-h2">Profile to portfolio in 60 seconds.</h2>
-          <FlowDiagram />
+          <h2 className="landing-h2">From profile to portfolio in under a minute.</h2>
+          <div className="landing-flow">
+            <div className="landing-flow-step">
+              <div className="landing-flow-num">1</div>
+              <h3>Answer 7 questions</h3>
+              <p>Risk tolerance, theme preference, rebalance style. Takes about 45 seconds.</p>
+            </div>
+            <div className="landing-flow-arrow" />
+            <div className="landing-flow-step">
+              <div className="landing-flow-num">2</div>
+              <h3>Get your match</h3>
+              <p>We compare candidates and show you the portfolio that fits your profile.</p>
+            </div>
+            <div className="landing-flow-arrow" />
+            <div className="landing-flow-step">
+              <div className="landing-flow-num">3</div>
+              <h3>Preview everything</h3>
+              <p>See every holding, weight, and rebalancing rule before you commit anything.</p>
+            </div>
+            <div className="landing-flow-arrow" />
+            <div className="landing-flow-step">
+              <div className="landing-flow-num">4</div>
+              <h3>Fund when ready</h3>
+              <p>Deposit USDC to activate. $10 minimum. Pause or exit whenever you want.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── Trust — visual chips, not paragraphs ── */}
+      {/* ── What you get ── */}
       <section className="landing-section landing-section-alt">
-        <div className="landing-section-inner landing-section-center">
-          <h2 className="landing-h2">Always yours.</h2>
-          <div className="landing-trust-chips">
-            <div className="landing-trust-chip">
-              <strong>Self-custody</strong>
-              <span>Assets stay in your wallet</span>
+        <div className="landing-section-inner">
+          <span className="landing-section-kicker">What you get</span>
+          <h2 className="landing-h2">A real portfolio, not a black box.</h2>
+          <div className="landing-features">
+            <div className="landing-feature">
+              <strong>Full custody</strong>
+              <p>Your assets live in a Privy smart wallet that only you control. No seed phrase needed.</p>
             </div>
-            <div className="landing-trust-chip">
-              <strong>Full preview</strong>
-              <span>See every holding before funding</span>
+            <div className="landing-feature">
+              <strong>Total transparency</strong>
+              <p>Every holding, every weight, every trade route — visible before and after you deposit.</p>
             </div>
-            <div className="landing-trust-chip">
-              <strong>Pause anytime</strong>
-              <span>Turn off or exit whenever you want</span>
+            <div className="landing-feature">
+              <strong>Your approval required</strong>
+              <p>Rebalances are recommended, never forced. Nothing executes without your explicit approval.</p>
             </div>
+            <div className="landing-feature">
+              <strong>$10 to start</strong>
+              <p>No minimums, no lock-ups, no hidden fees. Pause or exit anytime with your full balance.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="landing-section" id="faq">
+        <div className="landing-section-inner">
+          <span className="landing-section-kicker">Common questions</span>
+          <h2 className="landing-h2">Quick answers.</h2>
+          <div className="landing-faq">
+            {faq.map((item) => (
+              <details className="landing-faq-item" key={item.q}>
+                <summary>{item.q}</summary>
+                <p>{item.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
@@ -134,9 +169,9 @@ export function HomeTerminal() {
       {/* ── Bottom CTA ── */}
       <section className="landing-section landing-bottom-cta">
         <div className="landing-section-inner landing-section-center">
-          <h2 className="landing-h2">Ready?</h2>
-          <p className="landing-hero-sub" style={{ textAlign: "center", maxWidth: "40ch", marginInline: "auto" }}>
-            Seven questions. Preview the portfolio. Fund when you want.
+          <h2 className="landing-h2">See which portfolio fits you.</h2>
+          <p className="landing-hero-sub" style={{ textAlign: "center", maxWidth: "44ch", marginInline: "auto" }}>
+            Seven questions. Under a minute. Preview everything before you deposit.
           </p>
           <Link className="button button-primary button-xl" href="/onboarding">
             Find my portfolio
@@ -148,19 +183,22 @@ export function HomeTerminal() {
       <footer className="landing-footer">
         <div className="landing-footer-inner">
           <div className="landing-footer-brand">
-            <ChartIcon />
+            <ChartIcon size={40} />
             <div>
               <strong>Equity Terminal</strong>
               <span>Powered by xStocks</span>
             </div>
           </div>
-          <div className="landing-footer-links">
+          <div className="landing-footer-col">
+            <strong>Product</strong>
             <Link href="/onboarding">Find my portfolio</Link>
-            <Link href="/workspace/comparison">Browse portfolios</Link>
+            <a href="#how-it-works">How it works</a>
+            <a href="#faq">FAQ</a>
           </div>
-          <div className="landing-footer-infra">
+          <div className="landing-footer-col">
+            <strong>Infrastructure</strong>
             {infraPartners.map((p) => (
-              <span key={p.name}>{p.name}</span>
+              <a href={p.href} key={p.name} rel="noopener noreferrer" target="_blank">{p.name}</a>
             ))}
           </div>
         </div>
