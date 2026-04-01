@@ -237,7 +237,29 @@ button { font: inherit; }
 }
 
 .status-pill,
-.qual-pill { min-width: 80px; }
+.qual-pill { min-width: 80px; position: relative; cursor: help; }
+
+.status-pill[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  background: var(--black);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-family: var(--font-body), system-ui, sans-serif;
+  line-height: 1.4;
+  white-space: normal;
+  width: max-content;
+  max-width: 220px;
+  z-index: 100;
+  pointer-events: none;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: 4px;
+}
 
 .preview-chip {
   padding: 5px 10px;

@@ -896,18 +896,32 @@ function SimulatedWorkspace({
 
       {previewStatus && previewStatus.tone === "loading" ? <p className="panel-note" style={{ padding: "16px", textAlign: "center" }}>{previewStatus.message}</p> : null}
 
-      {/* Footer */}
-      <footer className="pq-footer">
-        <div className="pq-footer-brand">
-          <BrandLockup size="sm" />
-          <span style={{ color: '#999', fontSize: '0.78rem' }}>Powered by xStocks</span>
-        </div>
-        <div className="pq-footer-links">
-          <a href="https://xstocks.fi" target="_blank" rel="noopener noreferrer">xStocks</a>
-          <a href="https://privy.io" target="_blank" rel="noopener noreferrer">Privy</a>
-          <a href="https://cow.fi" target="_blank" rel="noopener noreferrer">CoW Protocol</a>
-          <a href="https://1inch.io" target="_blank" rel="noopener noreferrer">1inch</a>
-          <a href="https://chain.link" target="_blank" rel="noopener noreferrer">Chainlink</a>
+      {/* Footer — matches landing page */}
+      <footer className="landing-footer">
+        <div className="landing-footer-inner">
+          <div className="landing-footer-brand-block">
+            <BrandLockup size="md" />
+            <span className="landing-footer-powered">Powered by xStocks</span>
+            <span className="landing-footer-desc">Tokenized equity portfolios on Ethereum.</span>
+          </div>
+          <div className="landing-footer-col">
+            <strong>Product</strong>
+            <a href="/onboarding">Find my portfolio</a>
+            <a href="/#how-it-works">How it works</a>
+            <a href="/#faq">FAQ</a>
+          </div>
+          <div className="landing-footer-col">
+            <strong>Infrastructure</strong>
+            <a href="https://xstocks.fi" target="_blank" rel="noopener noreferrer">xStocks</a>
+            <a href="https://privy.io" target="_blank" rel="noopener noreferrer">Privy</a>
+            <a href="https://cow.fi" target="_blank" rel="noopener noreferrer">CoW Protocol</a>
+            <a href="https://1inch.io" target="_blank" rel="noopener noreferrer">1inch</a>
+            <a href="https://chain.link" target="_blank" rel="noopener noreferrer">Chainlink CRE</a>
+          </div>
+          <div className="landing-footer-col">
+            <strong>Open Source</strong>
+            <a href="https://github.com/twentyOne2x/xstocks-strategy-lab" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
         </div>
       </footer>
     </div>
