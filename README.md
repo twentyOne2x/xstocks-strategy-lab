@@ -1,36 +1,23 @@
-# xStocks Strategy Lab
+# 24-7 MARKETS
 
-`24-7 MARKETS` is the public product brand.
+`xStocks Strategy Lab` is the internal monorepo name for the codebase that powers `24-7 MARKETS`.
 
-`xStocks Strategy Lab` is the monorepo that powers the `24-7 MARKETS` terminal, API, and supporting research/runtime surfaces.
-
-The repo owns:
-1. qualification, promoted-manifest selection, activation, and execution staging for xStocks portfolios,
-2. a repo-owned `Strategy Lab` autoresearch loop that promotes the current winning manifest into each public slot,
-3. authenticated wallet and activation flows,
-4. venue-routed execution across `CoW` and `1inch`,
-5. provider-triggered rebalance review plus execution staging,
-6. and the active control-plane/docs surface that defines what is live, partial, or blocked.
+`24-7 MARKETS` is an xStocks portfolio product for people who want to:
+1. answer a short qualification flow and get a portfolio matched to their profile,
+2. understand why that portfolio was chosen,
+3. activate the portfolio and see whether execution is actually ready,
+4. follow rebalance and `Chainlink CRE`-driven change signals without pretending automation is further along than it is.
 
 The current public frontend is [24-7.markets](https://24-7.markets).
 
-## Current Repo Truth
+## What 24-7 MARKETS Does
 
-As of `2026-04-02`, the strongest repo-owned truth is:
-1. onboarding qualification, workspace/detail, activation preview, and authenticated activation surfaces exist,
-2. Railway-backed autoresearch is repo-owned and promotes manifests into the public slot registry,
-3. the backend owns a shared `ExecutionRequest` / `ExecutionRequestLeg` contract for venue-routed execution across `CoW` and `1inch`,
-4. accepted provider-triggered review can now hand off into canonical execution staging through `execute_all` under landed `XSL-018B`,
-5. execution is still user-approved and signer-owned,
-6. landed `XSL-014B` makes the promoted default `c5` basket truthfully `ready` / `executable` on the promoted path under venue-routed `1inch.ethereum` truth,
-7. full autonomous rebalancing is not live.
-
-What is not true yet:
-1. the strongest exact execution claim for the promoted `c5` basket is still limited to the six core xStocks legs, with the `AUSD` yield-buffer leg intentionally deferred/manual,
-2. provider-triggered `CRE` does not autonomously execute end to end,
-3. hosted/session-backed signer proof is not closed as a durable production claim,
-4. exact remaining execution blocker: signer-owned `1inch Fusion` EIP-712 signatures, submission, and receipt proof for the six quoted core legs,
-5. Privy smart-account-first execution remains an active `XSL-005` posture lane, not the current proven runtime branch.
+At the product level, the current repo supports:
+1. qualification into a promoted xStocks basket,
+2. portfolio explanation and manifest-backed recommendation surfaces,
+3. authenticated activation save and execution staging,
+4. venue-routed execution planning across `CoW` and `1inch`,
+5. `Chainlink CRE` / provider-triggered rebalance review and staged follow-up actions.
 
 ## Product Surfaces
 
@@ -59,11 +46,11 @@ Current execution hierarchy:
 1. `CoW` and `1inch` are the repo-owned Ethereum execution venues in the backend substrate,
 2. `1inch` is no longer quote-only; it persists quote, approval payload, signed submission attempt, and venue-status or exact blocker,
 3. `CoW` remains supported through the same execution-request contract,
-4. provider-triggered review can now create execution staging through the landed `XSL-018B` handoff,
+4. `Chainlink CRE` / provider-triggered review can now create execution staging through the landed `XSL-018B` handoff,
 5. execution still fails closed when readiness, quoteability, signer, or session blockers remain.
 
 Current truthful posture:
-1. provider review + operator-triggered execution staging is real,
+1. `Chainlink CRE` review + operator-triggered execution staging is real,
 2. full autonomous CRE/provider execution is not,
 3. whole-portfolio execution is the contract shape, and the promoted default `c5` basket is now executable under venue-routed `1inch` truth for its six core xStocks legs,
 4. exact remaining blocker is signer-owned `1inch Fusion` signature, submission, and receipt proof, while the `AUSD` yield-buffer leg remains deferred/manual.
@@ -88,6 +75,24 @@ Current wallet/auth posture:
 
 This does not mean portfolio execution is already fully autonomous.
 
+## Current Repo Truth
+
+As of `2026-04-02`, the strongest repo-owned truth is:
+1. onboarding qualification, workspace/detail, activation preview, and authenticated activation surfaces exist,
+2. Railway-backed autoresearch is repo-owned and promotes manifests into the public slot registry,
+3. the backend owns a shared `ExecutionRequest` / `ExecutionRequestLeg` contract for venue-routed execution across `CoW` and `1inch`,
+4. accepted `Chainlink CRE` / provider-triggered review can now hand off into canonical execution staging through `execute_all` under landed `XSL-018B`,
+5. execution is still user-approved and signer-owned,
+6. landed `XSL-014B` makes the promoted default `c5` basket truthfully `ready` / `executable` on the promoted path under venue-routed `1inch.ethereum` truth,
+7. full autonomous rebalancing is not live.
+
+What is not true yet:
+1. the strongest exact execution claim for the promoted `c5` basket is still limited to the six core xStocks legs, with the `AUSD` yield-buffer leg intentionally deferred/manual,
+2. provider-triggered `CRE` does not autonomously execute end to end,
+3. hosted/session-backed signer proof is not closed as a durable production claim,
+4. exact remaining execution blocker: signer-owned `1inch Fusion` EIP-712 signatures, submission, and receipt proof for the six quoted core legs,
+5. Privy smart-account-first execution remains an active `XSL-005` posture lane, not the current proven runtime branch.
+
 ## Architecture
 
 ```mermaid
@@ -101,7 +106,7 @@ flowchart LR
     subgraph A["API (apps/api)"]
         QA["Qualification + activation"]
         EX["Execution staging"]
-        RB["Rebalance + provider handoff"]
+        RB["Rebalance + Chainlink CRE handoff"]
     end
 
     subgraph R["Research + Runtime"]
@@ -116,6 +121,7 @@ flowchart LR
         OI["1inch Fusion"]
         PR["Privy"]
         MF["Morpho / AUSD"]
+        CRE["Chainlink CRE / provider events"]
     end
 
     O --> QA
@@ -128,6 +134,7 @@ flowchart LR
     EX --> CW
     EX --> OI
     QA --> PR
+    CRE --> RB
     WK --> RE
     RE --> XS
     PO --> MF

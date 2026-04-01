@@ -358,7 +358,7 @@ function AnalysisTransition({
   return (
     <div className="analysis-screen">
       <div className="analysis-inner">
-        <span className="landing-kicker">Evaluating fit</span>
+        <span className="landing-kicker">Evaluating fit · Autoresearch</span>
         <h1 className="analysis-title">{current.label}</h1>
         <p className="analysis-detail">{current.detail}</p>
 
