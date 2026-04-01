@@ -1,0 +1,1447 @@
+{
+  "schemaVersion": "2026-04-01.runtime-store.v8",
+  "meta": {
+    "createdAt": "2026-04-01T19:15:04.000Z",
+    "updatedAt": "2026-04-01T16:43:27.396Z"
+  },
+  "activations": [
+    {
+      "activationId": "act_4470a858-608a-46b6-9c87-a1987f0202a7",
+      "owner": {
+        "providerId": "privy",
+        "appId": "privy-rebalance-proof-app",
+        "userId": "did:privy:manual_rebalance_proof",
+        "sessionId": "session_manual_rebalance_proof",
+        "issuer": "privy.io",
+        "authenticatedAt": "2026-04-01T16:42:22.000Z"
+      },
+      "chain": "ethereum",
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "recommendationId": "rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "requestedNotionalUsd": 50,
+      "surfaceTruth": "live",
+      "status": "ready",
+      "createdAt": "2026-04-01T16:42:49.679Z",
+      "updatedAt": "2026-04-01T16:42:50.679Z",
+      "walletState": {
+        "walletConnected": true,
+        "walletAddress": "0x1111111111111111111111111111111111111111",
+        "fundedNotionalUsd": 62.5,
+        "fundingSource": null,
+        "embeddedWallet": {
+          "providerId": "privy_embedded_wallet",
+          "status": "ready",
+          "address": "0x1111111111111111111111111111111111111111"
+        },
+        "smartAccount": {
+          "providerId": "privy_embedded",
+          "status": "ready",
+          "address": "0x2222222222222222222222222222222222222222",
+          "implementation": "privy_smart_wallet",
+          "chain": "ethereum"
+        }
+      },
+      "routeTruthLabels": [
+        {
+          "routeId": "cow_swap.ethereum",
+          "label": "Cow Swap on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "core_xstocks",
+          "reason": "Publicly verified rail is available."
+        },
+        {
+          "routeId": "flowdesk.ausd-rwa-strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "routeKind": "yield_vault",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "yield_buffer",
+          "reason": "Publicly verified rail is available."
+        }
+      ],
+      "executionPlanSnapshot": {
+        "executionPlanId": "exec_4df23bf98ffe",
+        "generatedAt": "2026-04-01T16:43:23.384Z",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+        },
+        "surfaceTruth": "live",
+        "executionState": "ready",
+        "executionEligibility": "executable",
+        "requestedNotionalUsd": 50,
+        "walletConnectionLate": true,
+        "routeTruthLabels": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "core_xstocks",
+            "reason": "Publicly verified rail is available."
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "yield_buffer",
+            "reason": "Publicly verified rail is available."
+          }
+        ],
+        "assetChecks": [
+          {
+            "assetSymbol": "NVDAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 176.871
+          },
+          {
+            "assetSymbol": "MSFTx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 372.646
+          },
+          {
+            "assetSymbol": "AAPLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 254.803
+          },
+          {
+            "assetSymbol": "METAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 588.119
+          },
+          {
+            "assetSymbol": "AMZNx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 213.039
+          },
+          {
+            "assetSymbol": "GOOGLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 298.897
+          },
+          {
+            "assetSymbol": "AUSD",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 1
+          }
+        ],
+        "fundingPath": {
+          "provider": "privy",
+          "minRequiredUsd": 50,
+          "fundedNotionalUsd": 62.5,
+          "fundingGapUsd": 0,
+          "topUpAsset": "USDC",
+          "destinationAddress": "0x2222222222222222222222222222222222222222",
+          "destinationKind": "embedded_wallet",
+          "readiness": "funded",
+          "status": "funded",
+          "recommendedMethodId": null,
+          "surfaces": [
+            {
+              "methodId": "privy_card",
+              "providerId": "privy",
+              "kind": "card",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy card funding is a mainnet-only funding surface."
+              ]
+            },
+            {
+              "methodId": "privy_wallet",
+              "providerId": "privy",
+              "kind": "wallet",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Use this when the user wants to transfer from an external wallet."
+              ]
+            },
+            {
+              "methodId": "privy_exchange",
+              "providerId": "privy",
+              "kind": "exchange",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy exchange funding is expected to land on the current destination address on mainnet."
+              ]
+            },
+            {
+              "methodId": "manual_transfer",
+              "providerId": "manual",
+              "kind": "manual_transfer",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Manual same-chain transfer remains the fail-closed fallback when hosted funding is unavailable."
+              ]
+            }
+          ]
+        },
+        "smartAccount": {
+          "readiness": "not_required",
+          "providerId": "privy",
+          "status": "not_required",
+          "address": "0x2222222222222222222222222222222222222222",
+          "bootstrap": {
+            "state": "ready",
+            "chain": "ethereum",
+            "implementation": "privy_smart_wallet",
+            "signerAddress": "0x1111111111111111111111111111111111111111",
+            "embeddedWalletAddress": "0x1111111111111111111111111111111111111111",
+            "smartAccountAddress": "0x2222222222222222222222222222222222222222",
+            "destinationAddress": "0x2222222222222222222222222222222222222222",
+            "approvalMode": "user_approved_only",
+            "paymasterReady": false,
+            "notes": [
+              "This manifest does not require a smart account before execution review."
+            ]
+          },
+          "reviewArtifact": {
+            "providerId": "privy",
+            "providerName": "Privy smart wallet",
+            "supportedChains": [
+              "ethereum"
+            ],
+            "permissions": [
+              "activate_promoted_manifest_only",
+              "pause_strategy",
+              "turn_off_strategy"
+            ],
+            "approvalMode": "user_approved_only",
+            "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+            "fundingBoundary": "Funding remains provider-agnostic and should target the current signer or smart-wallet destination address through Privy-supported methods.",
+            "walletConnectionLate": true,
+            "notes": [
+              "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+              "Privy smart wallet bootstrap remains optional for the current CoW execution lane.",
+              "Funding readiness follows the user-requested notional for the current CoW execution lane.",
+              "Operator and user approvals stay explicit; no autonomous execution is implied."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "stepId": "review_promoted_manifest",
+            "title": "Review promoted manifest",
+            "status": "complete",
+            "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted."
+          },
+          {
+            "stepId": "connect_wallet",
+            "title": "Connect wallet late in flow",
+            "status": "complete",
+            "detail": "Wallet connection is only required at activation time."
+          },
+          {
+            "stepId": "fund_wallet",
+            "title": "Fund wallet",
+            "status": "complete",
+            "detail": "Wallet funding meets the current notional requirement."
+          },
+          {
+            "stepId": "prepare_smart_account",
+            "title": "Bootstrap smart account",
+            "status": "complete",
+            "detail": "Privy smart wallet remains optional for the current user-approved CoW execution lane."
+          },
+          {
+            "stepId": "request_cow_quote",
+            "title": "Request CoW quote",
+            "status": "pending",
+            "detail": "All required rails, funding, and smart-account checks are satisfied for CoW quote preparation."
+          },
+          {
+            "stepId": "approve_cow_order",
+            "title": "Approve CoW order",
+            "status": "pending",
+            "detail": "The user must sign and approve the CoW order before submission."
+          }
+        ],
+        "allowedActions": [
+          "review_manifest",
+          "read_route_truth",
+          "request_cow_quote",
+          "approve_cow_order",
+          "pause_after_activation",
+          "turn_off_strategy"
+        ],
+        "blockers": [],
+        "warnings": [],
+        "liveStateSummary": {
+          "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+          "routeStateVersion": "2026-03-31.route-live.package.v1"
+        }
+      }
+    },
+    {
+      "activationId": "activation_baseline_2026-04-01T16-42-21-679Z",
+      "owner": {
+        "providerId": "privy",
+        "appId": "privy-rebalance-proof-app",
+        "userId": "did:privy:manual_rebalance_proof",
+        "sessionId": "session_manual_rebalance_proof",
+        "issuer": "privy.io",
+        "authenticatedAt": "2026-04-01T16:42:22.679Z"
+      },
+      "chain": "ethereum",
+      "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "recommendationId": "rec_onboarding.default_basket:basket-baseline-v1:promoted",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-baseline-v1"
+      },
+      "requestedNotionalUsd": 50,
+      "surfaceTruth": "live",
+      "status": "ready",
+      "createdAt": "2026-04-01T16:42:23.679Z",
+      "updatedAt": "2026-04-01T16:42:24.679Z",
+      "walletState": {
+        "walletConnected": true,
+        "walletAddress": "0x1111111111111111111111111111111111111111",
+        "fundedNotionalUsd": 62.5,
+        "smartAccount": {
+          "status": "ready",
+          "address": "0x2222222222222222222222222222222222222222"
+        }
+      },
+      "routeTruthLabels": [
+        {
+          "routeId": "cow_swap.ethereum",
+          "label": "Cow Swap on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "core_xstocks",
+          "reason": "Publicly verified rail is available."
+        },
+        {
+          "routeId": "flowdesk.ausd-rwa-strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "routeKind": "yield_vault",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "yield_buffer",
+          "reason": "Publicly verified rail is available."
+        }
+      ],
+      "executionPlanSnapshot": {
+        "executionPlanId": "exec_e8e1ac91a9d2",
+        "generatedAt": "2026-04-01T16:43:22.181Z",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-baseline-v1"
+        },
+        "surfaceTruth": "live",
+        "executionState": "ready",
+        "executionEligibility": "executable",
+        "requestedNotionalUsd": 50,
+        "walletConnectionLate": true,
+        "routeTruthLabels": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "core_xstocks",
+            "reason": "Publicly verified rail is available."
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "yield_buffer",
+            "reason": "Publicly verified rail is available."
+          }
+        ],
+        "assetChecks": [
+          {
+            "assetSymbol": "NVDAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 176.871
+          },
+          {
+            "assetSymbol": "MSFTx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 372.646
+          },
+          {
+            "assetSymbol": "AAPLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 254.803
+          },
+          {
+            "assetSymbol": "METAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 588.119
+          },
+          {
+            "assetSymbol": "AMZNx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 213.039
+          },
+          {
+            "assetSymbol": "GOOGLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 298.897
+          },
+          {
+            "assetSymbol": "TSLAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 381.286
+          },
+          {
+            "assetSymbol": "AUSD",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 1
+          }
+        ],
+        "fundingPath": {
+          "provider": "privy",
+          "minRequiredUsd": 50,
+          "fundedNotionalUsd": 62.5,
+          "fundingGapUsd": 0,
+          "topUpAsset": "USDC",
+          "destinationAddress": "0x2222222222222222222222222222222222222222",
+          "destinationKind": "embedded_wallet",
+          "readiness": "funded",
+          "status": "funded",
+          "recommendedMethodId": null,
+          "surfaces": [
+            {
+              "methodId": "privy_card",
+              "providerId": "privy",
+              "kind": "card",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy card funding is a mainnet-only funding surface."
+              ]
+            },
+            {
+              "methodId": "privy_wallet",
+              "providerId": "privy",
+              "kind": "wallet",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Use this when the user wants to transfer from an external wallet."
+              ]
+            },
+            {
+              "methodId": "privy_exchange",
+              "providerId": "privy",
+              "kind": "exchange",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy exchange funding is expected to land on the current destination address on mainnet."
+              ]
+            },
+            {
+              "methodId": "manual_transfer",
+              "providerId": "manual",
+              "kind": "manual_transfer",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Manual same-chain transfer remains the fail-closed fallback when hosted funding is unavailable."
+              ]
+            }
+          ]
+        },
+        "smartAccount": {
+          "readiness": "not_required",
+          "providerId": "privy",
+          "status": "not_required",
+          "address": "0x2222222222222222222222222222222222222222",
+          "bootstrap": {
+            "state": "ready",
+            "chain": "ethereum",
+            "implementation": "privy_smart_wallet",
+            "signerAddress": "0x1111111111111111111111111111111111111111",
+            "embeddedWalletAddress": "0x1111111111111111111111111111111111111111",
+            "smartAccountAddress": "0x2222222222222222222222222222222222222222",
+            "destinationAddress": "0x2222222222222222222222222222222222222222",
+            "approvalMode": "user_approved_only",
+            "paymasterReady": false,
+            "notes": [
+              "This manifest does not require a smart account before execution review."
+            ]
+          },
+          "reviewArtifact": {
+            "providerId": "privy",
+            "providerName": "Privy smart wallet",
+            "supportedChains": [
+              "ethereum"
+            ],
+            "permissions": [
+              "activate_promoted_manifest_only",
+              "pause_strategy",
+              "turn_off_strategy"
+            ],
+            "approvalMode": "user_approved_only",
+            "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+            "fundingBoundary": "Funding remains provider-agnostic and should target the current signer or smart-wallet destination address through Privy-supported methods.",
+            "walletConnectionLate": true,
+            "notes": [
+              "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-baseline-v1:promoted.",
+              "Privy smart wallet bootstrap remains optional for the current CoW execution lane.",
+              "Funding readiness follows the user-requested notional for the current CoW execution lane.",
+              "Operator and user approvals stay explicit; no autonomous execution is implied."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "stepId": "review_promoted_manifest",
+            "title": "Review promoted manifest",
+            "status": "complete",
+            "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-baseline-v1:promoted."
+          },
+          {
+            "stepId": "connect_wallet",
+            "title": "Connect wallet late in flow",
+            "status": "complete",
+            "detail": "Wallet connection is only required at activation time."
+          },
+          {
+            "stepId": "fund_wallet",
+            "title": "Fund wallet",
+            "status": "complete",
+            "detail": "Wallet funding meets the current notional requirement."
+          },
+          {
+            "stepId": "prepare_smart_account",
+            "title": "Bootstrap smart account",
+            "status": "complete",
+            "detail": "Privy smart wallet remains optional for the current user-approved CoW execution lane."
+          },
+          {
+            "stepId": "request_cow_quote",
+            "title": "Request CoW quote",
+            "status": "pending",
+            "detail": "All required rails, funding, and smart-account checks are satisfied for CoW quote preparation."
+          },
+          {
+            "stepId": "approve_cow_order",
+            "title": "Approve CoW order",
+            "status": "pending",
+            "detail": "The user must sign and approve the CoW order before submission."
+          }
+        ],
+        "allowedActions": [
+          "review_manifest",
+          "read_route_truth",
+          "request_cow_quote",
+          "approve_cow_order",
+          "pause_after_activation",
+          "turn_off_strategy"
+        ],
+        "blockers": [],
+        "warnings": [],
+        "liveStateSummary": {
+          "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+          "routeStateVersion": "2026-03-31.route-live.package.v1"
+        }
+      }
+    },
+    {
+      "activationId": "activation_baseline_2026-04-01T19-15-00-000Z",
+      "owner": {
+        "providerId": "privy",
+        "appId": "privy-rebalance-proof-app",
+        "userId": "did:privy:manual_rebalance_proof",
+        "sessionId": "session_manual_rebalance_proof",
+        "issuer": "privy.io",
+        "authenticatedAt": "2026-04-01T19:15:01.000Z"
+      },
+      "chain": "ethereum",
+      "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "recommendationId": "rec_onboarding.default_basket:basket-baseline-v1:promoted",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-baseline-v1"
+      },
+      "requestedNotionalUsd": 50,
+      "surfaceTruth": "live",
+      "status": "ready",
+      "createdAt": "2026-04-01T19:15:02.000Z",
+      "updatedAt": "2026-04-01T19:15:03.000Z",
+      "walletState": {
+        "walletConnected": true,
+        "walletAddress": "0x1111111111111111111111111111111111111111",
+        "fundedNotionalUsd": 62.5,
+        "smartAccount": {
+          "status": "ready",
+          "address": "0x2222222222222222222222222222222222222222"
+        }
+      },
+      "routeTruthLabels": [
+        {
+          "routeId": "cow_swap.ethereum",
+          "label": "Cow Swap on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "core_xstocks",
+          "reason": "Publicly verified rail is available."
+        },
+        {
+          "routeId": "flowdesk.ausd-rwa-strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "routeKind": "yield_vault",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "yield_buffer",
+          "reason": "Publicly verified rail is available."
+        }
+      ],
+      "executionPlanSnapshot": {
+        "executionPlanId": "exec_e8e1ac91a9d2",
+        "generatedAt": "2026-04-01T16:41:58.783Z",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-baseline-v1"
+        },
+        "surfaceTruth": "live",
+        "executionState": "ready",
+        "executionEligibility": "executable",
+        "requestedNotionalUsd": 50,
+        "walletConnectionLate": true,
+        "routeTruthLabels": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "core_xstocks",
+            "reason": "Publicly verified rail is available."
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "yield_buffer",
+            "reason": "Publicly verified rail is available."
+          }
+        ],
+        "assetChecks": [
+          {
+            "assetSymbol": "NVDAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 176.925
+          },
+          {
+            "assetSymbol": "MSFTx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 372.478
+          },
+          {
+            "assetSymbol": "AAPLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 254.783
+          },
+          {
+            "assetSymbol": "METAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 588.035
+          },
+          {
+            "assetSymbol": "AMZNx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 213.039
+          },
+          {
+            "assetSymbol": "GOOGLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 298.935
+          },
+          {
+            "assetSymbol": "TSLAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 381.349
+          },
+          {
+            "assetSymbol": "AUSD",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 1
+          }
+        ],
+        "fundingPath": {
+          "provider": "privy",
+          "minRequiredUsd": 50,
+          "fundedNotionalUsd": 62.5,
+          "fundingGapUsd": 0,
+          "topUpAsset": "USDC",
+          "destinationAddress": "0x2222222222222222222222222222222222222222",
+          "destinationKind": "embedded_wallet",
+          "readiness": "funded",
+          "status": "funded",
+          "recommendedMethodId": null,
+          "surfaces": [
+            {
+              "methodId": "privy_card",
+              "providerId": "privy",
+              "kind": "card",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy card funding is a mainnet-only funding surface."
+              ]
+            },
+            {
+              "methodId": "privy_wallet",
+              "providerId": "privy",
+              "kind": "wallet",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Use this when the user wants to transfer from an external wallet."
+              ]
+            },
+            {
+              "methodId": "privy_exchange",
+              "providerId": "privy",
+              "kind": "exchange",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy exchange funding is expected to land on the current destination address on mainnet."
+              ]
+            },
+            {
+              "methodId": "manual_transfer",
+              "providerId": "manual",
+              "kind": "manual_transfer",
+              "status": "available",
+              "destinationAddress": "0x2222222222222222222222222222222222222222",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Manual same-chain transfer remains the fail-closed fallback when hosted funding is unavailable."
+              ]
+            }
+          ]
+        },
+        "smartAccount": {
+          "readiness": "not_required",
+          "providerId": "privy",
+          "status": "not_required",
+          "address": "0x2222222222222222222222222222222222222222",
+          "bootstrap": {
+            "state": "ready",
+            "chain": "ethereum",
+            "implementation": "privy_smart_wallet",
+            "signerAddress": "0x1111111111111111111111111111111111111111",
+            "embeddedWalletAddress": "0x1111111111111111111111111111111111111111",
+            "smartAccountAddress": "0x2222222222222222222222222222222222222222",
+            "destinationAddress": "0x2222222222222222222222222222222222222222",
+            "approvalMode": "user_approved_only",
+            "paymasterReady": false,
+            "notes": [
+              "This manifest does not require a smart account before execution review."
+            ]
+          },
+          "reviewArtifact": {
+            "providerId": "privy",
+            "providerName": "Privy smart wallet",
+            "supportedChains": [
+              "ethereum"
+            ],
+            "permissions": [
+              "activate_promoted_manifest_only",
+              "pause_strategy",
+              "turn_off_strategy"
+            ],
+            "approvalMode": "user_approved_only",
+            "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+            "fundingBoundary": "Funding remains provider-agnostic and should target the current signer or smart-wallet destination address through Privy-supported methods.",
+            "walletConnectionLate": true,
+            "notes": [
+              "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-baseline-v1:promoted.",
+              "Privy smart wallet bootstrap remains optional for the current CoW execution lane.",
+              "Funding readiness follows the user-requested notional for the current CoW execution lane.",
+              "Operator and user approvals stay explicit; no autonomous execution is implied."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "stepId": "review_promoted_manifest",
+            "title": "Review promoted manifest",
+            "status": "complete",
+            "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-baseline-v1:promoted."
+          },
+          {
+            "stepId": "connect_wallet",
+            "title": "Connect wallet late in flow",
+            "status": "complete",
+            "detail": "Wallet connection is only required at activation time."
+          },
+          {
+            "stepId": "fund_wallet",
+            "title": "Fund wallet",
+            "status": "complete",
+            "detail": "Wallet funding meets the current notional requirement."
+          },
+          {
+            "stepId": "prepare_smart_account",
+            "title": "Bootstrap smart account",
+            "status": "complete",
+            "detail": "Privy smart wallet remains optional for the current user-approved CoW execution lane."
+          },
+          {
+            "stepId": "request_cow_quote",
+            "title": "Request CoW quote",
+            "status": "pending",
+            "detail": "All required rails, funding, and smart-account checks are satisfied for CoW quote preparation."
+          },
+          {
+            "stepId": "approve_cow_order",
+            "title": "Approve CoW order",
+            "status": "pending",
+            "detail": "The user must sign and approve the CoW order before submission."
+          }
+        ],
+        "allowedActions": [
+          "review_manifest",
+          "read_route_truth",
+          "request_cow_quote",
+          "approve_cow_order",
+          "pause_after_activation",
+          "turn_off_strategy"
+        ],
+        "blockers": [],
+        "warnings": [],
+        "liveStateSummary": {
+          "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+          "routeStateVersion": "2026-03-31.route-live.package.v1"
+        }
+      }
+    }
+  ],
+  "activityEvents": [
+    {
+      "version": "1",
+      "eventId": "evt_adfc3234-d183-4f1f-877b-d2a4ce584c66",
+      "eventType": "activation_ready",
+      "scope": {
+        "type": "activation",
+        "id": "act_4470a858-608a-46b6-9c87-a1987f0202a7"
+      },
+      "summary": "CoW quote prepared and awaiting user approval for NVDAx.",
+      "occurredAt": "2026-04-01T16:42:59.679Z",
+      "payload": {
+        "executionRequestId": "execreq_c3e98d16-9454-4553-8601-553592581419",
+        "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:1",
+        "quoteId": "1126517600",
+        "requestState": "awaiting_approval"
+      }
+    },
+    {
+      "version": "1",
+      "eventId": "evt_0d295b93-a732-49e6-a2a9-3e06e89081b2",
+      "eventType": "activation_requested",
+      "scope": {
+        "type": "activation",
+        "id": "act_4470a858-608a-46b6-9c87-a1987f0202a7"
+      },
+      "summary": "Saved activation request for promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+      "occurredAt": "2026-04-01T16:42:51.679Z",
+      "payload": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "surfaceTruth": "live",
+        "executionState": "ready"
+      }
+    }
+  ],
+  "funnelEvents": [],
+  "rebalances": [
+    {
+      "rebalanceId": "rebalance_onboarding_default_basket",
+      "slotId": "onboarding.default_basket",
+      "chain": "ethereum",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "baselineActivationId": "activation_baseline_2026-04-01T16-42-21-679Z",
+      "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "baselineManifestMatchesTarget": false,
+      "state": "awaiting_operator",
+      "runtimeOwner": "operator_manual",
+      "triggerSource": "operator_manual",
+      "summary": "Rebalance is awaiting operator confirmation.",
+      "rationale": "Operator opened manual rebalance proof review.",
+      "scheduledFor": "2026-04-01T16:42:30.679Z",
+      "allowedTransitions": [
+        "scheduled",
+        "executing",
+        "paused",
+        "failed"
+      ],
+      "recommendationState": "full_rebalance",
+      "executionState": "ready",
+      "executionEligibility": "executable",
+      "surfaceTruth": "live",
+      "blockers": [],
+      "warnings": [],
+      "automationTruth": {
+        "operatorManualRequired": true,
+        "autonomousExecutionProven": false,
+        "providerTriggeredProven": false,
+        "supportedTriggerSources": [
+          "operator_manual",
+          "scheduled_cron"
+        ],
+        "notes": [
+          "Operator confirmation remains required before any rebalance execution claim.",
+          "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+          "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
+          "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist."
+        ]
+      },
+      "nextAction": {
+        "title": "Approve or reject manual rebalance",
+        "detail": "The worker shell will not submit execution without an explicit operator-driven state transition.",
+        "status": "pending"
+      },
+      "createdAt": "2026-04-01T19:15:20.000Z",
+      "updatedAt": "2026-04-01T16:42:39.679Z",
+      "history": [
+        {
+          "transitionId": "rtr_c194258b-36ef-40b8-93fd-fb101c7b9d87",
+          "eventType": "evaluation",
+          "fromState": "awaiting_operator",
+          "toState": "awaiting_operator",
+          "triggerSource": "operator_manual",
+          "summary": "Rebalance is awaiting operator confirmation.",
+          "rationale": "Operator opened manual rebalance proof review.",
+          "scheduledFor": "2026-04-01T16:42:30.679Z",
+          "occurredAt": "2026-04-01T16:42:39.679Z"
+        },
+        {
+          "transitionId": "rtr_45893224-ad24-4a00-bf39-8b78f78239d9",
+          "eventType": "transition:awaiting_operator",
+          "fromState": "scheduled",
+          "toState": "awaiting_operator",
+          "triggerSource": "operator_manual",
+          "summary": "Rebalance is awaiting operator confirmation.",
+          "rationale": "Operator opened manual rebalance proof review.",
+          "scheduledFor": null,
+          "occurredAt": "2026-04-01T19:15:34.000Z"
+        },
+        {
+          "transitionId": "rtr_aa24d4ad-982e-4bc6-9d51-2aa53f00aaba",
+          "eventType": "evaluation",
+          "fromState": null,
+          "toState": "scheduled",
+          "triggerSource": "scheduled_cron",
+          "summary": "Manual rebalance review has been scheduled.",
+          "rationale": "A cron-triggered worker evaluation queued a manual review for 2026-04-01T19:15:11.000Z.",
+          "scheduledFor": "2026-04-01T19:15:11.000Z",
+          "occurredAt": "2026-04-01T19:15:20.000Z"
+        }
+      ]
+    }
+  ],
+  "executionRequests": [
+    {
+      "version": "1",
+      "executionRequestId": "execreq_c3e98d16-9454-4553-8601-553592581419",
+      "owner": {
+        "providerId": "privy",
+        "appId": "privy-rebalance-proof-app",
+        "userId": "did:privy:manual_rebalance_proof",
+        "sessionId": "session_manual_rebalance_proof",
+        "issuer": "privy.io",
+        "authenticatedAt": "2026-04-01T16:42:22.000Z"
+      },
+      "activationId": "act_4470a858-608a-46b6-9c87-a1987f0202a7",
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "chain": "ethereum",
+      "mode": "basket",
+      "runtimeOwner": "operator_manual",
+      "triggerSource": "operator_manual",
+      "adapterId": "cow_swap",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "requestedNotionalUsd": 50,
+      "fundingAssetSymbol": "USDC",
+      "settlementAddress": "0x2222222222222222222222222222222222222222",
+      "state": "blocked",
+      "blockers": [
+        "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=8210000 targetNotionalUsd=8.21 receiver=0x2222222222222222222222222222222222222222 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+      ],
+      "warnings": [
+        "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+        "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+      ],
+      "legs": [
+        {
+          "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:1",
+          "sequence": 1,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "NVDAx",
+          "adapterId": "cow_swap",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 18,
+          "targetNotionalUsd": 9,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0x2222222222222222222222222222222222222222",
+          "state": "awaiting_approval",
+          "blockers": [],
+          "warnings": [
+            "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+            "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+          ],
+          "quote": {
+            "kind": "cow_swap",
+            "quoteId": "1126517600",
+            "quotedAt": "2026-04-01T16:42:56.679Z",
+            "expiration": "2026-04-01T16:45:23.787675618Z",
+            "verified": true,
+            "protocolFeeBps": "2",
+            "order": {
+              "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+              "receiver": "0x2222222222222222222222222222222222222222",
+              "sellAmount": "8394282",
+              "buyAmount": "47880133726442640",
+              "validTo": 1775063603,
+              "appData": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "feeAmount": "605718",
+              "gasAmount": "277985",
+              "gasPrice": "1016191657",
+              "sellTokenPrice": "466366040.277068793773651123046875",
+              "kind": "sell",
+              "partiallyFillable": false,
+              "sellTokenBalance": "erc20",
+              "buyTokenBalance": "erc20",
+              "signingScheme": "eip712"
+            },
+            "owner": "0x1111111111111111111111111111111111111111"
+          },
+          "approval": {
+            "approvalType": "eip712_signature",
+            "status": "awaiting_user",
+            "signerAddress": "0x1111111111111111111111111111111111111111",
+            "approvalTarget": "cow_order",
+            "orderToSign": {
+              "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+              "receiver": "0x2222222222222222222222222222222222222222",
+              "sellAmount": "8394282",
+              "buyAmount": "47880133726442640",
+              "validTo": 1775063603,
+              "appData": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "feeAmount": "605718",
+              "gasAmount": "277985",
+              "gasPrice": "1016191657",
+              "sellTokenPrice": "466366040.277068793773651123046875",
+              "kind": "sell",
+              "partiallyFillable": false,
+              "sellTokenBalance": "erc20",
+              "buyTokenBalance": "erc20",
+              "signingScheme": "eip712",
+              "from": "0x1111111111111111111111111111111111111111"
+            },
+            "signature": null,
+            "approvedAt": null,
+            "submittedAt": null,
+            "venueOrderId": null,
+            "notes": [
+              "The user must sign this CoW order via an EIP-712-compatible wallet flow before backend submission."
+            ]
+          },
+          "venueStatus": {
+            "venueId": "cow_swap",
+            "venueOrderId": null,
+            "status": "quote_ready",
+            "settlementTxHash": null,
+            "lastCheckedAt": null,
+            "updatedAt": "2026-04-01T16:42:57.679Z",
+            "rawStatus": {
+              "quoteId": "1126517600",
+              "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "buyToken": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+              "receiver": "0x2222222222222222222222222222222222222222",
+              "owner": "0x1111111111111111111111111111111111111111",
+              "kind": "sell",
+              "sellAmountBeforeFee": "9000000",
+              "targetNotionalUsd": 9
+            }
+          },
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:2",
+          "sequence": 2,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "MSFTx",
+          "adapterId": "cow_swap",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 16.43,
+          "targetNotionalUsd": 8.21,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x63ad27614231767c8c489745b9145272de50d09b",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0x2222222222222222222222222222222222222222",
+          "state": "blocked",
+          "blockers": [
+            "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=8210000 targetNotionalUsd=8.21 receiver=0x2222222222222222222222222222222222222222 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+          ],
+          "warnings": [
+            "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+            "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": {
+            "venueId": "cow_swap",
+            "venueOrderId": null,
+            "status": "quote_failed",
+            "settlementTxHash": null,
+            "lastCheckedAt": null,
+            "updatedAt": "2026-04-01T16:43:02.679Z",
+            "rawStatus": {
+              "sellToken": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "buyToken": "0x63ad27614231767c8c489745b9145272de50d09b",
+              "receiver": "0x2222222222222222222222222222222222222222",
+              "owner": "0x1111111111111111111111111111111111111111",
+              "kind": "sell",
+              "sellAmountBeforeFee": "8210000",
+              "targetNotionalUsd": 8.21,
+              "error": "CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}"
+            }
+          },
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:3",
+          "sequence": 3,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "AAPLx",
+          "adapterId": "cow_swap",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 15.74,
+          "targetNotionalUsd": 7.87,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0x2222222222222222222222222222222222222222",
+          "state": "pending",
+          "blockers": [],
+          "warnings": [
+            "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+            "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:4",
+          "sequence": 4,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "METAx",
+          "adapterId": "cow_swap",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 15.4,
+          "targetNotionalUsd": 7.7,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0x2222222222222222222222222222222222222222",
+          "state": "pending",
+          "blockers": [],
+          "warnings": [
+            "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+            "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:5",
+          "sequence": 5,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "AMZNx",
+          "adapterId": "cow_swap",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 14.89,
+          "targetNotionalUsd": 7.45,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0x2222222222222222222222222222222222222222",
+          "state": "pending",
+          "blockers": [],
+          "warnings": [
+            "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+            "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:6",
+          "sequence": 6,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "GOOGLx",
+          "adapterId": "cow_swap",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 14.54,
+          "targetNotionalUsd": 7.27,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0x2222222222222222222222222222222222222222",
+          "state": "pending",
+          "blockers": [],
+          "warnings": [
+            "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+            "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:7",
+          "sequence": 7,
+          "sleeve": "yield_buffer",
+          "assetSymbol": "AUSD",
+          "venueId": "flowdesk_ausd_rwa_strategy",
+          "adapterId": "flowdesk_ausd_rwa_strategy",
+          "requiredRouteId": "flowdesk.ausd-rwa-strategy",
+          "targetWeightPct": 5,
+          "targetNotionalUsd": 2.5,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": null,
+          "paymentTokenDecimals": null,
+          "receivingTokenAddress": null,
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0x2222222222222222222222222222222222222222",
+          "state": "deferred",
+          "blockers": [],
+          "warnings": [
+            "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        }
+      ],
+      "createdAt": "2026-04-01T16:42:52.679Z",
+      "updatedAt": "2026-04-01T16:43:04.679Z"
+    }
+  ],
+  "autoresearchRuntime": {
+    "runtimeId": "strategy_lab_regular_autoresearch_v1",
+    "runtimeOwner": "worker_strategy_lab",
+    "cadenceHours": 24,
+    "status": "idle",
+    "truthBoundary": "worker_runtime_only",
+    "repoOwnedRuntime": true,
+    "recurringAutonomousProven": false,
+    "supportedTriggerSources": [
+      "manual_cli",
+      "scheduled_cron"
+    ],
+    "notes": [
+      "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
+      "Scheduled cron is a supported trigger shape, not proof of a deployed recurring host.",
+      "Promoted manifests remain the only public explanation boundary."
+    ],
+    "lastRequestedAt": null,
+    "lastStartedAt": null,
+    "lastCompletedAt": null,
+    "lastRunId": null,
+    "lastTriggerSource": null,
+    "nextDueAt": null,
+    "lastPromotionCount": 0,
+    "lastPromotedManifestIds": [],
+    "schedulerHost": null,
+    "proofUpdatedAt": null
+  },
+  "autoresearchRuns": []
+}

@@ -1,0 +1,683 @@
+{
+  "schemaVersion": "2026-04-01.runtime-store.v9",
+  "meta": {
+    "createdAt": "2026-04-01T22:27:45.081Z",
+    "updatedAt": "2026-04-01T22:27:46.218Z"
+  },
+  "activations": [
+    {
+      "activationId": "act_b3171f06-3976-47d2-88db-7e3d86143c49",
+      "owner": {
+        "providerId": "privy",
+        "appId": "cmnfzikzk02ey0ckyx8m14qv2",
+        "userId": "did:privy:cmng4u99003bf0ckye9oqgopk",
+        "sessionId": "cmng4u96303be0ckywgn8rgqh",
+        "issuer": "privy.io",
+        "authenticatedAt": "2026-04-01T22:07:10.000Z"
+      },
+      "chain": "ethereum",
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "recommendationId": "rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "requestedNotionalUsd": 25,
+      "surfaceTruth": "preview",
+      "status": "blocked",
+      "createdAt": "2026-04-01T22:27:45.080Z",
+      "updatedAt": "2026-04-01T22:27:45.080Z",
+      "walletState": {
+        "walletConnected": true,
+        "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "fundedNotionalUsd": 25,
+        "fundingSource": null,
+        "embeddedWallet": {
+          "providerId": "privy_embedded_wallet",
+          "status": "ready",
+          "address": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2"
+        },
+        "smartAccount": {
+          "providerId": "privy_embedded",
+          "status": "not_started",
+          "address": null,
+          "implementation": "privy_smart_wallet",
+          "chain": "ethereum"
+        }
+      },
+      "routeTruthLabels": [
+        {
+          "routeId": "cow_swap.ethereum",
+          "label": "Cow Swap on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "preview",
+          "availability": "preview_only",
+          "requiredFor": "core_xstocks",
+          "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs MSFTx, AAPLx, METAx, AMZNx, GOOGLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+        },
+        {
+          "routeId": "flowdesk.ausd-rwa-strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "routeKind": "yield_vault",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "yield_buffer",
+          "reason": "Publicly verified rail is available."
+        }
+      ],
+      "executionPlanSnapshot": {
+        "executionPlanId": "exec_bfe7380ab132",
+        "generatedAt": "2026-04-01T22:27:45.078Z",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+        },
+        "surfaceTruth": "preview",
+        "executionState": "blocked",
+        "executionEligibility": "preview_only",
+        "requestedNotionalUsd": 25,
+        "walletConnectionLate": true,
+        "routeTruthLabels": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "preview",
+            "availability": "preview_only",
+            "requiredFor": "core_xstocks",
+            "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs MSFTx, AAPLx, METAx, AMZNx, GOOGLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "yield_buffer",
+            "reason": "Publicly verified rail is available."
+          }
+        ],
+        "assetChecks": [
+          {
+            "assetSymbol": "NVDAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 176.416
+          },
+          {
+            "assetSymbol": "MSFTx",
+            "truthState": "preview",
+            "status": "cow_unquoteable",
+            "reason": "Direct standalone USDC -> MSFTx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+            "blockerClass": "cow_no_liquidity",
+            "errorType": "NoLiquidity",
+            "statusCode": 404
+          },
+          {
+            "assetSymbol": "AAPLx",
+            "truthState": "preview",
+            "status": "cow_unquoteable",
+            "reason": "Direct standalone USDC -> AAPLx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+            "blockerClass": "cow_no_liquidity",
+            "errorType": "NoLiquidity",
+            "statusCode": 404
+          },
+          {
+            "assetSymbol": "METAx",
+            "truthState": "preview",
+            "status": "cow_unquoteable",
+            "reason": "Direct standalone USDC -> METAx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+            "blockerClass": "cow_no_liquidity",
+            "errorType": "NoLiquidity",
+            "statusCode": 404
+          },
+          {
+            "assetSymbol": "AMZNx",
+            "truthState": "preview",
+            "status": "cow_unquoteable",
+            "reason": "Direct standalone USDC -> AMZNx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+            "blockerClass": "cow_no_liquidity",
+            "errorType": "NoLiquidity",
+            "statusCode": 404
+          },
+          {
+            "assetSymbol": "GOOGLx",
+            "truthState": "preview",
+            "status": "cow_unquoteable",
+            "reason": "Direct standalone USDC -> GOOGLx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+            "blockerClass": "cow_no_liquidity",
+            "errorType": "NoLiquidity",
+            "statusCode": 404
+          },
+          {
+            "assetSymbol": "AUSD",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 1
+          }
+        ],
+        "fundingPath": {
+          "provider": "privy",
+          "minRequiredUsd": 25,
+          "fundedNotionalUsd": 25,
+          "fundingGapUsd": 0,
+          "topUpAsset": "USDC",
+          "destinationAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "destinationKind": "embedded_wallet",
+          "readiness": "funded",
+          "status": "funded",
+          "recommendedMethodId": null,
+          "surfaces": [
+            {
+              "methodId": "privy_wallet",
+              "providerId": "privy",
+              "kind": "wallet",
+              "status": "available",
+              "destinationAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Canonical self-serve path: transfer from your external wallet into the revealed same-chain destination address.",
+                "This wallet-funded path does not introduce a new app-level KYC/KYB step."
+              ]
+            },
+            {
+              "methodId": "manual_transfer",
+              "providerId": "manual",
+              "kind": "manual_transfer",
+              "status": "available",
+              "destinationAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Canonical strict self-serve fallback: complete a manual same-chain transfer from your external wallet into the revealed destination address.",
+                "Use this fail-closed path when hosted convenience rails are unavailable or not desired."
+              ]
+            },
+            {
+              "methodId": "privy_card",
+              "providerId": "privy",
+              "kind": "card",
+              "status": "available",
+              "destinationAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Optional hosted convenience rail for card top-up on mainnet.",
+                "A regulated on-ramp may require identity verification before funding completes."
+              ]
+            },
+            {
+              "methodId": "privy_exchange",
+              "providerId": "privy",
+              "kind": "exchange",
+              "status": "available",
+              "destinationAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+              "assetSymbol": "USDC",
+              "notes": [
+                "Optional hosted convenience rail for exchange-linked funding into the current destination on mainnet.",
+                "A regulated exchange or on-ramp partner may require identity verification before funding completes."
+              ]
+            }
+          ]
+        },
+        "smartAccount": {
+          "readiness": "not_required",
+          "providerId": "privy",
+          "status": "not_required",
+          "address": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "bootstrap": {
+            "state": "ready",
+            "chain": "ethereum",
+            "implementation": "privy_smart_wallet",
+            "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "embeddedWalletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "smartAccountAddress": null,
+            "destinationAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "approvalMode": "user_approved_only",
+            "paymasterReady": false,
+            "notes": [
+              "This manifest does not require a smart account before execution review."
+            ]
+          },
+          "reviewArtifact": {
+            "providerId": "privy",
+            "providerName": "Privy smart wallet",
+            "supportedChains": [
+              "ethereum"
+            ],
+            "permissions": [
+              "activate_promoted_manifest_only",
+              "pause_strategy",
+              "turn_off_strategy"
+            ],
+            "approvalMode": "user_approved_only",
+            "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+            "fundingBoundary": "Funding remains provider-agnostic and should target the current signer or smart-wallet destination address through Privy-supported methods.",
+            "walletConnectionLate": true,
+            "notes": [
+              "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+              "Privy smart wallet bootstrap remains optional for the current CoW execution lane.",
+              "Funding readiness follows the user-requested notional for the current CoW execution lane.",
+              "Operator and user approvals stay explicit; no autonomous execution is implied."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "stepId": "review_promoted_manifest",
+            "title": "Review promoted manifest",
+            "status": "complete",
+            "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted."
+          },
+          {
+            "stepId": "connect_wallet",
+            "title": "Connect wallet late in flow",
+            "status": "complete",
+            "detail": "Wallet connection is only required at activation time."
+          },
+          {
+            "stepId": "fund_wallet",
+            "title": "Fund wallet",
+            "status": "complete",
+            "detail": "Wallet funding meets the current requested notional."
+          },
+          {
+            "stepId": "prepare_smart_account",
+            "title": "Smart wallet optional",
+            "status": "complete",
+            "detail": "Privy smart wallet remains optional for the current user-approved CoW execution lane."
+          },
+          {
+            "stepId": "request_cow_quote",
+            "title": "Request CoW quote",
+            "status": "blocked",
+            "detail": "CoW quoting remains preview-only until every required rail and wallet check passes."
+          },
+          {
+            "stepId": "approve_cow_order",
+            "title": "Approve CoW order",
+            "status": "blocked",
+            "detail": "Order approval remains blocked until the quote and readiness checks are satisfied."
+          }
+        ],
+        "allowedActions": [
+          "review_manifest",
+          "read_route_truth",
+          "review_preview"
+        ],
+        "blockers": [],
+        "warnings": [
+          "MSFTx: Direct standalone USDC -> MSFTx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "AAPLx: Direct standalone USDC -> AAPLx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "METAx: Direct standalone USDC -> METAx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "AMZNx: Direct standalone USDC -> AMZNx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "GOOGLx: Direct standalone USDC -> GOOGLx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "Cow Swap on Ethereum: Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs MSFTx, AAPLx, METAx, AMZNx, GOOGLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+        ],
+        "liveStateSummary": {
+          "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+          "routeStateVersion": "2026-03-31.route-live.package.v1"
+        }
+      }
+    }
+  ],
+  "activityEvents": [
+    {
+      "version": "1",
+      "eventId": "evt_892f8ca5-2d08-4d65-9cf5-a21187b3f681",
+      "eventType": "activation_requested",
+      "scope": {
+        "type": "activation",
+        "id": "act_b3171f06-3976-47d2-88db-7e3d86143c49"
+      },
+      "summary": "Saved activation request for promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+      "occurredAt": "2026-04-01T22:27:45.080Z",
+      "payload": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "surfaceTruth": "preview",
+        "executionState": "blocked"
+      }
+    },
+    {
+      "version": "1",
+      "eventId": "evt_f5d0e717-3587-488a-a99a-3f52b2bd1788",
+      "eventType": "blocked",
+      "scope": {
+        "type": "activation",
+        "id": "act_b3171f06-3976-47d2-88db-7e3d86143c49"
+      },
+      "summary": "Activation remains preview-only or blocked until every required rail and wallet check passes.",
+      "occurredAt": "2026-04-01T22:27:45.080Z",
+      "payload": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "executionState": "blocked",
+        "blockers": [],
+        "warnings": [
+          "MSFTx: Direct standalone USDC -> MSFTx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "AAPLx: Direct standalone USDC -> AAPLx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "METAx: Direct standalone USDC -> METAx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "AMZNx: Direct standalone USDC -> AMZNx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "GOOGLx: Direct standalone USDC -> GOOGLx CoW quotes never cleared in the tested ladder; blockerClass=cow_no_liquidity.",
+          "Cow Swap on Ethereum: Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs MSFTx, AAPLx, METAx, AMZNx, GOOGLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+        ]
+      }
+    }
+  ],
+  "funnelEvents": [],
+  "providerReceipts": [],
+  "rebalances": [],
+  "executionRequests": [
+    {
+      "version": "1",
+      "executionRequestId": "execreq_3f278e58-e7d9-40c5-9627-7ff2aa640550",
+      "owner": {
+        "providerId": "privy",
+        "appId": "cmnfzikzk02ey0ckyx8m14qv2",
+        "userId": "did:privy:cmng4u99003bf0ckye9oqgopk",
+        "sessionId": "cmng4u96303be0ckywgn8rgqh",
+        "issuer": "privy.io",
+        "authenticatedAt": "2026-04-01T22:07:10.000Z"
+      },
+      "activationId": "act_b3171f06-3976-47d2-88db-7e3d86143c49",
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "chain": "ethereum",
+      "mode": "basket",
+      "runtimeOwner": "operator_manual",
+      "triggerSource": "operator_manual",
+      "adapterId": "venue_router",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "requestedNotionalUsd": 25,
+      "fundingAssetSymbol": "USDC",
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "blocked",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+      ],
+      "legs": [
+        {
+          "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:1",
+          "sequence": 1,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "NVDAx",
+          "venueId": "cow_swap.ethereum",
+          "adapterId": "venue_router",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 18,
+          "targetNotionalUsd": 4.5,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "state": "blocked",
+          "blockers": [
+            "The saved activation snapshot is not in a ready/executable state."
+          ],
+          "warnings": [
+            "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+            "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+            "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:2",
+          "sequence": 2,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "MSFTx",
+          "venueId": "cow_swap.ethereum",
+          "adapterId": "venue_router",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 16.43,
+          "targetNotionalUsd": 4.11,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x63ad27614231767c8c489745b9145272de50d09b",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "state": "blocked",
+          "blockers": [
+            "The saved activation snapshot is not in a ready/executable state."
+          ],
+          "warnings": [
+            "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+            "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+            "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:3",
+          "sequence": 3,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "AAPLx",
+          "venueId": "cow_swap.ethereum",
+          "adapterId": "venue_router",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 15.74,
+          "targetNotionalUsd": 3.94,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "state": "blocked",
+          "blockers": [
+            "The saved activation snapshot is not in a ready/executable state."
+          ],
+          "warnings": [
+            "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+            "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+            "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:4",
+          "sequence": 4,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "METAx",
+          "venueId": "cow_swap.ethereum",
+          "adapterId": "venue_router",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 15.4,
+          "targetNotionalUsd": 3.85,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "state": "blocked",
+          "blockers": [
+            "The saved activation snapshot is not in a ready/executable state."
+          ],
+          "warnings": [
+            "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+            "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+            "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:5",
+          "sequence": 5,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "AMZNx",
+          "venueId": "cow_swap.ethereum",
+          "adapterId": "venue_router",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 14.89,
+          "targetNotionalUsd": 3.72,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "state": "blocked",
+          "blockers": [
+            "The saved activation snapshot is not in a ready/executable state."
+          ],
+          "warnings": [
+            "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+            "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+            "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:6",
+          "sequence": 6,
+          "sleeve": "core_xstocks",
+          "assetSymbol": "GOOGLx",
+          "venueId": "cow_swap.ethereum",
+          "adapterId": "venue_router",
+          "requiredRouteId": "cow_swap.ethereum",
+          "targetWeightPct": 14.54,
+          "targetNotionalUsd": 3.63,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "paymentTokenDecimals": 6,
+          "receivingTokenAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "state": "blocked",
+          "blockers": [
+            "The saved activation snapshot is not in a ready/executable state."
+          ],
+          "warnings": [
+            "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+            "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+            "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        },
+        {
+          "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:7",
+          "sequence": 7,
+          "sleeve": "yield_buffer",
+          "assetSymbol": "AUSD",
+          "venueId": "flowdesk_ausd_rwa_strategy",
+          "adapterId": "flowdesk_ausd_rwa_strategy",
+          "requiredRouteId": "flowdesk.ausd-rwa-strategy",
+          "targetWeightPct": 5,
+          "targetNotionalUsd": 1.25,
+          "paymentAssetSymbol": "USDC",
+          "paymentTokenAddress": null,
+          "paymentTokenDecimals": null,
+          "receivingTokenAddress": null,
+          "receivingTokenDecimals": null,
+          "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "state": "deferred",
+          "blockers": [],
+          "warnings": [
+            "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+          ],
+          "quote": null,
+          "approval": null,
+          "venueStatus": null,
+          "receipt": null,
+          "trade": null
+        }
+      ],
+      "createdAt": "2026-04-01T22:27:46.217Z",
+      "updatedAt": "2026-04-01T22:27:46.217Z"
+    }
+  ],
+  "autoresearchRuntime": {
+    "runtimeId": "strategy_lab_regular_autoresearch_v1",
+    "runtimeOwner": "worker_strategy_lab",
+    "cadenceHours": 24,
+    "status": "idle",
+    "truthBoundary": "worker_runtime_only",
+    "repoOwnedRuntime": true,
+    "recurringAutonomousProven": false,
+    "supportedTriggerSources": [
+      "manual_cli",
+      "scheduled_cron"
+    ],
+    "notes": [
+      "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
+      "Scheduled cron is a supported trigger shape, not proof of a deployed recurring host.",
+      "Promoted manifests remain the only public explanation boundary."
+    ],
+    "lastRequestedAt": null,
+    "lastStartedAt": null,
+    "lastCompletedAt": null,
+    "lastRunId": null,
+    "lastTriggerSource": null,
+    "nextDueAt": null,
+    "lastPromotionCount": 0,
+    "lastPromotedManifestIds": [],
+    "schedulerHost": null,
+    "proofUpdatedAt": null
+  },
+  "autoresearchRuns": []
+}

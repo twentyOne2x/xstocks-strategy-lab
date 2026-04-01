@@ -1,0 +1,14 @@
+{
+  "url": "https://equityterminal.app/activate/ai-infra-autopilot",
+  "body": "ET\nEQUITY TERMINAL\nPowered by xStocks\nPREVIEW\nHOME\nONBOARDING\nCOMPARE\nDETAIL\nDEPOSIT\nACTIVITY\nACTIVATE YOUR PORTFOLIO\nAutopilot: Mag 7 Core\n\nLong-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 2% in AUSD as a yield buffer instead of forcing full equity exposure.\n\n1\nConnect wallet\n\nSign in with email or connect an existing wallet. Your keys, your assets.\n\nConnect wallet\n2\nFund with USDC\n\nMinimum $10 via card, exchange, or wallet transfer.\n\n3\nActivate portfolio\n\nReview the exact holdings and approve the transaction. Nothing executes without your confirmation.\n\nRoute\nCow Swap on Ethereum / Flowdesk AUSD RWA Strategy\nDeposit asset\nUSDC · $10\nReversible\nYes — pause or exit anytime\nYOUR ACCOUNT\nACTIVATION READY\n\nKeep monitoring promoted output\n\nDeposit\n$10 · USDC\nAUTOPILOT: MAG 7 CORE\n\nLong-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 2% in AUSD as a yield buffer instead of forcing full equity exposure.\n\nStatus\nlive\nRebalancing\nNo review queued · requires your approval\nNetwork\nEthereum · Cow Swap on Ethereum\nWHAT CHANGED\nRebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 0% annualized turnover, 0 bps annualized costs, and 0 rebalances over the frozen window. Legacy static proxy would have printed 98% turnover and 44.3 bps total costs with 2% parked in AUSD.\nNVDAx is the largest sleeve at 18% against a 18% single-name cap.\nSURFACE TRUTH: LIVE\nCASH SLEEVE: 2% AUSD\nPORTFOLIO LEDGER\n\nPreview data until deposit.\n\nPOSITIONS\nHISTORY\nREBALANCING\nACTIVITY\nSTATE\tSYMBOL\tROLE\tEXPOSURE\tROUTE\tUPDATED\nWATCH\tNVDAx\tcore xstocks\t$5\txChange\t04:17 PM UTC\nWATCH\tAMDx\tcore xstocks\t$4\txChange\t04:17 PM UTC\nWATCH\tAVGOx\tcore xstocks\t$4\txChange\t04:17 PM UTC\nWATCH\tMSFTx\tcore xstocks\t$4\txChange\t04:17 PM UTC\nWATCH\tAAPLx\tcore xstocks\t$4\txChange\t04:17 PM UTC\nWATCH\tMETAx\tcore xstocks\t$4\txChange\t04:17 PM UTC\nWATCH\tAUSD\tyield buffer\t$1\tflowdesk_ausd_rwa_strategy\t04:17 PM UTC\nLog in or sign up\nSubmit\nContinue with a wallet",
+  "buttons": [
+    "Connect wallet",
+    "Positions",
+    "History",
+    "Rebalancing",
+    "Activity",
+    "Submit",
+    "Continue with Email",
+    "Continue with a wallet"
+  ]
+}

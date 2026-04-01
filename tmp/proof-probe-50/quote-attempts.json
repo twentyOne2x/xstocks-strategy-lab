@@ -1,0 +1,22 @@
+[
+  {
+    "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:1",
+    "assetSymbol": "NVDAx",
+    "status": 200,
+    "ok": true,
+    "error": null,
+    "blockerCode": null,
+    "quoteId": "1126517600",
+    "resultingState": "awaiting_approval"
+  },
+  {
+    "legId": "act_4470a858-608a-46b6-9c87-a1987f0202a7:leg:2",
+    "assetSymbol": "MSFTx",
+    "status": 200,
+    "ok": true,
+    "error": null,
+    "blockerCode": null,
+    "quoteId": null,
+    "resultingState": "blocked"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "privyAppId": false,
+  "privyAppSecret": false,
+  "privyJwksUrl": false,
+  "ethereumRpcUrl": false,
+  "xstocksApiBaseUrl": false,
+  "cowApiBaseUrl": false
+}

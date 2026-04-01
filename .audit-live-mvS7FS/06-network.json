@@ -1,0 +1,891 @@
+[
+  {
+    "ts": "2026-04-01T16:34:14.067Z",
+    "type": "request",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot?_rsc=aeltd",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:14.213Z",
+    "type": "response",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot?_rsc=aeltd",
+    "status": 200,
+    "body": "0:{\"b\":\"l02kUMMwmc8j8WJwQla_Z\",\"f\":[[\"children\",\"activate\",[\"activate\",{\"children\":[[\"manifestSlug\",\"ai-infra-autopilot\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}],null,[null,null],true]],\"S\":false}\n"
+  },
+  {
+    "ts": "2026-04-01T16:34:14.972Z",
+    "type": "request",
+    "url": "https://api-production-e70b.up.railway.app/api/activity?slotId=onboarding.default_basket",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:14.973Z",
+    "type": "response",
+    "url": "https://api-production-e70b.up.railway.app/api/workspace?slotId=onboarding.default_basket&userNotionalUsd=10",
+    "status": 200,
+    "body": "{\n  \"data\": {\n    \"version\": \"1\",\n    \"generatedAt\": \"2026-04-01T16:34:14.580Z\",\n    \"slot\": {\n      \"chain\": \"ethereum\",\n      \"surface\": \"onboarding\",\n      \"position\": 0,\n      \"title\": \"Autopilot: Mag 7 Core\",\n      \"description\": \"Default onboarding basket anchored to the pinned Mag 7 baseline.\",\n      \"slotId\": \"onboarding.default_basket\",\n      \"mode\": \"basket\",\n      \"starterBasketId\": \"mag7\"\n    },\n    \"manifest\": {\n      \"manifestId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n      \"slotId\": \"onboarding.default_basket\",\n      \"mode\": \"basket\",\n      \"chain\": \"ethereum\",\n      \"strategyVersion\": \"basket-starter-h6-p100-c5-cap18-a0-r300-v1\",\n      \"promoted\": true,\n      \"source\": {\n        \"type\": \"research_promoted_manifest\",\n        \"manifestId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n        \"slotId\": \"onboarding.default_basket\"\n      },\n      \"frontend\": {\n        \"title\": \"Autopilot: Mag 7 Core\",\n        \"subtitle\": \"Default onboarding basket anchored to the pinned Mag 7 baseline.\",\n        \"riskLabel\": \"moderate\",\n        \"summary\": \"Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.\",\n        \"badges\": [\n          \"validated_strategy\",\n          \"promoted_manifest\",\n          \"basket_live_ready\"\n        ]\n      },\n      \"explanation\": {\n        \"thesis\": \"Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.\",\n        \"whatThisDoes\": \"Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.\",\n        \"bestForUser\": \"Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.\",\n        \"howItChanges\": \"Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.\",\n        \"replayInterpretation\": \"After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.\",\n        \"holdingRationales\": [\n          {\n            \"symbol\": \"NVDAx\",\n            \"sleeve\": \"core_xstocks\",\n            \"rationale\": \"Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.\"\n          },\n          {\n            \"symbol\": \"MSFTx\",\n            \"sleeve\": \"core_xstocks\",\n            \"rationale\": \"Core xStocks holding used to widen the basket beyond the lead name while staying ins"
+  },
+  {
+    "ts": "2026-04-01T16:34:15.351Z",
+    "type": "response",
+    "url": "https://api-production-e70b.up.railway.app/api/activity?slotId=onboarding.default_basket",
+    "status": 503,
+    "body": "{\n  \"error\": \"Privy auth verification requires PRIVY_APP_ID, PRIVY_APP_SECRET, and PRIVY_JWKS_URL.\",\n  \"details\": null\n}\n"
+  },
+  {
+    "ts": "2026-04-01T16:34:18.131Z",
+    "type": "request",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.948Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/media/558ca1a6aa3cb55e-s.p.woff2",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.948Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/media/558ca1a6aa3cb55e-s.p.woff2",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.948Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.948Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.948Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/css/f573aebb5f093fae.css",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.950Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/css/f573aebb5f093fae.css",
+    "status": 200,
+    "body": "@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/_next/static/media/ba9851c3c22cd980-s.woff2) format(\"woff2\");unicode-range:u+0460-052f,u+1c80-1c8a,u+20b4,u+2de0-2dff,u+a640-a69f,u+fe2e-fe2f}@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/_next/static/media/21350d82a1f187e9-s.woff2) format(\"woff2\");unicode-range:u+0301,u+0400-045f,u+0490-0491,u+04b0-04b1,u+2116}@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/_next/static/media/c5fe6dc8356a8c31-s.woff2) format(\"woff2\");unicode-range:u+1f??}@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/_next/static/media/19cfc7226ec3afaa-s.woff2) format(\"woff2\");unicode-range:u+0370-0377,u+037a-037f,u+0384-038a,u+038c,u+038e-03a1,u+03a3-03ff}@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/_next/static/media/df0a9ae256c0569c-s.woff2) format(\"woff2\");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/_next/static/media/8e9860b6e62d6359-s.woff2) format(\"woff2\");unicode-range:u+0100-02ba,u+02bd-02c5,u+02c7-02cc,u+02ce-02d7,u+02dd-02ff,u+0304,u+0308,u+0329,u+1d00-1dbf,u+1e00-1e9f,u+1ef2-1eff,u+2020,u+20a0-20ab,u+20ad-20c0,u+2113,u+2c60-2c7f,u+a720-a7ff}@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/_next/static/media/e4af272ccee01ff0-s.p.woff2) format(\"woff2\");unicode-range:u+00??,u+0131,u+0152-0153,u+02bb-02bc,u+02c6,u+02da,u+02dc,u+0304,u+0308,u+0329,u+2000-206f,u+20ac,u+2122,u+2191,u+2193,u+2212,u+2215,u+feff,u+fffd}@font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(/_next/static/media/ba9851c3c22cd980-s.woff2) format(\"woff2\");unicode-range:u+0460-052f,u+1c80-1c8a,u+20b4,u+2de0-2dff,u+a640-a69f,u+fe2e-fe2f}@font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(/_next/static/media/21350d82a1f187e9-s.woff2) format(\"woff2\");unicode-range:u+0301,u+0400-045f,u+0490-0491,u+04b0-04b1,u+2116}@font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(/_next/static/media/c5fe6dc8356a8c31-s.woff2) format(\"woff2\");unicode-range:u+1f??}@font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(/_next/static/media/19cfc7226ec3afaa-s.woff2) format(\"woff2\");unicode-range:u+0370-0377,u+037a-037f,u+0384-038a,u+038c,u+038e-03a1,u+03a3-03ff}@font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(/_next/static/media/df0a9ae256c0569c-s.woff2) format(\"woff2\");unicode-range:u+0102-0103,u+0110-0111,u+0128-0129,u+0168-0169,u+01a0-01a1,u+01af-01b0,u+0300-0301,u+0303-0304,u+0308-0309,u+0323,u+0329,u+1ea0-1ef9,u+20ab}@font-face{font-family:Inte"
+  },
+  {
+    "ts": "2026-04-01T16:34:19.961Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/webpack-12c87c1321922e6c.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.961Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/webpack-12c87c1321922e6c.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/4bd1b696-182b6b13bdad92e3.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/4bd1b696-182b6b13bdad92e3.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/1255-aab1fab69a431920.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/1255-aab1fab69a431920.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/main-app-981af569afe5bc02.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/main-app-981af569afe5bc02.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/339cd768-ee6ed161a30142b5.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/339cd768-ee6ed161a30142b5.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/683a606d-db84333cd23cd403.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/683a606d-db84333cd23cd403.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/505-4209cc9d5e3bdd3f.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/505-4209cc9d5e3bdd3f.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/417-c7bebc668e427786.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/417-c7bebc668e427786.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/app/layout-c3b7049f0a185b1e.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.962Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/app/layout-c3b7049f0a185b1e.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/2619-04bc32f026a0d946.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/2619-04bc32f026a0d946.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/app/page-a2c75a02b57e5521.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/app/page-a2c75a02b57e5521.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/1683-2395041a42ece44e.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/1683-2395041a42ece44e.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/7212-0a930999c112eb16.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.963Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/app/activate/%5BmanifestSlug%5D/page-13ceb524fa226e5c.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:19.992Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/7212-0a930999c112eb16.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.008Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/app/activate/%5BmanifestSlug%5D/page-13ceb524fa226e5c.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.047Z",
+    "type": "response",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot",
+    "status": 200,
+    "body": "<!DOCTYPE html><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/><link rel=\"stylesheet\" href=\"/_next/static/css/f573aebb5f093fae.css\" data-precedence=\"next\"/><link rel=\"preload\" as=\"script\" fetchPriority=\"low\" href=\"/_next/static/chunks/webpack-12c87c1321922e6c.js\"/><script src=\"/_next/static/chunks/4bd1b696-182b6b13bdad92e3.js\" async=\"\"></script><script src=\"/_next/static/chunks/1255-aab1fab69a431920.js\" async=\"\"></script><script src=\"/_next/static/chunks/main-app-981af569afe5bc02.js\" async=\"\"></script><script src=\"/_next/static/chunks/339cd768-ee6ed161a30142b5.js\" async=\"\"></script><script src=\"/_next/static/chunks/683a606d-db84333cd23cd403.js\" async=\"\"></script><script src=\"/_next/static/chunks/505-4209cc9d5e3bdd3f.js\" async=\"\"></script><script src=\"/_next/static/chunks/417-c7bebc668e427786.js\" async=\"\"></script><script src=\"/_next/static/chunks/app/layout-c3b7049f0a185b1e.js\" async=\"\"></script><script src=\"/_next/static/chunks/2619-04bc32f026a0d946.js\" async=\"\"></script><script src=\"/_next/static/chunks/app/page-a2c75a02b57e5521.js\" async=\"\"></script><script src=\"/_next/static/chunks/1683-2395041a42ece44e.js\" async=\"\"></script><script src=\"/_next/static/chunks/7212-0a930999c112eb16.js\" async=\"\"></script><script src=\"/_next/static/chunks/app/activate/%5BmanifestSlug%5D/page-13ceb524fa226e5c.js\" async=\"\"></script><meta name=\"next-size-adjust\" content=\"\"/><title>Equity Terminal — Tokenized equity portfolios powered by xStocks</title><meta name=\"description\" content=\"Find the xStocks portfolio that fits you. Answer a few questions, preview every holding, then connect and fund when ready.\"/><link rel=\"icon\" href=\"/icon.svg\"/><script src=\"/_next/static/chunks/polyfills-42372ed130431b0a.js\" noModule=\"\"></script></head><body class=\"__variable_8b3a0b __variable_e896d9\"><div hidden=\"\"><!--$--><!--/$--></div><main class=\"app-frame\"><header class=\"topbar\"><a class=\"brand-cluster\" href=\"/\"><div class=\"brand-mark\">ET</div><div><span class=\"section-kicker\">Equity Terminal</span><h1>Powered by xStocks</h1></div></a><div class=\"topbar-side\"><span class=\"preview-chip\">Preview</span><nav class=\"topnav\" aria-label=\"Navigation\"><a class=\"nav-link \" href=\"/\">Home</a><a class=\"nav-link \" href=\"/onboarding\">Onboarding</a><a class=\"nav-link \" href=\"/workspace/comparison\">Compare</a><a class=\"nav-link \" href=\"/workspace/detail/ai-infra-autopilot\">Detail</a><a class=\"nav-link nav-link-active\" href=\"/activate/ai-infra-autopilot\">Deposit</a><a class=\"nav-link \" href=\"/activity\">Activity</a></nav></div></header><div class=\"shell-grid\"><section class=\"workspace-main\"><div class=\"screen-stack\"><article class=\"activation-primary-card\"><div class=\"panel-heading\"><span class=\"section-kicker\">Activate your portfolio</span><h2>Autopilot: Mag 7 Core</h2></div><p>Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 2% in AUSD as a yield buffer instead o"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.056Z",
+    "type": "request",
+    "url": "https://explorer-api.walletconnect.com/v3/wallets?projectId=34357d3c125c2bcf2ce2bc3309d98715",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.056Z",
+    "type": "request",
+    "url": "https://auth.privy.io/api/v1/apps/cmnfzikzk02ey0ckyx8m14qv2",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.056Z",
+    "type": "request",
+    "url": "https://equityterminal.app/?_rsc=1ycrh",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.056Z",
+    "type": "request",
+    "url": "https://equityterminal.app/onboarding?_rsc=1ycrh",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.056Z",
+    "type": "request",
+    "url": "https://equityterminal.app/workspace/comparison?_rsc=1ycrh",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.057Z",
+    "type": "request",
+    "url": "https://equityterminal.app/workspace/detail/ai-infra-autopilot?_rsc=1ycrh",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.057Z",
+    "type": "request",
+    "url": "https://equityterminal.app/activity?_rsc=1ycrh",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.087Z",
+    "type": "response",
+    "url": "https://explorer-api.walletconnect.com/v3/wallets?projectId=34357d3c125c2bcf2ce2bc3309d98715",
+    "status": 200,
+    "body": "{\"listings\":{\"8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4\":{\"id\":\"8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4\",\"name\":\"Binance Wallet\",\"slug\":\"binance-defi-wallet\",\"description\":\"Binance Wallet is a keyless, multi-chain and self-custody wallet.\",\"homepage\":\"https://www.binance.com/en/web3wallet\",\"chains\":[\"eip155:1\",\"eip155:10\",\"eip155:1329\",\"eip155:137\",\"eip155:2020\",\"eip155:204\",\"eip155:324\",\"eip155:34443\",\"eip155:42161\",\"eip155:43114\",\"eip155:5000\",\"eip155:534352\",\"eip155:56\",\"eip155:59144\",\"eip155:6001\",\"eip155:80084\",\"eip155:80085\",\"eip155:8453\",\"solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp\"],\"versions\":[\"1\",\"2\"],\"sdks\":[\"sign_v1\",\"sign_v2\",\"auth_v1\"],\"app_type\":\"wallet\",\"category\":\"MPC-based wallets\",\"image_id\":\"ebac7b39-688c-41e3-7912-a4fefba74600\",\"image_url\":{\"sm\":\"https://explorer-api.walletconnect.com/v3/logo/sm/ebac7b39-688c-41e3-7912-a4fefba74600?projectId=34357d3c125c2bcf2ce2bc3309d98715\",\"md\":\"https://explorer-api.walletconnect.com/v3/logo/md/ebac7b39-688c-41e3-7912-a4fefba74600?projectId=34357d3c125c2bcf2ce2bc3309d98715\",\"lg\":\"https://explorer-api.walletconnect.com/v3/logo/md/ebac7b39-688c-41e3-7912-a4fefba74600?projectId=34357d3c125c2bcf2ce2bc3309d98715\"},\"app\":{\"browser\":\"https://www.binance.com/en/web3wallet\",\"ios\":\"https://www.binance.com/en/download\",\"android\":\"https://www.binance.com/en/download\",\"mac\":null,\"windows\":null,\"linux\":null,\"chrome\":\"https://chromewebstore.google.com/detail/binance-wallet/cadiboklkpojfamcoggejbbdjcoiljjk?utm_source=walletconnect\",\"firefox\":null,\"safari\":null,\"edge\":null,\"opera\":null},\"injected\":[{\"namespace\":\"eip155\",\"injected_id\":\"isBinance\"}],\"rdns\":\"com.binance.wallet\",\"mobile\":{\"native\":\"bnc://app.binance.com/cedefi/\",\"universal\":\"https://app.binance.com/cedefi\"},\"desktop\":{\"native\":\"\",\"universal\":\"https://www.binance.com/en/web3wallet\"},\"metadata\":{\"shortName\":\"Binance\",\"colors\":{\"primary\":null,\"secondary\":null}},\"updatedAt\":\"2023-04-18T15:40:25.222323+00:00\"},\"c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96\":{\"id\":\"c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96\",\"name\":\"MetaMask\",\"slug\":\"metamask\",\"description\":\"Whether you are an experienced user or brand new to blockchain, MetaMask helps you connect to the decentralized web: a new internet.\",\"homepage\":\"https://metamask.io/\",\"chains\":[\"eip155:1\",\"eip155:10\",\"eip155:137\",\"eip155:42161\",\"eip155:42170\",\"eip155:7777777\",\"eip155:80084\",\"eip155:80085\",\"eip155:8453\"],\"versions\":[\"1\",\"2\"],\"sdks\":[\"sign_v1\",\"sign_v2\"],\"app_type\":\"wallet\",\"category\":\"Mobile Wallets\",\"image_id\":\"eebe4a7f-7166-402f-92e0-1f64ca2aa800\",\"image_url\":{\"sm\":\"https://explorer-api.walletconnect.com/v3/logo/sm/eebe4a7f-7166-402f-92e0-1f64ca2aa800?projectId=34357d3c125c2bcf2ce2bc3309d98715\",\"md\":\"https://explorer-api.walletconnect.com/v3/logo/md/eebe4a7f-7166-402f-92e0-1f64ca2aa800?projectId=34357d3c125c2bcf2ce2bc3309d98715\",\"lg\":\"https://explorer-api.walletconnect.com/v3/logo/md/eebe4a7f-7166-402f-92e0-1f6"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.087Z",
+    "type": "response",
+    "url": "https://auth.privy.io/api/v1/apps/cmnfzikzk02ey0ckyx8m14qv2",
+    "status": 200,
+    "body": "{\"id\":\"cmnfzikzk02ey0ckyx8m14qv2\",\"name\":\"equityterminal\",\"logo_url\":null,\"icon_url\":null,\"terms_and_conditions_url\":null,\"privacy_policy_url\":null,\"require_users_accept_terms\":null,\"theme\":\"System\",\"accent_color\":null,\"show_wallet_login_first\":false,\"allowed_domains\":[],\"allowed_native_app_ids\":[],\"allowed_native_app_url_schemes\":[],\"wallet_auth\":true,\"email_auth\":true,\"sms_auth\":false,\"guest_auth\":false,\"solana_wallet_auth\":false,\"telegram_auth\":false,\"disable_plus_emails\":false,\"google_oauth\":false,\"twitter_oauth\":false,\"discord_oauth\":false,\"github_oauth\":false,\"tiktok_oauth\":false,\"line_oauth\":false,\"twitch_oauth\":false,\"linkedin_oauth\":false,\"apple_oauth\":false,\"spotify_oauth\":false,\"instagram_oauth\":false,\"farcaster_auth\":false,\"passkey_auth\":false,\"passkeys_for_signup_enabled\":false,\"custom_jwt_auth\":false,\"allowlist_enabled\":false,\"allowlist_config\":{\"error_title\":null,\"error_detail\":null,\"cta_text\":null,\"cta_link\":null},\"custom_oauth_providers\":[],\"wallet_connect_cloud_project_id\":\"ee5a8fd96ccb72f796efcd2a5ac92c63\",\"custom_api_url\":null,\"embedded_wallet_config\":{\"create_on_login\":\"off\",\"ethereum\":{\"create_on_login\":\"off\"},\"solana\":{\"create_on_login\":\"off\"},\"user_owned_recovery_options\":[\"user-passcode\"],\"require_user_password_on_create\":false,\"require_user_owned_recovery_on_create\":false,\"mode\":\"user-controlled-server-wallets-only\"},\"enforce_wallet_uis\":true,\"legacy_wallet_ui_config\":false,\"fiat_on_ramp_enabled\":false,\"captcha_enabled\":false,\"enabled_captcha_provider\":null,\"twitter_oauth_on_mobile_enabled\":true,\"mfa_methods\":[],\"verification_key\":\"-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEw6X6v+R3aZ9eGXiKZrwK4Lo804npNdbg9L62AB9GY9Vkic1uKIGmExOypZ5FYCSbXF0whUT0szH4JYQlsvV7kw==-----END PUBLIC KEY-----\",\"max_linked_wallets_per_user\":null,\"farcaster_link_wallets_enabled\":false,\"whatsapp_enabled\":false,\"smart_wallet_config\":{\"enabled\":false}}"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.087Z",
+    "type": "request",
+    "url": "https://auth.privy.io/apps/cmnfzikzk02ey0ckyx8m14qv2/embedded-wallets?caid=62d1b5f3-4e4b-46e0-8be3-7899553e99f5",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.088Z",
+    "type": "request",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot",
+    "method": "HEAD",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.088Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/1892.a1f3b124acb1442e.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.088Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/1892.a1f3b124acb1442e.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.088Z",
+    "type": "request",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot",
+    "method": "HEAD",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.088Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/app/onboarding/page-3b8f5a0cef95320e.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.088Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/app/onboarding/page-3b8f5a0cef95320e.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.089Z",
+    "type": "response",
+    "url": "https://equityterminal.app/onboarding?_rsc=1ycrh",
+    "status": 200,
+    "body": "1:\"$Sreact.fragment\"\n2:I[58011,[\"7532\",\"static/chunks/339cd768-ee6ed161a30142b5.js\",\"6973\",\"static/chunks/683a606d-db84333cd23cd403.js\",\"505\",\"static/chunks/505-4209cc9d5e3bdd3f.js\",\"417\",\"static/chunks/417-c7bebc668e427786.js\",\"7177\",\"static/chunks/app/layout-c3b7049f0a185b1e.js\"],\"PrivyProvider\"]\n3:I[9766,[],\"\"]\n4:I[98924,[],\"\"]\n5:I[52619,[\"2619\",\"static/chunks/2619-04bc32f026a0d946.js\",\"8974\",\"static/chunks/app/page-a2c75a02b57e5521.js\"],\"\"]\n6:\"$Sreact.suspense\"\n7:I[98963,[\"2619\",\"static/chunks/2619-04bc32f026a0d946.js\",\"1683\",\"static/chunks/1683-2395041a42ece44e.js\",\"9566\",\"static/chunks/app/onboarding/page-3b8f5a0cef95320e.js\"],\"OnboardingTerminalExperience\"]\na:I[57150,[],\"\"]\n:HL[\"/_next/static/media/558ca1a6aa3cb55e-s.p.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/e4af272ccee01ff0-s.p.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/css/f573aebb5f093fae.css\",\"style\"]\n0:{\"P\":null,\"b\":\"l02kUMMwmc8j8WJwQla_Z\",\"p\":\"\",\"c\":[\"\",\"onboarding\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"onboarding\",{\"children\":[\"__PAGE__\",{}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/f573aebb5f093fae.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"children\":[\"$\",\"body\",null,{\"className\":\"__variable_8b3a0b __variable_e896d9\",\"children\":[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[\"$\",\"main\",null,{\"className\":\"not-found-shell\",\"children\":[\"$\",\"div\",null,{\"className\":\"empty-state-card\",\"children\":[[\"$\",\"span\",null,{\"className\":\"section-kicker\",\"children\":\"xStocks Strategy Lab\"}],[\"$\",\"h1\",null,{\"children\":\"View not found\"}],[\"$\",\"p\",null,{\"children\":\"This shell only serves promoted strategy routes. Pick a current view from the terminal home.\"}],[\"$\",\"$L5\",null,{\"className\":\"button button-primary\",\"href\":\"/\",\"children\":\"Return to terminal\"}]]}]}],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}]}]}]]}],{\"children\":[\"onboarding\",[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"$6\",null,{\"children\":[\"$\",\"$L7\",null,{\"questions\":[{\"id\":\"q_goal_preference\",\"screenIndex\":1,\"prompt\":\"What matters most?\",\"helper\":\"Strongest signal for which portfolio fits you.\",\"options\":[{\"id\":\"broad_exposure\",\"label\":\"Broad exposure\",\"description\":\"Wide basket across tokenized equities.\",\"manifestSlugs\":[\"ai-infra-autopilot\",\"mag7-cash-balance\",\"spy-co"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.090Z",
+    "type": "response",
+    "url": "https://equityterminal.app/?_rsc=1ycrh",
+    "status": 200,
+    "body": "1:\"$Sreact.fragment\"\n2:I[58011,[\"7532\",\"static/chunks/339cd768-ee6ed161a30142b5.js\",\"6973\",\"static/chunks/683a606d-db84333cd23cd403.js\",\"505\",\"static/chunks/505-4209cc9d5e3bdd3f.js\",\"417\",\"static/chunks/417-c7bebc668e427786.js\",\"7177\",\"static/chunks/app/layout-c3b7049f0a185b1e.js\"],\"PrivyProvider\"]\n3:I[9766,[],\"\"]\n4:I[98924,[],\"\"]\n5:I[52619,[\"2619\",\"static/chunks/2619-04bc32f026a0d946.js\",\"8974\",\"static/chunks/app/page-a2c75a02b57e5521.js\"],\"\"]\n11:I[57150,[],\"\"]\n:HL[\"/_next/static/media/558ca1a6aa3cb55e-s.p.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/e4af272ccee01ff0-s.p.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/css/f573aebb5f093fae.css\",\"style\"]\n0:{\"P\":null,\"b\":\"l02kUMMwmc8j8WJwQla_Z\",\"p\":\"\",\"c\":[\"\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"__PAGE__\",{}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/f573aebb5f093fae.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"children\":[\"$\",\"body\",null,{\"className\":\"__variable_8b3a0b __variable_e896d9\",\"children\":[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[\"$\",\"main\",null,{\"className\":\"not-found-shell\",\"children\":[\"$\",\"div\",null,{\"className\":\"empty-state-card\",\"children\":[[\"$\",\"span\",null,{\"className\":\"section-kicker\",\"children\":\"xStocks Strategy Lab\"}],[\"$\",\"h1\",null,{\"children\":\"View not found\"}],[\"$\",\"p\",null,{\"children\":\"This shell only serves promoted strategy routes. Pick a current view from the terminal home.\"}],[\"$\",\"$L5\",null,{\"className\":\"button button-primary\",\"href\":\"/\",\"children\":\"Return to terminal\"}]]}]}],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}]}]}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"div\",null,{\"className\":\"landing\",\"children\":[[\"$\",\"header\",null,{\"className\":\"landing-header\",\"children\":[\"$\",\"div\",null,{\"className\":\"landing-header-inner\",\"children\":[[\"$\",\"$L5\",null,{\"className\":\"landing-brand\",\"href\":\"/\",\"children\":[[\"$\",\"svg\",null,{\"aria-hidden\":\"true\",\"className\":\"landing-icon\",\"fill\":\"none\",\"height\":32,\"viewBox\":\"0 0 128 128\",\"width\":32,\"xmlns\":\"http://www.w3.org/2000/svg\",\"children\":[[\"$\",\"rect\",null,{\"fill\":\"#0B0F0E\",\"height\":\"128\",\"rx\":\"28\",\"width\":\"128\"}],[\"$\",\"rect\",null,{\"fill\":\"none\",\"height\":\"122\",\"rx\":\"25\",\"stroke\":\"#1F2927\",\"strokeWidth\":\"1.5\",\"width\":\"122\",\"x\":\"3\",\"y\":\"3\"}],[\"$\",\"polyline\",null,{\"fill\":\"none\",\"points\":\"28,88 48,72 62,78 80,52 100,36\",\"stroke\":\"#1FD59A\",\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"strokeWidth\":\"5\"}],[\"$\",\"circle\",null,{\"cx\":\"100\",\"cy\":\"36\",\"fill\":\"#5FCEF0\",\"r\":\"4\"}]]}],[\"$\",\"span\",null,{\"className\":\"landing-brand-name\",\"children\":\"Equity Terminal\"}],[\"$\",\"span\",null,{\"className\":\"landing-bra"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.194Z",
+    "type": "response",
+    "url": "https://equityterminal.app/workspace/detail/ai-infra-autopilot?_rsc=1ycrh",
+    "status": 200,
+    "body": "0:{\"b\":\"l02kUMMwmc8j8WJwQla_Z\",\"f\":[[\"children\",\"workspace\",[\"workspace\",{\"children\":[\"detail\",{\"children\":[[\"manifestSlug\",\"ai-infra-autopilot\",\"d\"],{\"children\":[\"__PAGE__\",{}]}]}]}],null,[null,null],true]],\"S\":false}\n"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.239Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/css/9724a2ef8ab67e43.css?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.239Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/webpack-72efcc78029b24d6.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/webpack-72efcc78029b24d6.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/framework-f00fddb9800f9292.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/framework-f00fddb9800f9292.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/main-bd84a488ecf6b0e3.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/main-bd84a488ecf6b0e3.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/pages/_app-f4b290073ca18041.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/pages/_app-f4b290073ca18041.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/4f2f7108-89261840bb8c9d21.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/4f2f7108-89261840bb8c9d21.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/d2479e06-7d0fe6eea6bf0846.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/d2479e06-7d0fe6eea6bf0846.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/50ad770a-f07e677401d92a7a.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/50ad770a-f07e677401d92a7a.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/4133-c7a071389d40805b.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/4133-c7a071389d40805b.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.240Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/6813-961d01904fa78bb0.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/6813-961d01904fa78bb0.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/5206-49e7df4fa6a6e609.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/5206-49e7df4fa6a6e609.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/5676-bce9f8646d82760a.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/5676-bce9f8646d82760a.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/6627-5e8a8c4568175dbe.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/6627-5e8a8c4568175dbe.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/2231-d70eba655a2623d1.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/2231-d70eba655a2623d1.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/9611-bf1c585456256292.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/9611-bf1c585456256292.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/7578-9775f73fbce08e2b.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/7578-9775f73fbce08e2b.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/302-fd243951bc8d5ec8.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/302-fd243951bc8d5ec8.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/7361-2330537bf4915b96.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/7361-2330537bf4915b96.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.241Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/350-258c7f68fb8cc344.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/350-258c7f68fb8cc344.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/3285-3e75ab5b508be5cf.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/3285-3e75ab5b508be5cf.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/9681-0695bbf24bc4237c.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/9681-0695bbf24bc4237c.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/chunks/pages/apps/%5Bapp_id%5D/embedded-wallets-0756c9c2394ad1f1.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/chunks/pages/apps/%5Bapp_id%5D/embedded-wallets-0756c9c2394ad1f1.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/51fvHt99Nkmv-fJ9H06af/_buildManifest.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/51fvHt99Nkmv-fJ9H06af/_buildManifest.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "request",
+    "url": "https://auth.privy.io/_next/static/51fvHt99Nkmv-fJ9H06af/_ssgManifest.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.242Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/51fvHt99Nkmv-fJ9H06af/_ssgManifest.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.255Z",
+    "type": "response",
+    "url": "https://auth.privy.io/_next/static/css/9724a2ef8ab67e43.css?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3",
+    "status": 200,
+    "body": "/*\n! tailwindcss v3.4.0 | MIT License | https://tailwindcss.com\n*/*,:after,:before{box-sizing:border-box;border-width:0;border-style:solid;border-color:var(--color-border-default)}:after,:before{--tw-content:\"\"}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:var(--font-inter),ui-sans-serif,system-ui,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\";font-feature-settings:\"cv10\",\"ss01\",\"ss03\";font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{color:#ACB3BE}input::placeholder,textarea::placeholder{color:#ACB3BE}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}[multiple],[type=date],[type=datetime-local],[type=email],[type=month],[type=number],[type=password],[type=search],[type=tel],[type=text],[type=time],[type=url],[type=week],input:where(:not([type])),select,textarea{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:#fff;border-color:#8791A1;border-width:1px;border-radius:0;padding:.5rem .75rem;font-size:1rem;line-height:1.5rem;--tw-shadow:0 0 #0000}[multiple]:focus,[type=date]:focus,[type=datetime-local]:focus,[type"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.255Z",
+    "type": "response",
+    "url": "https://auth.privy.io/apps/cmnfzikzk02ey0ckyx8m14qv2/embedded-wallets?caid=62d1b5f3-4e4b-46e0-8be3-7899553e99f5",
+    "status": 200,
+    "body": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><title data-next-head=\"\">Wallet · Privy</title><link rel=\"preload\" href=\"/_next/static/css/9724a2ef8ab67e43.css?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/9724a2ef8ab67e43.css?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" data-n-g=\"\"/><noscript data-n-css=\"\"></noscript><script defer=\"\" nomodule=\"\" src=\"/_next/static/chunks/polyfills-42372ed130431b0a.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\"></script><script src=\"/_next/static/chunks/webpack-72efcc78029b24d6.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/framework-f00fddb9800f9292.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/main-bd84a488ecf6b0e3.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/_app-f4b290073ca18041.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/4f2f7108-89261840bb8c9d21.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/d2479e06-7d0fe6eea6bf0846.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/50ad770a-f07e677401d92a7a.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/4133-c7a071389d40805b.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/6813-961d01904fa78bb0.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/5206-49e7df4fa6a6e609.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/5676-bce9f8646d82760a.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/6627-5e8a8c4568175dbe.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/2231-d70eba655a2623d1.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/9611-bf1c585456256292.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/7578-9775f73fbce08e2b.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/302-fd243951bc8d5ec8.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/7361-2330537bf4915b96.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/350-258c7f68fb8cc344.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/3285-3e75ab5b508be5cf.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/9681-0695bbf24bc4237c.js?dpl=dpl_81wYNGxd84V8SFrPQg27k41gNvs3\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/apps/%5Bapp_id%5D/embedded-wallets-0756c9c2394ad1f"
+  },
+  {
+    "ts": "2026-04-01T16:34:20.292Z",
+    "type": "response",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.830Z",
+    "type": "response",
+    "url": "https://equityterminal.app/workspace/comparison?_rsc=1ycrh",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:20.858Z",
+    "type": "response",
+    "url": "https://equityterminal.app/activity?_rsc=1ycrh",
+    "status": 200,
+    "body": "0:{\"b\":\"l02kUMMwmc8j8WJwQla_Z\",\"f\":[[\"children\",\"activity\",[\"activity\",{\"children\":[\"__PAGE__\",{}]}],null,[null,null],true]],\"S\":false}\n"
+  },
+  {
+    "ts": "2026-04-01T16:34:21.437Z",
+    "type": "response",
+    "url": "https://equityterminal.app/activate/ai-infra-autopilot",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.550Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/4743.d19eec1bb7e7a01f.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.550Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/4607.55d2fb095ce7453a.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.551Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/9178.51b84e78e124bb3a.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.551Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/5165.5e80cccb0f4e8984.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.551Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/4820.dcc26178c5056d0b.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.551Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/4847.7ca1ca5df4f07d70.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.552Z",
+    "type": "request",
+    "url": "https://equityterminal.app/_next/static/chunks/330.438488316f0c3c59.js",
+    "method": "GET",
+    "postData": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.598Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/4607.55d2fb095ce7453a.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.599Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/5165.5e80cccb0f4e8984.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.599Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/330.438488316f0c3c59.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.659Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/4820.dcc26178c5056d0b.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.661Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/9178.51b84e78e124bb3a.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.662Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/4743.d19eec1bb7e7a01f.js",
+    "status": 200,
+    "body": null
+  },
+  {
+    "ts": "2026-04-01T16:34:23.664Z",
+    "type": "response",
+    "url": "https://equityterminal.app/_next/static/chunks/4847.7ca1ca5df4f07d70.js",
+    "status": 200,
+    "body": null
+  }
+]

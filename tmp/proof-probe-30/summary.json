@@ -1,0 +1,105 @@
+{
+  "slotId": "onboarding.default_basket",
+  "currentManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+  "requestedNotionalUsd": 30,
+  "proofMode": "local_jwks_harness",
+  "artifactDir": "./tmp/proof-probe-30",
+  "envAudit": {
+    "privyAppId": false,
+    "privyAppSecret": false,
+    "privyJwksUrl": false,
+    "ethereumRpcUrl": false,
+    "xstocksApiBaseUrl": false,
+    "cowApiBaseUrl": false
+  },
+  "currentManifest": {
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+  },
+  "baselineManifest": {
+    "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+    "strategyVersion": "basket-baseline-v1",
+    "sourcePath": "/Users/user/PycharmProjects/xstocks-strategy-lab/packages/research/manifests/promoted/onboarding.default_basket/basket-baseline-v1.json"
+  },
+  "executionPrerequisites": {
+    "activationBaseline": {
+      "activationId": "activation_baseline_2026-04-01T16-42-05-092Z",
+      "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "status": "ready",
+      "executionState": "ready",
+      "executionEligibility": "executable"
+    },
+    "rebalancePath": {
+      "scheduledState": "awaiting_operator",
+      "reviewState": "awaiting_operator",
+      "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "triggerSource": "operator_manual"
+    },
+    "currentActivation": {
+      "activationId": "act_b20c83ae-f3b8-45a2-bd1e-3b5dec956317",
+      "status": "ready",
+      "surfaceTruth": "live",
+      "executionState": "ready",
+      "executionEligibility": "executable"
+    },
+    "authOwnership": {
+      "mode": "local_jwks_harness",
+      "ownerUserId": "did:privy:manual_rebalance_proof",
+      "providerId": "privy",
+      "walletAddress": "0x1111111111111111111111111111111111111111",
+      "smartWalletAddress": "0x2222222222222222222222222222222222222222",
+      "livePrivyEnvPresent": false
+    },
+    "quoteability": {
+      "initialExecutionRequestState": "requested",
+      "latestExecutionRequestState": "blocked",
+      "legStates": {
+        "pending": 4,
+        "awaitingApproval": 1,
+        "blocked": 1,
+        "failed": 0,
+        "confirmed": 0,
+        "submitted": 0,
+        "deferred": 1
+      }
+    }
+  },
+  "authBoundary": {
+    "mode": "local_jwks_harness",
+    "livePrivyEnvPresent": false,
+    "accessMode": "bearer_plus_identity_token"
+  },
+  "boundaries": {
+    "reviewOpened": true,
+    "executionRequestCreated": true,
+    "quoteReady": true,
+    "awaitingApproval": false,
+    "signedSubmission": false,
+    "receiptConfirmed": false
+  },
+  "candidatePath": {
+    "scheduledState": "awaiting_operator",
+    "reviewState": "awaiting_operator",
+    "baselineActivationId": "activation_baseline_2026-04-01T16-42-05-092Z",
+    "currentActivationId": "act_b20c83ae-f3b8-45a2-bd1e-3b5dec956317",
+    "executionRequestId": "execreq_c6fe6e98-105f-4aa9-ad38-2ae4363bb4b1"
+  },
+  "liveProof": {
+    "xstocksBoundaryLoaded": true,
+    "quoteAttempts": 2,
+    "quoteIds": [
+      "1126517550"
+    ],
+    "orderUids": [],
+    "txHashes": []
+  },
+  "blocker": {
+    "code": "blocked_execution_leg",
+    "detail": "CoW quote request failed for MSFTx. buyToken=0x63ad27614231767c8c489745b9145272de50d09b sellToken=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 sellAmountBeforeFee=4930000 targetNotionalUsd=4.93 receiver=0x2222222222222222222222222222222222222222 reason=CoW quote request failed with status 404: {\"errorType\":\"NoLiquidity\",\"description\":\"no route found\"}",
+    "legId": "act_b20c83ae-f3b8-45a2-bd1e-3b5dec956317:leg:2",
+    "assetSymbol": "MSFTx",
+    "executionRequestState": "blocked"
+  }
+}

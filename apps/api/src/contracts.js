@@ -6,17 +6,16 @@ import {
   activationActionSchema,
   activationPermissionSchema,
 } from "../../../packages/shared/dist/contracts/activation.js";
-import {
-  executionRequestSchema,
-  executionRequestStateSchema,
-  executionTriggerSourceSchema,
-} from "../../../packages/shared/dist/contracts/execution.js";
+import { executionRequestSchema } from "../../../packages/shared/dist/contracts/execution.js";
 import {
   xstocksFunnelEventIngestRequestSchema,
   xstocksFunnelEventSchema,
   xstocksReportingSnapshotSchema,
 } from "../../../packages/shared/dist/contracts/reporting.js";
-import { providerRebalanceReceiptSchema } from "../../../packages/shared/dist/contracts/provider-rebalance.js";
+import {
+  CHAINLINK_CRE_PROVIDER_EVENT_RECEIPT_SCHEMA,
+  CHAINLINK_CRE_PROVIDER_EVENT_SCHEMA,
+} from "../../../packages/shared/src/rebalance-provider.js";
 import {
   activationManifestRefSchema,
   chainSchema,
@@ -36,13 +35,11 @@ import {
 import {
   basketRecommendationSchema,
   directionalRecommendationSchema,
-  marketIntelligenceSurfaceSchema,
   directionalExpressionSchema,
   portfolioExplanationBundleSchema,
   portfolioTargetAllocationSchema,
   promotedBasketExplanationBundleSchema,
   promotedBasketTuningSummarySchema,
-  replaySurfaceSchema,
   strategySlotSchema,
 } from "../../../packages/policy/src/shared-contracts.js";
 import { agentQualificationSchema } from "../../../packages/shared/dist/contracts/qualification.js";
@@ -172,8 +169,6 @@ const manifestViewSchema = z.object({
   explanation: manifestExplanationViewSchema,
   explanationBundle: promotedBasketExplanationBundleSchema.nullable(),
   tuningSummary: promotedBasketTuningSummarySchema.nullable(),
-  replay: replaySurfaceSchema.nullable(),
-  marketIntelligence: marketIntelligenceSurfaceSchema.nullable(),
   validation: manifestValidationViewSchema,
   fallback: manifestFallbackViewSchema,
   activationTemplate: manifestActivationTemplateViewSchema,
@@ -318,10 +313,6 @@ const rebalanceOrchestrationSchema = z.object({
   executionState: executionStateSchema,
   executionEligibility: executionEligibilitySchema,
   surfaceTruth: routeTruthLabelSchema,
-  providerReceiptId: nonEmptyStringSchema.nullable(),
-  executionRequestId: nonEmptyStringSchema.nullable(),
-  executionTriggerSource: executionTriggerSourceSchema.nullable(),
-  executionRequestState: executionRequestStateSchema.nullable(),
   blockers: z.array(nonEmptyStringSchema),
   warnings: z.array(nonEmptyStringSchema),
   automationTruth: rebalanceAutomationTruthSchema,
@@ -619,6 +610,8 @@ export const AUTORESEARCH_RUNTIME_RECEIPT_REQUEST_SCHEMA = z.object({
   runtime: autoresearchRuntimeProofRuntimeSchema,
   run: autoresearchRuntimeProofRunSchema,
 });
+export const CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW_REQUEST_SCHEMA =
+  CHAINLINK_CRE_PROVIDER_EVENT_SCHEMA;
 
 export const API_ENDPOINTS = Object.freeze({
   HEALTH: "/health",
@@ -632,9 +625,10 @@ export const API_ENDPOINTS = Object.freeze({
   ACTIVATIONS: "/api/activations",
   ACTIVITY: "/api/activity",
   EXECUTIONS: "/api/executions",
-  PROVIDER_REBALANCE_EVENTS: "/api/internal/rebalances/provider-events",
   AUTORESEARCH_RUNTIME: "/api/runtime/autoresearch",
   AUTORESEARCH_RUNTIME_RECEIPTS: "/api/internal/autoresearch/receipts",
+  CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW:
+    "/api/internal/rebalances/provider-triggered-review",
   XSTOCKS_FUNNEL_EVENTS: "/api/funnel-events/xstocks",
   XSTOCKS_REPORTING: "/api/reporting/xstocks",
 });
@@ -700,8 +694,6 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
     body: [
       "action",
       "activationId?",
-      "rebalanceId?",
-      "executionRouteId?",
       "executionRequestId?",
       "legId?",
       "signature?",
@@ -721,12 +713,6 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
     ],
     response: "execution_read_v1",
   },
-  provider_rebalance_event_ingest: {
-    method: "POST",
-    path: API_ENDPOINTS.PROVIDER_REBALANCE_EVENTS,
-    body: ["provider review event JSON", "Authorization: Bearer <ES256K ETH-JWT>"],
-    response: "provider_rebalance_event_ingest_v1",
-  },
   autoresearch_runtime_read: {
     method: "GET",
     path: API_ENDPOINTS.AUTORESEARCH_RUNTIME,
@@ -738,6 +724,22 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
     path: API_ENDPOINTS.AUTORESEARCH_RUNTIME_RECEIPTS,
     body: ["runtime", "run"],
     response: "autoresearch_runtime_receipt_write_v1",
+  },
+  provider_triggered_rebalance_review_write: {
+    method: "POST",
+    path: API_ENDPOINTS.CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW,
+    body: [
+      "version",
+      "providerId",
+      "providerEventId",
+      "workflowId",
+      "workflowExecutionId",
+      "slotId",
+      "chain",
+      "targetManifestId",
+      "reviewIntent",
+    ],
+    response: "provider_triggered_rebalance_review_write_v1",
   },
   xstocks_funnel_event_ingest: {
     method: "POST",
@@ -818,7 +820,6 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     generatedAt: timestampSchema,
     action: z.enum([
       "create",
-      "execute_all",
       "quote_leg",
       "record_submission",
       "poll_receipt",
@@ -832,13 +833,6 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     limit: z.number().int().positive(),
     items: z.array(executionRequestSchema),
   }),
-  provider_rebalance_event_ingest: z.object({
-    version: apiContractVersionSchema,
-    generatedAt: timestampSchema,
-    accepted: z.boolean(),
-    receipt: providerRebalanceReceiptSchema,
-    rebalanceOrchestration: rebalanceOrchestrationSchema.nullable(),
-  }),
   autoresearch_runtime_read: z.object({
     version: apiContractVersionSchema,
     generatedAt: timestampSchema,
@@ -851,6 +845,12 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     generatedAt: timestampSchema,
     runtime: autoresearchRuntimeProofRuntimeSchema,
     run: autoresearchRuntimeProofRunSchema,
+  }),
+  provider_triggered_rebalance_review_write: z.object({
+    version: apiContractVersionSchema,
+    generatedAt: timestampSchema,
+    receipt: CHAINLINK_CRE_PROVIDER_EVENT_RECEIPT_SCHEMA,
+    rebalanceOrchestration: rebalanceOrchestrationSchema.nullable(),
   }),
   xstocks_funnel_event_ingest: z.object({
     version: apiContractVersionSchema,

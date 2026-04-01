@@ -1,0 +1,2693 @@
+{
+  "health": {
+    "data": {
+      "status": "ok",
+      "endpoints": {
+        "recommendation_fetch": {
+          "method": "GET",
+          "path": "/api/recommendations",
+          "query": [
+            "manifestId? | slotId?",
+            "userNotionalUsd?",
+            "wallet*?"
+          ],
+          "response": "recommendation_fetch_v1"
+        },
+        "qualification_read": {
+          "method": "POST",
+          "path": "/api/qualify",
+          "body": [
+            "answers",
+            "userNotionalUsd?",
+            "walletState?"
+          ],
+          "response": "qualification_read_v1"
+        },
+        "catalog_read": {
+          "method": "GET",
+          "path": "/api/catalog",
+          "query": [
+            "surface?",
+            "mode?"
+          ],
+          "response": "catalog_read_v1"
+        },
+        "workspace_read": {
+          "method": "GET",
+          "path": "/api/workspace",
+          "query": [
+            "manifestId? | slotId?",
+            "userNotionalUsd?",
+            "wallet*?"
+          ],
+          "response": "workspace_read_v1"
+        },
+        "activation_preview_read": {
+          "method": "GET",
+          "path": "/api/activation-preview",
+          "query": [
+            "manifestId? | slotId?",
+            "userNotionalUsd?",
+            "wallet*?"
+          ],
+          "response": "activation_preview_read_v1"
+        },
+        "manifest_preflight": {
+          "method": "POST",
+          "path": "/api/manifests/preflight",
+          "body": [
+            "manifestId? | slotId?",
+            "userNotionalUsd",
+            "walletState?"
+          ],
+          "response": "manifest_preflight_v1"
+        },
+        "activation_save": {
+          "method": "POST",
+          "path": "/api/activations",
+          "body": [
+            "manifestId? | slotId?",
+            "userNotionalUsd",
+            "walletState?"
+          ],
+          "response": "activation_save_v1"
+        },
+        "activity_read": {
+          "method": "GET",
+          "path": "/api/activity",
+          "query": [
+            "activationId?",
+            "manifestId?",
+            "slotId?",
+            "limit?"
+          ],
+          "response": "activity_read_v1"
+        },
+        "execution_write": {
+          "method": "POST",
+          "path": "/api/executions",
+          "body": [
+            "action",
+            "activationId?",
+            "executionRequestId?",
+            "legId?",
+            "signature?",
+            "txHash?"
+          ],
+          "response": "execution_write_v1"
+        },
+        "execution_read": {
+          "method": "GET",
+          "path": "/api/executions",
+          "query": [
+            "executionRequestId?",
+            "activationId?",
+            "manifestId?",
+            "slotId?",
+            "limit?"
+          ],
+          "response": "execution_read_v1"
+        },
+        "xstocks_funnel_event_ingest": {
+          "method": "POST",
+          "path": "/api/funnel-events/xstocks",
+          "body": [
+            "stage",
+            "subjectId?",
+            "manifestId? | slotId?"
+          ],
+          "response": "xstocks_funnel_event_ingest_v1"
+        },
+        "xstocks_reporting_read": {
+          "method": "GET",
+          "path": "/api/reporting/xstocks",
+          "query": [
+            "limit?"
+          ],
+          "response": "xstocks_reporting_read_v1"
+        }
+      }
+    }
+  },
+  "qualify_status": "200",
+  "qualify_body": "{\n  \"data\": {\n    \"version\": \"1\",\n    \"generatedAt\": \"2026-04-01T16:34:34.941Z\",\n    \"qualification\": {\n      \"version\": \"1\",\n      \"normalizedAnswers\": {\n        \"version\": \"1\",\n        \"preferredChain\": \"ethereum\",\n        \"modePreference\": \"basket\",\n        \"initialSelection\": {\n          \"type\": \"theme\",\n          \"key\": \"mag-7\"\n        },\n        \"selectedStarterSlotId\": \"onboarding.default_basket\",\n        \"selectedStarterBasketId\": \"mag-7\",\n        \"directionalOptIn\": false,\n        \"submittedAt\": \"2026-04-01T16:34:33.660Z\"\n      },\n      \"userProfile\": {\n        \"version\": \"1\",\n        \"preferredChain\": \"ethereum\",\n        \"modePreference\": \"basket\",\n        \"selectedScope\": {\n          \"type\": \"theme\",\n          \"key\": \"mag-7\"\n        },\n        \"activeSlotId\": \"onboarding.default_basket\",\n        \"starterBasketId\": \"mag-7\",\n        \"directionalAllowed\": false,\n        \"yieldBufferAllowed\": true,\n        \"updatedAt\": \"2026-04-01T16:34:33.660Z\"\n      },\n      \"selection\": {\n        \"slotId\": \"onboarding.default_basket\",\n        \"mode\": \"basket\",\n        \"starterBasketId\": \"mag-7\",\n        \"safeFallbackApplied\": false,\n        \"reasonCodes\": [\n          \"mode_preference:basket\",\n          \"slot_from_selected_starter_slot:onboarding.default_basket\"\n        ]\n      },\n      \"manifestId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n      \"manifestRef\": {\n        \"manifestId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n        \"slotId\": \"onboarding.default_basket\",\n        \"mode\": \"basket\",\n        \"strategyVersion\": \"basket-starter-h6-p100-c5-cap18-a0-r300-v1\"\n      },\n      \"recommendation\": {\n        \"version\": \"1\",\n        \"recommendationId\": \"rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n        \"slotId\": \"onboarding.default_basket\",\n        \"portfolioMode\": \"basket\",\n        \"activationManifestRef\": {\n          \"manifestId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n          \"slotId\": \"onboarding.default_basket\",\n          \"mode\": \"basket\",\n          \"strategyVersion\": \"basket-starter-h6-p100-c5-cap18-a0-r300-v1\"\n        },\n        \"targetAllocations\": [\n          {\n            \"sleeve\": \"core_xstocks\",\n            \"targetWeightPct\": 18,\n            \"assetSymbol\": \"NVDAx\"\n          },\n          {\n            \"sleeve\": \"core_xstocks\",\n            \"targetWeightPct\": 16.43,\n            \"assetSymbol\": \"MSFTx\"\n          },\n          {\n            \"sleeve\": \"core_xstocks\",\n            \"targetWeightPct\": 15.74,\n            \"assetSymbol\": \"AAPLx\"\n          },\n          {\n            \"sleeve\": \"core_xstocks\",\n            \"targetWeightPct\": 15.4,\n            \"assetSymbol\": \"METAx\"\n          },\n          {\n            \"sleeve\": \"core_xstocks\",\n            \"targetWeightPct\": 14.89,\n            \"assetSymbol\": \"AMZNx\"\n          },\n          {\n            \"sleeve\": \"core_xstocks\",\n            \"targetWeightPct\": 14.54,\n            \"assetSymbol\": \"GOOGLx\"\n          },\n          {\n            \"sleeve\": \"yield_buffer\",\n            \"targetWeightPct\": 5,\n            \"assetSymbol\": \"AUSD\",\n            \"venueId\": \"flowdesk_ausd_rwa_strategy\"\n          }\n        ],\n        \"cashOrYieldBufferTarget\": {\n          \"assetSymbol\": \"AUSD\",\n          \"venueId\": \"flowdesk_ausd_rwa_strategy\",\n          \"targetWeightPct\": 5\n        },\n        \"explanationSummary\": \"Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.\",\n        \"explanationBundle\": {\n          \"whatThisPortfolioDoes\": \"Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.\",\n          \"howItIsBuilt\": \"95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%. Starts from the pinned Mag 7 basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.\",\n          \"howItChanges\": \"Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.\",\n          \"whatWouldTriggerNextRebalance\": \"A rebalance only becomes actionable when drift clears 3% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.\",\n          \"howToReadReplay\": \"After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.\",\n          \"bestFor\": \"Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.\",\n          \"components\": [\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:NVDAx\",\n              \"kind\": \"core_holding\",\n              \"sleeve\": \"core_xstocks\",\n              \"title\": \"NVDAx lead holding\",\n              \"rationale\": \"Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.\",\n              \"targetWeightPct\": 18,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"NVDAx\",\n              \"basketId\": \"mag7\",\n              \"venueId\": null\n            },\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:MSFTx\",\n              \"kind\": \"core_holding\",\n              \"sleeve\": \"core_xstocks\",\n              \"title\": \"MSFTx core holding\",\n              \"rationale\": \"Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.\",\n              \"targetWeightPct\": 16.4382,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"MSFTx\",\n              \"basketId\": \"mag7\",\n              \"venueId\": null\n            },\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:AAPLx\",\n              \"kind\": \"core_holding\",\n              \"sleeve\": \"core_xstocks\",\n              \"title\": \"AAPLx core holding\",\n              \"rationale\": \"Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.\",\n              \"targetWeightPct\": 15.7461,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"AAPLx\",\n              \"basketId\": \"mag7\",\n              \"venueId\": null\n            },\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:yield_buffer\",\n              \"kind\": \"yield_buffer\",\n              \"sleeve\": \"yield_buffer\",\n              \"title\": \"AUSD yield buffer\",\n              \"rationale\": \"A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.\",\n              \"targetWeightPct\": 5,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"AUSD\",\n              \"basketId\": null,\n              \"venueId\": \"flowdesk_ausd_rwa_strategy\"\n            }\n          ]\n        },\n        \"signalRefs\": [\n          {\n            \"signalId\": \"manifest:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n            \"scopeType\": \"basket\",\n            \"scopeKey\": \"mag7\"\n          }\n        ],\n        \"rebalanceDecision\": {\n          \"state\": \"full_rebalance\",\n          \"rationale\": \"The requested notional assumes a fresh activation from the promoted manifest.\",\n          \"signalFresh\": true,\n          \"routeChecksPassed\": true,\n          \"mandateChecksPassed\": true\n        },\n        \"validationBadges\": [\n          \"validated_strategy\",\n          \"promoted_manifest\",\n          \"basket_live_ready\"\n        ]\n      },\n      \"explanationSurface\": {\n        \"surfaceId\": \"recommendation.explanationBundle\",\n        \"summary\": \"Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.\",\n        \"bundle\": {\n          \"whatThisPortfolioDoes\": \"Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.\",\n          \"howItIsBuilt\": \"95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%. Starts from the pinned Mag 7 basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.\",\n          \"howItChanges\": \"Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.\",\n          \"whatWouldTriggerNextRebalance\": \"A rebalance only becomes actionable when drift clears 3% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.\",\n          \"howToReadReplay\": \"After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.\",\n          \"bestFor\": \"Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.\",\n          \"components\": [\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:NVDAx\",\n              \"kind\": \"core_holding\",\n              \"sleeve\": \"core_xstocks\",\n              \"title\": \"NVDAx lead holding\",\n              \"rationale\": \"Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.\",\n              \"targetWeightPct\": 18,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"NVDAx\",\n              \"basketId\": \"mag7\",\n              \"venueId\": null\n            },\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:MSFTx\",\n              \"kind\": \"core_holding\",\n              \"sleeve\": \"core_xstocks\",\n              \"title\": \"MSFTx core holding\",\n              \"rationale\": \"Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.\",\n              \"targetWeightPct\": 16.4382,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"MSFTx\",\n              \"basketId\": \"mag7\",\n              \"venueId\": null\n            },\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:AAPLx\",\n              \"kind\": \"core_holding\",\n              \"sleeve\": \"core_xstocks\",\n              \"title\": \"AAPLx core holding\",\n              \"rationale\": \"Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.\",\n              \"targetWeightPct\": 15.7461,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"AAPLx\",\n              \"basketId\": \"mag7\",\n              \"venueId\": null\n            },\n            {\n              \"componentId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:yield_buffer\",\n              \"kind\": \"yield_buffer\",\n              \"sleeve\": \"yield_buffer\",\n              \"title\": \"AUSD yield buffer\",\n              \"rationale\": \"A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.\",\n              \"targetWeightPct\": 5,\n              \"grossExposurePct\": null,\n              \"assetSymbol\": \"AUSD\",\n              \"basketId\": null,\n              \"venueId\": \"flowdesk_ausd_rwa_strategy\"\n            }\n          ]\n        },\n        \"matchSummary\": {\n          \"truthMode\": \"questionnaire_and_promoted_manifest_only\",\n          \"slotId\": \"onboarding.default_basket\",\n          \"mode\": \"basket\",\n          \"safeFallbackApplied\": false,\n          \"summary\": \"Qualification matched you to Autopilot default basket because you selected the basket path, so qualification stayed on the promoted onboarding basket lane.\",\n          \"reasons\": [\n            {\n              \"code\": \"mode_preference:basket\",\n              \"label\": \"Mode preference\",\n              \"rationale\": \"You selected the basket path, so qualification stayed on the promoted onboarding basket lane.\"\n            },\n            {\n              \"code\": \"slot_from_selected_starter_slot:onboarding.default_basket\",\n              \"label\": \"Selected starter slot\",\n              \"rationale\": \"The selected starter slot already points to Autopilot default basket.\"\n            }\n          ]\n        },\n        \"researchTruth\": {\n          \"explanationSource\": \"promoted_research_bundle\",\n          \"promotedManifestId\": \"onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted\",\n          \"slotId\": \"onboarding.default_basket\",\n          \"researchBackedSurfacesBlocked\": false\n        },\n        \"researchExplanationBundle\": {\n          \"truthMode\": \"promoted_incumbent_and_run_summary_only\",\n          \"incumbentState\": \"kept_promoted_run\",\n          \"reasonCodes\": [\n            {\n              \"code\": \"starter_basket:mag7\",\n              \"kind\": \"starter_basket\",\n              \"value\": \"mag7\",\n              \"label\": \"Starts from the pinned Mag 7 basket membership.\"\n            },\n            {\n              \"code\": \"selection_universe:starter_only\",\n              \"kind\": \"selection_universe\",\n              \"value\": \"starter_only\",\n              \"label\": \"Selects names from the starter basket only.\"\n            },\n            {\n              \"code\": \"holdings_count:6\",\n              \"kind\": \"holdings_count\",\n              \"value\": \"6\",\n              \"label\": \"Keeps the basket at 6 names.\"\n            },\n            {\n              \"code\": \"starter_bias:0pct\",\n              \"kind\": \"starter_bias\",\n              \"value\": \"0pct\",\n              \"label\": \"Applies a 0% score boost to starter-basket names inside broader selection.\"\n            },\n            {\n              \"code\": \"ranking:baseline_signal_score\",\n              \"kind\": \"ranking\",\n              \"value\": \"baseline_signal_score\",\n              \"label\": \"Ranks names by baseline signal score.\"\n            },\n            {\n              \"code\": \"weighting_curve:signal_score_proportional\",\n              \"kind\": \"weighting_curve\",\n              \"value\": \"signal_score_proportional\",\n              \"label\": \"Weights names with the signal score proportional curve.\"\n            },\n            {\n              \"code\": \"signal_power:1x\",\n              \"kind\": \"signal_power\",\n              \"value\": \"1x\",\n              \"label\": \"Raises ranking scores to the 1x power before weights are normalized.\"\n            },\n            {\n              \"code\": \"cash_weight:5pct\",\n              \"kind\": \"cash_weight\",\n              \"value\": \"5pct\",\n              \"label\": \"Keeps 5% in the AUSD yield buffer.\"\n            },\n            {\n              \"code\": \"concentration_cap:18pct\",\n              \"kind\": \"concentration_cap\",\n              \"value\": \"18pct\",\n              \"label\": \"Limits any single name to 18%.\"\n            },\n            {\n              \"code\": \"rebalance_threshold:300bps\",\n              \"kind\": \"rebalance_threshold\",\n              \"value\": \"300bps\",\n              \"label\": \"Only rebalances after 300 bps of drift.\"\n            }\n          ],\n          \"targetWeights\": [\n            {\n              \"rank\": 1,\n              \"symbol\": \"NVDAx\",\n              \"assetName\": \"NVIDIA\",\n              \"targetWeightPct\": 18\n            },\n            {\n              \"rank\": 2,\n              \"symbol\": \"MSFTx\",\n              \"assetName\": \"Microsoft\",\n              \"targetWeightPct\": 16.4382\n            },\n            {\n              \"rank\": 3,\n              \"symbol\": \"AAPLx\",\n              \"assetName\": \"Apple\",\n              \"targetWeightPct\": 15.7461\n            },\n            {\n              \"rank\": 4,\n              \"symbol\": \"METAx\",\n              \"assetName\": \"Meta\",\n              \"targetWeightPct\": 15.4\n            },\n            {\n              \"rank\": 5,\n              \"symbol\": \"AMZNx\",\n              \"assetName\": \"Amazon\",\n              \"targetWeightPct\": 14.8809\n            },\n            {\n              \"rank\": 6,\n              \"symbol\": \"GOOGLx\",\n              \"assetName\": \"Alphabet\",\n              \"targetWeightPct\": 14.5348\n            }\n          ],\n          \"cashWeightPct\": 5,\n          \"rebalanceThresholdBps\": 300,\n          \"rebalanceThresholdPct\": 3,\n          \"benchmarkDelta\": {\n            \"benchmarkId\": \"basket.sp500_core_v1\",\n            \"returnAnnPct\": 23.5436,\n            \"benchmarkReturnAnnPct\": 13.1599,\n            \"afterCostReturnAnnPct\": 23.4229,\n            \"benchmarkAfterCostReturnAnnPct\": 13.1599,\n            \"excessReturnAfterCostPct\": 10.263,\n            \"score\": 1.405954,\n            \"deltaVsIncumbent\": 0.399074\n          },\n          \"portfolioMetrics\": {\n            \"constituentCount\": 6,\n            \"concentrationPct\": 18,\n            \"concentrationCapPct\": 18,\n            \"turnoverAnnPct\": 3.3046,\n            \"costsTotalBps\": 12.0657\n          },\n          \"summaries\": {\n            \"construction\": \"95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%.\",\n            \"benchmark\": \"After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%.\",\n            \"rebalance\": \"Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.\"\n          }\n        },\n        \"researchTuningSummary\": {\n          \"headline\": \"95% invested across 6 names selected from the starter basket only with 5% in AUSD and a 300 bps rebalance trigger.\",\n          \"currentKnobs\": [\n            {\n              \"knobId\": \"candidate_family\",\n              \"label\": \"Candidate family\",\n              \"currentValue\": \"Starter Breadth Trim\",\n              \"tuningImpact\": \"Keeps starter-only selection and trims one name so the basket is slightly more concentrated.\"\n            },\n            {\n              \"knobId\": \"starter_basket\",\n              \"label\": \"Starter basket\",\n              \"currentValue\": \"Mag 7\",\n              \"tuningImpact\": \"Changes basket membership before weights are assigned.\"\n            },\n            {\n              \"knobId\": \"selection_universe\",\n              \"label\": \"Selection universe\",\n              \"currentValue\": \"starter basket only\",\n              \"tuningImpact\": \"Widens the eligible pool beyond the starter basket without changing slot identity.\"\n            },\n            {\n              \"knobId\": \"holdings_count\",\n              \"label\": \"Holdings breadth\",\n              \"currentValue\": \"6\",\n              \"tuningImpact\": \"Changes how many names survive ranking into the target basket.\"\n            },\n            {\n              \"knobId\": \"starter_bias\",\n              \"label\": \"Starter anchor bias\",\n              \"currentValue\": \"0%\",\n              \"tuningImpact\": \"Keeps the slot anchored to its starter basket even when broader selection is enabled.\"\n            },\n            {\n              \"knobId\": \"ranking_signal\",\n              \"label\": \"Ranking signal\",\n              \"currentValue\": \"baseline signal score\",\n              \"tuningImpact\": \"Changes which names rise or fall inside the current basket.\"\n            },\n            {\n              \"knobId\": \"weighting_curve\",\n              \"label\": \"Weighting curve\",\n              \"currentValue\": \"signal score proportional\",\n              \"tuningImpact\": \"Changes how aggressively higher-ranked names dominate the basket.\"\n            },\n            {\n              \"knobId\": \"signal_power\",\n              \"label\": \"Signal power\",\n              \"currentValue\": \"1x\",\n              \"tuningImpact\": \"Makes the weighting curve flatter or more conviction-heavy without changing the underlying signal.\"\n            },\n            {\n              \"knobId\": \"cash_weight\",\n              \"label\": \"Cash sleeve\",\n              \"currentValue\": \"5%\",\n              \"tuningImpact\": \"Changes how much capital stays in AUSD instead of xStocks exposure.\"\n            },\n            {\n              \"knobId\": \"concentration_cap\",\n              \"label\": \"Single-name cap\",\n              \"currentValue\": \"18%\",\n              \"tuningImpact\": \"Limits the maximum weight of one name.\"\n            },\n            {\n              \"knobId\": \"rebalance_threshold\",\n              \"label\": \"Rebalance trigger\",\n              \"currentValue\": \"300 bps\",\n              \"tuningImpact\": \"Skips smaller drifts to reduce churn.\"\n            }\n          ],\n          \"watchpoints\": [\n            \"NVDAx is the largest sleeve at 18% against a 18% single-name cap.\",\n            \"Authoritative rebalance simulation implies 3.3% turnover and 12.07 bps of annualized costs across 1 rebalance events.\",\n            \"Authoritative turnover is 3.3% with 12.07 bps of total costs.\",\n            \"Legacy static proxy would have printed 95% turnover and 43.25 bps of total costs.\",\n            \"6 names are selected from the starter basket only.\",\n            \"Benchmark edge after costs is 10.26% versus basket.sp500_core_v1.\"\n          ]\n        },\n        \"researchExplanationAvailable\": true,\n        \"researchTuningSummaryAvailable\": true\n      },\n      \"activationTruth\": {\n        \"surfaceTruth\": \"preview\",\n        \"executionState\": \"wallet_required\",\n        \"executionEligibility\": \"preview_only\",\n        \"requestedNotionalUsd\": 1000,\n        \"fundedNotionalUsd\": 0,\n        \"fundingGapUsd\": 1000,\n        \"fundingAssetSymbol\": \"USDC\",\n        \"minFundingUsd\": 1000,\n        \"depositRequired\": true,\n        \"activationReady\": false,\n        \"directionalPreviewOnly\": false,\n        \"blockers\": [\n          \"Funding destination is not ready yet.\"\n        ],\n        \"warnings\": []\n      }\n    }\n  }\n}\n",
+  "funnel_status": "200",
+  "funnel_body": "{\n  \"data\": {\n    \"version\": \"1\",\n    \"generatedAt\": \"2026-04-01T16:34:35.440Z\",\n    \"request\": {\n      \"stage\": \"landing_viewed\"\n    },\n    \"subjectId\": \"subj_31b6492d-03ab-4407-a376-8765226fb327\",\n    \"createdSubject\": true,\n    \"events\": [\n      {\n        \"version\": \"1\",\n        \"eventId\": \"funnel_evt_54fc70e5-c62c-4b28-aa38-988cb0508b78\",\n        \"stage\": \"landing_viewed\",\n        \"occurredAt\": \"2026-04-01T16:34:35.439Z\",\n        \"subjectId\": \"subj_31b6492d-03ab-4407-a376-8765226fb327\",\n        \"owner\": null,\n        \"walletAddress\": null,\n        \"activationId\": null,\n        \"manifestId\": null,\n        \"slotId\": null,\n        \"recommendationId\": null,\n        \"source\": \"web\",\n        \"verificationMethod\": \"web_subject_bootstrap\",\n        \"dedupeKey\": \"landing_viewed:subj_31b6492d-03ab-4407-a376-8765226fb327\"\n      }\n    ]\n  }\n}\n",
+  "executions_status": "503",
+  "executions_body": "{\n  \"error\": \"Privy auth verification requires PRIVY_APP_ID, PRIVY_APP_SECRET, and PRIVY_JWKS_URL.\",\n  \"details\": null\n}\n",
+  "reporting_status": "503",
+  "reporting_body": "{\n  \"error\": \"Operator reporting token is not configured on this backend.\",\n  \"details\": null\n}\n",
+  "activation_preview": {
+    "data": {
+      "version": "1",
+      "generatedAt": "2026-04-01T16:34:37.161Z",
+      "slot": {
+        "chain": "ethereum",
+        "surface": "onboarding",
+        "position": 0,
+        "title": "Autopilot: Mag 7 Core",
+        "description": "Default onboarding basket anchored to the pinned Mag 7 baseline.",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "starterBasketId": "mag7"
+      },
+      "manifest": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "chain": "ethereum",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+        "promoted": true,
+        "source": {
+          "type": "research_promoted_manifest",
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket"
+        },
+        "frontend": {
+          "title": "Autopilot: Mag 7 Core",
+          "subtitle": "Default onboarding basket anchored to the pinned Mag 7 baseline.",
+          "riskLabel": "moderate",
+          "summary": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.",
+          "badges": [
+            "validated_strategy",
+            "promoted_manifest",
+            "basket_live_ready"
+          ]
+        },
+        "explanation": {
+          "thesis": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+          "whatThisDoes": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+          "bestForUser": "Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.",
+          "howItChanges": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.",
+          "replayInterpretation": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.",
+          "holdingRationales": [
+            {
+              "symbol": "NVDAx",
+              "sleeve": "core_xstocks",
+              "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure."
+            },
+            {
+              "symbol": "MSFTx",
+              "sleeve": "core_xstocks",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights."
+            },
+            {
+              "symbol": "AAPLx",
+              "sleeve": "core_xstocks",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights."
+            },
+            {
+              "symbol": "AUSD",
+              "sleeve": "yield_buffer",
+              "rationale": "A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure."
+            }
+          ],
+          "bundle": {
+            "whatThisPortfolioDoes": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+            "howItIsBuilt": "95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%. Starts from the pinned Mag 7 basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.",
+            "howItChanges": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.",
+            "whatWouldTriggerNextRebalance": "A rebalance only becomes actionable when drift clears 3% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.",
+            "howToReadReplay": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.",
+            "bestFor": "Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.",
+            "components": [
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:NVDAx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "NVDAx lead holding",
+                "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.",
+                "targetWeightPct": 18,
+                "grossExposurePct": null,
+                "assetSymbol": "NVDAx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:MSFTx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "MSFTx core holding",
+                "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+                "targetWeightPct": 16.4382,
+                "grossExposurePct": null,
+                "assetSymbol": "MSFTx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:AAPLx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "AAPLx core holding",
+                "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+                "targetWeightPct": 15.7461,
+                "grossExposurePct": null,
+                "assetSymbol": "AAPLx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:yield_buffer",
+                "kind": "yield_buffer",
+                "sleeve": "yield_buffer",
+                "title": "AUSD yield buffer",
+                "rationale": "A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.",
+                "targetWeightPct": 5,
+                "grossExposurePct": null,
+                "assetSymbol": "AUSD",
+                "basketId": null,
+                "venueId": "flowdesk_ausd_rwa_strategy"
+              }
+            ]
+          }
+        },
+        "explanationBundle": {
+          "truthMode": "promoted_incumbent_and_run_summary_only",
+          "incumbentState": "kept_promoted_run",
+          "reasonCodes": [
+            {
+              "code": "starter_basket:mag7",
+              "kind": "starter_basket",
+              "value": "mag7",
+              "label": "Starts from the pinned Mag 7 basket membership."
+            },
+            {
+              "code": "selection_universe:starter_only",
+              "kind": "selection_universe",
+              "value": "starter_only",
+              "label": "Selects names from the starter basket only."
+            },
+            {
+              "code": "holdings_count:6",
+              "kind": "holdings_count",
+              "value": "6",
+              "label": "Keeps the basket at 6 names."
+            },
+            {
+              "code": "starter_bias:0pct",
+              "kind": "starter_bias",
+              "value": "0pct",
+              "label": "Applies a 0% score boost to starter-basket names inside broader selection."
+            },
+            {
+              "code": "ranking:baseline_signal_score",
+              "kind": "ranking",
+              "value": "baseline_signal_score",
+              "label": "Ranks names by baseline signal score."
+            },
+            {
+              "code": "weighting_curve:signal_score_proportional",
+              "kind": "weighting_curve",
+              "value": "signal_score_proportional",
+              "label": "Weights names with the signal score proportional curve."
+            },
+            {
+              "code": "signal_power:1x",
+              "kind": "signal_power",
+              "value": "1x",
+              "label": "Raises ranking scores to the 1x power before weights are normalized."
+            },
+            {
+              "code": "cash_weight:5pct",
+              "kind": "cash_weight",
+              "value": "5pct",
+              "label": "Keeps 5% in the AUSD yield buffer."
+            },
+            {
+              "code": "concentration_cap:18pct",
+              "kind": "concentration_cap",
+              "value": "18pct",
+              "label": "Limits any single name to 18%."
+            },
+            {
+              "code": "rebalance_threshold:300bps",
+              "kind": "rebalance_threshold",
+              "value": "300bps",
+              "label": "Only rebalances after 300 bps of drift."
+            }
+          ],
+          "targetWeights": [
+            {
+              "rank": 1,
+              "symbol": "NVDAx",
+              "assetName": "NVIDIA",
+              "targetWeightPct": 18
+            },
+            {
+              "rank": 2,
+              "symbol": "MSFTx",
+              "assetName": "Microsoft",
+              "targetWeightPct": 16.4382
+            },
+            {
+              "rank": 3,
+              "symbol": "AAPLx",
+              "assetName": "Apple",
+              "targetWeightPct": 15.7461
+            },
+            {
+              "rank": 4,
+              "symbol": "METAx",
+              "assetName": "Meta",
+              "targetWeightPct": 15.4
+            },
+            {
+              "rank": 5,
+              "symbol": "AMZNx",
+              "assetName": "Amazon",
+              "targetWeightPct": 14.8809
+            },
+            {
+              "rank": 6,
+              "symbol": "GOOGLx",
+              "assetName": "Alphabet",
+              "targetWeightPct": 14.5348
+            }
+          ],
+          "cashWeightPct": 5,
+          "rebalanceThresholdBps": 300,
+          "rebalanceThresholdPct": 3,
+          "benchmarkDelta": {
+            "benchmarkId": "basket.sp500_core_v1",
+            "returnAnnPct": 23.5436,
+            "benchmarkReturnAnnPct": 13.1599,
+            "afterCostReturnAnnPct": 23.4229,
+            "benchmarkAfterCostReturnAnnPct": 13.1599,
+            "excessReturnAfterCostPct": 10.263,
+            "score": 1.405954,
+            "deltaVsIncumbent": 0.399074
+          },
+          "portfolioMetrics": {
+            "constituentCount": 6,
+            "concentrationPct": 18,
+            "concentrationCapPct": 18,
+            "turnoverAnnPct": 3.3046,
+            "costsTotalBps": 12.0657
+          },
+          "summaries": {
+            "construction": "95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%.",
+            "benchmark": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%.",
+            "rebalance": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD."
+          }
+        },
+        "tuningSummary": {
+          "headline": "95% invested across 6 names selected from the starter basket only with 5% in AUSD and a 300 bps rebalance trigger.",
+          "currentKnobs": [
+            {
+              "knobId": "candidate_family",
+              "label": "Candidate family",
+              "currentValue": "Starter Breadth Trim",
+              "tuningImpact": "Keeps starter-only selection and trims one name so the basket is slightly more concentrated."
+            },
+            {
+              "knobId": "starter_basket",
+              "label": "Starter basket",
+              "currentValue": "Mag 7",
+              "tuningImpact": "Changes basket membership before weights are assigned."
+            },
+            {
+              "knobId": "selection_universe",
+              "label": "Selection universe",
+              "currentValue": "starter basket only",
+              "tuningImpact": "Widens the eligible pool beyond the starter basket without changing slot identity."
+            },
+            {
+              "knobId": "holdings_count",
+              "label": "Holdings breadth",
+              "currentValue": "6",
+              "tuningImpact": "Changes how many names survive ranking into the target basket."
+            },
+            {
+              "knobId": "starter_bias",
+              "label": "Starter anchor bias",
+              "currentValue": "0%",
+              "tuningImpact": "Keeps the slot anchored to its starter basket even when broader selection is enabled."
+            },
+            {
+              "knobId": "ranking_signal",
+              "label": "Ranking signal",
+              "currentValue": "baseline signal score",
+              "tuningImpact": "Changes which names rise or fall inside the current basket."
+            },
+            {
+              "knobId": "weighting_curve",
+              "label": "Weighting curve",
+              "currentValue": "signal score proportional",
+              "tuningImpact": "Changes how aggressively higher-ranked names dominate the basket."
+            },
+            {
+              "knobId": "signal_power",
+              "label": "Signal power",
+              "currentValue": "1x",
+              "tuningImpact": "Makes the weighting curve flatter or more conviction-heavy without changing the underlying signal."
+            },
+            {
+              "knobId": "cash_weight",
+              "label": "Cash sleeve",
+              "currentValue": "5%",
+              "tuningImpact": "Changes how much capital stays in AUSD instead of xStocks exposure."
+            },
+            {
+              "knobId": "concentration_cap",
+              "label": "Single-name cap",
+              "currentValue": "18%",
+              "tuningImpact": "Limits the maximum weight of one name."
+            },
+            {
+              "knobId": "rebalance_threshold",
+              "label": "Rebalance trigger",
+              "currentValue": "300 bps",
+              "tuningImpact": "Skips smaller drifts to reduce churn."
+            }
+          ],
+          "watchpoints": [
+            "NVDAx is the largest sleeve at 18% against a 18% single-name cap.",
+            "Authoritative rebalance simulation implies 3.3% turnover and 12.07 bps of annualized costs across 1 rebalance events.",
+            "Authoritative turnover is 3.3% with 12.07 bps of total costs.",
+            "Legacy static proxy would have printed 95% turnover and 43.25 bps of total costs.",
+            "6 names are selected from the starter basket only.",
+            "Benchmark edge after costs is 10.26% versus basket.sp500_core_v1."
+          ]
+        },
+        "validation": {
+          "datasetVersion": "research-bundle-v2",
+          "evaluatorVersion": "strategy_lab_evaluator_v1",
+          "objectiveId": "basket_excess_calmar_after_cost_v1",
+          "score": 1.405954,
+          "deltaVsIncumbent": 0.399074,
+          "promotedAt": "2026-04-01T11:00:18.704Z"
+        },
+        "fallback": {
+          "previousIncumbentId": "onboarding.default_basket:basket-baseline-v1",
+          "disableConditions": [
+            "slot_not_promoted",
+            "research_manifest_missing",
+            "xstocks_live_state_stale"
+          ]
+        },
+        "activationTemplate": {
+          "mode": "basket",
+          "templateId": "xstocks_basket_allocations_v1",
+          "fundingAssetSymbol": "USDC",
+          "starterBasketId": "mag7"
+        },
+        "requiredAssets": [
+          "NVDAx",
+          "MSFTx",
+          "AAPLx",
+          "METAx",
+          "AMZNx",
+          "GOOGLx",
+          "AUSD"
+        ],
+        "requiredRoutes": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "requiredFor": "core_xstocks"
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "requiredFor": "yield_buffer"
+          }
+        ],
+        "walletRequirements": {
+          "requiresWallet": true,
+          "requiresSmartAccount": true,
+          "minFundingUsd": 1000,
+          "preferredFundingProvider": "privy",
+          "topUpAsset": "USDC"
+        },
+        "signalRefs": [
+          {
+            "signalId": "manifest:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+            "scopeType": "basket",
+            "scopeKey": "mag7"
+          }
+        ],
+        "targetAllocations": [
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 18,
+            "assetSymbol": "NVDAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 16.43,
+            "assetSymbol": "MSFTx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.74,
+            "assetSymbol": "AAPLx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.4,
+            "assetSymbol": "METAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 14.89,
+            "assetSymbol": "AMZNx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 14.54,
+            "assetSymbol": "GOOGLx"
+          },
+          {
+            "sleeve": "yield_buffer",
+            "targetWeightPct": 5,
+            "assetSymbol": "AUSD",
+            "venueId": "flowdesk_ausd_rwa_strategy"
+          }
+        ],
+        "targetDirectionalExpression": null,
+        "routeValidation": {
+          "executionEligibility": "executable",
+          "surfaceTruth": "live",
+          "routeTruthLabels": [
+            {
+              "routeId": "cow_swap.ethereum",
+              "label": "Cow Swap on Ethereum",
+              "routeKind": "execution",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "truthState": "live",
+              "availability": "available",
+              "requiredFor": "core_xstocks",
+              "reason": "Public xStocks basket execution route is verified for live onboarding baskets."
+            },
+            {
+              "routeId": "flowdesk.ausd-rwa-strategy",
+              "label": "Flowdesk AUSD RWA Strategy",
+              "routeKind": "vault",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "truthState": "live",
+              "availability": "available",
+              "requiredFor": "yield_buffer",
+              "reason": "AUSD yield-buffer vault is verified for live basket activations."
+            }
+          ],
+          "proofNotes": [
+            "Basket execution routes are validated for live onboarding activations.",
+            "Yield-buffer sleeve uses the verified Flowdesk AUSD vault whenever AUSD is present."
+          ],
+          "validationBadges": [
+            "validated_strategy",
+            "promoted_manifest",
+            "basket_live_ready"
+          ]
+        },
+        "permissions": {
+          "allowPause": true,
+          "allowTurnOff": true
+        },
+        "legacyFallback": false
+      },
+      "requestedNotionalUsd": 10,
+      "recommendation": {
+        "version": "1",
+        "recommendationId": "rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "portfolioMode": "basket",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+        },
+        "targetAllocations": [
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 18,
+            "assetSymbol": "NVDAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 16.43,
+            "assetSymbol": "MSFTx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.74,
+            "assetSymbol": "AAPLx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.4,
+            "assetSymbol": "METAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 14.89,
+            "assetSymbol": "AMZNx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 14.54,
+            "assetSymbol": "GOOGLx"
+          },
+          {
+            "sleeve": "yield_buffer",
+            "targetWeightPct": 5,
+            "assetSymbol": "AUSD",
+            "venueId": "flowdesk_ausd_rwa_strategy"
+          }
+        ],
+        "cashOrYieldBufferTarget": {
+          "assetSymbol": "AUSD",
+          "venueId": "flowdesk_ausd_rwa_strategy",
+          "targetWeightPct": 5
+        },
+        "explanationSummary": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.",
+        "explanationBundle": {
+          "whatThisPortfolioDoes": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+          "howItIsBuilt": "95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%. Starts from the pinned Mag 7 basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.",
+          "howItChanges": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.",
+          "whatWouldTriggerNextRebalance": "A rebalance only becomes actionable when drift clears 3% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.",
+          "howToReadReplay": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.",
+          "bestFor": "Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.",
+          "components": [
+            {
+              "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:NVDAx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "NVDAx lead holding",
+              "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.",
+              "targetWeightPct": 18,
+              "grossExposurePct": null,
+              "assetSymbol": "NVDAx",
+              "basketId": "mag7",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:MSFTx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "MSFTx core holding",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+              "targetWeightPct": 16.4382,
+              "grossExposurePct": null,
+              "assetSymbol": "MSFTx",
+              "basketId": "mag7",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:AAPLx",
+              "kind": "core_holding",
+              "sleeve": "core_xstocks",
+              "title": "AAPLx core holding",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+              "targetWeightPct": 15.7461,
+              "grossExposurePct": null,
+              "assetSymbol": "AAPLx",
+              "basketId": "mag7",
+              "venueId": null
+            },
+            {
+              "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:yield_buffer",
+              "kind": "yield_buffer",
+              "sleeve": "yield_buffer",
+              "title": "AUSD yield buffer",
+              "rationale": "A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.",
+              "targetWeightPct": 5,
+              "grossExposurePct": null,
+              "assetSymbol": "AUSD",
+              "basketId": null,
+              "venueId": "flowdesk_ausd_rwa_strategy"
+            }
+          ]
+        },
+        "signalRefs": [
+          {
+            "signalId": "manifest:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+            "scopeType": "basket",
+            "scopeKey": "mag7"
+          }
+        ],
+        "rebalanceDecision": {
+          "state": "full_rebalance",
+          "rationale": "The requested notional assumes a fresh activation from the promoted manifest.",
+          "signalFresh": true,
+          "routeChecksPassed": true,
+          "mandateChecksPassed": true
+        },
+        "validationBadges": [
+          "validated_strategy",
+          "promoted_manifest",
+          "basket_live_ready"
+        ]
+      },
+      "executionPlan": {
+        "executionPlanId": "exec_96786027b2b8",
+        "generatedAt": "2026-04-01T16:34:37.160Z",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+        },
+        "surfaceTruth": "preview",
+        "executionState": "wallet_required",
+        "executionEligibility": "preview_only",
+        "requestedNotionalUsd": 10,
+        "walletConnectionLate": true,
+        "routeTruthLabels": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "core_xstocks",
+            "reason": "Publicly verified rail is available."
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "chain": "ethereum",
+            "verificationTier": "public_verified",
+            "truthState": "live",
+            "availability": "available",
+            "requiredFor": "yield_buffer",
+            "reason": "Publicly verified rail is available."
+          }
+        ],
+        "assetChecks": [
+          {
+            "assetSymbol": "NVDAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 177.058
+          },
+          {
+            "assetSymbol": "MSFTx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 372.223
+          },
+          {
+            "assetSymbol": "AAPLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 254.542
+          },
+          {
+            "assetSymbol": "METAx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 586.774
+          },
+          {
+            "assetSymbol": "AMZNx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 212.869
+          },
+          {
+            "assetSymbol": "GOOGLx",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 298.281
+          },
+          {
+            "assetSymbol": "AUSD",
+            "truthState": "live",
+            "status": "active",
+            "reason": "Asset is active in live xStocks state.",
+            "chain": "ethereum",
+            "priceUsd": 1
+          }
+        ],
+        "fundingPath": {
+          "provider": "privy",
+          "minRequiredUsd": 10,
+          "fundedNotionalUsd": 0,
+          "fundingGapUsd": 10,
+          "topUpAsset": "USDC",
+          "destinationAddress": null,
+          "destinationKind": "embedded_wallet",
+          "readiness": "destination_required",
+          "recommendedMethodId": null,
+          "surfaces": [
+            {
+              "methodId": "privy_card",
+              "providerId": "privy",
+              "kind": "card",
+              "status": "blocked",
+              "destinationAddress": null,
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy card funding is a mainnet-only funding surface."
+              ]
+            },
+            {
+              "methodId": "privy_wallet",
+              "providerId": "privy",
+              "kind": "wallet",
+              "status": "blocked",
+              "destinationAddress": null,
+              "assetSymbol": "USDC",
+              "notes": [
+                "Use this when the user wants to transfer from an external wallet."
+              ]
+            },
+            {
+              "methodId": "privy_exchange",
+              "providerId": "privy",
+              "kind": "exchange",
+              "status": "blocked",
+              "destinationAddress": null,
+              "assetSymbol": "USDC",
+              "notes": [
+                "Privy exchange funding is expected to land on the current destination address on mainnet."
+              ]
+            },
+            {
+              "methodId": "manual_transfer",
+              "providerId": "manual",
+              "kind": "manual_transfer",
+              "status": "blocked",
+              "destinationAddress": null,
+              "assetSymbol": "USDC",
+              "notes": [
+                "Manual same-chain transfer remains the fail-closed fallback when hosted funding is unavailable."
+              ]
+            }
+          ],
+          "status": "destination_required"
+        },
+        "smartAccount": {
+          "readiness": "not_required",
+          "providerId": "privy",
+          "status": "not_required",
+          "address": null,
+          "bootstrap": {
+            "state": "ready",
+            "chain": "ethereum",
+            "implementation": "privy_smart_wallet",
+            "signerAddress": null,
+            "embeddedWalletAddress": null,
+            "smartAccountAddress": null,
+            "destinationAddress": null,
+            "approvalMode": "user_approved_only",
+            "paymasterReady": false,
+            "notes": [
+              "This manifest does not require a smart account before execution review."
+            ]
+          },
+          "reviewArtifact": {
+            "providerId": "privy",
+            "providerName": "Privy smart wallet",
+            "supportedChains": [
+              "ethereum"
+            ],
+            "permissions": [
+              "activate_promoted_manifest_only",
+              "pause_strategy",
+              "turn_off_strategy"
+            ],
+            "approvalMode": "user_approved_only",
+            "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+            "fundingBoundary": "Funding remains provider-agnostic and should target the current signer or smart-wallet destination address through Privy-supported methods.",
+            "walletConnectionLate": true,
+            "notes": [
+              "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+              "Privy smart wallet bootstrap remains optional for the current CoW execution lane.",
+              "Funding readiness follows the user-requested notional for the current CoW execution lane.",
+              "Operator and user approvals stay explicit; no autonomous execution is implied."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "stepId": "review_promoted_manifest",
+            "title": "Review promoted manifest",
+            "status": "complete",
+            "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted."
+          },
+          {
+            "stepId": "connect_wallet",
+            "title": "Connect wallet late in flow",
+            "status": "pending",
+            "detail": "Wallet connection is only required at activation time."
+          },
+          {
+            "stepId": "fund_wallet",
+            "title": "Fund wallet",
+            "status": "complete",
+            "detail": "Wallet funding meets the current notional requirement."
+          },
+          {
+            "stepId": "prepare_smart_account",
+            "title": "Bootstrap smart account",
+            "status": "complete",
+            "detail": "Privy smart wallet remains optional for the current user-approved CoW execution lane."
+          },
+          {
+            "stepId": "request_cow_quote",
+            "title": "Request CoW quote",
+            "status": "blocked",
+            "detail": "CoW quoting remains preview-only until every required rail and wallet check passes."
+          },
+          {
+            "stepId": "approve_cow_order",
+            "title": "Approve CoW order",
+            "status": "blocked",
+            "detail": "Order approval remains blocked until the quote and readiness checks are satisfied."
+          }
+        ],
+        "allowedActions": [
+          "review_manifest",
+          "read_route_truth",
+          "review_preview",
+          "connect_wallet"
+        ],
+        "blockers": [
+          "Funding destination is not ready yet."
+        ],
+        "warnings": [],
+        "liveStateSummary": {
+          "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+          "routeStateVersion": "2026-03-31.route-live.package.v1"
+        }
+      },
+      "liveState": {
+        "liveXStocksState": {
+          "stateVersion": "2026-03-31.xstocks-live.package.v1",
+          "asOf": "2026-04-01T16:34:36.464Z",
+          "assets": [
+            {
+              "assetSymbol": "NVDAx",
+              "source": "xstocks",
+              "chain": "ethereum",
+              "status": "active",
+              "priceUsd": 177.058,
+              "proofOfReserves": "verified",
+              "deployments": {
+                "Ethereum": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                  "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                },
+                "BinanceSmartChain": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                  "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                },
+                "Arbitrum": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                  "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                },
+                "Solana": {
+                  "supportsAtomicSwaps": true,
+                  "address": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
+                  "wrapperAddress": null
+                },
+                "Tron": {
+                  "supportsAtomicSwaps": false,
+                  "address": "TNMR6r9Z4cL7eWNrNQ4e4sm2XPhhifexZU",
+                  "wrapperAddress": "TViJkpcCd1PGMnv2odHPt5aVF15BZ2H7g9"
+                },
+                "Ton": {
+                  "supportsAtomicSwaps": false,
+                  "address": "EQCva-Of7acQdU_piADdlcbzsFtA-xJwZoctz8ZOXBdBoaB8",
+                  "wrapperAddress": null
+                },
+                "Mantle": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                  "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                },
+                "HyperEVM": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                  "wrapperAddress": null
+                },
+                "Ink": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                  "wrapperAddress": null
+                }
+              }
+            },
+            {
+              "assetSymbol": "MSFTx",
+              "source": "xstocks",
+              "chain": "ethereum",
+              "status": "active",
+              "priceUsd": 372.223,
+              "proofOfReserves": "verified",
+              "deployments": {
+                "Ethereum": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                  "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                },
+                "BinanceSmartChain": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                  "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                },
+                "Arbitrum": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                  "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                },
+                "Solana": {
+                  "supportsAtomicSwaps": true,
+                  "address": "XspzcW1PRtgf6Wj92HCiZdjzKCyFekVD8P5Ueh3dRMX",
+                  "wrapperAddress": null
+                },
+                "Tron": {
+                  "supportsAtomicSwaps": false,
+                  "address": "TDVHfwqTFimf8bAYSkzvQe3vwArRDMdcFh",
+                  "wrapperAddress": null
+                },
+                "Ton": {
+                  "supportsAtomicSwaps": false,
+                  "address": "EQDI9JwkYTEHM2TSFPSWFbwznBq07_I4Apy9TBhxsDlZaBvg",
+                  "wrapperAddress": null
+                },
+                "Mantle": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                  "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                },
+                "HyperEVM": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                  "wrapperAddress": null
+                },
+                "Ink": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                  "wrapperAddress": null
+                }
+              }
+            },
+            {
+              "assetSymbol": "AAPLx",
+              "source": "xstocks",
+              "chain": "ethereum",
+              "status": "active",
+              "priceUsd": 254.542,
+              "proofOfReserves": "verified",
+              "deployments": {
+                "Ethereum": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                  "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                },
+                "BinanceSmartChain": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                  "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                },
+                "Arbitrum": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                  "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                },
+                "Solana": {
+                  "supportsAtomicSwaps": true,
+                  "address": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
+                  "wrapperAddress": null
+                },
+                "Tron": {
+                  "supportsAtomicSwaps": false,
+                  "address": "TZ7nsyCuQq1cusCtex6V4qbzWcb3NbibAM",
+                  "wrapperAddress": null
+                },
+                "Ton": {
+                  "supportsAtomicSwaps": false,
+                  "address": "EQDsjAwfKo-6FVZv2EYt-1CaZTY_ZL-pfkSId6jeQchNwmdo",
+                  "wrapperAddress": null
+                },
+                "Mantle": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                  "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                },
+                "HyperEVM": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                  "wrapperAddress": null
+                },
+                "Ink": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                  "wrapperAddress": null
+                }
+              }
+            },
+            {
+              "assetSymbol": "METAx",
+              "source": "xstocks",
+              "chain": "ethereum",
+              "status": "active",
+              "priceUsd": 586.774,
+              "proofOfReserves": "verified",
+              "deployments": {
+                "Ethereum": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                  "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                },
+                "BinanceSmartChain": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                  "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                },
+                "Arbitrum": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                  "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                },
+                "Solana": {
+                  "supportsAtomicSwaps": true,
+                  "address": "Xsa62P5mvPszXL1krVUnU5ar38bBSVcWAB6fmPCo5Zu",
+                  "wrapperAddress": null
+                },
+                "Tron": {
+                  "supportsAtomicSwaps": false,
+                  "address": "TGJaEbWPNmM6NErggxJwWQ5ChRH7KxXF3a",
+                  "wrapperAddress": null
+                },
+                "Ton": {
+                  "supportsAtomicSwaps": false,
+                  "address": "EQD3cgQg432BiCSRli-hMswoVuvNnO42FuMdc-AXqd83SfcV",
+                  "wrapperAddress": null
+                },
+                "Mantle": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                  "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                },
+                "HyperEVM": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                  "wrapperAddress": null
+                },
+                "Ink": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                  "wrapperAddress": null
+                }
+              }
+            },
+            {
+              "assetSymbol": "AMZNx",
+              "source": "xstocks",
+              "chain": "ethereum",
+              "status": "active",
+              "priceUsd": 212.869,
+              "proofOfReserves": "verified",
+              "deployments": {
+                "Ethereum": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                  "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                },
+                "BinanceSmartChain": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                  "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                },
+                "Arbitrum": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                  "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                },
+                "Solana": {
+                  "supportsAtomicSwaps": true,
+                  "address": "Xs3eBt7uRfJX8QUs4suhyU8p2M6DoUDrJyWBa8LLZsg",
+                  "wrapperAddress": null
+                },
+                "Tron": {
+                  "supportsAtomicSwaps": false,
+                  "address": "TKbZf7Ni93pAB6ZHQLR2BxbnukRsB3WNvh",
+                  "wrapperAddress": null
+                },
+                "Ton": {
+                  "supportsAtomicSwaps": false,
+                  "address": "EQCtD2-7qxHhQoNhxri2JSzH-dlmWqKYCDtlEZqRi3-56gd9",
+                  "wrapperAddress": null
+                },
+                "Mantle": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                  "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                },
+                "HyperEVM": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                  "wrapperAddress": null
+                },
+                "Ink": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                  "wrapperAddress": null
+                }
+              }
+            },
+            {
+              "assetSymbol": "GOOGLx",
+              "source": "xstocks",
+              "chain": "ethereum",
+              "status": "active",
+              "priceUsd": 298.281,
+              "proofOfReserves": "verified",
+              "deployments": {
+                "Ethereum": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                  "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                },
+                "BinanceSmartChain": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                  "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                },
+                "Arbitrum": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                  "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                },
+                "Solana": {
+                  "supportsAtomicSwaps": true,
+                  "address": "XsCPL9dNWBMvFtTmwcCA5v3xWPSMEBCszbQdiLLq6aN",
+                  "wrapperAddress": null
+                },
+                "Tron": {
+                  "supportsAtomicSwaps": false,
+                  "address": "TX34MBKqsHzvon1JX4mokJ8CLeh5QmBqNd",
+                  "wrapperAddress": null
+                },
+                "Ton": {
+                  "supportsAtomicSwaps": false,
+                  "address": "EQALwJzXnxFjckNsurCi9O2kVg_0b1KdtjOSfvOedlY37iZc",
+                  "wrapperAddress": null
+                },
+                "Mantle": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                  "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                },
+                "HyperEVM": {
+                  "supportsAtomicSwaps": false,
+                  "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                  "wrapperAddress": null
+                },
+                "Ink": {
+                  "supportsAtomicSwaps": true,
+                  "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                  "wrapperAddress": null
+                }
+              }
+            },
+            {
+              "assetSymbol": "AUSD",
+              "source": "stablecoin_bridge",
+              "chain": "ethereum",
+              "status": "active",
+              "priceUsd": 1,
+              "proofOfReserves": "repo_scaffolded",
+              "notes": [
+                "AUSD is surfaced here through a package-owned execution-boundary bridge helper.",
+                "This is not a claim that AUSD is an xStocks public asset."
+              ],
+              "deployments": {
+                "Ethereum": {
+                  "supportsAtomicSwaps": true,
+                  "address": null,
+                  "wrapperAddress": null
+                }
+              }
+            }
+          ]
+        },
+        "liveRouteState": {
+          "stateVersion": "2026-03-31.route-live.package.v1",
+          "asOf": "2026-04-01T16:34:36.464Z",
+          "routes": [
+            {
+              "routeId": "cow_swap.ethereum",
+              "label": "Cow Swap on Ethereum",
+              "routeKind": "execution",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "availability": "available",
+              "notes": "Verified Ethereum execution surface for xStocks xChange."
+            },
+            {
+              "routeId": "1inch.ethereum",
+              "label": "1inch on Ethereum",
+              "routeKind": "execution",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "availability": "available",
+              "notes": "Verified Ethereum execution surface for xStocks xChange."
+            },
+            {
+              "routeId": "spread.ink",
+              "label": "Spread Finance on Ink",
+              "routeKind": "execution",
+              "chain": "ink",
+              "verificationTier": "mentor_reported",
+              "availability": "available",
+              "notes": "Mentor-reported Ink execution surface. Do not surface as live without direct proof."
+            },
+            {
+              "routeId": "morpho.spyx-ausd",
+              "label": "Morpho SPYx/AUSD",
+              "routeKind": "lending_market",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "availability": "available",
+              "notes": "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays. Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+            },
+            {
+              "routeId": "flowdesk.ausd-rwa-strategy",
+              "label": "Flowdesk AUSD RWA Strategy",
+              "routeKind": "yield_vault",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "availability": "available",
+              "notes": "Verified Flowdesk AUSD vault context for yield-buffer sleeves. Keep this explicit in payloads when Euler remains preview-only."
+            },
+            {
+              "routeId": "euler.ethereum.directional",
+              "label": "Euler Directional",
+              "routeKind": "directional_market",
+              "chain": "ethereum",
+              "verificationTier": "unverified",
+              "availability": "preview_only",
+              "notes": "Euler remains central for directional UX, but direct live xStocks-on-Euler execution is still unverified. Do not promote this route above preview until public proof is captured."
+            }
+          ]
+        }
+      },
+      "rebalanceOrchestration": {
+        "rebalanceId": "rebalance_onboarding_default_basket",
+        "slotId": "onboarding.default_basket",
+        "chain": "ethereum",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+        },
+        "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "baselineActivationId": null,
+        "baselineManifestId": null,
+        "baselineManifestMatchesTarget": false,
+        "state": "preview_only",
+        "runtimeOwner": "operator_manual",
+        "triggerSource": "operator_manual",
+        "summary": "Rebalance orchestration is preview-only.",
+        "rationale": "No prior activation snapshot exists for this slot, so the worker has no live portfolio baseline to rebalance against.",
+        "scheduledFor": null,
+        "allowedTransitions": [],
+        "recommendationState": "full_rebalance",
+        "executionState": "wallet_required",
+        "executionEligibility": "preview_only",
+        "surfaceTruth": "preview",
+        "blockers": [
+          "Funding destination is not ready yet."
+        ],
+        "warnings": [],
+        "automationTruth": {
+          "operatorManualRequired": true,
+          "autonomousExecutionProven": false,
+          "providerTriggeredProven": false,
+          "supportedTriggerSources": [
+            "operator_manual",
+            "scheduled_cron"
+          ],
+          "notes": [
+            "Operator confirmation remains required before any rebalance execution claim.",
+            "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+            "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
+            "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist."
+          ]
+        },
+        "nextAction": {
+          "title": "Create activation baseline",
+          "detail": "No live activation snapshot exists for this slot yet, so rebalance orchestration stays preview-only.",
+          "status": "preview_only"
+        },
+        "createdAt": "2026-04-01T16:34:37.160Z",
+        "updatedAt": "2026-04-01T16:34:37.160Z"
+      },
+      "latestActivation": null
+    }
+  },
+  "workspace": {
+    "data": {
+      "version": "1",
+      "generatedAt": "2026-04-01T16:34:38.591Z",
+      "slot": {
+        "chain": "ethereum",
+        "surface": "onboarding",
+        "position": 0,
+        "title": "Autopilot: Mag 7 Core",
+        "description": "Default onboarding basket anchored to the pinned Mag 7 baseline.",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "starterBasketId": "mag7"
+      },
+      "manifest": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "chain": "ethereum",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+        "promoted": true,
+        "source": {
+          "type": "research_promoted_manifest",
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket"
+        },
+        "frontend": {
+          "title": "Autopilot: Mag 7 Core",
+          "subtitle": "Default onboarding basket anchored to the pinned Mag 7 baseline.",
+          "riskLabel": "moderate",
+          "summary": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.",
+          "badges": [
+            "validated_strategy",
+            "promoted_manifest",
+            "basket_live_ready"
+          ]
+        },
+        "explanation": {
+          "thesis": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+          "whatThisDoes": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+          "bestForUser": "Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.",
+          "howItChanges": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.",
+          "replayInterpretation": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.",
+          "holdingRationales": [
+            {
+              "symbol": "NVDAx",
+              "sleeve": "core_xstocks",
+              "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure."
+            },
+            {
+              "symbol": "MSFTx",
+              "sleeve": "core_xstocks",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights."
+            },
+            {
+              "symbol": "AAPLx",
+              "sleeve": "core_xstocks",
+              "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights."
+            },
+            {
+              "symbol": "AUSD",
+              "sleeve": "yield_buffer",
+              "rationale": "A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure."
+            }
+          ],
+          "bundle": {
+            "whatThisPortfolioDoes": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+            "howItIsBuilt": "95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%. Starts from the pinned Mag 7 basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.",
+            "howItChanges": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.",
+            "whatWouldTriggerNextRebalance": "A rebalance only becomes actionable when drift clears 3% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.",
+            "howToReadReplay": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.",
+            "bestFor": "Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.",
+            "components": [
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:NVDAx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "NVDAx lead holding",
+                "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.",
+                "targetWeightPct": 18,
+                "grossExposurePct": null,
+                "assetSymbol": "NVDAx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:MSFTx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "MSFTx core holding",
+                "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+                "targetWeightPct": 16.4382,
+                "grossExposurePct": null,
+                "assetSymbol": "MSFTx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:AAPLx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "AAPLx core holding",
+                "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+                "targetWeightPct": 15.7461,
+                "grossExposurePct": null,
+                "assetSymbol": "AAPLx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:yield_buffer",
+                "kind": "yield_buffer",
+                "sleeve": "yield_buffer",
+                "title": "AUSD yield buffer",
+                "rationale": "A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.",
+                "targetWeightPct": 5,
+                "grossExposurePct": null,
+                "assetSymbol": "AUSD",
+                "basketId": null,
+                "venueId": "flowdesk_ausd_rwa_strategy"
+              }
+            ]
+          }
+        },
+        "explanationBundle": {
+          "truthMode": "promoted_incumbent_and_run_summary_only",
+          "incumbentState": "kept_promoted_run",
+          "reasonCodes": [
+            {
+              "code": "starter_basket:mag7",
+              "kind": "starter_basket",
+              "value": "mag7",
+              "label": "Starts from the pinned Mag 7 basket membership."
+            },
+            {
+              "code": "selection_universe:starter_only",
+              "kind": "selection_universe",
+              "value": "starter_only",
+              "label": "Selects names from the starter basket only."
+            },
+            {
+              "code": "holdings_count:6",
+              "kind": "holdings_count",
+              "value": "6",
+              "label": "Keeps the basket at 6 names."
+            },
+            {
+              "code": "starter_bias:0pct",
+              "kind": "starter_bias",
+              "value": "0pct",
+              "label": "Applies a 0% score boost to starter-basket names inside broader selection."
+            },
+            {
+              "code": "ranking:baseline_signal_score",
+              "kind": "ranking",
+              "value": "baseline_signal_score",
+              "label": "Ranks names by baseline signal score."
+            },
+            {
+              "code": "weighting_curve:signal_score_proportional",
+              "kind": "weighting_curve",
+              "value": "signal_score_proportional",
+              "label": "Weights names with the signal score proportional curve."
+            },
+            {
+              "code": "signal_power:1x",
+              "kind": "signal_power",
+              "value": "1x",
+              "label": "Raises ranking scores to the 1x power before weights are normalized."
+            },
+            {
+              "code": "cash_weight:5pct",
+              "kind": "cash_weight",
+              "value": "5pct",
+              "label": "Keeps 5% in the AUSD yield buffer."
+            },
+            {
+              "code": "concentration_cap:18pct",
+              "kind": "concentration_cap",
+              "value": "18pct",
+              "label": "Limits any single name to 18%."
+            },
+            {
+              "code": "rebalance_threshold:300bps",
+              "kind": "rebalance_threshold",
+              "value": "300bps",
+              "label": "Only rebalances after 300 bps of drift."
+            }
+          ],
+          "targetWeights": [
+            {
+              "rank": 1,
+              "symbol": "NVDAx",
+              "assetName": "NVIDIA",
+              "targetWeightPct": 18
+            },
+            {
+              "rank": 2,
+              "symbol": "MSFTx",
+              "assetName": "Microsoft",
+              "targetWeightPct": 16.4382
+            },
+            {
+              "rank": 3,
+              "symbol": "AAPLx",
+              "assetName": "Apple",
+              "targetWeightPct": 15.7461
+            },
+            {
+              "rank": 4,
+              "symbol": "METAx",
+              "assetName": "Meta",
+              "targetWeightPct": 15.4
+            },
+            {
+              "rank": 5,
+              "symbol": "AMZNx",
+              "assetName": "Amazon",
+              "targetWeightPct": 14.8809
+            },
+            {
+              "rank": 6,
+              "symbol": "GOOGLx",
+              "assetName": "Alphabet",
+              "targetWeightPct": 14.5348
+            }
+          ],
+          "cashWeightPct": 5,
+          "rebalanceThresholdBps": 300,
+          "rebalanceThresholdPct": 3,
+          "benchmarkDelta": {
+            "benchmarkId": "basket.sp500_core_v1",
+            "returnAnnPct": 23.5436,
+            "benchmarkReturnAnnPct": 13.1599,
+            "afterCostReturnAnnPct": 23.4229,
+            "benchmarkAfterCostReturnAnnPct": 13.1599,
+            "excessReturnAfterCostPct": 10.263,
+            "score": 1.405954,
+            "deltaVsIncumbent": 0.399074
+          },
+          "portfolioMetrics": {
+            "constituentCount": 6,
+            "concentrationPct": 18,
+            "concentrationCapPct": 18,
+            "turnoverAnnPct": 3.3046,
+            "costsTotalBps": 12.0657
+          },
+          "summaries": {
+            "construction": "95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%.",
+            "benchmark": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%.",
+            "rebalance": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD."
+          }
+        },
+        "tuningSummary": {
+          "headline": "95% invested across 6 names selected from the starter basket only with 5% in AUSD and a 300 bps rebalance trigger.",
+          "currentKnobs": [
+            {
+              "knobId": "candidate_family",
+              "label": "Candidate family",
+              "currentValue": "Starter Breadth Trim",
+              "tuningImpact": "Keeps starter-only selection and trims one name so the basket is slightly more concentrated."
+            },
+            {
+              "knobId": "starter_basket",
+              "label": "Starter basket",
+              "currentValue": "Mag 7",
+              "tuningImpact": "Changes basket membership before weights are assigned."
+            },
+            {
+              "knobId": "selection_universe",
+              "label": "Selection universe",
+              "currentValue": "starter basket only",
+              "tuningImpact": "Widens the eligible pool beyond the starter basket without changing slot identity."
+            },
+            {
+              "knobId": "holdings_count",
+              "label": "Holdings breadth",
+              "currentValue": "6",
+              "tuningImpact": "Changes how many names survive ranking into the target basket."
+            },
+            {
+              "knobId": "starter_bias",
+              "label": "Starter anchor bias",
+              "currentValue": "0%",
+              "tuningImpact": "Keeps the slot anchored to its starter basket even when broader selection is enabled."
+            },
+            {
+              "knobId": "ranking_signal",
+              "label": "Ranking signal",
+              "currentValue": "baseline signal score",
+              "tuningImpact": "Changes which names rise or fall inside the current basket."
+            },
+            {
+              "knobId": "weighting_curve",
+              "label": "Weighting curve",
+              "currentValue": "signal score proportional",
+              "tuningImpact": "Changes how aggressively higher-ranked names dominate the basket."
+            },
+            {
+              "knobId": "signal_power",
+              "label": "Signal power",
+              "currentValue": "1x",
+              "tuningImpact": "Makes the weighting curve flatter or more conviction-heavy without changing the underlying signal."
+            },
+            {
+              "knobId": "cash_weight",
+              "label": "Cash sleeve",
+              "currentValue": "5%",
+              "tuningImpact": "Changes how much capital stays in AUSD instead of xStocks exposure."
+            },
+            {
+              "knobId": "concentration_cap",
+              "label": "Single-name cap",
+              "currentValue": "18%",
+              "tuningImpact": "Limits the maximum weight of one name."
+            },
+            {
+              "knobId": "rebalance_threshold",
+              "label": "Rebalance trigger",
+              "currentValue": "300 bps",
+              "tuningImpact": "Skips smaller drifts to reduce churn."
+            }
+          ],
+          "watchpoints": [
+            "NVDAx is the largest sleeve at 18% against a 18% single-name cap.",
+            "Authoritative rebalance simulation implies 3.3% turnover and 12.07 bps of annualized costs across 1 rebalance events.",
+            "Authoritative turnover is 3.3% with 12.07 bps of total costs.",
+            "Legacy static proxy would have printed 95% turnover and 43.25 bps of total costs.",
+            "6 names are selected from the starter basket only.",
+            "Benchmark edge after costs is 10.26% versus basket.sp500_core_v1."
+          ]
+        },
+        "validation": {
+          "datasetVersion": "research-bundle-v2",
+          "evaluatorVersion": "strategy_lab_evaluator_v1",
+          "objectiveId": "basket_excess_calmar_after_cost_v1",
+          "score": 1.405954,
+          "deltaVsIncumbent": 0.399074,
+          "promotedAt": "2026-04-01T11:00:18.704Z"
+        },
+        "fallback": {
+          "previousIncumbentId": "onboarding.default_basket:basket-baseline-v1",
+          "disableConditions": [
+            "slot_not_promoted",
+            "research_manifest_missing",
+            "xstocks_live_state_stale"
+          ]
+        },
+        "activationTemplate": {
+          "mode": "basket",
+          "templateId": "xstocks_basket_allocations_v1",
+          "fundingAssetSymbol": "USDC",
+          "starterBasketId": "mag7"
+        },
+        "requiredAssets": [
+          "NVDAx",
+          "MSFTx",
+          "AAPLx",
+          "METAx",
+          "AMZNx",
+          "GOOGLx",
+          "AUSD"
+        ],
+        "requiredRoutes": [
+          {
+            "routeId": "cow_swap.ethereum",
+            "label": "Cow Swap on Ethereum",
+            "routeKind": "execution",
+            "requiredFor": "core_xstocks"
+          },
+          {
+            "routeId": "flowdesk.ausd-rwa-strategy",
+            "label": "Flowdesk AUSD RWA Strategy",
+            "routeKind": "yield_vault",
+            "requiredFor": "yield_buffer"
+          }
+        ],
+        "walletRequirements": {
+          "requiresWallet": true,
+          "requiresSmartAccount": true,
+          "minFundingUsd": 1000,
+          "preferredFundingProvider": "privy",
+          "topUpAsset": "USDC"
+        },
+        "signalRefs": [
+          {
+            "signalId": "manifest:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+            "scopeType": "basket",
+            "scopeKey": "mag7"
+          }
+        ],
+        "targetAllocations": [
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 18,
+            "assetSymbol": "NVDAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 16.43,
+            "assetSymbol": "MSFTx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.74,
+            "assetSymbol": "AAPLx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 15.4,
+            "assetSymbol": "METAx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 14.89,
+            "assetSymbol": "AMZNx"
+          },
+          {
+            "sleeve": "core_xstocks",
+            "targetWeightPct": 14.54,
+            "assetSymbol": "GOOGLx"
+          },
+          {
+            "sleeve": "yield_buffer",
+            "targetWeightPct": 5,
+            "assetSymbol": "AUSD",
+            "venueId": "flowdesk_ausd_rwa_strategy"
+          }
+        ],
+        "targetDirectionalExpression": null,
+        "routeValidation": {
+          "executionEligibility": "executable",
+          "surfaceTruth": "live",
+          "routeTruthLabels": [
+            {
+              "routeId": "cow_swap.ethereum",
+              "label": "Cow Swap on Ethereum",
+              "routeKind": "execution",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "truthState": "live",
+              "availability": "available",
+              "requiredFor": "core_xstocks",
+              "reason": "Public xStocks basket execution route is verified for live onboarding baskets."
+            },
+            {
+              "routeId": "flowdesk.ausd-rwa-strategy",
+              "label": "Flowdesk AUSD RWA Strategy",
+              "routeKind": "vault",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "truthState": "live",
+              "availability": "available",
+              "requiredFor": "yield_buffer",
+              "reason": "AUSD yield-buffer vault is verified for live basket activations."
+            }
+          ],
+          "proofNotes": [
+            "Basket execution routes are validated for live onboarding activations.",
+            "Yield-buffer sleeve uses the verified Flowdesk AUSD vault whenever AUSD is present."
+          ],
+          "validationBadges": [
+            "validated_strategy",
+            "promoted_manifest",
+            "basket_live_ready"
+          ]
+        },
+        "permissions": {
+          "allowPause": true,
+          "allowTurnOff": true
+        },
+        "legacyFallback": false
+      },
+      "workspace": {
+        "requestedNotionalUsd": 10,
+        "fundingAssetSymbol": "USDC",
+        "targetAllocations": [
+          {
+            "allocationId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:allocation:1",
+            "sleeve": "core_xstocks",
+            "assetSymbol": "NVDAx",
+            "targetWeightPct": 18,
+            "targetNotionalUsd": 1.8,
+            "liveAsset": {
+              "status": "active",
+              "priceUsd": 177.058,
+              "proofOfReserves": "verified"
+            }
+          },
+          {
+            "allocationId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:allocation:2",
+            "sleeve": "core_xstocks",
+            "assetSymbol": "MSFTx",
+            "targetWeightPct": 16.43,
+            "targetNotionalUsd": 1.64,
+            "liveAsset": {
+              "status": "active",
+              "priceUsd": 372.223,
+              "proofOfReserves": "verified"
+            }
+          },
+          {
+            "allocationId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:allocation:3",
+            "sleeve": "core_xstocks",
+            "assetSymbol": "AAPLx",
+            "targetWeightPct": 15.74,
+            "targetNotionalUsd": 1.57,
+            "liveAsset": {
+              "status": "active",
+              "priceUsd": 254.542,
+              "proofOfReserves": "verified"
+            }
+          },
+          {
+            "allocationId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:allocation:4",
+            "sleeve": "core_xstocks",
+            "assetSymbol": "METAx",
+            "targetWeightPct": 15.4,
+            "targetNotionalUsd": 1.54,
+            "liveAsset": {
+              "status": "active",
+              "priceUsd": 586.774,
+              "proofOfReserves": "verified"
+            }
+          },
+          {
+            "allocationId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:allocation:5",
+            "sleeve": "core_xstocks",
+            "assetSymbol": "AMZNx",
+            "targetWeightPct": 14.89,
+            "targetNotionalUsd": 1.49,
+            "liveAsset": {
+              "status": "active",
+              "priceUsd": 212.869,
+              "proofOfReserves": "verified"
+            }
+          },
+          {
+            "allocationId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:allocation:6",
+            "sleeve": "core_xstocks",
+            "assetSymbol": "GOOGLx",
+            "targetWeightPct": 14.54,
+            "targetNotionalUsd": 1.45,
+            "liveAsset": {
+              "status": "active",
+              "priceUsd": 298.281,
+              "proofOfReserves": "verified"
+            }
+          },
+          {
+            "allocationId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:allocation:7",
+            "sleeve": "yield_buffer",
+            "assetSymbol": "AUSD",
+            "venueId": "flowdesk_ausd_rwa_strategy",
+            "targetWeightPct": 5,
+            "targetNotionalUsd": 0.5,
+            "liveAsset": {
+              "status": "active",
+              "priceUsd": 1,
+              "proofOfReserves": "repo_scaffolded"
+            }
+          }
+        ],
+        "targetDirectionalExpression": null,
+        "cashOrYieldBufferTarget": {
+          "assetSymbol": "AUSD",
+          "venueId": "flowdesk_ausd_rwa_strategy",
+          "targetWeightPct": 5
+        },
+        "recommendation": {
+          "version": "1",
+          "recommendationId": "rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "portfolioMode": "basket",
+          "activationManifestRef": {
+            "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+            "slotId": "onboarding.default_basket",
+            "mode": "basket",
+            "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+          },
+          "targetAllocations": [
+            {
+              "sleeve": "core_xstocks",
+              "targetWeightPct": 18,
+              "assetSymbol": "NVDAx"
+            },
+            {
+              "sleeve": "core_xstocks",
+              "targetWeightPct": 16.43,
+              "assetSymbol": "MSFTx"
+            },
+            {
+              "sleeve": "core_xstocks",
+              "targetWeightPct": 15.74,
+              "assetSymbol": "AAPLx"
+            },
+            {
+              "sleeve": "core_xstocks",
+              "targetWeightPct": 15.4,
+              "assetSymbol": "METAx"
+            },
+            {
+              "sleeve": "core_xstocks",
+              "targetWeightPct": 14.89,
+              "assetSymbol": "AMZNx"
+            },
+            {
+              "sleeve": "core_xstocks",
+              "targetWeightPct": 14.54,
+              "assetSymbol": "GOOGLx"
+            },
+            {
+              "sleeve": "yield_buffer",
+              "targetWeightPct": 5,
+              "assetSymbol": "AUSD",
+              "venueId": "flowdesk_ausd_rwa_strategy"
+            }
+          ],
+          "cashOrYieldBufferTarget": {
+            "assetSymbol": "AUSD",
+            "venueId": "flowdesk_ausd_rwa_strategy",
+            "targetWeightPct": 5
+          },
+          "explanationSummary": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside.",
+          "explanationBundle": {
+            "whatThisPortfolioDoes": "Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.",
+            "howItIsBuilt": "95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%. Starts from the pinned Mag 7 basket membership. Selects names from the starter basket only. Keeps the basket at 6 names.",
+            "howItChanges": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 3.3% annualized turnover, 12.07 bps annualized costs, and 1 rebalance over the frozen window. Legacy static proxy would have printed 95% turnover and 43.25 bps total costs with 5% parked in AUSD.",
+            "whatWouldTriggerNextRebalance": "A rebalance only becomes actionable when drift clears 3% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.",
+            "howToReadReplay": "After estimated costs, the pinned run delivered 23.42% versus 13.16% for basket.sp500_core_v1, an excess of +10.26%. Treat replay as validation, not a promise of future returns.",
+            "bestFor": "Best for someone who wants Mag 7 exposure through a curated xStocks basket with a visible 5% AUSD buffer and can accept moderate risk with roughly 18% in the largest name.",
+            "components": [
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:NVDAx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "NVDAx lead holding",
+                "rationale": "Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.",
+                "targetWeightPct": 18,
+                "grossExposurePct": null,
+                "assetSymbol": "NVDAx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:MSFTx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "MSFTx core holding",
+                "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+                "targetWeightPct": 16.4382,
+                "grossExposurePct": null,
+                "assetSymbol": "MSFTx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:AAPLx",
+                "kind": "core_holding",
+                "sleeve": "core_xstocks",
+                "title": "AAPLx core holding",
+                "rationale": "Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.",
+                "targetWeightPct": 15.7461,
+                "grossExposurePct": null,
+                "assetSymbol": "AAPLx",
+                "basketId": "mag7",
+                "venueId": null
+              },
+              {
+                "componentId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:component:yield_buffer",
+                "kind": "yield_buffer",
+                "sleeve": "yield_buffer",
+                "title": "AUSD yield buffer",
+                "rationale": "A 5% sleeve stays outside the core basket as a liquidity and yield buffer instead of forcing full equity exposure.",
+                "targetWeightPct": 5,
+                "grossExposurePct": null,
+                "assetSymbol": "AUSD",
+                "basketId": null,
+                "venueId": "flowdesk_ausd_rwa_strategy"
+              }
+            ]
+          },
+          "signalRefs": [
+            {
+              "signalId": "manifest:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+              "scopeType": "basket",
+              "scopeKey": "mag7"
+            }
+          ],
+          "rebalanceDecision": {
+            "state": "full_rebalance",
+            "rationale": "The requested notional assumes a fresh activation from the promoted manifest.",
+            "signalFresh": true,
+            "routeChecksPassed": true,
+            "mandateChecksPassed": true
+          },
+          "validationBadges": [
+            "validated_strategy",
+            "promoted_manifest",
+            "basket_live_ready"
+          ]
+        },
+        "executionPlanPreview": {
+          "surfaceTruth": "preview",
+          "executionState": "wallet_required",
+          "executionEligibility": "preview_only",
+          "routeTruthLabels": [
+            {
+              "routeId": "cow_swap.ethereum",
+              "label": "Cow Swap on Ethereum",
+              "routeKind": "execution",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "truthState": "live",
+              "availability": "available",
+              "requiredFor": "core_xstocks",
+              "reason": "Publicly verified rail is available."
+            },
+            {
+              "routeId": "flowdesk.ausd-rwa-strategy",
+              "label": "Flowdesk AUSD RWA Strategy",
+              "routeKind": "yield_vault",
+              "chain": "ethereum",
+              "verificationTier": "public_verified",
+              "truthState": "live",
+              "availability": "available",
+              "requiredFor": "yield_buffer",
+              "reason": "Publicly verified rail is available."
+            }
+          ],
+          "blockers": [
+            "Funding destination is not ready yet."
+          ],
+          "warnings": []
+        },
+        "liveState": {
+          "liveXStocksState": {
+            "stateVersion": "2026-03-31.xstocks-live.package.v1",
+            "asOf": "2026-04-01T16:34:37.839Z",
+            "assets": [
+              {
+                "assetSymbol": "NVDAx",
+                "source": "xstocks",
+                "chain": "ethereum",
+                "status": "active",
+                "priceUsd": 177.058,
+                "proofOfReserves": "verified",
+                "deployments": {
+                  "Ethereum": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                    "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                  },
+                  "BinanceSmartChain": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                    "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                  },
+                  "Arbitrum": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                    "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                  },
+                  "Solana": {
+                    "supportsAtomicSwaps": true,
+                    "address": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
+                    "wrapperAddress": null
+                  },
+                  "Tron": {
+                    "supportsAtomicSwaps": false,
+                    "address": "TNMR6r9Z4cL7eWNrNQ4e4sm2XPhhifexZU",
+                    "wrapperAddress": "TViJkpcCd1PGMnv2odHPt5aVF15BZ2H7g9"
+                  },
+                  "Ton": {
+                    "supportsAtomicSwaps": false,
+                    "address": "EQCva-Of7acQdU_piADdlcbzsFtA-xJwZoctz8ZOXBdBoaB8",
+                    "wrapperAddress": null
+                  },
+                  "Mantle": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                    "wrapperAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a"
+                  },
+                  "HyperEVM": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                    "wrapperAddress": null
+                  },
+                  "Ink": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                    "wrapperAddress": null
+                  }
+                }
+              },
+              {
+                "assetSymbol": "MSFTx",
+                "source": "xstocks",
+                "chain": "ethereum",
+                "status": "active",
+                "priceUsd": 372.223,
+                "proofOfReserves": "verified",
+                "deployments": {
+                  "Ethereum": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                    "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                  },
+                  "BinanceSmartChain": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                    "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                  },
+                  "Arbitrum": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                    "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                  },
+                  "Solana": {
+                    "supportsAtomicSwaps": true,
+                    "address": "XspzcW1PRtgf6Wj92HCiZdjzKCyFekVD8P5Ueh3dRMX",
+                    "wrapperAddress": null
+                  },
+                  "Tron": {
+                    "supportsAtomicSwaps": false,
+                    "address": "TDVHfwqTFimf8bAYSkzvQe3vwArRDMdcFh",
+                    "wrapperAddress": null
+                  },
+                  "Ton": {
+                    "supportsAtomicSwaps": false,
+                    "address": "EQDI9JwkYTEHM2TSFPSWFbwznBq07_I4Apy9TBhxsDlZaBvg",
+                    "wrapperAddress": null
+                  },
+                  "Mantle": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                    "wrapperAddress": "0x63ad27614231767c8c489745b9145272de50d09b"
+                  },
+                  "HyperEVM": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                    "wrapperAddress": null
+                  },
+                  "Ink": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                    "wrapperAddress": null
+                  }
+                }
+              },
+              {
+                "assetSymbol": "AAPLx",
+                "source": "xstocks",
+                "chain": "ethereum",
+                "status": "active",
+                "priceUsd": 254.542,
+                "proofOfReserves": "verified",
+                "deployments": {
+                  "Ethereum": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                    "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                  },
+                  "BinanceSmartChain": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                    "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                  },
+                  "Arbitrum": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                    "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                  },
+                  "Solana": {
+                    "supportsAtomicSwaps": true,
+                    "address": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
+                    "wrapperAddress": null
+                  },
+                  "Tron": {
+                    "supportsAtomicSwaps": false,
+                    "address": "TZ7nsyCuQq1cusCtex6V4qbzWcb3NbibAM",
+                    "wrapperAddress": null
+                  },
+                  "Ton": {
+                    "supportsAtomicSwaps": false,
+                    "address": "EQDsjAwfKo-6FVZv2EYt-1CaZTY_ZL-pfkSId6jeQchNwmdo",
+                    "wrapperAddress": null
+                  },
+                  "Mantle": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                    "wrapperAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724"
+                  },
+                  "HyperEVM": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                    "wrapperAddress": null
+                  },
+                  "Ink": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                    "wrapperAddress": null
+                  }
+                }
+              },
+              {
+                "assetSymbol": "METAx",
+                "source": "xstocks",
+                "chain": "ethereum",
+                "status": "active",
+                "priceUsd": 586.774,
+                "proofOfReserves": "verified",
+                "deployments": {
+                  "Ethereum": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                    "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                  },
+                  "BinanceSmartChain": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                    "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                  },
+                  "Arbitrum": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                    "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                  },
+                  "Solana": {
+                    "supportsAtomicSwaps": true,
+                    "address": "Xsa62P5mvPszXL1krVUnU5ar38bBSVcWAB6fmPCo5Zu",
+                    "wrapperAddress": null
+                  },
+                  "Tron": {
+                    "supportsAtomicSwaps": false,
+                    "address": "TGJaEbWPNmM6NErggxJwWQ5ChRH7KxXF3a",
+                    "wrapperAddress": null
+                  },
+                  "Ton": {
+                    "supportsAtomicSwaps": false,
+                    "address": "EQD3cgQg432BiCSRli-hMswoVuvNnO42FuMdc-AXqd83SfcV",
+                    "wrapperAddress": null
+                  },
+                  "Mantle": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                    "wrapperAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06"
+                  },
+                  "HyperEVM": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                    "wrapperAddress": null
+                  },
+                  "Ink": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                    "wrapperAddress": null
+                  }
+                }
+              },
+              {
+                "assetSymbol": "AMZNx",
+                "source": "xstocks",
+                "chain": "ethereum",
+                "status": "active",
+                "priceUsd": 212.869,
+                "proofOfReserves": "verified",
+                "deployments": {
+                  "Ethereum": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                    "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                  },
+                  "BinanceSmartChain": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                    "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                  },
+                  "Arbitrum": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                    "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                  },
+                  "Solana": {
+                    "supportsAtomicSwaps": true,
+                    "address": "Xs3eBt7uRfJX8QUs4suhyU8p2M6DoUDrJyWBa8LLZsg",
+                    "wrapperAddress": null
+                  },
+                  "Tron": {
+                    "supportsAtomicSwaps": false,
+                    "address": "TKbZf7Ni93pAB6ZHQLR2BxbnukRsB3WNvh",
+                    "wrapperAddress": null
+                  },
+                  "Ton": {
+                    "supportsAtomicSwaps": false,
+                    "address": "EQCtD2-7qxHhQoNhxri2JSzH-dlmWqKYCDtlEZqRi3-56gd9",
+                    "wrapperAddress": null
+                  },
+                  "Mantle": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                    "wrapperAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c"
+                  },
+                  "HyperEVM": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                    "wrapperAddress": null
+                  },
+                  "Ink": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                    "wrapperAddress": null
+                  }
+                }
+              },
+              {
+                "assetSymbol": "GOOGLx",
+                "source": "xstocks",
+                "chain": "ethereum",
+                "status": "active",
+                "priceUsd": 298.281,
+                "proofOfReserves": "verified",
+                "deployments": {
+                  "Ethereum": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                    "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                  },
+                  "BinanceSmartChain": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                    "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                  },
+                  "Arbitrum": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                    "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                  },
+                  "Solana": {
+                    "supportsAtomicSwaps": true,
+                    "address": "XsCPL9dNWBMvFtTmwcCA5v3xWPSMEBCszbQdiLLq6aN",
+                    "wrapperAddress": null
+                  },
+                  "Tron": {
+                    "supportsAtomicSwaps": false,
+                    "address": "TX34MBKqsHzvon1JX4mokJ8CLeh5QmBqNd",
+                    "wrapperAddress": null
+                  },
+                  "Ton": {
+                    "supportsAtomicSwaps": false,
+                    "address": "EQALwJzXnxFjckNsurCi9O2kVg_0b1KdtjOSfvOedlY37iZc",
+                    "wrapperAddress": null
+                  },
+                  "Mantle": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                    "wrapperAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc"
+                  },
+                  "HyperEVM": {
+                    "supportsAtomicSwaps": false,
+                    "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                    "wrapperAddress": null
+                  },
+                  "Ink": {
+                    "supportsAtomicSwaps": true,
+                    "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                    "wrapperAddress": null
+                  }
+                }
+              },
+              {
+                "assetSymbol": "AUSD",
+                "source": "stablecoin_bridge",
+                "chain": "ethereum",
+                "status": "active",
+                "priceUsd": 1,
+                "proofOfReserves": "repo_scaffolded",
+                "notes": [
+                  "AUSD is surfaced here through a package-owned execution-boundary bridge helper.",
+                  "This is not a claim that AUSD is an xStocks public asset."
+                ],
+                "deployments": {
+                  "Ethereum": {
+                    "supportsAtomicSwaps": true,
+                    "address": null,
+                    "wrapperAddress": null
+                  }
+                }
+              }
+            ]
+          },
+          "liveRouteState": {
+            "stateVersion": "2026-03-31.route-live.package.v1",
+            "asOf": "2026-04-01T16:34:37.839Z",
+            "routes": [
+              {
+                "routeId": "cow_swap.ethereum",
+                "label": "Cow Swap on Ethereum",
+                "routeKind": "execution",
+                "chain": "ethereum",
+                "verificationTier": "public_verified",
+                "availability": "available",
+                "notes": "Verified Ethereum execution surface for xStocks xChange."
+              },
+              {
+                "routeId": "1inch.ethereum",
+                "label": "1inch on Ethereum",
+                "routeKind": "execution",
+                "chain": "ethereum",
+                "verificationTier": "public_verified",
+                "availability": "available",
+                "notes": "Verified Ethereum execution surface for xStocks xChange."
+              },
+              {
+                "routeId": "spread.ink",
+                "label": "Spread Finance on Ink",
+                "routeKind": "execution",
+                "chain": "ink",
+                "verificationTier": "mentor_reported",
+                "availability": "available",
+                "notes": "Mentor-reported Ink execution surface. Do not surface as live without direct proof."
+              },
+              {
+                "routeId": "morpho.spyx-ausd",
+                "label": "Morpho SPYx/AUSD",
+                "routeKind": "lending_market",
+                "chain": "ethereum",
+                "verificationTier": "public_verified",
+                "availability": "available",
+                "notes": "Publicly verified Morpho SPYx/AUSD market used for live-proof overlays. Use this market as the canonical verified lending context until direct xStocks-on-Euler proof is captured."
+              },
+              {
+                "routeId": "flowdesk.ausd-rwa-strategy",
+                "label": "Flowdesk AUSD RWA Strategy",
+                "routeKind": "yield_vault",
+                "chain": "ethereum",
+                "verificationTier": "public_verified",
+                "availability": "available",
+                "notes": "Verified Flowdesk AUSD vault context for yield-buffer sleeves. Keep this explicit in payloads when Euler remains preview-only."
+              },
+              {
+                "routeId": "euler.ethereum.directional",
+                "label": "Euler Directional",
+                "routeKind": "directional_market",
+                "chain": "ethereum",
+                "verificationTier": "unverified",
+                "availability": "preview_only",
+                "notes": "Euler remains central for directional UX, but direct live xStocks-on-Euler execution is still unverified. Do not promote this route above preview until public proof is captured."
+              }
+            ]
+          }
+        },
+        "rebalanceOrchestration": {
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "slotId": "onboarding.default_basket",
+          "chain": "ethereum",
+          "activationManifestRef": {
+            "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+            "slotId": "onboarding.default_basket",
+            "mode": "basket",
+            "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+          },
+          "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "baselineActivationId": null,
+          "baselineManifestId": null,
+          "baselineManifestMatchesTarget": false,
+          "state": "preview_only",
+          "runtimeOwner": "operator_manual",
+          "triggerSource": "operator_manual",
+          "summary": "Rebalance orchestration is preview-only.",
+          "rationale": "No prior activation snapshot exists for this slot, so the worker has no live portfolio baseline to rebalance against.",
+          "scheduledFor": null,
+          "allowedTransitions": [],
+          "recommendationState": "full_rebalance",
+          "executionState": "wallet_required",
+          "executionEligibility": "preview_only",
+          "surfaceTruth": "preview",
+          "blockers": [
+            "Funding destination is not ready yet."
+          ],
+          "warnings": [],
+          "automationTruth": {
+            "operatorManualRequired": true,
+            "autonomousExecutionProven": false,
+            "providerTriggeredProven": false,
+            "supportedTriggerSources": [
+              "operator_manual",
+              "scheduled_cron"
+            ],
+            "notes": [
+              "Operator confirmation remains required before any rebalance execution claim.",
+              "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+              "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
+              "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist."
+            ]
+          },
+          "nextAction": {
+            "title": "Create activation baseline",
+            "detail": "No live activation snapshot exists for this slot yet, so rebalance orchestration stays preview-only.",
+            "status": "preview_only"
+          },
+          "createdAt": "2026-04-01T16:34:38.591Z",
+          "updatedAt": "2026-04-01T16:34:38.591Z"
+        },
+        "activitySummary": {
+          "activationCount": 0,
+          "eventCount": 0,
+          "latestActivationId": null,
+          "latestActivationStatus": null,
+          "latestEventId": null,
+          "latestEventType": null,
+          "latestEventAt": null,
+          "nextAction": {
+            "title": "Create activation baseline",
+            "detail": "No live activation snapshot exists for this slot yet, so rebalance orchestration stays preview-only.",
+            "status": "preview_only"
+          }
+        }
+      }
+    }
+  },
+  "activity": {
+    "error": "Privy auth verification requires PRIVY_APP_ID, PRIVY_APP_SECRET, and PRIVY_JWKS_URL.",
+    "details": null
+  }
+}

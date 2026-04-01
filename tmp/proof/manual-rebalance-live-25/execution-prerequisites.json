@@ -1,0 +1,44 @@
+{
+  "activationBaseline": {
+    "activationId": "activation_baseline_2026-04-01T16-44-49-446Z",
+    "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+    "status": "ready",
+    "executionState": "ready",
+    "executionEligibility": "executable"
+  },
+  "rebalancePath": {
+    "scheduledState": "scheduled",
+    "reviewState": "awaiting_operator",
+    "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+    "triggerSource": "operator_manual"
+  },
+  "currentActivation": {
+    "activationId": "act_fbe91daa-ae11-4fe8-859d-702b5a2ef926",
+    "status": "ready",
+    "surfaceTruth": "live",
+    "executionState": "ready",
+    "executionEligibility": "executable"
+  },
+  "authOwnership": {
+    "mode": "local_jwks_harness",
+    "ownerUserId": "did:privy:manual_rebalance_proof",
+    "providerId": "privy",
+    "walletAddress": "0x1111111111111111111111111111111111111111",
+    "smartWalletAddress": "0x2222222222222222222222222222222222222222",
+    "livePrivyEnvPresent": false
+  },
+  "quoteability": {
+    "initialExecutionRequestState": "requested",
+    "latestExecutionRequestState": "blocked",
+    "legStates": {
+      "pending": 4,
+      "awaitingApproval": 1,
+      "blocked": 1,
+      "failed": 0,
+      "confirmed": 0,
+      "submitted": 0,
+      "deferred": 1
+    }
+  }
+}

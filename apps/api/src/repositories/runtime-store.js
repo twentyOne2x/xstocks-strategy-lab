@@ -4,7 +4,7 @@ import { readJsonFile, writeJsonFile } from "../json.js";
 
 function createDefaultState(now) {
   return {
-    schemaVersion: "2026-04-02.runtime-store.v10",
+    schemaVersion: "2026-04-01.runtime-store.v9",
     meta: {
       createdAt: now(),
       updatedAt: now(),
@@ -12,8 +12,8 @@ function createDefaultState(now) {
     activations: [],
     activityEvents: [],
     funnelEvents: [],
-    providerReceipts: [],
     rebalances: [],
+    providerEventReceipts: [],
     executionRequests: [],
     autoresearchRuntime: {
       runtimeId: "strategy_lab_regular_autoresearch_v1",
@@ -68,6 +68,17 @@ function normalizeEthereumAddress(value) {
     : null;
 }
 
+function normalizeSha256HexDigest(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return /^0x([A-Fa-f0-9]{64})$/u.test(normalized)
+    ? normalized.toLowerCase()
+    : null;
+}
+
 function normalizeAuthenticatedOwner(owner) {
   if (!owner || typeof owner !== "object") {
     return null;
@@ -105,11 +116,8 @@ function normalizeActivation(activation) {
     manifestId: activation.manifestId ?? activation.manifest_id,
     slotId: activation.slotId ?? activation.slot_id,
     recommendationId: activation.recommendationId ?? activation.recommendation_id,
-    activationManifestRef: firstDefined(
-      activation.activationManifestRef,
-      activation.activation_manifest_ref,
-      null,
-    ),
+    activationManifestRef:
+      activation.activationManifestRef ?? activation.activation_manifest_ref,
     requestedNotionalUsd:
       activation.requestedNotionalUsd ?? activation.requested_notional_usd,
     surfaceTruth: activation.surfaceTruth ?? activation.surface_truth,
@@ -283,11 +291,8 @@ function normalizeRebalance(rebalance, index, now) {
       `rebalance_${index}`,
     slotId: rebalance.slotId ?? rebalance.slot_id,
     chain: rebalance.chain ?? "ethereum",
-    activationManifestRef: firstDefined(
-      rebalance.activationManifestRef,
-      rebalance.activation_manifest_ref,
-      null,
-    ),
+    activationManifestRef:
+      rebalance.activationManifestRef ?? rebalance.activation_manifest_ref,
     targetManifestId,
     baselineActivationId: firstDefined(
       rebalance.baselineActivationId,
@@ -335,34 +340,6 @@ function normalizeRebalance(rebalance, index, now) {
       "blocked",
     surfaceTruth:
       rebalance.surfaceTruth ?? rebalance.surface_truth ?? "blocked",
-    providerReceiptId: normalizeNonEmptyString(
-      firstDefined(
-        rebalance.providerReceiptId,
-        rebalance.provider_receipt_id,
-        null,
-      ),
-    ),
-    executionRequestId: normalizeNonEmptyString(
-      firstDefined(
-        rebalance.executionRequestId,
-        rebalance.execution_request_id,
-        null,
-      ),
-    ),
-    executionTriggerSource: normalizeNonEmptyString(
-      firstDefined(
-        rebalance.executionTriggerSource,
-        rebalance.execution_trigger_source,
-        null,
-      ),
-    ),
-    executionRequestState: normalizeNonEmptyString(
-      firstDefined(
-        rebalance.executionRequestState,
-        rebalance.execution_request_state,
-        null,
-      ),
-    ),
     blockers: (rebalance.blockers ?? []).map((value) => String(value)),
     warnings: (rebalance.warnings ?? []).map((value) => String(value)),
     automationTruth: normalizeAutomationTruth(
@@ -381,212 +358,82 @@ function normalizeRebalance(rebalance, index, now) {
   };
 }
 
-function normalizeProviderJwtSummary(jwt) {
-  if (!jwt || typeof jwt !== "object") {
-    return null;
-  }
-
-  const audience = Array.isArray(jwt.audience ?? jwt.aud)
-    ? jwt.audience ?? jwt.aud
-    : typeof (jwt.audience ?? jwt.aud) === "string"
-      ? [jwt.audience ?? jwt.aud]
-      : [];
-
-  return {
-    alg: normalizeNonEmptyString(jwt.alg),
-    kid: normalizeNonEmptyString(jwt.kid),
-    issuer: normalizeEthereumAddress(firstDefined(jwt.issuer, jwt.iss, null)),
-    subject: normalizeNonEmptyString(firstDefined(jwt.subject, jwt.sub, null)),
-    audience: audience.map((value) => String(value)),
-    jwtId: normalizeNonEmptyString(firstDefined(jwt.jwtId, jwt.jwt_id, jwt.jti, null)),
-    issuedAt: firstDefined(jwt.issuedAt, jwt.issued_at, null),
-    expiresAt: firstDefined(jwt.expiresAt, jwt.expires_at, null),
-    notBefore: firstDefined(jwt.notBefore, jwt.not_before, null),
-    digest: normalizeNonEmptyString(firstDefined(jwt.digest, jwt.requestDigest, null)),
-  };
-}
-
-function normalizeProviderReceipt(receipt, index, now) {
+function normalizeProviderEventReceipt(receipt, index, now) {
   if (!receipt || typeof receipt !== "object") {
     return receipt;
   }
 
+  const decision = firstDefined(receipt.decision, "rejected");
+
   return {
-    version: receipt.version ?? "1",
     receiptId:
       receipt.receiptId ??
       receipt.receipt_id ??
-      `provider_receipt_${index + 1}`,
-    decision: receipt.decision ?? "rejected",
-    statusCode: Number(firstDefined(receipt.statusCode, receipt.status_code, 500)),
-    providerId: normalizeNonEmptyString(firstDefined(receipt.providerId, receipt.provider_id, null)),
-    deliveryId: normalizeNonEmptyString(firstDefined(receipt.deliveryId, receipt.delivery_id, null)),
-    eventId: normalizeNonEmptyString(firstDefined(receipt.eventId, receipt.event_id, null)),
-    triggerSource:
-      receipt.triggerSource ?? receipt.trigger_source ?? "provider_triggered",
-    routePath:
-      receipt.routePath ?? receipt.route_path ?? "/api/internal/rebalances/provider-events",
-    receivedAt: firstDefined(receipt.receivedAt, receipt.received_at, now()),
-    processedAt: firstDefined(receipt.processedAt, receipt.processed_at, now()),
-    requestDigest: normalizeNonEmptyString(firstDefined(receipt.requestDigest, receipt.request_digest, null)),
-    rawBodyDigest:
-      receipt.rawBodyDigest ??
-      receipt.raw_body_digest ??
-      "sha256:0000000000000000000000000000000000000000000000000000000000000000",
-    signerAddress: normalizeEthereumAddress(
-      firstDefined(receipt.signerAddress, receipt.signer_address, null),
+      `provider_evt_rcpt_${index + 1}`,
+    receivedAt: receipt.receivedAt ?? receipt.received_at ?? now(),
+    providerId: normalizeNonEmptyString(
+      firstDefined(receipt.providerId, receipt.provider_id, "chainlink_cre"),
     ),
-    reasonCodes: (receipt.reasonCodes ?? receipt.reason_codes ?? []).map((value) =>
-      String(value)
+    providerEventId: normalizeNonEmptyString(
+      firstDefined(receipt.providerEventId, receipt.provider_event_id, null),
     ),
-    reasonDetail:
-      receipt.reasonDetail ?? receipt.reason_detail ?? "Provider receipt recorded.",
-    duplicateOfReceiptId: normalizeNonEmptyString(
-      firstDefined(
-        receipt.duplicateOfReceiptId,
-        receipt.duplicate_of_receipt_id,
-        null,
-      ),
+    workflowId: normalizeNonEmptyString(
+      firstDefined(receipt.workflowId, receipt.workflow_id, null),
     ),
-    stateChanged: Boolean(
-      firstDefined(receipt.stateChanged, receipt.state_changed, false),
+    workflowExecutionId: normalizeNonEmptyString(
+      firstDefined(receipt.workflowExecutionId, receipt.workflow_execution_id, null),
     ),
-    rebalanceId: normalizeNonEmptyString(firstDefined(receipt.rebalanceId, receipt.rebalance_id, null)),
-    rebalanceState: normalizeNonEmptyString(firstDefined(receipt.rebalanceState, receipt.rebalance_state, null)),
+    slotId: normalizeNonEmptyString(
+      firstDefined(receipt.slotId, receipt.slot_id, null),
+    ),
+    chain: normalizeNonEmptyString(firstDefined(receipt.chain, null)),
     targetManifestId: normalizeNonEmptyString(
       firstDefined(receipt.targetManifestId, receipt.target_manifest_id, null),
     ),
-    baselineManifestId: normalizeNonEmptyString(
-      firstDefined(receipt.baselineManifestId, receipt.baseline_manifest_id, null),
+    dedupeKey: normalizeNonEmptyString(
+      firstDefined(receipt.dedupeKey, receipt.dedupe_key, null),
     ),
-    executionRequestId: normalizeNonEmptyString(
-      firstDefined(receipt.executionRequestId, receipt.execution_request_id, null),
+    digest: normalizeSha256HexDigest(
+      firstDefined(receipt.digest, null),
     ),
-    executionTriggerSource: normalizeNonEmptyString(
-      firstDefined(
-        receipt.executionTriggerSource,
-        receipt.execution_trigger_source,
-        null,
-      ),
+    signerAddress: normalizeEthereumAddress(
+      firstDefined(receipt.signerAddress, receipt.signer_address, null),
     ),
-    executionState: normalizeNonEmptyString(
-      firstDefined(receipt.executionState, receipt.execution_state, null),
+    issuer: normalizeNonEmptyString(
+      firstDefined(receipt.issuer, receipt.iss, null),
     ),
-    rebalanceBlockers: (receipt.rebalanceBlockers ?? receipt.rebalance_blockers ?? []).map(
-      (value) => String(value),
+    jti: normalizeNonEmptyString(firstDefined(receipt.jti, null)),
+    tokenIssuedAt: firstDefined(
+      receipt.tokenIssuedAt,
+      receipt.token_issued_at,
+      null,
     ),
-    request: receipt.request ?? null,
-    jwt: normalizeProviderJwtSummary(receipt.jwt),
-  };
-}
-
-function normalizeExecutionRequestLinkage(linkage) {
-  if (!linkage || typeof linkage !== "object") {
-    return null;
-  }
-
-  return {
-    rebalanceId: normalizeNonEmptyString(
-      firstDefined(linkage.rebalanceId, linkage.rebalance_id, null),
+    tokenExpiresAt: firstDefined(
+      receipt.tokenExpiresAt,
+      receipt.token_expires_at,
+      null,
     ),
-    providerReceiptId: normalizeNonEmptyString(
-      firstDefined(linkage.providerReceiptId, linkage.provider_receipt_id, null),
+    decision:
+      decision === "accepted" ||
+      decision === "rejected" ||
+      decision === "duplicate"
+        ? decision
+        : "rejected",
+    errorCode: normalizeNonEmptyString(
+      firstDefined(receipt.errorCode, receipt.error_code, null),
     ),
-    providerDeliveryId: normalizeNonEmptyString(
-      firstDefined(
-        linkage.providerDeliveryId,
-        linkage.provider_delivery_id,
-        null,
-      ),
+    reason:
+      normalizeNonEmptyString(firstDefined(receipt.reason, null)) ??
+      "Provider event receipt recorded.",
+    duplicateOfReceiptId: normalizeNonEmptyString(
+      firstDefined(receipt.duplicateOfReceiptId, receipt.duplicate_of_receipt_id, null),
     ),
-    providerEventId: normalizeNonEmptyString(
-      firstDefined(linkage.providerEventId, linkage.provider_event_id, null),
-    ),
-  };
-}
-
-function normalizeExecutionLegArtifactLinkage(linkage) {
-  if (!linkage || typeof linkage !== "object") {
-    return null;
-  }
-
-  const executionRequestId = normalizeNonEmptyString(
-    firstDefined(linkage.executionRequestId, linkage.execution_request_id, null),
-  );
-
-  if (!executionRequestId) {
-    return null;
-  }
-
-  return {
-    executionRequestId,
-    ...(normalizeExecutionRequestLinkage(linkage) ?? {
-      rebalanceId: null,
-      providerReceiptId: null,
-      providerDeliveryId: null,
-      providerEventId: null,
-    }),
   };
 }
 
 function normalizeExecutionQuote(quote) {
   if (!quote || typeof quote !== "object") {
     return null;
-  }
-
-  if (
-    quote.kind === "oneinch_fusion" ||
-    (Object.hasOwn(quote, "fromTokenAmount") &&
-      Object.hasOwn(quote, "toTokenAmount") &&
-      Object.hasOwn(quote, "recommendedPreset"))
-  ) {
-    return {
-      kind: "oneinch_fusion",
-      quoteId: firstDefined(quote.quoteId, quote.quote_id, quote.id, null),
-      quotedAt:
-        quote.quotedAt ??
-        quote.quoted_at ??
-        quote.requestedAt ??
-        quote.requested_at ??
-        quote.createdAt,
-      fromTokenAddress:
-        quote.fromTokenAddress ?? quote.from_token_address ?? null,
-      toTokenAddress: quote.toTokenAddress ?? quote.to_token_address ?? null,
-      walletAddress: quote.walletAddress ?? quote.wallet_address ?? null,
-      fromTokenAmount:
-        quote.fromTokenAmount ?? quote.from_token_amount ?? null,
-      toTokenAmount: quote.toTokenAmount ?? quote.to_token_amount ?? null,
-      settlementAddress:
-        quote.settlementAddress ?? quote.settlement_address ?? null,
-      recommendedPreset:
-        quote.recommendedPreset ??
-        quote.recommended_preset ??
-        quote.preset ??
-        null,
-      priceImpactPercent: firstDefined(
-        quote.priceImpactPercent,
-        quote.price_impact_percent,
-        null,
-      ),
-      orderHash: quote.orderHash ?? quote.order_hash ?? null,
-      signerAddress: quote.signerAddress ?? quote.signer_address ?? null,
-      receiver: quote.receiver ?? null,
-      fee: quote.fee ?? {
-        receiver: quote.feeReceiver ?? quote.fee_receiver ?? null,
-        bps: quote.feeBps ?? quote.fee_bps ?? 0,
-        whitelistDiscountPercent:
-          quote.whitelistDiscountPercent ??
-          quote.whitelist_discount_percent ??
-          0,
-      },
-      submissionSupported: Boolean(
-        firstDefined(
-          quote.submissionSupported,
-          quote.submission_supported,
-          false,
-        ),
-      ),
-    };
   }
 
   if (
@@ -822,9 +669,6 @@ function normalizeExecutionLeg(leg, index, now) {
     venueStatus: normalizeExecutionVenueStatus(leg.venueStatus, now),
     receipt: normalizeExecutionReceipt(leg.receipt),
     trade: normalizeExecutionTrade(leg.trade, now),
-    linkage: normalizeExecutionLegArtifactLinkage(
-      firstDefined(leg.linkage, leg.artifactLinkage, leg.artifact_linkage, null),
-    ),
   };
 }
 
@@ -842,15 +686,6 @@ function normalizeExecutionRequest(request, index, now) {
     owner: normalizeAuthenticatedOwner(
       request.owner ?? request.authenticated_owner,
     ),
-    rebalanceId: normalizeNonEmptyString(
-      firstDefined(
-        request.rebalanceId,
-        request.rebalance_id,
-        request.linkage?.rebalanceId,
-        request.linkage?.rebalance_id,
-        null,
-      ),
-    ),
     activationId: request.activationId ?? request.activation_id,
     manifestId: request.manifestId ?? request.manifest_id,
     slotId: request.slotId ?? request.slot_id,
@@ -860,11 +695,8 @@ function normalizeExecutionRequest(request, index, now) {
     triggerSource:
       request.triggerSource ?? request.trigger_source ?? "operator_manual",
     adapterId: request.adapterId ?? request.adapter_id ?? "unknown",
-    activationManifestRef: firstDefined(
-      request.activationManifestRef,
-      request.activation_manifest_ref,
-      null,
-    ),
+    activationManifestRef:
+      request.activationManifestRef ?? request.activation_manifest_ref,
     requestedNotionalUsd:
       request.requestedNotionalUsd ?? request.requested_notional_usd ?? 0,
     fundingAssetSymbol:
@@ -879,14 +711,6 @@ function normalizeExecutionRequest(request, index, now) {
     warnings: (request.warnings ?? []).map((value) => String(value)),
     legs: (request.legs ?? []).map((leg, legIndex) =>
       normalizeExecutionLeg(leg, legIndex, now),
-    ),
-    linkage: normalizeExecutionRequestLinkage(
-      firstDefined(
-        request.linkage,
-        request.executionLinkage,
-        request.execution_linkage,
-        null,
-      ),
     ),
     createdAt: request.createdAt ?? request.created_at ?? now(),
     updatedAt: request.updatedAt ?? request.updated_at ?? now(),
@@ -1237,14 +1061,14 @@ function normalizeState(state, now) {
     funnelEvents: (state.funnelEvents ?? state.funnel_events ?? []).map(
       (event, index) => normalizeFunnelEvent(event, index, now),
     ),
-    providerReceipts: (
-      state.providerReceipts ??
-      state.provider_receipts ??
-      []
-    ).map((receipt, index) => normalizeProviderReceipt(receipt, index, now)),
     rebalances: (state.rebalances ?? []).map((rebalance, index) =>
       normalizeRebalance(rebalance, index, now),
     ),
+    providerEventReceipts: (
+      state.providerEventReceipts ??
+      state.provider_event_receipts ??
+      []
+    ).map((receipt, index) => normalizeProviderEventReceipt(receipt, index, now)),
     executionRequests: (
       state.executionRequests ??
       state.execution_requests ??
@@ -1386,128 +1210,6 @@ export function createRuntimeStore({
       const state = await readState();
       return state.funnelEvents.some((event) => event.subjectId === subjectId);
     },
-    async appendProviderReceipt({ receipt }) {
-      const state = await readState();
-      const normalizedReceipt = normalizeProviderReceipt(receipt, 0, now);
-      state.providerReceipts.unshift(normalizedReceipt);
-      state.providerReceipts.sort((left, right) =>
-        String(right.receivedAt).localeCompare(String(left.receivedAt)),
-      );
-      await writeState(state);
-      return normalizedReceipt;
-    },
-    async upsertProviderReceipt({ receipt }) {
-      const state = await readState();
-      const normalizedReceipt = normalizeProviderReceipt(receipt, 0, now);
-      const existingIndex = state.providerReceipts.findIndex(
-        (item) => item.receiptId === normalizedReceipt.receiptId,
-      );
-
-      if (existingIndex === -1) {
-        state.providerReceipts.unshift(normalizedReceipt);
-      } else {
-        state.providerReceipts.splice(existingIndex, 1, normalizedReceipt);
-      }
-
-      state.providerReceipts.sort((left, right) =>
-        String(right.receivedAt).localeCompare(String(left.receivedAt)),
-      );
-      await writeState(state);
-      return normalizedReceipt;
-    },
-    async listProviderReceipts({
-      providerId,
-      deliveryId,
-      rebalanceId,
-      decision,
-      signerAddress,
-      jwtId,
-      requestDigest,
-      limit = 100,
-    } = {}) {
-      const state = await readState();
-      let providerReceipts = [...state.providerReceipts];
-
-      if (providerId) {
-        providerReceipts = providerReceipts.filter(
-          (receipt) => receipt.providerId === providerId,
-        );
-      }
-
-      if (deliveryId) {
-        providerReceipts = providerReceipts.filter(
-          (receipt) => receipt.deliveryId === deliveryId,
-        );
-      }
-
-      if (rebalanceId) {
-        providerReceipts = providerReceipts.filter(
-          (receipt) => receipt.rebalanceId === rebalanceId,
-        );
-      }
-
-      if (decision) {
-        providerReceipts = providerReceipts.filter(
-          (receipt) => receipt.decision === decision,
-        );
-      }
-
-      if (signerAddress) {
-        const normalizedSignerAddress = normalizeEthereumAddress(signerAddress);
-        providerReceipts = providerReceipts.filter(
-          (receipt) => receipt.signerAddress === normalizedSignerAddress,
-        );
-      }
-
-      if (jwtId) {
-        providerReceipts = providerReceipts.filter(
-          (receipt) => receipt.jwt?.jwtId === jwtId,
-        );
-      }
-
-      if (requestDigest) {
-        providerReceipts = providerReceipts.filter(
-          (receipt) => receipt.requestDigest === requestDigest,
-        );
-      }
-
-      return providerReceipts.slice(0, limit);
-    },
-    async findProviderReceiptConflicts({
-      providerId,
-      deliveryId,
-      signerAddress,
-      jwtId,
-      requestDigest,
-    } = {}) {
-      const state = await readState();
-      const normalizedSignerAddress = normalizeEthereumAddress(signerAddress);
-
-      return {
-        delivery:
-          state.providerReceipts.find(
-            (receipt) =>
-              receipt.providerId === providerId &&
-              receipt.deliveryId === deliveryId,
-          ) ?? null,
-        jwtId:
-          !normalizedSignerAddress || !jwtId
-            ? null
-            : state.providerReceipts.find(
-              (receipt) =>
-                receipt.signerAddress === normalizedSignerAddress &&
-                receipt.jwt?.jwtId === jwtId,
-            ) ?? null,
-        requestDigest:
-          !normalizedSignerAddress || !requestDigest
-            ? null
-            : state.providerReceipts.find(
-              (receipt) =>
-                receipt.signerAddress === normalizedSignerAddress &&
-                receipt.requestDigest === requestDigest,
-            ) ?? null,
-      };
-    },
     async listActivity({
       activationId,
       manifestId,
@@ -1603,7 +1305,6 @@ export function createRuntimeStore({
     },
     async listExecutionRequests({
       executionRequestId,
-      rebalanceId,
       activationId,
       manifestId,
       slotId,
@@ -1622,12 +1323,6 @@ export function createRuntimeStore({
       if (executionRequestId) {
         executionRequests = executionRequests.filter(
           (request) => request.executionRequestId === executionRequestId,
-        );
-      }
-
-      if (rebalanceId) {
-        executionRequests = executionRequests.filter(
-          (request) => request.rebalanceId === rebalanceId,
         );
       }
 
@@ -1669,8 +1364,8 @@ export function createRuntimeStore({
         activations: [...state.activations],
         activityEvents: [...state.activityEvents],
         funnelEvents: [...state.funnelEvents],
-        providerReceipts: [...state.providerReceipts],
         executionRequests: [...state.executionRequests],
+        providerEventReceipts: [...state.providerEventReceipts],
         autoresearchRuntime: state.autoresearchRuntime,
         autoresearchRuns: [...state.autoresearchRuns],
       };
@@ -1840,6 +1535,62 @@ export function createRuntimeStore({
       );
       await writeState(state);
       return nextRebalance;
+    },
+    async recordProviderEventReceipt({ receipt }) {
+      const state = await readState();
+      const normalizedReceipt = normalizeProviderEventReceipt(receipt, 0, now);
+
+      state.providerEventReceipts.unshift(normalizedReceipt);
+      state.providerEventReceipts.sort((left, right) =>
+        right.receivedAt.localeCompare(left.receivedAt),
+      );
+      await writeState(state);
+      return normalizedReceipt;
+    },
+    async listProviderEventReceipts({
+      jti,
+      dedupeKey,
+      slotId,
+      decision,
+      limit = 50,
+    } = {}) {
+      const state = await readState();
+      let receipts = [...state.providerEventReceipts];
+
+      if (jti) {
+        receipts = receipts.filter((receipt) => receipt.jti === jti);
+      }
+
+      if (dedupeKey) {
+        receipts = receipts.filter((receipt) => receipt.dedupeKey === dedupeKey);
+      }
+
+      if (slotId) {
+        receipts = receipts.filter((receipt) => receipt.slotId === slotId);
+      }
+
+      if (decision) {
+        receipts = receipts.filter((receipt) => receipt.decision === decision);
+      }
+
+      return receipts.slice(0, limit);
+    },
+    async getProviderEventReceiptByJti({ jti } = {}) {
+      const [receipt] = await this.listProviderEventReceipts({
+        jti,
+        limit: 1,
+      });
+
+      return receipt ?? null;
+    },
+    async getAcceptedProviderEventReceiptByDedupeKey({ dedupeKey } = {}) {
+      const [receipt] = await this.listProviderEventReceipts({
+        dedupeKey,
+        decision: "accepted",
+        limit: 1,
+      });
+
+      return receipt ?? null;
     },
     async listRebalances({ slotId, manifestId, limit = 50 } = {}) {
       const state = await readState();

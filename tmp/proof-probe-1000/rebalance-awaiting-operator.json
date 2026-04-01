@@ -1,0 +1,90 @@
+{
+  "rebalanceId": "rebalance_onboarding_default_basket",
+  "slotId": "onboarding.default_basket",
+  "chain": "ethereum",
+  "activationManifestRef": {
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "slotId": "onboarding.default_basket",
+    "mode": "basket",
+    "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+  },
+  "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "baselineActivationId": "activation_baseline_2026-04-01T16-43-02-120Z",
+  "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+  "baselineManifestMatchesTarget": false,
+  "state": "awaiting_operator",
+  "runtimeOwner": "operator_manual",
+  "triggerSource": "operator_manual",
+  "summary": "Rebalance is awaiting operator confirmation.",
+  "rationale": "Operator opened manual rebalance proof review.",
+  "scheduledFor": null,
+  "allowedTransitions": [
+    "scheduled",
+    "executing",
+    "paused",
+    "failed"
+  ],
+  "recommendationState": "full_rebalance",
+  "executionState": "ready",
+  "executionEligibility": "executable",
+  "surfaceTruth": "live",
+  "blockers": [],
+  "warnings": [],
+  "automationTruth": {
+    "operatorManualRequired": true,
+    "autonomousExecutionProven": false,
+    "providerTriggeredProven": false,
+    "supportedTriggerSources": [
+      "operator_manual",
+      "scheduled_cron"
+    ],
+    "notes": [
+      "Operator confirmation remains required before any rebalance execution claim.",
+      "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+      "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
+      "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist."
+    ]
+  },
+  "nextAction": {
+    "title": "Approve or reject manual rebalance",
+    "detail": "The worker shell will not submit execution without an explicit operator-driven state transition.",
+    "status": "pending"
+  },
+  "createdAt": "2026-04-01T19:15:20.000Z",
+  "updatedAt": "2026-04-01T16:43:34.120Z",
+  "history": [
+    {
+      "transitionId": "rtr_d53558e0-0f9c-47af-9013-7066f4406a83",
+      "eventType": "transition:awaiting_operator",
+      "fromState": "scheduled",
+      "toState": "awaiting_operator",
+      "triggerSource": "operator_manual",
+      "summary": "Rebalance is awaiting operator confirmation.",
+      "rationale": "Operator opened manual rebalance proof review.",
+      "scheduledFor": null,
+      "occurredAt": "2026-04-01T16:43:34.120Z"
+    },
+    {
+      "transitionId": "rtr_a1a30b86-ce4d-4278-a329-95564b167c48",
+      "eventType": "evaluation",
+      "fromState": "blocked",
+      "toState": "scheduled",
+      "triggerSource": "scheduled_cron",
+      "summary": "Manual rebalance review has been scheduled.",
+      "rationale": "A cron-triggered worker evaluation queued a manual review for 2026-04-01T16:43:11.120Z.",
+      "scheduledFor": "2026-04-01T16:43:11.120Z",
+      "occurredAt": "2026-04-01T16:43:20.120Z"
+    },
+    {
+      "transitionId": "rtr_398ed42f-a9b6-47c9-92ad-efa54218f1a0",
+      "eventType": "evaluation",
+      "fromState": null,
+      "toState": "blocked",
+      "triggerSource": "scheduled_cron",
+      "summary": "Rebalance is blocked.",
+      "rationale": "NVDAx: Asset is not currently active for execution.",
+      "scheduledFor": null,
+      "occurredAt": "2026-04-01T19:15:20.000Z"
+    }
+  ]
+}

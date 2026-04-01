@@ -1,0 +1,169 @@
+{
+  "reached": false,
+  "state": "not_reached",
+  "reason": "basket_not_all_leg_quoteable",
+  "blockedLegs": [
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:1",
+      "assetSymbol": "NVDAx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": null,
+      "venueOrderId": null,
+      "venueStatus": null,
+      "quoteBuyToken": null,
+      "sellAmountBeforeFee": null,
+      "targetNotionalUsd": 4.5,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "The saved activation snapshot is not in a ready/executable state.",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:2",
+      "assetSymbol": "MSFTx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x63ad27614231767c8c489745b9145272de50d09b",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": null,
+      "venueOrderId": null,
+      "venueStatus": null,
+      "quoteBuyToken": null,
+      "sellAmountBeforeFee": null,
+      "targetNotionalUsd": 4.11,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "The saved activation snapshot is not in a ready/executable state.",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:3",
+      "assetSymbol": "AAPLx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": null,
+      "venueOrderId": null,
+      "venueStatus": null,
+      "quoteBuyToken": null,
+      "sellAmountBeforeFee": null,
+      "targetNotionalUsd": 3.94,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "The saved activation snapshot is not in a ready/executable state.",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:4",
+      "assetSymbol": "METAx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": null,
+      "venueOrderId": null,
+      "venueStatus": null,
+      "quoteBuyToken": null,
+      "sellAmountBeforeFee": null,
+      "targetNotionalUsd": 3.85,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "The saved activation snapshot is not in a ready/executable state.",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:5",
+      "assetSymbol": "AMZNx",
+      "state": "blocked",
+      "receivingTokenAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": null,
+      "venueOrderId": null,
+      "venueStatus": null,
+      "quoteBuyToken": null,
+      "sellAmountBeforeFee": null,
+      "targetNotionalUsd": 3.72,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "The saved activation snapshot is not in a ready/executable state.",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ]
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:6",
+      "assetSymbol": "GOOGLx",
+      "state": "blocked",
+      "receivingTokenAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+      "quoteId": null,
+      "quoteVerified": null,
+      "approvalStatus": null,
+      "signerAddress": null,
+      "receiverAddress": null,
+      "venueOrderId": null,
+      "venueStatus": null,
+      "quoteBuyToken": null,
+      "sellAmountBeforeFee": null,
+      "targetNotionalUsd": 3.63,
+      "txHash": null,
+      "receiptStatus": null,
+      "firstBlocker": "The saved activation snapshot is not in a ready/executable state.",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ]
+    }
+  ]
+}

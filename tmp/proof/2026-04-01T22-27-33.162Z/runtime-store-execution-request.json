@@ -1,0 +1,266 @@
+{
+  "version": "1",
+  "executionRequestId": "execreq_3f278e58-e7d9-40c5-9627-7ff2aa640550",
+  "owner": {
+    "providerId": "privy",
+    "appId": "cmnfzikzk02ey0ckyx8m14qv2",
+    "userId": "did:privy:cmng4u99003bf0ckye9oqgopk",
+    "sessionId": "cmng4u96303be0ckywgn8rgqh",
+    "issuer": "privy.io",
+    "authenticatedAt": "2026-04-01T22:07:10.000Z"
+  },
+  "activationId": "act_b3171f06-3976-47d2-88db-7e3d86143c49",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "slotId": "onboarding.default_basket",
+  "chain": "ethereum",
+  "mode": "basket",
+  "runtimeOwner": "operator_manual",
+  "triggerSource": "operator_manual",
+  "adapterId": "venue_router",
+  "activationManifestRef": {
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "slotId": "onboarding.default_basket",
+    "mode": "basket",
+    "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+  },
+  "requestedNotionalUsd": 25,
+  "fundingAssetSymbol": "USDC",
+  "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+  "state": "blocked",
+  "blockers": [
+    "The saved activation snapshot is not in a ready/executable state."
+  ],
+  "warnings": [
+    "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+    "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+    "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+    "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+    "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+    "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+    "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+    "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+    "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+    "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+    "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+    "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+    "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+    "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+  ],
+  "legs": [
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:1",
+      "sequence": 1,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "NVDAx",
+      "venueId": "cow_swap.ethereum",
+      "adapterId": "venue_router",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 18,
+      "targetNotionalUsd": 4.5,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x93e62845c1dd5822ebc807ab71a5fb750decd15a",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "blocked",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:2",
+      "sequence": 2,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "MSFTx",
+      "venueId": "cow_swap.ethereum",
+      "adapterId": "venue_router",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 16.43,
+      "targetNotionalUsd": 4.11,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x63ad27614231767c8c489745b9145272de50d09b",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "blocked",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:3",
+      "sequence": 3,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "AAPLx",
+      "venueId": "cow_swap.ethereum",
+      "adapterId": "venue_router",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 15.74,
+      "targetNotionalUsd": 3.94,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x5aa7649fdbda47de64a07ac81d64b682af9c0724",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "blocked",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:4",
+      "sequence": 4,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "METAx",
+      "venueId": "cow_swap.ethereum",
+      "adapterId": "venue_router",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 15.4,
+      "targetNotionalUsd": 3.85,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x4e41a262caa93c6575d336e0a4eb79f3c67caa06",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "blocked",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:5",
+      "sequence": 5,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "AMZNx",
+      "venueId": "cow_swap.ethereum",
+      "adapterId": "venue_router",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 14.89,
+      "targetNotionalUsd": 3.72,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0xac85d37acbadca37545e21ab0fb991bce8c1187c",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "blocked",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:6",
+      "sequence": 6,
+      "sleeve": "core_xstocks",
+      "assetSymbol": "GOOGLx",
+      "venueId": "cow_swap.ethereum",
+      "adapterId": "venue_router",
+      "requiredRouteId": "cow_swap.ethereum",
+      "targetWeightPct": 14.54,
+      "targetNotionalUsd": 3.63,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "paymentTokenDecimals": 6,
+      "receivingTokenAddress": "0x1630f08370917e79df0b7572395a5e907508bbbc",
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "blocked",
+      "blockers": [
+        "The saved activation snapshot is not in a ready/executable state."
+      ],
+      "warnings": [
+        "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+        "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+        "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:7",
+      "sequence": 7,
+      "sleeve": "yield_buffer",
+      "assetSymbol": "AUSD",
+      "venueId": "flowdesk_ausd_rwa_strategy",
+      "adapterId": "flowdesk_ausd_rwa_strategy",
+      "requiredRouteId": "flowdesk.ausd-rwa-strategy",
+      "targetWeightPct": 5,
+      "targetNotionalUsd": 1.25,
+      "paymentAssetSymbol": "USDC",
+      "paymentTokenAddress": null,
+      "paymentTokenDecimals": null,
+      "receivingTokenAddress": null,
+      "receivingTokenDecimals": null,
+      "settlementAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "state": "deferred",
+      "blockers": [],
+      "warnings": [
+        "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+      ],
+      "quote": null,
+      "approval": null,
+      "venueStatus": null,
+      "receipt": null,
+      "trade": null
+    }
+  ],
+  "createdAt": "2026-04-01T22:27:46.217Z",
+  "updatedAt": "2026-04-01T22:27:46.217Z"
+}

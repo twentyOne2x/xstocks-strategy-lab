@@ -1,0 +1,9 @@
+{
+  "prompt": "What matters most?",
+  "helper": "Strongest signal for which portfolio fits you.",
+  "options": [
+    "Broad exposureWide basket across tokenized equities.",
+    "A specific themeLean into a sector like AI or tech leaders.",
+    "Highest convictionConcentrate in the strongest names."
+  ]
+}

@@ -2,32 +2,20 @@ import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  createCowSwapApiClient,
-  createOneInchFusionApiClient,
-} from "../../../packages/xstocks/dist/index.js";
+import { createCowSwapApiClient } from "../../../packages/xstocks/dist/index.js";
 import { API_ENDPOINT_CONTRACTS, API_ENDPOINTS } from "./contracts.js";
 import { HttpError } from "./errors.js";
-import { readJsonRequestBody, readTextRequestBody, sendJson } from "./json.js";
+import { readJsonRequestBody, sendJson } from "./json.js";
 import { createLiveStateRepository } from "./repositories/live-state-repository.js";
 import { createResearchManifestRepository } from "./repositories/research-manifest-repository.js";
 import { createRuntimeStore } from "./repositories/runtime-store.js";
 import { createApiService } from "./services/api-service.js";
 import { createEthereumRpcClient } from "./services/ethereum-rpc.js";
-import { createProviderRebalanceAuthService } from "./services/provider-rebalance-auth.js";
 import { createPrivyAuthService } from "./services/privy-auth.js";
 
 const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(CURRENT_DIR, "..");
 const REPO_ROOT = resolve(APP_ROOT, "..", "..");
-
-function parseJsonEnv(value) {
-  if (typeof value !== "string" || value.trim().length === 0) {
-    return null;
-  }
-
-  return JSON.parse(value);
-}
 
 function createDefaultConfig() {
   return {
@@ -39,12 +27,7 @@ function createDefaultConfig() {
     storePath: resolve(APP_ROOT, "data/runtime-store.json"),
     xstocksBaseUrl:
       process.env.XSTOCKS_API_BASE_URL ?? "https://api.xstocks.fi/api/v2",
-    backedApiBaseUrl:
-      process.env.BACKED_API_BASE_URL ?? "https://api.backed.fi/api/v1",
     cowApiBaseUrl: process.env.COW_API_BASE_URL ?? undefined,
-    oneInchFusionApiBaseUrl:
-      process.env.ONEINCH_FUSION_API_BASE_URL ?? undefined,
-    oneInchApiKey: process.env.ONEINCH_API_KEY ?? null,
     ethereumRpcUrl: process.env.ETHEREUM_RPC_URL ?? null,
     privyAppId:
       process.env.PRIVY_APP_ID ?? process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? null,
@@ -53,10 +36,10 @@ function createDefaultConfig() {
     privyApiBaseUrl: process.env.PRIVY_API_BASE_URL ?? undefined,
     reportingToken: process.env.XSTOCKS_REPORTING_TOKEN ?? null,
     autoresearchProofToken: process.env.AUTORESEARCH_PROOF_TOKEN ?? null,
-    providerRebalanceJwtAudience:
-      process.env.XSTOCKS_PROVIDER_REBALANCE_JWT_AUDIENCE ?? null,
-    providerRebalanceSignerAllowlist:
-      parseJsonEnv(process.env.XSTOCKS_PROVIDER_REBALANCE_SIGNER_ALLOWLIST_JSON),
+    chainlinkCreSignerAllowlist:
+      process.env.CHAINLINK_CRE_SIGNER_ALLOWLIST ?? "",
+    chainlinkCreWorkflowAllowlist:
+      process.env.CHAINLINK_CRE_WORKFLOW_ALLOWLIST ?? "",
   };
 }
 
@@ -77,7 +60,6 @@ export function createApiRuntimeService(overrides = {}) {
       overrides.liveStateRepository ??
       createLiveStateRepository({
         baseUrl: config.xstocksBaseUrl,
-        backedBaseUrl: config.backedApiBaseUrl,
         fetchImpl: overrides.fetchImpl,
       }),
     runtimeStore:
@@ -91,15 +73,6 @@ export function createApiRuntimeService(overrides = {}) {
         baseUrl: config.cowApiBaseUrl,
         fetch: overrides.fetchImpl,
       }),
-    oneInchExecutionClient:
-      overrides.oneInchExecutionClient ??
-      (config.oneInchApiKey
-        ? createOneInchFusionApiClient({
-            authKey: config.oneInchApiKey,
-            baseUrl: config.oneInchFusionApiBaseUrl,
-            fetch: overrides.fetchImpl,
-          })
-        : null),
     ethereumRpcClient:
       overrides.ethereumRpcClient ??
       createEthereumRpcClient({
@@ -115,17 +88,10 @@ export function createApiRuntimeService(overrides = {}) {
         apiBaseUrl: config.privyApiBaseUrl,
         fetchImpl: overrides.privyFetchImpl ?? overrides.fetchImpl,
       }),
-    providerRebalanceAuthService:
-      overrides.providerRebalanceAuthService ??
-      createProviderRebalanceAuthService({
-        audience: config.providerRebalanceJwtAudience,
-        signerAllowlist: config.providerRebalanceSignerAllowlist,
-        now:
-          overrides.authNow ??
-          (() => Date.now()),
-      }),
     reportingToken: config.reportingToken,
     autoresearchProofToken: config.autoresearchProofToken,
+    chainlinkCreSignerAllowlist: config.chainlinkCreSignerAllowlist,
+    chainlinkCreWorkflowAllowlist: config.chainlinkCreWorkflowAllowlist,
     now: overrides.now,
   });
 }
@@ -302,20 +268,6 @@ export function createApiServer(overrides = {}) {
       }
 
       if (
-        request.method === "POST" &&
-        url.pathname === API_ENDPOINTS.PROVIDER_REBALANCE_EVENTS
-      ) {
-        const rawBody = await readTextRequestBody(request);
-        const result = await service.ingestProviderRebalanceEvent({
-          request,
-          routePath: url.pathname,
-          rawBody,
-        });
-        sendJson(response, result.statusCode, { data: result.payload });
-        return;
-      }
-
-      if (
         request.method === "GET" &&
         url.pathname === API_ENDPOINTS.AUTORESEARCH_RUNTIME
       ) {
@@ -335,6 +287,18 @@ export function createApiServer(overrides = {}) {
           required: true,
         });
         const result = await service.recordAutoresearchRuntimeReceipt(body);
+        sendJson(response, 200, { data: result });
+        return;
+      }
+
+      if (
+        request.method === "POST" &&
+        url.pathname === API_ENDPOINTS.CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW
+      ) {
+        const body = await readJsonRequestBody(request);
+        const result = await service.recordProviderTriggeredRebalanceReview(body, {
+          request,
+        });
         sendJson(response, 200, { data: result });
         return;
       }

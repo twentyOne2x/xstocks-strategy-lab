@@ -1,0 +1,27 @@
+{
+  "slotId": "onboarding.default_basket",
+  "currentManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+  "requestedNotionalUsd": 75,
+  "proofMode": "local_jwks_harness",
+  "artifactDir": "./tmp/proof-probe-75",
+  "boundaries": {
+    "reviewOpened": true,
+    "executionRequestCreated": false,
+    "quoteReady": false,
+    "awaitingApproval": false,
+    "signedSubmission": false,
+    "receiptConfirmed": false
+  },
+  "liveProof": {
+    "xstocksBoundaryLoaded": true,
+    "quoteAttempts": 0,
+    "quoteIds": [],
+    "orderUids": [],
+    "txHashes": []
+  },
+  "blocker": {
+    "code": "missing_live_auth_context",
+    "detail": "Privy access token was issued in the future."
+  }
+}

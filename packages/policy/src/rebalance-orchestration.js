@@ -43,10 +43,6 @@ const HOLD_STATES = new Set([
   REBALANCE_ORCHESTRATION_STATE.EXECUTING,
   REBALANCE_ORCHESTRATION_STATE.PAUSED,
 ]);
-const SUPPORTED_TRIGGER_SOURCES = Object.freeze([
-  REBALANCE_TRIGGER_SOURCE.OPERATOR_MANUAL,
-  REBALANCE_TRIGGER_SOURCE.SCHEDULED_CRON,
-]);
 const POLICY_EVENT_BLOCKERS = Object.freeze([
   "Promoted-manifest drift can recommend a rebalance, but no autonomous policy-event emitter is implemented in this repo.",
 ]);
@@ -137,26 +133,46 @@ function createRebalanceId(slotId) {
   return `rebalance_${normalizedSlotId}`;
 }
 
-function buildAutomationTruth({ providerTriggeredProven = false } = {}) {
-  const supportedTriggerSources = [...SUPPORTED_TRIGGER_SOURCES];
+function buildSupportedTriggerSources(providerTriggeredProven) {
+  return providerTriggeredProven
+    ? [
+        REBALANCE_TRIGGER_SOURCE.OPERATOR_MANUAL,
+        REBALANCE_TRIGGER_SOURCE.SCHEDULED_CRON,
+        REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED,
+      ]
+    : [
+        REBALANCE_TRIGGER_SOURCE.OPERATOR_MANUAL,
+        REBALANCE_TRIGGER_SOURCE.SCHEDULED_CRON,
+      ];
+}
 
-  if (providerTriggeredProven) {
-    supportedTriggerSources.push(REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED);
-  }
+function buildAutomationTruth({
+  latestRebalance = null,
+  providerTriggeredProven = false,
+} = {}) {
+  const existingAutomationTruth = latestRebalance?.automationTruth ?? {};
+  const nextProviderTriggeredProven = Boolean(
+    existingAutomationTruth.providerTriggeredProven ??
+      existingAutomationTruth.provider_triggered_proven ??
+      providerTriggeredProven,
+  );
+  const supportedTriggerSources = buildSupportedTriggerSources(
+    nextProviderTriggeredProven,
+  );
 
   return {
     operatorManualRequired: true,
     autonomousExecutionProven: false,
-    providerTriggeredProven,
+    providerTriggeredProven: nextProviderTriggeredProven,
     supportedTriggerSources,
     notes: [
       "Operator confirmation remains required before any rebalance execution claim.",
       "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
-      providerTriggeredProven
-        ? "Provider-triggered review is proven only for validated signed ingress events and still stops at awaiting_operator."
+      nextProviderTriggeredProven
+        ? "Validated provider-triggered review is proven for this runtime, but operator approval remains mandatory before execution staging."
         : "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
-      providerTriggeredProven
-        ? "Validated provider-triggered review is review-only and cannot create, sign, submit, or settle CoW orders autonomously."
+      nextProviderTriggeredProven
+        ? "Chainlink-oriented provider review is proven only for authenticated review opening; no autonomous execution claim exists."
         : "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist.",
     ],
   };
@@ -332,7 +348,6 @@ function createSnapshot({
   latestActivation,
   recommendation,
   executionPlan,
-  automationTruth,
   state,
   triggerSource,
   runtimeOwner,
@@ -341,6 +356,7 @@ function createSnapshot({
   rationale,
   now,
   latestRebalance = null,
+  providerTriggeredProven = false,
 }) {
   const baselineManifestId = latestActivation?.manifestId ?? null;
   const blockers = [...(executionPlan?.blockers ?? [])];
@@ -370,7 +386,10 @@ function createSnapshot({
     surfaceTruth: executionPlan.surfaceTruth,
     blockers,
     warnings,
-    automationTruth,
+    automationTruth: buildAutomationTruth({
+      latestRebalance,
+      providerTriggeredProven,
+    }),
     nextAction: buildNextAction({
       state,
       manifest,
@@ -391,9 +410,9 @@ export function deriveRebalanceOrchestration({
   trigger_source = REBALANCE_TRIGGER_SOURCE.OPERATOR_MANUAL,
   runtime_owner = null,
   scheduled_for = null,
-  provider_triggered_proven = false,
   now = new Date().toISOString(),
   resume = false,
+  provider_triggered_proven = false,
 }) {
   const manifest = assertPromotedActivationManifest(activation_manifest);
   const executionPlan = execution_plan;
@@ -401,11 +420,8 @@ export function deriveRebalanceOrchestration({
   const latestActivation = latest_activation;
   const latestRebalance = latest_rebalance;
   const providerTriggeredProven =
-    provider_triggered_proven === true ||
-    latestRebalance?.automationTruth?.providerTriggeredProven === true;
-  const automationTruth = buildAutomationTruth({
-    providerTriggeredProven,
-  });
+    latestRebalance?.automationTruth?.providerTriggeredProven === true ||
+    provider_triggered_proven === true;
   const hasActivationBaseline = Boolean(latestActivation);
   const manifestDriftDetected =
     hasActivationBaseline && latestActivation.manifestId !== manifest.manifestId;
@@ -451,25 +467,14 @@ export function deriveRebalanceOrchestration({
       rationale: latestRebalance.rationale ?? narrative.rationale,
       now,
       latestRebalance,
-      automationTruth:
-        providerTriggeredProven
-          ? automationTruth
-          : latestRebalance.automationTruth ?? automationTruth,
+      providerTriggeredProven,
     });
   }
 
   let state = REBALANCE_ORCHESTRATION_STATE.PREVIEW_ONLY;
   let scheduledFor = null;
 
-  if (
-    triggerSource === REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED &&
-    !providerTriggeredProven
-  ) {
-    state = REBALANCE_ORCHESTRATION_STATE.BLOCKED;
-  } else if (
-    triggerSource !== REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED &&
-    !SUPPORTED_TRIGGER_SOURCES.includes(triggerSource)
-  ) {
+  if (!buildSupportedTriggerSources(providerTriggeredProven).includes(triggerSource)) {
     state = REBALANCE_ORCHESTRATION_STATE.BLOCKED;
   } else if (!hasActivationBaseline) {
     state = REBALANCE_ORCHESTRATION_STATE.PREVIEW_ONLY;
@@ -521,7 +526,6 @@ export function deriveRebalanceOrchestration({
       ...executionPlan,
       blockers,
     },
-    automationTruth,
     state,
     triggerSource,
     runtimeOwner,
@@ -530,6 +534,7 @@ export function deriveRebalanceOrchestration({
     rationale: narrative.rationale,
     now,
     latestRebalance,
+    providerTriggeredProven,
   });
 }
 

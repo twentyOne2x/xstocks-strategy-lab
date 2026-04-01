@@ -1,0 +1,47 @@
+{
+  "executionRequestId": "execreq_3f278e58-e7d9-40c5-9627-7ff2aa640550",
+  "attempts": [
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:1",
+      "assetSymbol": "NVDAx",
+      "skipped": true,
+      "reason": "leg_state_blocked"
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:2",
+      "assetSymbol": "MSFTx",
+      "skipped": true,
+      "reason": "leg_state_blocked"
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:3",
+      "assetSymbol": "AAPLx",
+      "skipped": true,
+      "reason": "leg_state_blocked"
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:4",
+      "assetSymbol": "METAx",
+      "skipped": true,
+      "reason": "leg_state_blocked"
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:5",
+      "assetSymbol": "AMZNx",
+      "skipped": true,
+      "reason": "leg_state_blocked"
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:6",
+      "assetSymbol": "GOOGLx",
+      "skipped": true,
+      "reason": "leg_state_blocked"
+    },
+    {
+      "legId": "act_b3171f06-3976-47d2-88db-7e3d86143c49:leg:7",
+      "assetSymbol": "AUSD",
+      "skipped": true,
+      "reason": "leg_state_deferred"
+    }
+  ]
+}

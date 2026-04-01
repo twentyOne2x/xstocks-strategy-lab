@@ -2,19 +2,10 @@ import { randomUUID, timingSafeEqual } from "node:crypto";
 
 import { activityEventSchema } from "../../../../packages/shared/dist/contracts/activity.js";
 import {
-  providerRebalanceReceiptSchema,
-  providerRebalanceReviewRequestSchema,
-} from "../../../../packages/shared/dist/contracts/provider-rebalance.js";
-import {
   xstocksFunnelEventIngestRequestSchema,
   xstocksFunnelEventSchema,
 } from "../../../../packages/shared/dist/contracts/reporting.js";
 import {
-  createProviderRebalanceRequestDigest,
-  createSha256Digest,
-} from "../../../../packages/shared/src/rebalance.js";
-import {
-  applyRebalanceTransition,
   deriveRebalanceOrchestration,
   createActivationManifestRef,
   compileQuestionnaireQualification,
@@ -35,6 +26,10 @@ import {
   parseApiResponse,
 } from "../contracts.js";
 import { HttpError } from "../errors.js";
+import {
+  authenticateChainlinkCreProviderEvent,
+  ChainlinkCreValidationError,
+} from "./chainlink-cre-auth.js";
 import { buildXStocksReportingSnapshot } from "./reporting-service.js";
 
 const DEFAULT_SLOT_ID = "onboarding.default_basket";
@@ -45,39 +40,11 @@ const CATALOG_SURFACES = new Set(["onboarding", "advanced"]);
 const CATALOG_MODES = new Set(["basket", "directional"]);
 const EXECUTION_ACTIONS = new Set([
   "create",
-  "execute_all",
   "quote_leg",
   "record_submission",
   "poll_receipt",
 ]);
-const OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "venue_router";
-const COW_SWAP_EXECUTION_ADAPTER_ID = "cow_swap";
-const COW_SWAP_EXECUTION_ROUTE_ID = "cow_swap.ethereum";
-const ONEINCH_EXECUTION_ADAPTER_ID = "oneinch_fusion";
-const ONEINCH_EXECUTION_ROUTE_ID = "1inch.ethereum";
-const MANUAL_EXECUTION_ROUTE_SELECTIONS = Object.freeze({
-  venue_router: {
-    requestAdapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
-    routeId: null,
-    label: "venue-routed execution",
-    allowCow: true,
-    allowOneInch: true,
-  },
-  cow_swap: {
-    requestAdapterId: COW_SWAP_EXECUTION_ADAPTER_ID,
-    routeId: COW_SWAP_EXECUTION_ROUTE_ID,
-    label: "CoW",
-    allowCow: true,
-    allowOneInch: false,
-  },
-  oneinch_fusion: {
-    requestAdapterId: ONEINCH_EXECUTION_ADAPTER_ID,
-    routeId: ONEINCH_EXECUTION_ROUTE_ID,
-    label: "1inch Fusion",
-    allowCow: false,
-    allowOneInch: true,
-  },
-});
+const OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "cow_swap";
 const YIELD_BUFFER_DEFERRED_WARNING =
   "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve.";
 const COW_ORDER_UID_PATTERN = /^0x([A-Fa-f0-9]{112})$/u;
@@ -117,9 +84,6 @@ const PUBLIC_AGENT_APIS = Object.freeze([
     purpose: "Read the explicit public-to-internal handoff boundary.",
   },
 ]);
-const PROVIDER_REBALANCE_ROUTE_PATH = API_ENDPOINTS.PROVIDER_REBALANCE_EVENTS;
-const PROVIDER_REBALANCE_REVIEW_NOTE =
-  "Validated external provider input may only open operator review; it cannot create, sign, submit, or confirm a CoW order.";
 const AUTHENTICATED_AGENT_APIS = Object.freeze([
   {
     method: "POST",
@@ -771,8 +735,6 @@ function buildManifestView(manifest) {
     explanation: buildManifestExplanationView(manifest),
     explanationBundle: manifest.researchExplanationBundle ?? null,
     tuningSummary: manifest.researchTuningSummary ?? null,
-    replay: manifest.replay ?? null,
-    marketIntelligence: manifest.marketIntelligence ?? null,
     validation: {
       datasetVersion: manifest.validation.datasetVersion,
       evaluatorVersion: manifest.validation.evaluatorVersion,
@@ -1215,92 +1177,6 @@ function resolveCowReceivingToken(deployment) {
   };
 }
 
-function resolveOneInchReceivingToken(deployment) {
-  if (!deployment) {
-    return {
-      address: null,
-      source: "missing",
-    };
-  }
-
-  if (deployment.address) {
-    return {
-      address: deployment.address,
-      source: "deployment.address",
-    };
-  }
-
-  if (deployment.wrapperAddress) {
-    return {
-      address: deployment.wrapperAddress,
-      source: "wrapperAddress",
-    };
-  }
-
-  return {
-    address: null,
-    source: "missing",
-  };
-}
-
-function resolveManualExecutionRouteSelection({
-  requestedRouteId,
-  requestedAdapterId,
-} = {}) {
-  const normalizedRouteId =
-    typeof requestedRouteId === "string" && requestedRouteId.trim().length > 0
-      ? requestedRouteId.trim()
-      : null;
-  const normalizedAdapterId =
-    typeof requestedAdapterId === "string" && requestedAdapterId.trim().length > 0
-      ? requestedAdapterId.trim().toLowerCase()
-      : null;
-
-  if (normalizedRouteId === null && normalizedAdapterId === null) {
-    return MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router;
-  }
-
-  if (
-    normalizedAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
-  ) {
-    return MANUAL_EXECUTION_ROUTE_SELECTIONS.cow_swap;
-  }
-
-  if (
-    normalizedAdapterId === ONEINCH_EXECUTION_ADAPTER_ID ||
-    normalizedAdapterId === "1inch" ||
-    normalizedAdapterId === "oneinch"
-  ) {
-    return MANUAL_EXECUTION_ROUTE_SELECTIONS.oneinch_fusion;
-  }
-
-  if (normalizedRouteId === COW_SWAP_EXECUTION_ROUTE_ID) {
-    return MANUAL_EXECUTION_ROUTE_SELECTIONS.cow_swap;
-  }
-
-  if (normalizedRouteId === ONEINCH_EXECUTION_ROUTE_ID) {
-    return MANUAL_EXECUTION_ROUTE_SELECTIONS.oneinch_fusion;
-  }
-
-  throw new HttpError(
-    400,
-    `executionRouteId must be one of ${COW_SWAP_EXECUTION_ROUTE_ID} or ${ONEINCH_EXECUTION_ROUTE_ID}.`,
-  );
-}
-
-function resolveManualExecutionRouteSelectionFromLeg(leg, executionRequest) {
-  const adapterId = leg.adapterId ?? executionRequest?.adapterId ?? null;
-
-  if (adapterId === OPERATOR_MANUAL_EXECUTION_ADAPTER_ID) {
-    return MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router;
-  }
-
-  return resolveManualExecutionRouteSelection({
-    requestedRouteId: leg.requiredRouteId,
-    requestedAdapterId: adapterId,
-  });
-}
-
 function formatUsdAmount(value) {
   return Number(normalizeUsd(value, 0)).toFixed(2);
 }
@@ -1324,264 +1200,29 @@ function buildCowQuoteAttemptContext({
   };
 }
 
-function buildOneInchQuoteAttemptContext({
-  leg,
-  signerAddress,
-  receivingTokenAddress,
-}) {
-  return {
-    fromTokenAddress: leg.paymentTokenAddress,
-    toTokenAddress: receivingTokenAddress,
-    walletAddress: signerAddress,
-    amount: toAtomicAmount(
-      leg.targetNotionalUsd,
-      leg.paymentTokenDecimals ?? 6,
-    ),
-    enableEstimate: true,
-    source: "xstocks-strategy-lab",
-    targetNotionalUsd: Number(formatUsdAmount(leg.targetNotionalUsd)),
-  };
-}
-
-function parseCowErrorPayload(rawBody) {
-  if (typeof rawBody !== "string" || rawBody.trim().length === 0) {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(rawBody);
-
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return null;
-    }
-
-    return {
-      errorType:
-        typeof parsed.errorType === "string" ? parsed.errorType : null,
-      description:
-        typeof parsed.description === "string" &&
-        parsed.description.trim().length > 0
-          ? parsed.description.trim()
-          : null,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function deriveCowQuoteBlockerClass({ statusCode, errorType }) {
-  if (errorType === "NoLiquidity") {
-    return "cow_no_liquidity";
-  }
-
-  if (errorType === "InternalServerError") {
-    return "cow_internal_server_error";
-  }
-
-  if (Number.isInteger(statusCode) && statusCode > 0) {
-    return `cow_quote_http_${statusCode}`;
-  }
-
-  return "cow_quote_error";
-}
-
-function parseOneInchErrorPayload(rawBody) {
-  if (typeof rawBody !== "string" || rawBody.trim().length === 0) {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(rawBody);
-
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return null;
-    }
-
-    return {
-      code: typeof parsed.code === "string" ? parsed.code : null,
-      description:
-        typeof parsed.description === "string" &&
-        parsed.description.trim().length > 0
-          ? parsed.description.trim()
-          : null,
-      error:
-        typeof parsed.error === "string" && parsed.error.trim().length > 0
-          ? parsed.error.trim()
-          : null,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function deriveOneInchQuoteBlockerClass({ statusCode, code }) {
-  if (code === "PATHFINDER_UNKNOWN") {
-    return "oneinch_pathfinder_unknown";
-  }
-
-  if (typeof code === "string" && code.trim().length > 0) {
-    return `oneinch_${code.trim().toLowerCase()}`;
-  }
-
-  if (Number.isInteger(statusCode) && statusCode > 0) {
-    return `oneinch_quote_http_${statusCode}`;
-  }
-
-  return "oneinch_quote_error";
-}
-
-function normalizeCowQuoteFailure(error) {
+function buildCowQuoteFailureMessage({ leg, quoteAttempt, error }) {
   const errorMessage = error instanceof Error ? error.message : String(error);
-  const statusMatch = errorMessage.match(
-    /^CoW quote request failed with status (?<status>\d+):\s*(?<body>.*)$/su,
-  );
-  const statusCode = statusMatch?.groups?.status
-    ? Number.parseInt(statusMatch.groups.status, 10)
-    : null;
-  const rawBody =
-    statusMatch?.groups?.body && statusMatch.groups.body.trim().length > 0
-      ? statusMatch.groups.body.trim()
-      : null;
-  const parsedPayload = parseCowErrorPayload(rawBody);
-  const errorType = parsedPayload?.errorType ?? null;
-  const errorDescription = parsedPayload?.description ?? null;
 
-  return {
-    message: errorMessage,
-    statusCode,
-    rawBody,
-    errorType,
-    errorDescription,
-    blockerClass: deriveCowQuoteBlockerClass({
-      statusCode,
-      errorType,
-    }),
-  };
-}
-
-function normalizeOneInchQuoteFailure(error) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  const statusMatch = errorMessage.match(
-    /^1inch Fusion quote request failed with status (?<status>\d+):\s*(?<body>.*)$/su,
-  );
-  const statusCode = statusMatch?.groups?.status
-    ? Number.parseInt(statusMatch.groups.status, 10)
-    : null;
-  const rawBody =
-    statusMatch?.groups?.body && statusMatch.groups.body.trim().length > 0
-      ? statusMatch.groups.body.trim()
-      : null;
-  const parsedPayload = parseOneInchErrorPayload(rawBody);
-  const errorCode = parsedPayload?.code ?? null;
-  const errorDescription =
-    parsedPayload?.description ?? parsedPayload?.error ?? null;
-
-  return {
-    message: errorMessage,
-    statusCode,
-    rawBody,
-    errorCode,
-    errorDescription,
-    blockerClass: deriveOneInchQuoteBlockerClass({
-      statusCode,
-      code: errorCode,
-    }),
-  };
-}
-
-function buildCowQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
-  const parts = [
+  return [
     `CoW quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
     `buyToken=${quoteAttempt.buyToken ?? "missing"}`,
     `sellToken=${quoteAttempt.sellToken ?? "missing"}`,
     `sellAmountBeforeFee=${quoteAttempt.sellAmountBeforeFee}`,
     `targetNotionalUsd=${formatUsdAmount(leg.targetNotionalUsd)}`,
     `receiver=${quoteAttempt.receiver ?? "missing"}`,
-    `blockerClass=${quoteFailure.blockerClass}`,
-  ];
-
-  if (quoteFailure.errorType) {
-    parts.push(`venueErrorType=${quoteFailure.errorType}`);
-  }
-
-  if (quoteFailure.errorDescription) {
-    parts.push(`venueErrorDescription=${quoteFailure.errorDescription}`);
-  }
-
-  parts.push(`reason=${quoteFailure.message}`);
-
-  return parts.join(" ");
-}
-
-function buildOneInchQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
-  const parts = [
-    `1inch Fusion quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
-    `buyToken=${quoteAttempt.toTokenAddress ?? "missing"}`,
-    `sellToken=${quoteAttempt.fromTokenAddress ?? "missing"}`,
-    `amount=${quoteAttempt.amount}`,
-    `targetNotionalUsd=${formatUsdAmount(leg.targetNotionalUsd)}`,
-    `blockerClass=${quoteFailure.blockerClass}`,
-  ];
-
-  if (quoteFailure.errorCode) {
-    parts.push(`venueErrorCode=${quoteFailure.errorCode}`);
-  }
-
-  if (quoteFailure.errorDescription) {
-    parts.push(`venueErrorDescription=${quoteFailure.errorDescription}`);
-  }
-
-  parts.push(`reason=${quoteFailure.message}`);
-
-  return parts.join(" ");
+    `reason=${errorMessage}`,
+  ].join(" ");
 }
 
 function stripExecutionQuoteBlockers(messages = []) {
   return messages.filter(
     (message) =>
       !String(message).startsWith("CoW quote request failed") &&
-      !String(message).startsWith("1inch Fusion quote request failed") &&
-      !String(message).startsWith("CoW order submission failed") &&
-      !String(message).startsWith("1inch Fusion order submission failed"),
+      !String(message).startsWith("CoW order submission failed"),
   );
 }
 
-function createExecutionRequestLinkage({
-  rebalance = null,
-  providerReceipt = null,
-} = {}) {
-  const linkage = {
-    rebalanceId: rebalance?.rebalanceId ?? null,
-    providerReceiptId:
-      providerReceipt?.receiptId ?? rebalance?.providerReceiptId ?? null,
-    providerDeliveryId: providerReceipt?.deliveryId ?? null,
-    providerEventId: providerReceipt?.eventId ?? null,
-  };
-
-  return Object.values(linkage).some((value) => value !== null)
-    ? linkage
-    : null;
-}
-
-function createExecutionLegArtifactLinkage({
-  executionRequestId,
-  requestLinkage = null,
-}) {
-  if (!executionRequestId || !requestLinkage) {
-    return null;
-  }
-
-  return {
-    executionRequestId,
-    rebalanceId: requestLinkage?.rebalanceId ?? null,
-    providerReceiptId: requestLinkage?.providerReceiptId ?? null,
-    providerDeliveryId: requestLinkage?.providerDeliveryId ?? null,
-    providerEventId: requestLinkage?.providerEventId ?? null,
-  };
-}
-
 function createExecutionLeg({
-  executionRequestId,
   allocation,
   sequence,
   requestedNotionalUsd,
@@ -1591,9 +1232,6 @@ function createExecutionLeg({
   fetchedAsset,
   manifest,
   activation,
-  executionPlanSnapshot = activation.executionPlanSnapshot,
-  routeSelection = MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router,
-  requestLinkage = null,
 }) {
   const targetNotionalUsd = roundUsd(
     (requestedNotionalUsd * allocation.targetWeightPct) / 100,
@@ -1624,62 +1262,41 @@ function createExecutionLeg({
       venueStatus: null,
       receipt: null,
       trade: null,
-      linkage: createExecutionLegArtifactLinkage({
-        executionRequestId,
-        requestLinkage,
-      }),
     };
   }
 
   const deployment = findEthereumDeployment(fetchedAsset);
   const fundingStablecoin = findFundingStablecoin(deployment, fundingAssetSymbol);
-  const cowReceivingToken = resolveCowReceivingToken(deployment);
-  const oneInchReceivingToken = resolveOneInchReceivingToken(deployment);
-  const selectedReceivingToken =
-    routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
-      ? oneInchReceivingToken
-      : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
-        ? cowReceivingToken
-        : {
-            address: cowReceivingToken.address ?? oneInchReceivingToken.address,
-            source:
-              cowReceivingToken.address
-                ? cowReceivingToken.source
-                : oneInchReceivingToken.source,
-          };
+  const receivingToken = resolveCowReceivingToken(deployment);
   const blockers = [];
 
-  if (!selectedReceivingToken.address) {
+  if (!receivingToken.address) {
     blockers.push(
-      routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
-        ? `Ethereum execution token metadata is missing for ${allocation.assetSymbol}; 1inch requires deployment.address metadata on the live xstocks asset.`
-        : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
-          ? `Ethereum execution token metadata is missing for ${allocation.assetSymbol}; CoW requires wrapperAddress or deployment.address metadata on the live xstocks asset.`
-          : `Ethereum execution token metadata is missing for ${allocation.assetSymbol}; neither CoW wrapperAddress nor 1inch deployment.address is available.`,
+      `Ethereum CoW buy-token metadata is missing for ${allocation.assetSymbol}; neither wrapperAddress nor deployment.address is available.`,
     );
   }
 
   if (!fundingStablecoin?.address) {
     blockers.push(
-      `${allocation.assetSymbol} does not expose ${fundingAssetSymbol} as an Ethereum payment asset in the live xstocks metadata required for venue-routed execution.`,
+      `${allocation.assetSymbol} does not expose ${fundingAssetSymbol} as an Ethereum payment asset in the live xstocks metadata required for CoW.`,
     );
   }
 
   if (!signerAddress) {
     blockers.push(
-      "A verified signer wallet is required before the user-approved venue-routed lane can quote or submit this leg.",
+      "A verified signer wallet is required before the user-approved CoW lane can quote or submit this leg.",
     );
   }
 
   if (!settlementAddress) {
     blockers.push(
-      "A settlement wallet or smart-wallet destination is required before the user-approved venue-routed lane can quote or submit this leg.",
+      "A settlement wallet or smart-wallet destination is required before the user-approved CoW lane can quote or submit this leg.",
     );
   }
 
   if (
-    executionPlanSnapshot?.executionState !== "ready" ||
-    executionPlanSnapshot?.executionEligibility !== "executable"
+    activation.executionPlanSnapshot?.executionState !== "ready" ||
+    activation.executionPlanSnapshot?.executionEligibility !== "executable"
   ) {
     blockers.push(
       "The saved activation snapshot is not in a ready/executable state.",
@@ -1691,37 +1308,23 @@ function createExecutionLeg({
     sequence,
     sleeve: allocation.sleeve,
     assetSymbol: allocation.assetSymbol,
-    venueId:
-      routeSelection.routeId ??
-      allocation.venueId ??
-      findManifestRouteId(manifest, allocation.sleeve),
-    adapterId: routeSelection.requestAdapterId,
-    requiredRouteId:
-      routeSelection.routeId ?? findManifestRouteId(manifest, allocation.sleeve),
+    venueId: allocation.venueId,
+    adapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+    requiredRouteId: findManifestRouteId(manifest, allocation.sleeve),
     targetWeightPct: allocation.targetWeightPct,
     targetNotionalUsd,
     paymentAssetSymbol: fundingAssetSymbol,
     paymentTokenAddress: fundingStablecoin?.address ?? null,
     paymentTokenDecimals: fundingStablecoin?.decimals ?? null,
-    receivingTokenAddress: selectedReceivingToken.address,
+    receivingTokenAddress: receivingToken.address,
     receivingTokenDecimals: null,
     settlementAddress,
     state: blockers.length > 0 ? "blocked" : "pending",
     blockers,
     warnings: uniqueStrings([
-      "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
-      routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
-        ? `${allocation.assetSymbol} is pinned to the 1inch Ethereum route for this execution request.`
-        : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
-          ? `${allocation.assetSymbol} is pinned to the CoW Ethereum route for this execution request.`
-          : null,
-      cowReceivingToken.source === "wrapperAddress" &&
-      routeSelection.requestAdapterId !== ONEINCH_EXECUTION_ADAPTER_ID
+      "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+      receivingToken.source === "wrapperAddress"
         ? `${allocation.assetSymbol} will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.`
-        : null,
-      oneInchReceivingToken.source === "deployment.address" &&
-      routeSelection.requestAdapterId !== COW_SWAP_EXECUTION_ADAPTER_ID
-        ? `${allocation.assetSymbol} can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.`
         : null,
     ]),
     quote: null,
@@ -1729,10 +1332,6 @@ function createExecutionLeg({
     venueStatus: null,
     receipt: null,
     trade: null,
-    linkage: createExecutionLegArtifactLinkage({
-      executionRequestId,
-      requestLinkage,
-    }),
   };
 }
 
@@ -1792,46 +1391,28 @@ function updateExecutionRequestState(request) {
   };
 }
 
-function createExecutionRequest({
-  activation,
-  manifest,
-  fetchedAssets,
-  now,
-  routeSelection = MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router,
-  runtimeOwner = "operator_manual",
-  triggerSource = "operator_manual",
-  rebalance = null,
-  providerReceipt = null,
-  executionPlanSnapshot = activation.executionPlanSnapshot,
-}) {
+function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
   const requestedNotionalUsd = activation.requestedNotionalUsd;
   const fundingAssetSymbol =
     manifest.activationTemplate.fundingAssetSymbol ?? "USDC";
   const signerAddress = resolveExecutionSignerAddress(activation.walletState);
   const settlementAddress = resolveSettlementAddress(activation.walletState);
-  const executionRequestId = `execreq_${randomUUID()}`;
-  const requestLinkage = createExecutionRequestLinkage({
-    rebalance,
-    providerReceipt,
-  });
   const fetchedAssetIndex = new Map(
     fetchedAssets.map((asset) => [asset.assetSymbol, asset]),
   );
   const request = {
     version: EXECUTION_REQUEST_CONTRACT_VERSION,
-    executionRequestId,
+    executionRequestId: `execreq_${randomUUID()}`,
     owner: activation.owner ?? null,
-    rebalanceId: rebalance?.rebalanceId ?? null,
     activationId: activation.activationId,
     manifestId: manifest.manifestId,
     slotId: manifest.slotId,
     chain: manifest.chain,
     mode: manifest.mode,
-    runtimeOwner,
-    triggerSource,
-    adapterId: routeSelection.requestAdapterId,
-    activationManifestRef:
-      activation.activationManifestRef ?? createActivationManifestRef(manifest),
+    runtimeOwner: "operator_manual",
+    triggerSource: "operator_manual",
+    adapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+    activationManifestRef: activation.activationManifestRef,
     requestedNotionalUsd,
     fundingAssetSymbol,
     settlementAddress,
@@ -1849,7 +1430,6 @@ function createExecutionRequest({
     warnings: [],
     legs: (manifest.targetAllocations ?? []).map((allocation, index) =>
       createExecutionLeg({
-        executionRequestId,
         allocation,
         sequence: index + 1,
         requestedNotionalUsd,
@@ -1861,12 +1441,8 @@ function createExecutionRequest({
           : null,
         manifest,
         activation,
-        executionPlanSnapshot,
-        routeSelection,
-        requestLinkage,
       }),
     ),
-    linkage: requestLinkage,
     createdAt: now(),
     updatedAt: now(),
   };
@@ -1914,32 +1490,7 @@ function toStoredExecutionQuote(quote, quotedAt) {
   };
 }
 
-function toStoredOneInchExecutionQuote(quote, quoteAttempt, quotedAt) {
-  return {
-    kind: "oneinch_fusion",
-    quoteId: quote.quoteId ?? null,
-    quotedAt,
-    fromTokenAddress: quoteAttempt.fromTokenAddress,
-    toTokenAddress: quoteAttempt.toTokenAddress,
-    walletAddress: quoteAttempt.walletAddress,
-    fromTokenAmount: quote.fromTokenAmount,
-    toTokenAmount: quote.toTokenAmount,
-    settlementAddress: quote.settlementAddress,
-    recommendedPreset: quote.recommendedPreset ?? quote.recommended_preset,
-    priceImpactPercent: quote.priceImpactPercent ?? null,
-    orderHash: quote.orderHash ?? null,
-    signerAddress: quote.signerAddress ?? quoteAttempt.walletAddress,
-    receiver: quote.receiver ?? quoteAttempt.walletAddress,
-    fee: {
-      receiver: quote.fee.receiver,
-      bps: quote.fee.bps,
-      whitelistDiscountPercent: quote.fee.whitelistDiscountPercent,
-    },
-    submissionSupported: true,
-  };
-}
-
-function createApprovalFromCowQuote(storedQuote) {
+function createApprovalFromQuote(storedQuote) {
   return {
     approvalType: "eip712_signature",
     status: "awaiting_user",
@@ -1959,55 +1510,6 @@ function createApprovalFromCowQuote(storedQuote) {
   };
 }
 
-function createApprovalFromQuote(storedQuote, preparedOrder = null) {
-  if (storedQuote.kind === "oneinch_fusion") {
-    if (!preparedOrder) {
-      throw new Error(
-        "1inch Fusion approval payloads require a prepared order artifact.",
-      );
-    }
-
-    return {
-      approvalType: "eip712_signature",
-      status: "awaiting_user",
-      signerAddress: storedQuote.signerAddress,
-      approvalTarget: "oneinch_fusion_order",
-      orderToSign: {
-        quoteId: preparedOrder.quoteId,
-        orderHash: preparedOrder.orderHash,
-        order: preparedOrder.order,
-        extension: preparedOrder.extension,
-        typedData: preparedOrder.typedData,
-      },
-      signature: null,
-      approvedAt: null,
-      submittedAt: null,
-      venueOrderId: null,
-      notes: [
-        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission.",
-      ],
-    };
-  }
-
-  return createApprovalFromCowQuote(storedQuote);
-}
-
-function getExecutionVenueLabel(leg) {
-  if (leg?.quote?.kind === "oneinch_fusion") {
-    return "1inch Fusion";
-  }
-
-  if (leg?.quote?.kind === "cow_swap") {
-    return "CoW";
-  }
-
-  if (leg?.venueId === ONEINCH_EXECUTION_ROUTE_ID) {
-    return "1inch Fusion";
-  }
-
-  return "CoW";
-}
-
 function buildExecutionActivityEvents({
   activation,
   executionRequest,
@@ -2018,20 +1520,16 @@ function buildExecutionActivityEvents({
   const events = [];
   const txHash = leg.receipt?.txHash ?? null;
   const venueOrderId = leg.venueStatus?.venueOrderId ?? null;
-  const venueLabel = getExecutionVenueLabel(leg);
 
   if (
-    (leg.state === "awaiting_approval" || leg.state === "quote_ready") &&
-    previousLeg?.state !== leg.state
+    leg.state === "awaiting_approval" &&
+    previousLeg?.state !== "awaiting_approval"
   ) {
     events.push(
       createActivityEvent({
         activation,
         eventType: "activation_ready",
-        summary:
-          leg.state === "awaiting_approval"
-            ? `${venueLabel} quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`
-            : `${venueLabel} quote prepared for ${leg.assetSymbol ?? leg.sleeve}; submission remains blocked on the current backend boundary.`,
+        summary: `CoW quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -2051,7 +1549,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_submitted",
-        summary: `Recorded user-approved ${venueLabel} submission for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `Recorded user-approved CoW submission for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -2069,7 +1567,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_succeeded",
-        summary: `${venueLabel} execution confirmed for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `CoW execution confirmed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -2085,7 +1583,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_failed",
-        summary: `${venueLabel} execution failed for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `CoW execution failed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -2099,40 +1597,6 @@ function buildExecutionActivityEvents({
   }
 
   return events;
-}
-
-function compareAtomicAmountStrings(left, right) {
-  const leftValue = BigInt(String(left ?? "0"));
-  const rightValue = BigInt(String(right ?? "0"));
-
-  if (leftValue === rightValue) {
-    return 0;
-  }
-
-  return leftValue > rightValue ? 1 : -1;
-}
-
-function selectVenueQuoteCandidate(candidates) {
-  if (candidates.length === 0) {
-    return null;
-  }
-
-  return [...candidates].sort((left, right) => {
-    if (left.submissionSupported !== right.submissionSupported) {
-      return left.submissionSupported ? -1 : 1;
-    }
-
-    const amountComparison = compareAtomicAmountStrings(
-      right.outputAmount,
-      left.outputAmount,
-    );
-
-    if (amountComparison !== 0) {
-      return amountComparison;
-    }
-
-    return left.adapterId.localeCompare(right.adapterId);
-  })[0];
 }
 
 function sortCatalogRecords(records) {
@@ -2154,12 +1618,12 @@ export function createApiService({
   liveStateRepository,
   runtimeStore,
   cowExecutionClient = null,
-  oneInchExecutionClient = null,
   ethereumRpcClient = null,
   privyAuthService = null,
-  providerRebalanceAuthService = null,
   reportingToken = null,
   autoresearchProofToken = null,
+  chainlinkCreSignerAllowlist = [],
+  chainlinkCreWorkflowAllowlist = [],
   now = () => new Date().toISOString(),
 }) {
   const smartAccountProvider = createSmartAccountProviderScaffold();
@@ -2467,6 +1931,22 @@ export function createApiService({
     };
   }
 
+  async function loadGlobalSlotRuntime(manifest) {
+    const [slotActivations, latestRebalanceRecord] = await Promise.all([
+      runtimeStore.listActivations({
+        slotId: manifest.slotId,
+      }),
+      runtimeStore.getLatestRebalance({ slotId: manifest.slotId }),
+    ]);
+
+    return {
+      latestActivation:
+        slotActivations.length > 0 ? serializeActivation(slotActivations[0]) : null,
+      latestRebalance: serializeRebalance(latestRebalanceRecord),
+      rebalanceHistory: serializeRebalanceHistory(latestRebalanceRecord),
+    };
+  }
+
   function buildRebalanceOrchestration({
     manifest,
     boundaryPayload,
@@ -2474,6 +1954,7 @@ export function createApiService({
     latestRebalance,
     triggerSource = latestRebalance?.triggerSource,
     providerTriggeredProven = false,
+    resume = false,
   }) {
     return deriveRebalanceOrchestration({
       activation_manifest: manifest,
@@ -2483,52 +1964,92 @@ export function createApiService({
       latest_rebalance: latestRebalance,
       trigger_source: triggerSource,
       provider_triggered_proven: providerTriggeredProven,
+      resume,
       now: now(),
     });
   }
 
-  function formatZodIssues(error) {
-    return error.issues
-      .map((issue) => {
-        const path = issue.path.length > 0 ? issue.path.join(".") : "request";
-        return `${path}: ${issue.message}`;
-      })
-      .join("; ");
-  }
-
-  function mapRejectedProviderReviewState(rebalance) {
-    if (!rebalance) {
-      return {
-        reasonCodes: ["review_state_not_opened"],
-        reasonDetail: "Provider-triggered review did not produce a rebalance snapshot.",
-      };
-    }
-
-    if (rebalance.state === "preview_only") {
-      return {
-        reasonCodes: ["review_state_not_opened"],
-        reasonDetail: rebalance.rationale,
-      };
-    }
-
-    if (rebalance.state === "blocked" || rebalance.state === "paused") {
-      return {
-        reasonCodes: ["manual_lane_not_ready"],
-        reasonDetail: rebalance.rationale,
-      };
-    }
-
-    if (rebalance.state === "rebalance_deferred") {
-      return {
-        reasonCodes: ["review_state_not_opened"],
-        reasonDetail: rebalance.rationale,
-      };
-    }
+  function buildProviderEventReceipt({
+    validation = null,
+    receiptCandidate = null,
+    decision,
+    reason,
+    errorCode = null,
+    duplicateOfReceiptId = null,
+  }) {
+    const body = validation?.body ?? null;
+    const claims = validation?.claims ?? null;
+    const signerAddress = validation?.signerAddress ?? receiptCandidate?.signerAddress ?? null;
+    const digest = validation?.digest ?? receiptCandidate?.digest ?? null;
+    const dedupeKey = validation?.dedupeKey ?? receiptCandidate?.dedupeKey ?? null;
 
     return {
-      reasonCodes: ["review_state_not_opened"],
-      reasonDetail: rebalance.rationale,
+      receiptId: `provider_evt_rcpt_${randomUUID()}`,
+      receivedAt: now(),
+      providerId:
+        body?.providerId ??
+        receiptCandidate?.providerId ??
+        claims?.providerId ??
+        "chainlink_cre",
+      providerEventId: body?.providerEventId ?? receiptCandidate?.providerEventId ?? null,
+      workflowId: body?.workflowId ?? receiptCandidate?.workflowId ?? claims?.workflowId ?? null,
+      workflowExecutionId:
+        body?.workflowExecutionId ??
+        receiptCandidate?.workflowExecutionId ??
+        claims?.workflowExecutionId ??
+        null,
+      slotId: body?.slotId ?? receiptCandidate?.slotId ?? claims?.slotId ?? null,
+      chain: body?.chain ?? receiptCandidate?.chain ?? claims?.chain ?? null,
+      targetManifestId:
+        body?.targetManifestId ??
+        receiptCandidate?.targetManifestId ??
+        claims?.targetManifestId ??
+        null,
+      dedupeKey,
+      digest,
+      signerAddress,
+      issuer: claims?.iss ?? receiptCandidate?.issuer ?? null,
+      jti: claims?.jti ?? receiptCandidate?.jti ?? null,
+      tokenIssuedAt:
+        claims?.iat !== undefined
+          ? new Date(claims.iat * 1000).toISOString()
+          : receiptCandidate?.tokenIssuedAt ?? null,
+      tokenExpiresAt:
+        claims?.exp !== undefined
+          ? new Date(claims.exp * 1000).toISOString()
+          : receiptCandidate?.tokenExpiresAt ?? null,
+      decision,
+      errorCode,
+      reason,
+      duplicateOfReceiptId,
     };
+  }
+
+  async function persistProviderEventReceipt(input) {
+    return runtimeStore.recordProviderEventReceipt({
+      receipt: buildProviderEventReceipt(input),
+    });
+  }
+
+  async function rejectProviderTriggeredReview({
+    validation = null,
+    receiptCandidate = null,
+    statusCode = 409,
+    errorCode,
+    message,
+  }) {
+    const receipt = await persistProviderEventReceipt({
+      validation,
+      receiptCandidate,
+      decision: "rejected",
+      reason: message,
+      errorCode,
+    });
+
+    throw new HttpError(statusCode, message, {
+      errorCode,
+      receiptId: receipt.receiptId,
+    });
   }
 
   async function loadActivationById(activationId, requestContext) {
@@ -2576,275 +2097,6 @@ export function createApiService({
     return executionRequest;
   }
 
-  async function loadProviderRebalanceContext(requestPayload) {
-    const [activation] = await runtimeStore.listActivations({
-      activationId: requestPayload.activationId,
-    });
-
-    if (!activation) {
-      return {
-        activation: null,
-        record: null,
-        boundaryPayload: null,
-        latestRebalance: null,
-      };
-    }
-
-    const record = await resolvePromotedRecord({
-      slotId: activation.slotId ?? requestPayload.slotId,
-    });
-    const manifest = record.manifest;
-    const { liveXStocksState, liveRouteState } = await loadLiveState(manifest);
-    const boundaryPayload = deriveBoundaryPayload({
-      manifest,
-      liveXStocksState,
-      liveRouteState,
-      requestedNotionalUsd:
-        activation.requestedNotionalUsd ??
-        manifest.walletRequirements.minFundingUsd,
-      walletState: activation.walletState,
-    });
-    const latestRebalance = await runtimeStore.getLatestRebalance({
-      slotId: manifest.slotId,
-    });
-
-    return {
-      activation: serializeActivation(activation),
-      record,
-      boundaryPayload,
-      latestRebalance,
-    };
-  }
-
-  async function loadRebalanceForExecuteAll({
-    activation,
-    rebalanceId = null,
-  }) {
-    const rebalances = await runtimeStore.listRebalances({
-      slotId: activation.slotId,
-      limit: 50,
-    });
-    const rebalance =
-      rebalanceId
-        ? rebalances.find((item) => item.rebalanceId === rebalanceId) ?? null
-        : rebalances[0] ?? null;
-
-    if (!rebalance) {
-      throw new HttpError(
-        404,
-        "Provider-backed execute_all requires a persisted rebalance review for this slot.",
-      );
-    }
-
-    if (rebalance.triggerSource !== "provider_triggered") {
-      throw new HttpError(
-        409,
-        "execute_all currently supports provider-triggered awaiting_operator review state only.",
-      );
-    }
-
-    if (rebalance.state !== "awaiting_operator") {
-      throw new HttpError(
-        409,
-        `execute_all requires awaiting_operator review state, received ${rebalance.state}.`,
-      );
-    }
-
-    return rebalance;
-  }
-
-  async function loadAcceptedProviderReceiptForRebalance(rebalance) {
-    const [providerReceipt] = await runtimeStore.listProviderReceipts({
-      rebalanceId: rebalance.rebalanceId,
-      decision: "accepted",
-      limit: 1,
-    });
-
-    if (!providerReceipt) {
-      throw new HttpError(
-        409,
-        "Accepted provider receipt linkage is required before provider-backed execute_all can stage execution.",
-      );
-    }
-
-    return providerReceipt;
-  }
-
-  function ensureExecuteAllStagingProof({
-    activation,
-    requestContext,
-  }) {
-    const authenticatedRequestContext =
-      requireAuthenticatedRequestContext(requestContext);
-
-    if (!activation.owner?.userId || !activation.owner?.authenticatedAt) {
-      throw new HttpError(
-        409,
-        "Saved activation ownership proof is missing; provider-backed execute_all cannot stage execution.",
-      );
-    }
-
-    if (!authenticatedRequestContext.owner?.sessionId) {
-      throw new HttpError(
-        409,
-        "Current authenticated session proof is required before provider-backed execute_all can stage execution.",
-      );
-    }
-
-    const signerAddress = resolveExecutionSignerAddress(activation.walletState);
-    const settlementAddress = resolveSettlementAddress(activation.walletState);
-    const verifiedAddresses = uniqueStrings([
-      ...authenticatedRequestContext.linkedWalletAddresses,
-      ...authenticatedRequestContext.linkedEmbeddedWalletAddresses,
-    ]);
-
-    if (!signerAddress) {
-      throw new HttpError(
-        409,
-        "A verified signer wallet proof is required before provider-backed execute_all can stage execution.",
-      );
-    }
-
-    if (!addressInVerifiedSet(signerAddress, verifiedAddresses)) {
-      throw new HttpError(
-        403,
-        "Provider-backed execute_all signer proof does not match the authenticated Privy user.",
-      );
-    }
-
-    if (!settlementAddress) {
-      throw new HttpError(
-        409,
-        "A settlement wallet or smart-wallet destination is required before provider-backed execute_all can stage execution.",
-      );
-    }
-  }
-
-  async function persistProviderReceipt({
-    decision,
-    statusCode,
-    reasonCodes,
-    reasonDetail,
-    rawBodyDigest,
-    routePath,
-    requestPayload = null,
-    authResult = null,
-    duplicateOfReceiptId = null,
-    rebalance = null,
-    stateChanged = false,
-    receivedAt,
-  }) {
-    const receipt = providerRebalanceReceiptSchema.parse({
-      version: DEFAULT_RESPONSE_VERSION,
-      receiptId: `provider_receipt_${randomUUID()}`,
-      decision,
-      statusCode,
-      providerId: requestPayload?.providerId ?? null,
-      deliveryId: requestPayload?.deliveryId ?? null,
-      eventId: requestPayload?.eventId ?? null,
-      triggerSource: "provider_triggered",
-      routePath,
-      receivedAt,
-      processedAt: now(),
-      requestDigest: requestPayload?.requestDigest ?? null,
-      rawBodyDigest,
-      signerAddress: authResult?.signerAddress ?? authResult?.jwt?.issuer ?? null,
-      reasonCodes,
-      reasonDetail,
-      duplicateOfReceiptId,
-      stateChanged,
-      rebalanceId: rebalance?.rebalanceId ?? null,
-      rebalanceState: rebalance?.state ?? null,
-      targetManifestId: rebalance?.targetManifestId ?? null,
-      baselineManifestId: rebalance?.baselineManifestId ?? null,
-      executionRequestId: rebalance?.executionRequestId ?? null,
-      executionTriggerSource: rebalance?.executionTriggerSource ?? null,
-      executionState: rebalance?.executionRequestState ?? null,
-      rebalanceBlockers: rebalance?.blockers ?? [],
-      request: requestPayload,
-      jwt: authResult?.jwt ?? null,
-    });
-
-    return runtimeStore.appendProviderReceipt({
-      receipt,
-    });
-  }
-
-  async function finalizeProviderRebalanceEvent({
-    decision,
-    statusCode,
-    reasonCodes,
-    reasonDetail,
-    rawBodyDigest,
-    routePath,
-    requestPayload = null,
-    authResult = null,
-    duplicateOfReceiptId = null,
-    rebalance = null,
-    stateChanged = false,
-    receivedAt,
-  }) {
-    const receipt = await persistProviderReceipt({
-      decision,
-      statusCode,
-      reasonCodes,
-      reasonDetail,
-      rawBodyDigest,
-      routePath,
-      requestPayload,
-      authResult,
-      duplicateOfReceiptId,
-      rebalance,
-      stateChanged,
-      receivedAt,
-    });
-    const linkedRebalance =
-      rebalance
-        ? await runtimeStore.upsertRebalance({
-          rebalance: {
-            ...rebalance,
-            providerReceiptId: receipt.receiptId,
-          },
-          eventType: "provider_receipt_linked",
-        })
-        : null;
-
-    return {
-      statusCode,
-      payload: parseApiResponse("provider_rebalance_event_ingest", {
-        version: DEFAULT_RESPONSE_VERSION,
-        generatedAt: now(),
-        accepted: decision === "accepted",
-        receipt,
-        rebalanceOrchestration: serializeRebalance(linkedRebalance ?? rebalance),
-      }),
-    };
-  }
-
-  function applyExecutionLinkage({
-    executionRequest,
-    rebalance = null,
-    providerReceipt = null,
-  }) {
-    const requestLinkage = createExecutionRequestLinkage({
-      rebalance,
-      providerReceipt,
-    });
-
-    return {
-      ...executionRequest,
-      rebalanceId: rebalance?.rebalanceId ?? executionRequest.rebalanceId ?? null,
-      linkage: requestLinkage,
-      legs: executionRequest.legs.map((leg) => ({
-        ...leg,
-        linkage: createExecutionLegArtifactLinkage({
-          executionRequestId: executionRequest.executionRequestId,
-          requestLinkage,
-        }),
-      })),
-    };
-  }
-
   function replaceExecutionLeg(executionRequest, nextLeg) {
     return {
       ...executionRequest,
@@ -2876,54 +2128,6 @@ export function createApiService({
     return {
       executionRequest: normalizedExecutionRequest,
       activityEvents,
-    };
-  }
-
-  async function persistProviderExecutionHandoff({
-    executionRequest,
-    activation,
-    rebalance,
-    providerReceipt,
-    activityEvents = [],
-  }) {
-    const linkedExecutionRequest = applyExecutionLinkage({
-      executionRequest,
-      rebalance,
-      providerReceipt,
-    });
-    const persistedExecution = await persistExecutionRequest({
-      executionRequest: linkedExecutionRequest,
-      activation,
-      activityEvents,
-    });
-    const nextProviderReceipt = await runtimeStore.upsertProviderReceipt({
-      receipt: {
-        ...providerReceipt,
-        executionRequestId:
-          persistedExecution.executionRequest.executionRequestId,
-        executionTriggerSource:
-          persistedExecution.executionRequest.triggerSource,
-        executionState: persistedExecution.executionRequest.state,
-      },
-    });
-    const nextRebalance = await runtimeStore.upsertRebalance({
-      rebalance: {
-        ...rebalance,
-        providerReceiptId: nextProviderReceipt.receiptId,
-        executionRequestId:
-          persistedExecution.executionRequest.executionRequestId,
-        executionTriggerSource:
-          persistedExecution.executionRequest.triggerSource,
-        executionRequestState: persistedExecution.executionRequest.state,
-      },
-      eventType: "execution_staged",
-    });
-
-    return {
-      executionRequest: persistedExecution.executionRequest,
-      activityEvents: persistedExecution.activityEvents,
-      providerReceipt: nextProviderReceipt,
-      rebalance: nextRebalance,
     };
   }
 
@@ -3074,107 +2278,6 @@ export function createApiService({
     } catch {
       return leg;
     }
-  }
-
-  function mapOneInchVenueState(status) {
-    const normalizedStatus = String(status ?? "pending").toLowerCase();
-
-    if (normalizedStatus === "filled") {
-      return "confirmed";
-    }
-
-    if (
-      [
-        "false-predicate",
-        "not-enough-balance-or-allowance",
-        "expired",
-        "wrong-permit",
-        "cancelled",
-        "invalid-signature",
-      ].includes(normalizedStatus)
-    ) {
-      return "failed";
-    }
-
-    return "submitted";
-  }
-
-  async function refreshOneInchVenueStatus(leg) {
-    if (!oneInchExecutionClient || !leg.approval?.venueOrderId) {
-      return leg;
-    }
-
-    try {
-      const venueStatus = await oneInchExecutionClient.getOrderStatus(
-        leg.approval.venueOrderId,
-      );
-
-      if (!venueStatus) {
-        return leg;
-      }
-
-      const nextState = mapOneInchVenueState(venueStatus.status);
-      const settlementTxHash =
-        nextState === "confirmed"
-          ? normalizeTxHash(venueStatus.settlementTxHash) ??
-            leg.venueStatus?.settlementTxHash ??
-            null
-          : leg.venueStatus?.settlementTxHash ?? null;
-
-      return {
-        ...leg,
-        state:
-          leg.receipt?.txHash && leg.state !== "failed"
-            ? leg.state
-            : nextState,
-        warnings:
-          String(venueStatus.status).toLowerCase() === "partially-filled"
-            ? uniqueStrings([
-                ...leg.warnings,
-                "1inch Fusion order is partially filled; final settlement remains pending.",
-              ])
-            : leg.warnings,
-        venueStatus: {
-          venueId: leg.venueId ?? ONEINCH_EXECUTION_ROUTE_ID,
-          venueOrderId: venueStatus.orderHash,
-          status: venueStatus.status,
-          settlementTxHash,
-          lastCheckedAt: now(),
-          updatedAt: now(),
-          rawStatus: venueStatus.raw ?? null,
-        },
-        receipt:
-          settlementTxHash && !leg.receipt
-            ? {
-                txHash: settlementTxHash,
-                submittedAt: leg.approval.submittedAt ?? now(),
-                lastCheckedAt: null,
-                receiptStatus: "pending",
-                confirmedAt: null,
-                revertedAt: null,
-                blockNumber: null,
-                transactionIndex: null,
-                rpcUrl: ethereumRpcClient?.rpcUrl ?? null,
-                rawReceipt: null,
-              }
-            : leg.receipt,
-      };
-    } catch {
-      return leg;
-    }
-  }
-
-  async function refreshVenueStatusForLeg(leg, executionRequest = null) {
-    const routeSelection = resolveManualExecutionRouteSelectionFromLeg(
-      leg,
-      executionRequest,
-    );
-
-    if (routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID) {
-      return await refreshOneInchVenueStatus(leg);
-    }
-
-    return await refreshCowVenueStatus(leg);
   }
 
   return {
@@ -3765,18 +2868,6 @@ export function createApiService({
 
       if (action === "create") {
         const activationId = firstDefined(body.activationId, body.activation_id);
-        const routeSelection = resolveManualExecutionRouteSelection({
-          requestedRouteId: firstDefined(
-            body.executionRouteId,
-            body.execution_route_id,
-          ),
-          requestedAdapterId: firstDefined(
-            body.executionAdapterId,
-            body.execution_adapter_id,
-            body.adapterId,
-            body.adapter_id,
-          ),
-        });
 
         if (!activationId) {
           throw new HttpError(
@@ -3808,7 +2899,6 @@ export function createApiService({
           manifest: record.manifest,
           fetchedAssets,
           now,
-          routeSelection,
         });
         const persisted = await persistExecutionRequest({
           executionRequest,
@@ -3820,116 +2910,6 @@ export function createApiService({
           generatedAt: now(),
           action,
           ...persisted,
-        });
-      }
-
-      if (action === "execute_all") {
-        const activationId = firstDefined(body.activationId, body.activation_id);
-        const rebalanceId = firstDefined(body.rebalanceId, body.rebalance_id);
-        const routeSelection = resolveManualExecutionRouteSelection({
-          requestedRouteId: firstDefined(
-            body.executionRouteId,
-            body.execution_route_id,
-          ),
-          requestedAdapterId: firstDefined(
-            body.executionAdapterId,
-            body.execution_adapter_id,
-            body.adapterId,
-            body.adapter_id,
-          ),
-        });
-
-        if (!activationId) {
-          throw new HttpError(
-            400,
-            "activationId is required to stage provider-backed execute_all execution.",
-          );
-        }
-
-        const activation = await loadActivationById(
-          activationId,
-          authenticatedRequestContext,
-        );
-        const rebalance = await loadRebalanceForExecuteAll({
-          activation,
-          rebalanceId,
-        });
-        const providerReceipt = await loadAcceptedProviderReceiptForRebalance(
-          rebalance,
-        );
-
-        ensureExecuteAllStagingProof({
-          activation,
-          requestContext: authenticatedRequestContext,
-        });
-
-        const [existingExecutionRequest] = await runtimeStore.listExecutionRequests(
-          {
-            ownerUserId: authenticatedRequestContext.owner.userId,
-            rebalanceId: rebalance.rebalanceId,
-            limit: 1,
-          },
-        );
-
-        if (existingExecutionRequest) {
-          const persisted = await persistProviderExecutionHandoff({
-            executionRequest: existingExecutionRequest,
-            activation,
-            rebalance,
-            providerReceipt,
-          });
-
-          return parseApiResponse("execution_write", {
-            version: DEFAULT_RESPONSE_VERSION,
-            generatedAt: now(),
-            action,
-            executionRequest: persisted.executionRequest,
-            activityEvents: persisted.activityEvents,
-          });
-        }
-
-        const record = await manifestRepository.getPromotedRecordById(
-          rebalance.targetManifestId,
-        );
-
-        if (!record) {
-          throw new HttpError(
-            404,
-            `Promoted manifest ${rebalance.targetManifestId} was not found.`,
-          );
-        }
-
-        const fetchedAssets = await liveStateRepository.fetchRequiredAssets(
-          record.manifest.requiredAssets,
-        );
-        const executionRequest = createExecutionRequest({
-          activation,
-          manifest: record.manifest,
-          fetchedAssets,
-          now,
-          routeSelection,
-          runtimeOwner: "operator_manual",
-          triggerSource: "provider_staging",
-          rebalance,
-          providerReceipt,
-          executionPlanSnapshot: {
-            executionState: rebalance.executionState,
-            executionEligibility: rebalance.executionEligibility,
-          },
-        });
-        const persisted = await persistProviderExecutionHandoff({
-          executionRequest,
-          activation,
-          rebalance,
-          providerReceipt,
-        });
-
-        return parseApiResponse("execution_write", {
-          version: DEFAULT_RESPONSE_VERSION,
-          generatedAt: now(),
-          action,
-          executionRequest: persisted.executionRequest,
-          activityEvents: persisted.activityEvents,
         });
       }
 
@@ -3959,7 +2939,7 @@ export function createApiService({
         if (!legId) {
           throw new HttpError(
             400,
-            "legId is required to request a live venue quote.",
+            "legId is required to request a live CoW quote.",
           );
         }
 
@@ -3994,219 +2974,92 @@ export function createApiService({
           ...executionRequest,
           blockers: stripExecutionQuoteBlockers(executionRequest.blockers),
         };
-        const routeSelection = resolveManualExecutionRouteSelectionFromLeg(
-          leg,
-          executionRequest,
-        );
-        const signerAddress = resolveExecutionSignerAddress(activation.walletState);
-        const fetchedAsset =
-          leg.assetSymbol && typeof liveStateRepository.fetchAssetSnapshot === "function"
-            ? await liveStateRepository.fetchAssetSnapshot(leg.assetSymbol)
-            : null;
-        const deployment = findEthereumDeployment(fetchedAsset);
-        const fundingStablecoin = findFundingStablecoin(
-          deployment,
-          leg.paymentAssetSymbol,
-        );
-        const cowReceivingToken = resolveCowReceivingToken(deployment);
-        const oneInchReceivingToken = resolveOneInchReceivingToken(deployment);
-        const quoteCandidates = [];
-        const quoteFailures = [];
-        const quoteAttempts = {};
 
-        if (routeSelection.allowCow && cowExecutionClient) {
-          if (
-            fundingStablecoin?.address &&
-            signerAddress &&
-            executionRequest.settlementAddress &&
-            cowReceivingToken.address
-          ) {
-            const quoteAttempt = buildCowQuoteAttemptContext({
-              leg: {
-                ...leg,
-                paymentTokenAddress: fundingStablecoin.address,
-                paymentTokenDecimals:
-                  fundingStablecoin.decimals ?? leg.paymentTokenDecimals,
-                receivingTokenAddress: cowReceivingToken.address,
-              },
-              signerAddress,
-              settlementAddress: executionRequest.settlementAddress,
-            });
-
-            try {
-              const quote = await cowExecutionClient.requestQuote(quoteAttempt);
-              const storedQuote = toStoredExecutionQuote(quote, now());
-              quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
-                status: "quoted",
-                venueId: COW_SWAP_EXECUTION_ROUTE_ID,
-                submissionSupported: true,
-                quoteId: storedQuote.quoteId,
-                buyAmount: storedQuote.order.buyAmount,
-                sellAmount: storedQuote.order.sellAmount,
-                ...quoteAttempt,
-              };
-              quoteCandidates.push({
-                adapterId: COW_SWAP_EXECUTION_ADAPTER_ID,
-                venueId: COW_SWAP_EXECUTION_ROUTE_ID,
-                receivingTokenAddress: cowReceivingToken.address,
-                storedQuote,
-                approval: createApprovalFromCowQuote(storedQuote),
-                state: "awaiting_approval",
-                outputAmount: storedQuote.order.buyAmount,
-                submissionSupported: true,
-                warnings: [],
-              });
-            } catch (error) {
-              const quoteFailure = normalizeCowQuoteFailure(error);
-              const failureMessage = buildCowQuoteFailureMessage({
-                leg,
-                quoteAttempt,
-                quoteFailure,
-              });
-              quoteFailures.push(failureMessage);
-              quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
-                status: "failed",
-                venueId: COW_SWAP_EXECUTION_ROUTE_ID,
-                ...quoteAttempt,
-                error: quoteFailure.message,
-                errorStatusCode: quoteFailure.statusCode,
-                errorType: quoteFailure.errorType,
-                errorDescription: quoteFailure.errorDescription,
-                errorBody: quoteFailure.rawBody,
-                blockerClass: quoteFailure.blockerClass,
-              };
-            }
-          } else {
-            quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
-              status: "skipped",
-              venueId: COW_SWAP_EXECUTION_ROUTE_ID,
-              reason:
-                !fundingStablecoin?.address
-                  ? `${leg.assetSymbol} is missing an Ethereum ${leg.paymentAssetSymbol} payment token for CoW.`
-                  : !signerAddress
-                    ? "A verified signer wallet is required before CoW can quote this leg."
-                    : !executionRequest.settlementAddress
-                      ? "A settlement destination is required before CoW can quote this leg."
-                      : `Ethereum CoW buy-token metadata is missing for ${leg.assetSymbol}.`,
-            };
-          }
-        } else {
-          quoteAttempts[COW_SWAP_EXECUTION_ADAPTER_ID] = {
-            status: "skipped",
-            venueId: COW_SWAP_EXECUTION_ROUTE_ID,
-            reason: routeSelection.allowCow
-              ? "CoW client is not configured for this runtime."
-              : `Execution request is pinned to ${routeSelection.label}.`,
-          };
-        }
-
-        if (routeSelection.allowOneInch && oneInchExecutionClient) {
-          if (fundingStablecoin?.address && signerAddress && oneInchReceivingToken.address) {
-            const quoteAttempt = buildOneInchQuoteAttemptContext({
-              leg: {
-                ...leg,
-                paymentTokenAddress: fundingStablecoin.address,
-                paymentTokenDecimals:
-                  fundingStablecoin.decimals ?? leg.paymentTokenDecimals,
-              },
-              signerAddress,
-              receivingTokenAddress: oneInchReceivingToken.address,
-            });
-
-            try {
-              const preparedOrder = await oneInchExecutionClient.prepareOrder({
-                ...quoteAttempt,
-                receiver:
-                  executionRequest.settlementAddress ?? quoteAttempt.walletAddress,
-              });
-              const storedQuote = toStoredOneInchExecutionQuote(
-                {
-                  ...preparedOrder.quote,
-                  orderHash: preparedOrder.orderHash,
-                  signerAddress: preparedOrder.signerAddress,
-                  receiver: preparedOrder.receiver,
-                },
-                quoteAttempt,
-                now(),
-              );
-              quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
-                status: "quoted",
-                venueId: ONEINCH_EXECUTION_ROUTE_ID,
-                submissionSupported: true,
-                quoteId: storedQuote.quoteId,
-                orderHash: preparedOrder.orderHash,
-                buyAmount: storedQuote.toTokenAmount,
-                sellAmount: storedQuote.fromTokenAmount,
-                recommendedPreset: storedQuote.recommendedPreset,
-                settlementAddress: storedQuote.settlementAddress,
-                ...quoteAttempt,
-              };
-              quoteCandidates.push({
-                adapterId: ONEINCH_EXECUTION_ADAPTER_ID,
-                venueId: ONEINCH_EXECUTION_ROUTE_ID,
-                receivingTokenAddress: oneInchReceivingToken.address,
-                storedQuote,
-                approval: createApprovalFromQuote(storedQuote, preparedOrder),
-                state: "awaiting_approval",
-                outputAmount: storedQuote.toTokenAmount,
-                submissionSupported: true,
-                warnings: [],
-              });
-            } catch (error) {
-              const quoteFailure = normalizeOneInchQuoteFailure(error);
-              const failureMessage = buildOneInchQuoteFailureMessage({
-                leg,
-                quoteAttempt,
-                quoteFailure,
-              });
-              quoteFailures.push(failureMessage);
-              quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
-                status: "failed",
-                venueId: ONEINCH_EXECUTION_ROUTE_ID,
-                ...quoteAttempt,
-                error: quoteFailure.message,
-                errorStatusCode: quoteFailure.statusCode,
-                errorCode: quoteFailure.errorCode,
-                errorDescription: quoteFailure.errorDescription,
-                errorBody: quoteFailure.rawBody,
-                blockerClass: quoteFailure.blockerClass,
-              };
-            }
-          } else {
-            quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
-              status: "skipped",
-              venueId: ONEINCH_EXECUTION_ROUTE_ID,
-              reason:
-                !fundingStablecoin?.address
-                  ? `${leg.assetSymbol} is missing an Ethereum ${leg.paymentAssetSymbol} payment token for 1inch Fusion.`
-                  : !signerAddress
-                    ? "A verified signer wallet is required before 1inch Fusion can quote this leg."
-                    : `Ethereum deployment.address metadata is missing for ${leg.assetSymbol}.`,
-            };
-          }
-        } else {
-          quoteAttempts[ONEINCH_EXECUTION_ADAPTER_ID] = {
-            status: "skipped",
-            venueId: ONEINCH_EXECUTION_ROUTE_ID,
-            reason: routeSelection.allowOneInch
-              ? "1inch Fusion client is not configured for this runtime."
-              : `Execution request is pinned to ${routeSelection.label}.`,
-          };
-        }
-
-        const selectedCandidate = selectVenueQuoteCandidate(quoteCandidates);
-
-        if (!selectedCandidate) {
-          const quoteSkipReasons = Object.values(quoteAttempts)
-            .filter((attempt) => attempt?.status === "skipped" && attempt.reason)
-            .map((attempt) => attempt.reason);
+        if (!cowExecutionClient) {
           const blockedLeg = {
             ...nextLegBase,
             state: "blocked",
             blockers: uniqueStrings([
               ...nextLegBase.blockers,
-              ...quoteFailures,
-              ...quoteSkipReasons,
+              "CoW client is not configured for this runtime.",
+            ]),
+          };
+          const persisted = await persistExecutionRequest({
+            executionRequest: replaceExecutionLeg(nextRequestBase, blockedLeg),
+            activation,
+          });
+
+          return parseApiResponse("execution_write", {
+            version: DEFAULT_RESPONSE_VERSION,
+            generatedAt: now(),
+            action,
+            ...persisted,
+          });
+        }
+
+        try {
+          const signerAddress = resolveExecutionSignerAddress(activation.walletState);
+          const quoteAttempt = buildCowQuoteAttemptContext({
+            leg,
+            signerAddress,
+            settlementAddress: executionRequest.settlementAddress,
+          });
+          const quote = await cowExecutionClient.requestQuote(quoteAttempt);
+          const storedQuote = toStoredExecutionQuote(quote, now());
+          const quotedLeg = {
+            ...nextLegBase,
+            state: "awaiting_approval",
+            quote: storedQuote,
+            approval: createApprovalFromQuote(storedQuote),
+            venueStatus: {
+              venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+              venueOrderId: null,
+              status: "quote_ready",
+              settlementTxHash: null,
+              lastCheckedAt: null,
+              updatedAt: now(),
+              rawStatus: {
+                quoteId: storedQuote.quoteId,
+                ...quoteAttempt,
+              },
+            },
+          };
+          const nextRequest = replaceExecutionLeg(nextRequestBase, quotedLeg);
+          const persisted = await persistExecutionRequest({
+            executionRequest: nextRequest,
+            activation,
+            activityEvents: buildExecutionActivityEvents({
+              activation,
+              executionRequest: updateExecutionRequestState(nextRequest),
+              previousLeg: leg,
+              leg: quotedLeg,
+              now,
+            }),
+          });
+
+          return parseApiResponse("execution_write", {
+            version: DEFAULT_RESPONSE_VERSION,
+            generatedAt: now(),
+            action,
+            ...persisted,
+          });
+        } catch (error) {
+          const blockedLeg = {
+            ...nextLegBase,
+            state: "blocked",
+            blockers: uniqueStrings([
+              ...nextLegBase.blockers,
+              buildCowQuoteFailureMessage({
+                leg,
+                quoteAttempt: buildCowQuoteAttemptContext({
+                  leg,
+                  signerAddress: resolveExecutionSignerAddress(
+                    activation.walletState,
+                  ),
+                  settlementAddress: executionRequest.settlementAddress,
+                }),
+                error,
+              }),
             ]),
             venueStatus: {
               venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
@@ -4216,8 +3069,15 @@ export function createApiService({
               lastCheckedAt: null,
               updatedAt: now(),
               rawStatus: {
-                selectedVenueId: null,
-                quoteAttempts,
+                ...buildCowQuoteAttemptContext({
+                  leg,
+                  signerAddress: resolveExecutionSignerAddress(
+                    activation.walletState,
+                  ),
+                  settlementAddress: executionRequest.settlementAddress,
+                }),
+                error:
+                  error instanceof Error ? error.message : String(error),
               },
             },
           };
@@ -4233,64 +3093,6 @@ export function createApiService({
             ...persisted,
           });
         }
-
-        const selectionReason =
-          quoteCandidates.length === 1
-            ? `${selectedCandidate.venueId} was the only venue that returned a live quote.`
-            : selectedCandidate.submissionSupported
-              ? `${selectedCandidate.venueId} was selected because it is currently the strongest submission-capable venue in the repo-owned manual lane.`
-              : `${selectedCandidate.venueId} was selected because CoW did not return a live quote for this leg.`;
-        const quotedLeg = {
-          ...nextLegBase,
-          state: selectedCandidate.state,
-          venueId: selectedCandidate.venueId,
-          adapterId: selectedCandidate.adapterId,
-          requiredRouteId: selectedCandidate.venueId,
-          paymentTokenAddress: fundingStablecoin?.address ?? leg.paymentTokenAddress,
-          paymentTokenDecimals:
-            fundingStablecoin?.decimals ?? leg.paymentTokenDecimals,
-          receivingTokenAddress: selectedCandidate.receivingTokenAddress,
-          quote: selectedCandidate.storedQuote,
-          approval: selectedCandidate.approval,
-          warnings: uniqueStrings([
-            ...nextLegBase.warnings,
-            ...selectedCandidate.warnings,
-          ]),
-          venueStatus: {
-            venueId: selectedCandidate.venueId,
-            venueOrderId: null,
-            status: "quote_ready",
-            settlementTxHash: null,
-            lastCheckedAt: null,
-            updatedAt: now(),
-            rawStatus: {
-              selectedVenueId: selectedCandidate.venueId,
-              selectedAdapterId: selectedCandidate.adapterId,
-              selectionReason,
-              submissionSupported: selectedCandidate.submissionSupported,
-              quoteAttempts,
-            },
-          },
-        };
-        const nextRequest = replaceExecutionLeg(nextRequestBase, quotedLeg);
-        const persisted = await persistExecutionRequest({
-          executionRequest: nextRequest,
-          activation,
-          activityEvents: buildExecutionActivityEvents({
-            activation,
-            executionRequest: updateExecutionRequestState(nextRequest),
-            previousLeg: leg,
-            leg: quotedLeg,
-            now,
-          }),
-        });
-
-        return parseApiResponse("execution_write", {
-          version: DEFAULT_RESPONSE_VERSION,
-          generatedAt: now(),
-          action,
-          ...persisted,
-        });
       }
 
       if (!legId) {
@@ -4319,11 +3121,6 @@ export function createApiService({
         );
       }
 
-      const routeSelection = resolveManualExecutionRouteSelectionFromLeg(
-        leg,
-        executionRequest,
-      );
-
       if (action === "record_submission") {
         const signature = normalizeSignature(
           firstDefined(body.signature, body.orderSignature, body.order_signature),
@@ -4340,7 +3137,14 @@ export function createApiService({
         if (!leg.quote || !leg.approval?.orderToSign) {
           throw new HttpError(
             409,
-            "A live execution quote and approval payload must be captured before submission can be recorded.",
+            "A live CoW quote and approval payload must be captured before submission can be recorded.",
+          );
+        }
+
+        if (!cowExecutionClient) {
+          throw new HttpError(
+            503,
+            "CoW client is not configured for signed order submission.",
           );
         }
 
@@ -4355,68 +3159,19 @@ export function createApiService({
         ) {
           throw new HttpError(
             403,
-            routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
-              ? "The 1inch Fusion signer address is not linked to the authenticated Privy user."
-              : "The CoW signer address is not linked to the authenticated Privy user.",
+            "The CoW signer address is not linked to the authenticated Privy user.",
           );
         }
 
         try {
-          let venueOrderId;
-          let submissionRawStatus = null;
+          const rawVenueOrderId = await cowExecutionClient.submitOrder({
+            ...leg.approval.orderToSign,
+            signature,
+          });
+          const venueOrderId = normalizeOrderUid(rawVenueOrderId);
 
-          if (routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID) {
-            if (!oneInchExecutionClient) {
-              throw new HttpError(
-                503,
-                "1inch Fusion client is not configured for signed order submission.",
-              );
-            }
-
-            const orderToSign = leg.approval.orderToSign ?? {};
-
-            if (
-              !orderToSign.order ||
-              !orderToSign.quoteId ||
-              !orderToSign.extension ||
-              !orderToSign.orderHash
-            ) {
-              throw new HttpError(
-                409,
-                "A prepared 1inch Fusion order payload is required before signed submission can be recorded.",
-              );
-            }
-
-            const submission = await oneInchExecutionClient.submitOrder({
-              order: orderToSign.order,
-              signature,
-              quoteId: orderToSign.quoteId,
-              extension: orderToSign.extension,
-              orderHash: orderToSign.orderHash,
-            });
-            venueOrderId = normalizeTxHash(submission.orderHash);
-            submissionRawStatus = submission.raw ?? null;
-
-            if (!venueOrderId) {
-              throw new Error("1inch Fusion returned an invalid order hash.");
-            }
-          } else {
-            if (!cowExecutionClient) {
-              throw new HttpError(
-                503,
-                "CoW client is not configured for signed order submission.",
-              );
-            }
-
-            const rawVenueOrderId = await cowExecutionClient.submitOrder({
-              ...leg.approval.orderToSign,
-              signature,
-            });
-            venueOrderId = normalizeOrderUid(rawVenueOrderId);
-
-            if (!venueOrderId) {
-              throw new Error("CoW returned an invalid order uid.");
-            }
+          if (!venueOrderId) {
+            throw new Error("CoW returned an invalid order uid.");
           }
 
           let nextLeg = {
@@ -4431,13 +3186,13 @@ export function createApiService({
               venueOrderId,
             },
             venueStatus: {
-              venueId: leg.venueId ?? routeSelection.requestAdapterId,
+              venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
               venueOrderId,
               status: "submitted",
               settlementTxHash: txHash,
               lastCheckedAt: null,
               updatedAt: now(),
-              rawStatus: submissionRawStatus ?? leg.venueStatus?.rawStatus ?? null,
+              rawStatus: leg.venueStatus?.rawStatus ?? null,
             },
             receipt: txHash
               ? {
@@ -4455,7 +3210,7 @@ export function createApiService({
               : leg.receipt,
           };
 
-          nextLeg = await refreshVenueStatusForLeg(nextLeg, executionRequest);
+          nextLeg = await refreshCowVenueStatus(nextLeg);
           nextLeg = await refreshReceiptForLeg(nextLeg);
           const nextRequest = replaceExecutionLeg(executionRequest, nextLeg);
           const persisted = await persistExecutionRequest({
@@ -4488,11 +3243,7 @@ export function createApiService({
               : null,
             blockers: uniqueStrings([
               ...leg.blockers,
-              `${
-                routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
-                  ? "1inch Fusion"
-                  : "CoW"
-              } order submission failed: ${
+              `CoW order submission failed: ${
                 error instanceof Error ? error.message : String(error)
               }`,
             ]),
@@ -4537,7 +3288,7 @@ export function createApiService({
               },
               venueStatus: {
                 ...(leg.venueStatus ?? {
-                  venueId: leg.venueId ?? routeSelection.requestAdapterId,
+                  venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
                   venueOrderId: leg.approval?.venueOrderId ?? null,
                   status: "submitted",
                 }),
@@ -4549,17 +3300,14 @@ export function createApiService({
             }
           : leg;
 
-      refreshedLeg = await refreshVenueStatusForLeg(
-        refreshedLeg,
-        executionRequest,
-      );
+      refreshedLeg = await refreshCowVenueStatus(refreshedLeg);
 
       if (!refreshedLeg.receipt?.txHash) {
         const nextLeg = {
           ...refreshedLeg,
           warnings: uniqueStrings([
             ...refreshedLeg.warnings,
-            `Settlement transaction hash is not available yet; ${routeSelection.label} order remains submitted.`,
+            "Settlement transaction hash is not available yet; CoW order remains submitted.",
           ]),
         };
         const nextRequest = replaceExecutionLeg(executionRequest, nextLeg);
@@ -4633,279 +3381,6 @@ export function createApiService({
       });
     },
 
-    async ingestProviderRebalanceEvent({
-      request,
-      routePath = PROVIDER_REBALANCE_ROUTE_PATH,
-      rawBody = "",
-    } = {}) {
-      const receivedAt = now();
-      const rawBodyDigest = createSha256Digest(rawBody);
-      let requestPayload = null;
-      let authResult = null;
-
-      try {
-        let parsedBody;
-
-        try {
-          parsedBody = rawBody.trim().length === 0 ? {} : JSON.parse(rawBody);
-        } catch {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 400,
-            reasonCodes: ["request_json_invalid"],
-            reasonDetail: "Provider request body must be valid JSON.",
-            rawBodyDigest,
-            routePath,
-            receivedAt,
-          });
-        }
-
-        try {
-          requestPayload = providerRebalanceReviewRequestSchema.parse(parsedBody);
-        } catch (error) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 422,
-            reasonCodes: ["request_schema_invalid"],
-            reasonDetail:
-              error?.issues
-                ? formatZodIssues(error)
-                : "Provider request body does not match the shared schema.",
-            rawBodyDigest,
-            routePath,
-            receivedAt,
-          });
-        }
-
-        const computedRequestDigest = createProviderRebalanceRequestDigest(
-          requestPayload,
-        );
-
-        if (requestPayload.requestDigest !== computedRequestDigest) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 401,
-            reasonCodes: ["request_digest_mismatch"],
-            reasonDetail: "Provider requestDigest does not match the canonical request payload.",
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            receivedAt,
-          });
-        }
-
-        authResult =
-          providerRebalanceAuthService?.authenticateAuthorizationHeader(
-            request?.headers?.authorization ?? null,
-            {
-              providerId: requestPayload.providerId,
-              expectedDigest: computedRequestDigest,
-            },
-          ) ?? {
-            ok: false,
-            statusCode: 503,
-            reasonCode: "provider_auth_not_configured",
-            detail:
-              "Provider-triggered rebalance auth service is not configured in this runtime.",
-          };
-
-        if (!authResult.ok) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: authResult.statusCode,
-            reasonCodes: [authResult.reasonCode],
-            reasonDetail: authResult.detail,
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            receivedAt,
-          });
-        }
-
-        const conflicts = await runtimeStore.findProviderReceiptConflicts({
-          providerId: requestPayload.providerId,
-          deliveryId: requestPayload.deliveryId,
-          signerAddress: authResult.signerAddress,
-          jwtId: authResult.jwt.jwtId,
-          requestDigest: requestPayload.requestDigest,
-        });
-
-        if (conflicts.delivery) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 409,
-            reasonCodes: ["duplicate_delivery"],
-            reasonDetail: "Provider deliveryId has already been processed.",
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            duplicateOfReceiptId: conflicts.delivery.receiptId,
-            receivedAt,
-          });
-        }
-
-        if (conflicts.jwtId) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 409,
-            reasonCodes: ["replayed_jwt_id"],
-            reasonDetail: "Provider token jti has already been processed for this signer.",
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            duplicateOfReceiptId: conflicts.jwtId.receiptId,
-            receivedAt,
-          });
-        }
-
-        if (conflicts.requestDigest) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 409,
-            reasonCodes: ["replayed_request_digest"],
-            reasonDetail: "Provider request digest has already been processed for this signer.",
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            duplicateOfReceiptId: conflicts.requestDigest.receiptId,
-            receivedAt,
-          });
-        }
-
-        const providerContext = await loadProviderRebalanceContext(requestPayload);
-
-        if (!providerContext.activation) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 404,
-            reasonCodes: ["activation_not_found"],
-            reasonDetail:
-              "Provider event activationId does not match any stored activation runtime context.",
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            receivedAt,
-          });
-        }
-
-        if (providerContext.activation.slotId !== requestPayload.slotId) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 409,
-            reasonCodes: ["slot_mismatch"],
-            reasonDetail:
-              "Provider event slotId does not match the stored activation runtime context.",
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            receivedAt,
-          });
-        }
-
-        if (
-          requestPayload.claimedManifestId &&
-          providerContext.record.manifest.manifestId !== requestPayload.claimedManifestId
-        ) {
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 409,
-            reasonCodes: ["promoted_manifest_mismatch"],
-            reasonDetail:
-              "Provider event claimedManifestId does not match the current promoted manifest.",
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            receivedAt,
-          });
-        }
-
-        let rebalance = buildRebalanceOrchestration({
-          manifest: providerContext.record.manifest,
-          boundaryPayload: providerContext.boundaryPayload,
-          latestActivation: providerContext.activation,
-          latestRebalance: providerContext.latestRebalance,
-          triggerSource: "provider_triggered",
-          providerTriggeredProven: true,
-        });
-
-        if (rebalance.state === "scheduled") {
-          rebalance = applyRebalanceTransition({
-            current_rebalance: rebalance,
-            next_state: "awaiting_operator",
-            trigger_source: "provider_triggered",
-            note: PROVIDER_REBALANCE_REVIEW_NOTE,
-            now: now(),
-          });
-        }
-
-        if (rebalance.state !== "awaiting_operator") {
-          const rejection = mapRejectedProviderReviewState(rebalance);
-
-          return finalizeProviderRebalanceEvent({
-            decision: "rejected",
-            statusCode: 409,
-            reasonCodes: rejection.reasonCodes,
-            reasonDetail: rejection.reasonDetail,
-            rawBodyDigest,
-            routePath,
-            requestPayload,
-            authResult,
-            rebalance,
-            receivedAt,
-          });
-        }
-
-        const persistedRebalance = await runtimeStore.upsertRebalance({
-          rebalance,
-          eventType: "provider_triggered_review",
-        });
-        const latestRebalance = providerContext.latestRebalance;
-        const stateChanged =
-          !latestRebalance ||
-          latestRebalance.state !== persistedRebalance.state ||
-          latestRebalance.triggerSource !== persistedRebalance.triggerSource ||
-          latestRebalance.updatedAt !== persistedRebalance.updatedAt ||
-          latestRebalance.targetManifestId !== persistedRebalance.targetManifestId;
-
-        return finalizeProviderRebalanceEvent({
-          decision: "accepted",
-          statusCode: 202,
-          reasonCodes: ["accepted_review_only"],
-          reasonDetail:
-            "Validated provider event opened operator review only; the manual CoW boundary remains unchanged.",
-          rawBodyDigest,
-          routePath,
-          requestPayload,
-          authResult,
-          rebalance: persistedRebalance,
-          stateChanged,
-          receivedAt,
-        });
-      } catch (error) {
-        return finalizeProviderRebalanceEvent({
-          decision: "rejected",
-          statusCode: 500,
-          reasonCodes: ["internal_error"],
-          reasonDetail:
-            error instanceof Error
-              ? error.message
-              : "Provider-triggered rebalance review failed unexpectedly.",
-          rawBodyDigest,
-          routePath,
-          requestPayload,
-          authResult,
-          receivedAt,
-        });
-      }
-    },
-
     async readAutoresearchRuntime(query = {}) {
       const limit = Math.max(1, Math.min(Number(query.limit ?? 10), 50));
       const [runtime, runs] = await Promise.all([
@@ -4946,6 +3421,217 @@ export function createApiService({
         generatedAt: now(),
         runtime: persisted.runtime,
         run: persisted.run,
+      });
+    },
+
+    async recordProviderTriggeredRebalanceReview(
+      body = {},
+      { request = null } = {},
+    ) {
+      let validation;
+
+      try {
+        validation = await authenticateChainlinkCreProviderEvent({
+          request,
+          requestBody: body,
+          signerAllowlist: chainlinkCreSignerAllowlist,
+          workflowAllowlist: chainlinkCreWorkflowAllowlist,
+          now,
+        });
+      } catch (error) {
+        if (error instanceof ChainlinkCreValidationError) {
+          if (error.receiptCandidate) {
+            await persistProviderEventReceipt({
+              receiptCandidate: error.receiptCandidate,
+              decision: "rejected",
+              reason: error.message,
+              errorCode: error.errorCode,
+            });
+          }
+
+          throw new HttpError(error.statusCode, error.message, {
+            errorCode: error.errorCode,
+            ...(error.details ? { validation: error.details } : {}),
+          });
+        }
+
+        throw error;
+      }
+
+      const duplicateByJti = await runtimeStore.getProviderEventReceiptByJti({
+        jti: validation.claims.jti,
+      });
+
+      if (duplicateByJti) {
+        const duplicateReceipt = await persistProviderEventReceipt({
+          validation,
+          decision: "duplicate",
+          reason: `Chainlink CRE jti ${validation.claims.jti} was already processed.`,
+          errorCode: "duplicate_jti",
+          duplicateOfReceiptId: duplicateByJti.receiptId,
+        });
+
+        return parseApiResponse("provider_triggered_rebalance_review_write", {
+          version: DEFAULT_RESPONSE_VERSION,
+          generatedAt: now(),
+          receipt: duplicateReceipt,
+          rebalanceOrchestration:
+            duplicateByJti.decision === "accepted"
+              ? serializeRebalance(
+                  await runtimeStore.getLatestRebalance({
+                    slotId: validation.body.slotId,
+                  }),
+                )
+              : null,
+        });
+      }
+
+      const duplicateByDedupeKey =
+        await runtimeStore.getAcceptedProviderEventReceiptByDedupeKey({
+          dedupeKey: validation.dedupeKey,
+        });
+
+      if (duplicateByDedupeKey) {
+        const duplicateReceipt = await persistProviderEventReceipt({
+          validation,
+          decision: "duplicate",
+          reason:
+            `Chainlink CRE dedupe key ${validation.dedupeKey} was already accepted.`,
+          errorCode: "duplicate_dedupe_key",
+          duplicateOfReceiptId: duplicateByDedupeKey.receiptId,
+        });
+
+        return parseApiResponse("provider_triggered_rebalance_review_write", {
+          version: DEFAULT_RESPONSE_VERSION,
+          generatedAt: now(),
+          receipt: duplicateReceipt,
+          rebalanceOrchestration: serializeRebalance(
+            await runtimeStore.getLatestRebalance({
+              slotId: validation.body.slotId,
+            }),
+          ),
+        });
+      }
+
+      let record = null;
+
+      try {
+        record = await manifestRepository.getPromotedRecordBySlot(
+          validation.body.slotId,
+        );
+      } catch {
+        record = null;
+      }
+
+      if (!record) {
+        await rejectProviderTriggeredReview({
+          validation,
+          statusCode: 409,
+          errorCode: "unknown_promoted_slot",
+          message:
+            `No promoted manifest was found for slot ${validation.body.slotId}.`,
+        });
+      }
+
+      if (record.manifest.manifestId !== validation.body.targetManifestId) {
+        await rejectProviderTriggeredReview({
+          validation,
+          statusCode: 409,
+          errorCode: "manifest_scope_mismatch",
+          message:
+            `Provider event target manifest ${validation.body.targetManifestId} does not match the current promoted manifest ${record.manifest.manifestId}.`,
+        });
+      }
+
+      if (record.manifest.chain !== validation.body.chain) {
+        await rejectProviderTriggeredReview({
+          validation,
+          statusCode: 409,
+          errorCode: "chain_scope_mismatch",
+          message:
+            `Provider event chain ${validation.body.chain} does not match the promoted manifest chain ${record.manifest.chain}.`,
+        });
+      }
+
+      const manifest = record.manifest;
+      const slotRuntime = await loadGlobalSlotRuntime(manifest);
+
+      if (!slotRuntime.latestActivation) {
+        await rejectProviderTriggeredReview({
+          validation,
+          statusCode: 409,
+          errorCode: "missing_activation_baseline",
+          message:
+            `Slot ${manifest.slotId} has no live activation baseline, so provider-triggered review stays preview-only.`,
+        });
+      }
+
+      if (slotRuntime.latestRebalance?.state === "paused") {
+        await rejectProviderTriggeredReview({
+          validation,
+          statusCode: 409,
+          errorCode: "operator_paused",
+          message:
+            `Slot ${manifest.slotId} is paused, so provider-triggered review cannot reopen execution handling.`,
+        });
+      }
+
+      if (slotRuntime.latestRebalance?.state === "executing") {
+        await rejectProviderTriggeredReview({
+          validation,
+          statusCode: 409,
+          errorCode: "rebalance_already_executing",
+          message:
+            `Slot ${manifest.slotId} is already executing, so provider-triggered review cannot open another review.`,
+        });
+      }
+
+      const { liveXStocksState, liveRouteState } = await loadLiveState(manifest);
+      const boundaryPayload = deriveBoundaryPayload({
+        manifest,
+        liveXStocksState,
+        liveRouteState,
+        requestedNotionalUsd:
+          slotRuntime.latestActivation.requestedNotionalUsd ??
+          manifest.walletRequirements.minFundingUsd,
+        walletState: slotRuntime.latestActivation.walletState ?? {},
+      });
+      const rebalanceOrchestration = buildRebalanceOrchestration({
+        manifest,
+        boundaryPayload,
+        latestActivation: slotRuntime.latestActivation,
+        latestRebalance: slotRuntime.latestRebalance,
+        triggerSource: "provider_triggered",
+        providerTriggeredProven: true,
+        resume: true,
+      });
+
+      if (rebalanceOrchestration.state !== "awaiting_operator") {
+        await rejectProviderTriggeredReview({
+          validation,
+          statusCode: 409,
+          errorCode: `rebalance_state_${rebalanceOrchestration.state}`,
+          message:
+            `Provider-triggered review may only open awaiting_operator, but local runtime truth resolved to ${rebalanceOrchestration.state}.`,
+        });
+      }
+
+      const persistedRebalance = await runtimeStore.upsertRebalance({
+        rebalance: rebalanceOrchestration,
+        eventType: "provider_triggered_review",
+      });
+      const receipt = await persistProviderEventReceipt({
+        validation,
+        decision: "accepted",
+        reason:
+          "Validated Chainlink CRE event opened operator review for the current promoted manifest.",
+      });
+
+      return parseApiResponse("provider_triggered_rebalance_review_write", {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        receipt,
+        rebalanceOrchestration: serializeRebalance(persistedRebalance),
       });
     },
 
