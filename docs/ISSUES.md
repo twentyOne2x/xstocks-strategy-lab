@@ -100,6 +100,36 @@ Last updated: 2026-04-01
 - Plan links:
   - [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
 
+### XSL-006A Deployed Recurring Autoresearch Scheduler Host
+
+- Type: runtime/deployment
+- Status: completed
+- Canonical owner lane: `XSL-006`
+- Date opened: 2026-04-01
+- Context: The repo owns the regular autoresearch worker runtime, but recurring deployed cadence is still unproven. Fresh audit on 2026-04-01 now has live Railway and GitHub access from this machine and confirms the current host inventory exactly: Railway project `xstocks-strategy-lab-preview` has one `production` environment with exactly one service, `api`; `railway functions list` returns no functions; `gh workflow list` and `gh run list` for `twentyOne2x/xstocks-strategy-lab` are empty; and `origin/main` has no `.github/**` or `.vercel/**` tree. SSH into the live Railway `api` service shows `/app/apps/api/data/runtime-store.json` exists but has no `autoresearch`, `truthBoundary`, or `recurringAutonomousProven` keys, so the deployed host currently carries no autoresearch scheduler receipts.
+- Suspected cause: the repo shipped the worker CLI and persisted local cadence model first, but never established a repo-owned recurring host plus receipt path. The only deployed Railway service is still API-only, and the live API contract itself is older than local.
+- Fix intent: establish the narrowest truthful repo-owned recurring host for autoresearch, capture host-level receipts, and add only one tiny proof surface if needed so `recurringAutonomousProven` flips only when deployed truth actually exists.
+- Acceptance criteria:
+  1. Either an existing repo-owned recurring host is proven with exact host/service, cadence, last run, next run, and runtime/log evidence, or a new narrow repo-owned scheduler host is added and deployed.
+  2. The chosen surface is classified explicitly among Railway worker/service, Railway cron/job, GitHub Actions, and Vercel cron.
+  3. `apps/api` gains at most one tiny runtime-proof surface if needed to read current autoresearch host truth later.
+  4. `recurringAutonomousProven` remains `false` and `worker_runtime_only` remains active unless host-level proof and receipts exist.
+  5. If closure still fails, one exact infrastructure blocker is recorded instead of widening scope.
+- Complexity: medium
+- Plan: [2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md)
+- Resolution note: Chosen scheduler surface is Railway cron service `autoresearch-worker` in project `xstocks-strategy-lab-preview` / environment `production`. The live API proof surface now shows the first scheduled host receipt at run id `autoresearch_20260401T170541978z_bd9d4900`, started `2026-04-01T17:05:41.978Z`, completed `2026-04-01T17:05:42.918Z`, proof captured `2026-04-01T17:05:42.921Z`, deployment `38862730-0d6a-42f7-8246-b639ea48a9c3`, snapshot `116ecc2e-ca12-4a9f-b6c8-ec3898419779`, and cron schedule `5 17 * * *`. The next host tick is deterministically derived from the live cron schedule as `2026-04-02 17:05 UTC`, and repo truth is now `railway_cron_service` rather than `worker_runtime_only`.
+- Executor prompt:
+  - Audit Railway, GitHub Actions, and Vercel ownership for the autoresearch recurring lane using current live access.
+  - If no recurring host already exists, implement the narrowest truthful scheduler path in `apps/worker` plus deployment/runtime config only.
+  - Touch `apps/api` only if one tiny receipt or runtime-proof surface is needed so later verification does not require SSH.
+  - Capture real deployed receipts before changing repo truth, and fail closed at the first exact deploy blocker if the host still cannot be established.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] visual/screenshot verification not applicable because this lane is worker/deploy/runtime only
+
 ### XSL-007 Manifest-To-Execution API Boundary
 
 - Type: backend/integration

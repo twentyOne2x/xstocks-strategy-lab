@@ -531,6 +531,81 @@ const publicAgentHandoffBoundarySchema = z.object({
   authenticatedApis: z.array(apiSurfaceSchema).min(1),
   privateDetailsWithheld: z.array(nonEmptyStringSchema).min(1),
 });
+const autoresearchSchedulerHostSchema = z.object({
+  provider: nonEmptyStringSchema,
+  hostKind: nonEmptyStringSchema,
+  projectId: nonEmptyStringSchema,
+  projectName: nonEmptyStringSchema,
+  environmentId: nonEmptyStringSchema,
+  environmentName: nonEmptyStringSchema,
+  serviceId: nonEmptyStringSchema,
+  serviceName: nonEmptyStringSchema,
+  cronSchedule: nonEmptyStringSchema,
+});
+const autoresearchSchedulerReceiptSchema = autoresearchSchedulerHostSchema.extend({
+  receiptCapturedAt: timestampSchema,
+  deploymentId: nonEmptyStringSchema,
+  snapshotId: nonEmptyStringSchema,
+  publicDomain: nonEmptyStringSchema.nullable(),
+  privateDomain: nonEmptyStringSchema.nullable(),
+  gitCommitSha: nonEmptyStringSchema.nullable(),
+  gitBranch: nonEmptyStringSchema.nullable(),
+});
+const autoresearchRuntimeProofRuntimeSchema = z.object({
+  runtimeId: nonEmptyStringSchema,
+  runtimeOwner: nonEmptyStringSchema,
+  cadenceHours: z.number().finite().positive(),
+  status: nonEmptyStringSchema,
+  truthBoundary: nonEmptyStringSchema,
+  repoOwnedRuntime: z.boolean(),
+  recurringAutonomousProven: z.boolean(),
+  supportedTriggerSources: z.array(nonEmptyStringSchema),
+  notes: z.array(nonEmptyStringSchema),
+  lastRequestedAt: timestampSchema.nullable(),
+  lastStartedAt: timestampSchema.nullable(),
+  lastCompletedAt: timestampSchema.nullable(),
+  lastRunId: nonEmptyStringSchema.nullable(),
+  lastTriggerSource: nonEmptyStringSchema.nullable(),
+  nextDueAt: timestampSchema.nullable(),
+  lastPromotionCount: z.number().int().nonnegative(),
+  lastPromotedManifestIds: z.array(nonEmptyStringSchema),
+  schedulerHost: autoresearchSchedulerHostSchema.nullable(),
+  proofUpdatedAt: timestampSchema.nullable(),
+});
+const autoresearchRuntimeProofChecksSchema = z
+  .object({
+    researchContractsOk: z.boolean(),
+    researchRunIntegrityOk: z.boolean(),
+    promotedBoundaryOk: z.boolean(),
+  })
+  .nullable();
+const autoresearchRuntimeProofRunSchema = z.object({
+  runId: nonEmptyStringSchema,
+  runtimeId: nonEmptyStringSchema,
+  runtimeOwner: nonEmptyStringSchema,
+  triggerSource: nonEmptyStringSchema,
+  cadenceHours: z.number().finite().positive(),
+  status: nonEmptyStringSchema,
+  truthBoundary: nonEmptyStringSchema,
+  recurringAutonomousProven: z.boolean(),
+  startedAt: timestampSchema,
+  completedAt: timestampSchema.nullable(),
+  slotIds: z.array(nonEmptyStringSchema),
+  baselineSeeded: z.boolean(),
+  waveExecuted: z.boolean(),
+  previousManifestIds: z.array(nonEmptyStringSchema),
+  nextManifestIds: z.array(nonEmptyStringSchema),
+  promotedManifestIds: z.array(nonEmptyStringSchema),
+  promotionCount: z.number().int().nonnegative(),
+  checks: autoresearchRuntimeProofChecksSchema,
+  note: z.string().nullable(),
+  errorMessage: z.string().nullable(),
+  schedulerReceipt: autoresearchSchedulerReceiptSchema.nullable(),
+});
+export const AUTORESEARCH_RUNTIME_RECEIPT_REQUEST_SCHEMA = z.object({
+  runtime: autoresearchRuntimeProofRuntimeSchema,
+  run: autoresearchRuntimeProofRunSchema,
+});
 
 export const API_ENDPOINTS = Object.freeze({
   HEALTH: "/health",
@@ -544,6 +619,8 @@ export const API_ENDPOINTS = Object.freeze({
   ACTIVATIONS: "/api/activations",
   ACTIVITY: "/api/activity",
   EXECUTIONS: "/api/executions",
+  AUTORESEARCH_RUNTIME: "/api/runtime/autoresearch",
+  AUTORESEARCH_RUNTIME_RECEIPTS: "/api/internal/autoresearch/receipts",
   XSTOCKS_FUNNEL_EVENTS: "/api/funnel-events/xstocks",
   XSTOCKS_REPORTING: "/api/reporting/xstocks",
 });
@@ -627,6 +704,18 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
       "limit?",
     ],
     response: "execution_read_v1",
+  },
+  autoresearch_runtime_read: {
+    method: "GET",
+    path: API_ENDPOINTS.AUTORESEARCH_RUNTIME,
+    query: ["limit?"],
+    response: "autoresearch_runtime_read_v1",
+  },
+  autoresearch_runtime_receipt_write: {
+    method: "POST",
+    path: API_ENDPOINTS.AUTORESEARCH_RUNTIME_RECEIPTS,
+    body: ["runtime", "run"],
+    response: "autoresearch_runtime_receipt_write_v1",
   },
   xstocks_funnel_event_ingest: {
     method: "POST",
@@ -719,6 +808,19 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     generatedAt: timestampSchema,
     limit: z.number().int().positive(),
     items: z.array(executionRequestSchema),
+  }),
+  autoresearch_runtime_read: z.object({
+    version: apiContractVersionSchema,
+    generatedAt: timestampSchema,
+    limit: z.number().int().positive(),
+    runtime: autoresearchRuntimeProofRuntimeSchema,
+    runs: z.array(autoresearchRuntimeProofRunSchema),
+  }),
+  autoresearch_runtime_receipt_write: z.object({
+    version: apiContractVersionSchema,
+    generatedAt: timestampSchema,
+    runtime: autoresearchRuntimeProofRuntimeSchema,
+    run: autoresearchRuntimeProofRunSchema,
   }),
   xstocks_funnel_event_ingest: z.object({
     version: apiContractVersionSchema,

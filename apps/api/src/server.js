@@ -35,6 +35,7 @@ function createDefaultConfig() {
     privyJwksUrl: process.env.PRIVY_JWKS_URL ?? null,
     privyApiBaseUrl: process.env.PRIVY_API_BASE_URL ?? undefined,
     reportingToken: process.env.XSTOCKS_REPORTING_TOKEN ?? null,
+    autoresearchProofToken: process.env.AUTORESEARCH_PROOF_TOKEN ?? null,
   };
 }
 
@@ -84,6 +85,7 @@ export function createApiRuntimeService(overrides = {}) {
         fetchImpl: overrides.privyFetchImpl ?? overrides.fetchImpl,
       }),
     reportingToken: config.reportingToken,
+    autoresearchProofToken: config.autoresearchProofToken,
     now: overrides.now,
   });
 }
@@ -129,7 +131,7 @@ export function createApiServer(overrides = {}) {
         response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
         response.setHeader(
           "Access-Control-Allow-Headers",
-          "Content-Type,Authorization,X-Privy-Identity-Token,X-Reporting-Token",
+          "Content-Type,Authorization,X-Privy-Identity-Token,X-Reporting-Token,X-Autoresearch-Proof-Token",
         );
         response.end();
         return;
@@ -255,6 +257,30 @@ export function createApiServer(overrides = {}) {
             requestContext,
           },
         );
+        sendJson(response, 200, { data: result });
+        return;
+      }
+
+      if (
+        request.method === "GET" &&
+        url.pathname === API_ENDPOINTS.AUTORESEARCH_RUNTIME
+      ) {
+        const result = await service.readAutoresearchRuntime(
+          Object.fromEntries(url.searchParams),
+        );
+        sendJson(response, 200, { data: result });
+        return;
+      }
+
+      if (
+        request.method === "POST" &&
+        url.pathname === API_ENDPOINTS.AUTORESEARCH_RUNTIME_RECEIPTS
+      ) {
+        const body = await readJsonRequestBody(request);
+        await service.authenticateAutoresearchProofRequest(request, {
+          required: true,
+        });
+        const result = await service.recordAutoresearchRuntimeReceipt(body);
         sendJson(response, 200, { data: result });
         return;
       }

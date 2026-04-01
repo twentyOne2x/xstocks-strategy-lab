@@ -9,6 +9,7 @@
     "test": "node --test ./src/__tests__/*.test.js ./test/*.test.js",
     "check": "node ./src/check.js && node --test ./src/__tests__/*.test.js ./test/*.test.js",
     "wave:basket": "node ./src/run-basket-research-wave.js",
-    "autoresearch:run": "node ./src/autoresearch-runtime.js"
+    "autoresearch:run": "node ./src/autoresearch-runtime.js",
+    "autoresearch:railway-cron": "node ./src/autoresearch-railway-cron.js"
   }
 }

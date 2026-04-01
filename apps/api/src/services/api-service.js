@@ -20,7 +20,11 @@ import {
   normalizeWalletState,
 } from "../../../../packages/policy/src/index.js";
 
-import { API_ENDPOINTS, parseApiResponse } from "../contracts.js";
+import {
+  AUTORESEARCH_RUNTIME_RECEIPT_REQUEST_SCHEMA,
+  API_ENDPOINTS,
+  parseApiResponse,
+} from "../contracts.js";
 import { HttpError } from "../errors.js";
 import { buildXStocksReportingSnapshot } from "./reporting-service.js";
 
@@ -260,8 +264,11 @@ function getOptionalSubjectId(payload = {}) {
   return String(subjectId).trim();
 }
 
-function readOperatorTokenFromRequest(request) {
-  const directHeader = request.headers["x-reporting-token"];
+function readNamedBearerTokenFromRequest(
+  request,
+  directHeaderName = "x-reporting-token",
+) {
+  const directHeader = request.headers[directHeaderName];
 
   if (typeof directHeader === "string" && directHeader.trim().length > 0) {
     return directHeader.trim();
@@ -1610,6 +1617,7 @@ export function createApiService({
   ethereumRpcClient = null,
   privyAuthService = null,
   reportingToken = null,
+  autoresearchProofToken = null,
   now = () => new Date().toISOString(),
 }) {
   const smartAccountProvider = createSmartAccountProviderScaffold();
@@ -2190,7 +2198,10 @@ export function createApiService({
         return null;
       }
 
-      const suppliedToken = readOperatorTokenFromRequest(request);
+      const suppliedToken = readNamedBearerTokenFromRequest(
+        request,
+        "x-reporting-token",
+      );
 
       if (!suppliedToken) {
         throw new HttpError(401, "Operator reporting token is required.");
@@ -2202,6 +2213,36 @@ export function createApiService({
 
       return {
         accessMode: "operator_token",
+      };
+    },
+
+    async authenticateAutoresearchProofRequest(request, options = {}) {
+      if (!autoresearchProofToken) {
+        if (options.required) {
+          throw new HttpError(
+            503,
+            "Autoresearch proof token is not configured on this backend.",
+          );
+        }
+
+        return null;
+      }
+
+      const suppliedToken = readNamedBearerTokenFromRequest(
+        request,
+        "x-autoresearch-proof-token",
+      );
+
+      if (!suppliedToken) {
+        throw new HttpError(401, "Autoresearch proof token is required.");
+      }
+
+      if (!tokensMatch(suppliedToken, autoresearchProofToken)) {
+        throw new HttpError(403, "Autoresearch proof token is invalid.");
+      }
+
+      return {
+        accessMode: "autoresearch_proof_token",
       };
     },
 
@@ -3227,6 +3268,49 @@ export function createApiService({
         generatedAt: now(),
         limit,
         items,
+      });
+    },
+
+    async readAutoresearchRuntime(query = {}) {
+      const limit = Math.max(1, Math.min(Number(query.limit ?? 10), 50));
+      const [runtime, runs] = await Promise.all([
+        runtimeStore.getAutoresearchRuntime(),
+        runtimeStore.listAutoresearchRuns({ limit }),
+      ]);
+
+      return parseApiResponse("autoresearch_runtime_read", {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        limit,
+        runtime,
+        runs,
+      });
+    },
+
+    async recordAutoresearchRuntimeReceipt(body = {}) {
+      let request;
+
+      try {
+        request = AUTORESEARCH_RUNTIME_RECEIPT_REQUEST_SCHEMA.parse(body);
+      } catch (error) {
+        throw new HttpError(
+          400,
+          error instanceof Error
+            ? error.message
+            : "Invalid autoresearch runtime receipt payload.",
+        );
+      }
+
+      const persisted = await runtimeStore.recordAutoresearchHostReceipt({
+        runtime: request.runtime,
+        run: request.run,
+      });
+
+      return parseApiResponse("autoresearch_runtime_receipt_write", {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        runtime: persisted.runtime,
+        run: persisted.run,
       });
     },
 

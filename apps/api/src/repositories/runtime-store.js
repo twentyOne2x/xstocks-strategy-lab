@@ -4,7 +4,7 @@ import { readJsonFile, writeJsonFile } from "../json.js";
 
 function createDefaultState(now) {
   return {
-    schemaVersion: "2026-04-01.runtime-store.v7",
+    schemaVersion: "2026-04-01.runtime-store.v8",
     meta: {
       createdAt: now(),
       updatedAt: now(),
@@ -36,6 +36,8 @@ function createDefaultState(now) {
       nextDueAt: null,
       lastPromotionCount: 0,
       lastPromotedManifestIds: [],
+      schedulerHost: null,
+      proofUpdatedAt: null,
     },
     autoresearchRuns: [],
   };
@@ -43,6 +45,15 @@ function createDefaultState(now) {
 
 function firstDefined(...values) {
   return values.find((value) => value !== undefined);
+}
+
+function normalizeNonEmptyString(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : null;
 }
 
 function normalizeEthereumAddress(value) {
@@ -707,7 +718,125 @@ function normalizeAutoresearchRuntime(runtime, now) {
       runtime.last_promoted_manifest_ids ??
       defaultRuntime.lastPromotedManifestIds
     ).map((value) => String(value)),
+    schedulerHost: normalizeAutoresearchSchedulerHost(
+      runtime.schedulerHost ?? runtime.scheduler_host,
+    ),
+    proofUpdatedAt: firstDefined(
+      runtime.proofUpdatedAt,
+      runtime.proof_updated_at,
+      null,
+    ),
   };
+}
+
+function normalizeAutoresearchSchedulerHost(host) {
+  if (!host || typeof host !== "object") {
+    return null;
+  }
+
+  const normalizedHost = {
+    provider: normalizeNonEmptyString(host.provider),
+    hostKind: normalizeNonEmptyString(
+      host.hostKind ?? host.host_kind,
+    ),
+    projectId: normalizeNonEmptyString(host.projectId ?? host.project_id),
+    projectName: normalizeNonEmptyString(
+      host.projectName ?? host.project_name,
+    ),
+    environmentId: normalizeNonEmptyString(
+      host.environmentId ?? host.environment_id,
+    ),
+    environmentName: normalizeNonEmptyString(
+      host.environmentName ?? host.environment_name,
+    ),
+    serviceId: normalizeNonEmptyString(host.serviceId ?? host.service_id),
+    serviceName: normalizeNonEmptyString(
+      host.serviceName ?? host.service_name,
+    ),
+    cronSchedule: normalizeNonEmptyString(
+      host.cronSchedule ?? host.cron_schedule,
+    ),
+  };
+
+  return normalizedHost.provider &&
+    normalizedHost.hostKind &&
+    normalizedHost.projectId &&
+    normalizedHost.projectName &&
+    normalizedHost.environmentId &&
+    normalizedHost.environmentName &&
+    normalizedHost.serviceId &&
+    normalizedHost.serviceName &&
+    normalizedHost.cronSchedule
+    ? normalizedHost
+    : null;
+}
+
+function normalizeAutoresearchSchedulerReceipt(receipt) {
+  if (!receipt || typeof receipt !== "object") {
+    return null;
+  }
+
+  const normalizedReceipt = {
+    provider: normalizeNonEmptyString(receipt.provider),
+    hostKind: normalizeNonEmptyString(
+      receipt.hostKind ?? receipt.host_kind,
+    ),
+    receiptCapturedAt: firstDefined(
+      receipt.receiptCapturedAt,
+      receipt.receipt_captured_at,
+      null,
+    ),
+    deploymentId: normalizeNonEmptyString(
+      receipt.deploymentId ?? receipt.deployment_id,
+    ),
+    snapshotId: normalizeNonEmptyString(
+      receipt.snapshotId ?? receipt.snapshot_id,
+    ),
+    publicDomain: normalizeNonEmptyString(
+      receipt.publicDomain ?? receipt.public_domain,
+    ),
+    privateDomain: normalizeNonEmptyString(
+      receipt.privateDomain ?? receipt.private_domain,
+    ),
+    projectId: normalizeNonEmptyString(receipt.projectId ?? receipt.project_id),
+    projectName: normalizeNonEmptyString(
+      receipt.projectName ?? receipt.project_name,
+    ),
+    environmentId: normalizeNonEmptyString(
+      receipt.environmentId ?? receipt.environment_id,
+    ),
+    environmentName: normalizeNonEmptyString(
+      receipt.environmentName ?? receipt.environment_name,
+    ),
+    serviceId: normalizeNonEmptyString(receipt.serviceId ?? receipt.service_id),
+    serviceName: normalizeNonEmptyString(
+      receipt.serviceName ?? receipt.service_name,
+    ),
+    cronSchedule: normalizeNonEmptyString(
+      receipt.cronSchedule ?? receipt.cron_schedule,
+    ),
+    gitCommitSha: normalizeNonEmptyString(
+      receipt.gitCommitSha ?? receipt.git_commit_sha,
+    ),
+    gitBranch: normalizeNonEmptyString(
+      receipt.gitBranch ?? receipt.git_branch,
+    ),
+  };
+
+  return normalizedReceipt.provider &&
+    normalizedReceipt.hostKind &&
+    normalizedReceipt.receiptCapturedAt &&
+    normalizedReceipt.deploymentId &&
+    normalizedReceipt.snapshotId &&
+    normalizedReceipt.projectId &&
+    normalizedReceipt.projectName &&
+    normalizedReceipt.environmentId &&
+    normalizedReceipt.environmentName &&
+    normalizedReceipt.serviceId &&
+    normalizedReceipt.serviceName &&
+    normalizedReceipt.cronSchedule
+    ? normalizedReceipt
+    : null;
 }
 
 function normalizeAutoresearchRun(run, index, now) {
@@ -806,7 +935,27 @@ function normalizeAutoresearchRun(run, index, now) {
       run.error_message,
       null,
     ),
+    schedulerReceipt: normalizeAutoresearchSchedulerReceipt(
+      run.schedulerReceipt ?? run.scheduler_receipt,
+    ),
   };
+}
+
+function getNextAutoresearchDueAt(run) {
+  return run.completedAt === null
+    ? null
+    : new Date(
+        new Date(run.completedAt).getTime() +
+          run.cadenceHours * 60 * 60 * 1000,
+      ).toISOString();
+}
+
+function getAutoresearchRuntimeStatus(run) {
+  return run.status === "failed"
+    ? "failed"
+    : run.status === "succeeded"
+      ? "idle"
+      : run.status;
 }
 
 function normalizeState(state, now) {
@@ -1184,19 +1333,8 @@ export function createRuntimeStore({
         state.autoresearchRuns.splice(existingIndex, 1, normalizedRun);
       }
 
-      const nextDueAt =
-        normalizedRun.completedAt === null
-          ? null
-          : new Date(
-              new Date(normalizedRun.completedAt).getTime() +
-                normalizedRun.cadenceHours * 60 * 60 * 1000,
-            ).toISOString();
-      const runtimeStatus =
-        normalizedRun.status === "failed"
-          ? "failed"
-          : normalizedRun.status === "succeeded"
-            ? "idle"
-            : normalizedRun.status;
+      const nextDueAt = getNextAutoresearchDueAt(normalizedRun);
+      const runtimeStatus = getAutoresearchRuntimeStatus(normalizedRun);
 
       state.autoresearchRuntime = normalizeAutoresearchRuntime(
         {
@@ -1218,6 +1356,47 @@ export function createRuntimeStore({
       );
       await writeState(state);
       return normalizedRun;
+    },
+    async recordAutoresearchHostReceipt({ runtime, run }) {
+      const state = await readState();
+      const normalizedRun = normalizeAutoresearchRun(run, 0, now);
+      const normalizedRuntime = normalizeAutoresearchRuntime(
+        {
+          ...state.autoresearchRuntime,
+          ...runtime,
+          status: getAutoresearchRuntimeStatus(normalizedRun),
+          cadenceHours: normalizedRun.cadenceHours,
+          lastRequestedAt: normalizedRun.startedAt,
+          lastStartedAt: normalizedRun.startedAt,
+          lastCompletedAt: normalizedRun.completedAt,
+          lastRunId: normalizedRun.runId,
+          lastTriggerSource: normalizedRun.triggerSource,
+          nextDueAt: getNextAutoresearchDueAt(normalizedRun),
+          lastPromotionCount: normalizedRun.promotionCount,
+          lastPromotedManifestIds: normalizedRun.promotedManifestIds,
+        },
+        now,
+      );
+      const existingIndex = state.autoresearchRuns.findIndex(
+        (item) => item.runId === normalizedRun.runId,
+      );
+
+      if (existingIndex === -1) {
+        state.autoresearchRuns.unshift(normalizedRun);
+      } else {
+        state.autoresearchRuns.splice(existingIndex, 1, normalizedRun);
+      }
+
+      state.autoresearchRuntime = normalizedRuntime;
+      state.autoresearchRuns.sort((left, right) =>
+        String(right.startedAt).localeCompare(String(left.startedAt)),
+      );
+      await writeState(state);
+
+      return {
+        runtime: normalizedRuntime,
+        run: normalizedRun,
+      };
     },
     async upsertRebalance({ rebalance, eventType = "evaluation" }) {
       const state = await readState();

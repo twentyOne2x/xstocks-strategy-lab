@@ -35,6 +35,7 @@ const TEST_SETTLEMENT_TX_HASH = `0x${"a".repeat(64)}`;
 const TEST_PRIVY_APP_ID = "privy-app-test";
 const TEST_PRIVY_APP_SECRET = "privy-app-secret-test";
 const TEST_REPORTING_TOKEN = "xstocks-reporting-token-test";
+const TEST_AUTORESEARCH_PROOF_TOKEN = "xstocks-autoresearch-proof-token-test";
 const TEST_WALLET_ADDRESS = "0x1111111111111111111111111111111111111111";
 const TEST_SMART_WALLET_ADDRESS = "0x2222222222222222222222222222222222222222";
 const TEST_OTHER_WALLET_ADDRESS = "0x3333333333333333333333333333333333333333";
@@ -327,6 +328,14 @@ function createJsonHeaders(auth, options = {}) {
 function createReportingHeaders(token = TEST_REPORTING_TOKEN) {
   return {
     "X-Reporting-Token": token,
+  };
+}
+
+function createAutoresearchProofHeaders(
+  token = TEST_AUTORESEARCH_PROOF_TOKEN,
+) {
+  return {
+    "X-Autoresearch-Proof-Token": token,
   };
 }
 
@@ -2179,6 +2188,163 @@ test("xstocks reporting route fails closed without the operator token", async ()
 
     assert.equal(response.status, 401);
     assert.match(payload.error, /operator reporting token is required/i);
+  } finally {
+    await harness.close();
+  }
+});
+
+test("autoresearch runtime proof surface stays local-only until a host receipt is recorded", async () => {
+  const harness = await startServer({
+    autoresearchProofToken: TEST_AUTORESEARCH_PROOF_TOKEN,
+  });
+
+  try {
+    const initialResponse = await fetch(
+      `${harness.baseUrl}/api/runtime/autoresearch?limit=5`,
+    );
+    const initialPayload = await initialResponse.json();
+
+    assert.equal(initialResponse.status, 200);
+    assert.equal(initialPayload.data.runtime.truthBoundary, "worker_runtime_only");
+    assert.equal(initialPayload.data.runtime.recurringAutonomousProven, false);
+    assert.equal(initialPayload.data.runtime.schedulerHost, null);
+    assert.deepEqual(initialPayload.data.runs, []);
+
+    const receiptResponse = await fetch(
+      `${harness.baseUrl}/api/internal/autoresearch/receipts`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...createAutoresearchProofHeaders(),
+        },
+        body: JSON.stringify({
+          runtime: {
+            runtimeId: "strategy_lab_regular_autoresearch_v1",
+            runtimeOwner: "worker_strategy_lab",
+            cadenceHours: 24,
+            status: "idle",
+            truthBoundary: "railway_cron_service",
+            repoOwnedRuntime: true,
+            recurringAutonomousProven: true,
+            supportedTriggerSources: ["manual_cli", "scheduled_cron"],
+            notes: [
+              "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
+              "Recurring autoresearch is now hosted by Railway cron_service autoresearch-worker in production.",
+              "Railway scheduler cadence is 5 6 * * *.",
+              "Promoted manifests remain the only public explanation boundary.",
+            ],
+            lastRequestedAt: "2026-04-01T06:05:00.000Z",
+            lastStartedAt: "2026-04-01T06:05:00.000Z",
+            lastCompletedAt: "2026-04-01T06:06:00.000Z",
+            lastRunId: "autoresearch_railway_1",
+            lastTriggerSource: "scheduled_cron",
+            nextDueAt: "2026-04-02T06:06:00.000Z",
+            lastPromotionCount: 1,
+            lastPromotedManifestIds: [
+              "onboarding.default_basket:starter-trim-v2:promoted",
+            ],
+            schedulerHost: {
+              provider: "railway",
+              hostKind: "cron_service",
+              projectId: "project_1",
+              projectName: "xstocks-strategy-lab-preview",
+              environmentId: "env_1",
+              environmentName: "production",
+              serviceId: "svc_1",
+              serviceName: "autoresearch-worker",
+              cronSchedule: "5 6 * * *",
+            },
+            proofUpdatedAt: "2026-04-01T06:06:05.000Z",
+          },
+          run: {
+            runId: "autoresearch_railway_1",
+            runtimeId: "strategy_lab_regular_autoresearch_v1",
+            runtimeOwner: "worker_strategy_lab",
+            triggerSource: "scheduled_cron",
+            cadenceHours: 24,
+            status: "succeeded",
+            truthBoundary: "railway_cron_service",
+            recurringAutonomousProven: true,
+            startedAt: "2026-04-01T06:05:00.000Z",
+            completedAt: "2026-04-01T06:06:00.000Z",
+            slotIds: ["onboarding.default_basket"],
+            baselineSeeded: true,
+            waveExecuted: true,
+            previousManifestIds: [
+              "onboarding.default_basket:baseline-v1:promoted",
+            ],
+            nextManifestIds: [
+              "onboarding.default_basket:starter-trim-v2:promoted",
+            ],
+            promotedManifestIds: [
+              "onboarding.default_basket:starter-trim-v2:promoted",
+            ],
+            promotionCount: 1,
+            checks: {
+              researchContractsOk: true,
+              researchRunIntegrityOk: true,
+              promotedBoundaryOk: true,
+            },
+            note: "railway cron service",
+            errorMessage: null,
+            schedulerReceipt: {
+              provider: "railway",
+              hostKind: "cron_service",
+              receiptCapturedAt: "2026-04-01T06:06:05.000Z",
+              deploymentId: "deployment_1",
+              snapshotId: "snapshot_1",
+              publicDomain: null,
+              privateDomain: "autoresearch-worker.railway.internal",
+              projectId: "project_1",
+              projectName: "xstocks-strategy-lab-preview",
+              environmentId: "env_1",
+              environmentName: "production",
+              serviceId: "svc_1",
+              serviceName: "autoresearch-worker",
+              cronSchedule: "5 6 * * *",
+              gitCommitSha: "abc123",
+              gitBranch: "main",
+            },
+          },
+        }),
+      },
+    );
+    const receiptPayload = await receiptResponse.json();
+
+    assert.equal(receiptResponse.status, 200);
+    assert.equal(
+      receiptPayload.data.runtime.truthBoundary,
+      "railway_cron_service",
+    );
+    assert.equal(
+      receiptPayload.data.runtime.recurringAutonomousProven,
+      true,
+    );
+    assert.equal(
+      receiptPayload.data.run.schedulerReceipt.serviceName,
+      "autoresearch-worker",
+    );
+
+    const verifiedResponse = await fetch(
+      `${harness.baseUrl}/api/runtime/autoresearch?limit=5`,
+    );
+    const verifiedPayload = await verifiedResponse.json();
+
+    assert.equal(verifiedResponse.status, 200);
+    assert.equal(
+      verifiedPayload.data.runtime.schedulerHost.serviceName,
+      "autoresearch-worker",
+    );
+    assert.equal(
+      verifiedPayload.data.runtime.recurringAutonomousProven,
+      true,
+    );
+    assert.equal(verifiedPayload.data.runs.length, 1);
+    assert.equal(
+      verifiedPayload.data.runs[0].schedulerReceipt.deploymentId,
+      "deployment_1",
+    );
   } finally {
     await harness.close();
   }
