@@ -6,6 +6,7 @@ import {
   getRebalanceOrchestration,
   isDirectionalPreviewOnly,
 } from "@/lib/portfolio-ui";
+import { getAssetHref, getCleanRationale, getVenueDisplay } from "@/lib/holdings-display";
 
 import { WorkspaceSpotlight } from "@/components/workspace-spotlight";
 
@@ -45,14 +46,18 @@ export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
               </tr>
             </thead>
             <tbody>
-              {manifest.allocations.map((row) => (
-                <tr key={`${row.symbol}-${row.sleeve}`}>
-                  <td>{row.symbol}</td>
-                  <td>{row.targetWeight}</td>
-                  <td>{row.rationale || row.sleeve}</td>
-                  <td>{row.venue}</td>
-                </tr>
-              ))}
+              {manifest.allocations.map((row) => {
+                const assetHref = getAssetHref(row.symbol);
+                const venue = getVenueDisplay(row.venue);
+                return (
+                  <tr key={`${row.symbol}-${row.sleeve}`}>
+                    <td>{assetHref ? <a className="table-link" href={assetHref} target="_blank" rel="noopener noreferrer">{row.symbol}</a> : row.symbol}</td>
+                    <td>{row.targetWeight}</td>
+                    <td>{getCleanRationale(row.rationale, row.sleeve)}</td>
+                    <td>{venue.href ? <a className="table-link" href={venue.href} target="_blank" rel="noopener noreferrer">{venue.label}</a> : venue.label}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </article>
