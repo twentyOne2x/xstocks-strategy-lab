@@ -670,6 +670,9 @@ function SimulatedWorkspace({
       {/* ── Preview bar with big deposit CTA ── */}
       <div className="pq-preview-bar">
         <div className="pq-preview-bar-left">
+          <Link href="/" className="landing-header-brand" style={{ padding: "0 16px 0 0", borderRight: "none", height: "auto" }}>
+            <BrandLockup size="sm" />
+          </Link>
           <span className="preview-chip">Simulation</span>
           <span>Preview. No money has moved.</span>
         </div>
