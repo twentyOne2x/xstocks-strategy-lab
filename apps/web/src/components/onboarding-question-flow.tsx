@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { usePrivy } from "@privy-io/react-auth";
 
 import { BrandLockup } from "@/components/home-terminal";
 
@@ -415,8 +416,8 @@ function RecommendationGate({
   const spotlight = getWorkspaceSpotlightData(manifest);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
-  const keyDrivers = qualification.whyRecommended.slice(0, 3);
-  const fitNotes = qualification.fitNotes.slice(0, 2);
+  const keyDrivers = qualification.whyRecommended.slice(0, 2);
+  const fitNotes = qualification.fitNotes.slice(0, 1);
   const leadComponents = bundle.components.slice(0, 4);
   const [gateChartHover, setGateChartHover] = useState<{ x: number; value: number } | null>(null);
 
@@ -629,6 +630,7 @@ function SimulatedWorkspace({
   onTourDismiss: () => void;
   previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
+  const { login } = usePrivy();
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
@@ -638,6 +640,7 @@ function SimulatedWorkspace({
   const currentTour = tourDismissed ? null : tourSteps[tourStep];
   const highlightId = currentTour?.anchor ?? null;
   const [chartHover, setChartHover] = useState<{ x: number; value: number } | null>(null);
+  const [tourWelcomeShown, setTourWelcomeShown] = useState(false);
   const bundle = getRecommendationExplanationBundle(manifest);
 
   // Scroll highlighted section into view when tour advances
@@ -650,6 +653,19 @@ function SimulatedWorkspace({
   }, [highlightId]);
 
   return (
+    <>
+    {!tourDismissed && !tourWelcomeShown && (
+      <div className="pq-tour-welcome-overlay">
+        <div className="pq-tour-welcome-card">
+          <h2>Take a quick tour?</h2>
+          <p>We will walk you through your portfolio, holdings, and market signals.</p>
+          <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+            <button className="button button-primary button-lg" onClick={() => setTourWelcomeShown(true)} type="button">Start tour</button>
+            <button className="button button-ghost button-lg" onClick={() => { setTourWelcomeShown(true); onTourDismiss(); }} type="button">Skip</button>
+          </div>
+        </div>
+      </div>
+    )}
     <div className={`pq-workspace ${currentTour ? "pq-workspace-touring" : ""}`}>
       {/* ── Preview bar with big deposit CTA ── */}
       <div className="pq-preview-bar">
@@ -658,9 +674,9 @@ function SimulatedWorkspace({
           <span>Preview. No money has moved.</span>
         </div>
         <div className="pq-preview-bar-actions">
-          <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`} id="pq-deposit-cta">
+          <button className="button button-primary button-lg" id="pq-deposit-cta" onClick={login} type="button">
             {directionalPreviewOnly ? "Review preview" : "Start deposit"}
-          </Link>
+          </button>
           <button className="button button-ghost button-sm" onClick={onReset} type="button">
             Change answers
           </button>
@@ -704,9 +720,9 @@ function SimulatedWorkspace({
                 <span className="section-kicker">Your portfolio</span>
                 <h2>{recommendation.title}</h2>
               </div>
-              <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`}>
+              <button className="button button-primary button-lg" onClick={login} type="button">
                 {directionalPreviewOnly ? "Preview" : "Start deposit"}
-              </Link>
+              </button>
             </div>
 
             {/* Performance surface with hover */}
@@ -756,7 +772,7 @@ function SimulatedWorkspace({
               <div><span>Holdings</span><strong>{manifest.allocations.length}</strong></div>
               <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
               <div><span>Rebalance</span><strong>{recommendation.rebalance_cadence.replaceAll("_", " ")}</strong></div>
-              <div><span>Network</span><strong>Ethereum</strong></div>
+              <div title="Autoresearch continuously replay-tests portfolio candidates against the promoted benchmark, promoting the best-performing manifest into the slot registry. Powered by the xStocks Strategy Lab evaluation pipeline."><span>Optimisation</span><strong>Autoresearch</strong></div>
             </div>
 
             <div className="pq-summary-explain">
@@ -945,5 +961,6 @@ function SimulatedWorkspace({
         </div>
       </footer>
     </div>
+    </>
   );
 }

@@ -76,7 +76,7 @@ button { font: inherit; }
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.06)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.06)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -996,8 +996,8 @@ button { font: inherit; }
   text-transform: uppercase;
 }
 
-.brand-lockup-sm .brand-247 { font-size: 1.6rem; }
-.brand-lockup-sm .brand-markets { font-size: 0.48rem; }
+.brand-lockup-sm .brand-247 { font-size: 2.2rem; }
+.brand-lockup-sm .brand-markets { font-size: 0.58rem; }
 
 .brand-lockup-lg .brand-247 {
   font-size: clamp(6rem, 14vw, 14rem);
@@ -1046,7 +1046,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -1238,7 +1238,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -1546,7 +1546,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -1805,7 +1805,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.06)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.06)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -1847,7 +1847,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(255,255,255,0.04)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(255,255,255,0.04)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -1972,7 +1972,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -2294,7 +2294,7 @@ button { font: inherit; }
 
 .landing-stack-label {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   font-style: italic;
   text-transform: uppercase;
   font-weight: 900;
@@ -2304,7 +2304,7 @@ button { font: inherit; }
 
 .landing-stack-detail {
   color: var(--gray-600);
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   line-height: 1.4;
 }
 
@@ -2622,7 +2622,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.10)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -2907,7 +2907,7 @@ button { font: inherit; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='130'%3E%3Ctext x='80' y='80' transform='rotate(-12, 340, 65)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.06)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='rgba(10,10,10,0.06)' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 290px 56px;
 }
@@ -3034,6 +3034,43 @@ button { font: inherit; }
   gap: 8px;
 }
 
+/* ── Tour Welcome Overlay ── */
+
+.pq-tour-welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.pq-tour-welcome-card {
+  max-width: 480px;
+  padding: 48px 40px;
+  background: var(--white);
+  border: var(--border-w) solid var(--black);
+  box-shadow: var(--shadow);
+  text-align: center;
+  display: grid;
+  gap: 20px;
+}
+
+.pq-tour-welcome-card h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pq-tour-welcome-card p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
 /* ── Main grid ── */
 
 .pq-grid {
@@ -3111,8 +3148,8 @@ button { font: inherit; }
 .pq-perf-meta {
   display: flex;
   gap: 20px;
-  color: var(--text-muted);
-  font-size: 0.78rem;
+  color: var(--text-soft);
+  font-size: 0.92rem;
 }
 
 /* ── Tour caption ── */
@@ -3150,7 +3187,7 @@ button { font: inherit; }
 .pq-summary-strip span {
   display: block;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -3160,7 +3197,8 @@ button { font: inherit; }
   display: block;
   margin-top: 4px;
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
 /* ── How row ── */
@@ -3192,7 +3230,7 @@ button { font: inherit; }
   display: block;
   margin-top: 4px;
   color: var(--text);
-  font-size: 0.92rem;
+  font-size: 1.1rem;
 }
 
 /* ── MI updated label ── */
@@ -3278,6 +3316,7 @@ button { font: inherit; }
   gap: 14px;
   position: sticky;
   top: 20px;
+  scroll-margin-top: 80px;
 }
 
 .pq-rail-card {

@@ -126,6 +126,10 @@ export function HomeTerminal() {
             <div className="landing-stack-detail">Profile matching. Portfolio construction. Transparent preview.</div>
           </div>
           <div className="landing-stack-layer">
+            <div className="landing-stack-label">Privy</div>
+            <div className="landing-stack-detail">Smart wallets. Embedded authentication. Non-custodial key management.</div>
+          </div>
+          <div className="landing-stack-layer">
             <div className="landing-stack-label">Chainlink CRE</div>
             <div className="landing-stack-detail">Monitors drift. Triggers rebalancing. Automation rails.</div>
           </div>
