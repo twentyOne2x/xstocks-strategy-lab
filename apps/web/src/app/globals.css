@@ -2620,8 +2620,23 @@ button { font: inherit; }
   overflow: hidden;
 }
 
+.pq-chart-shell {
+  position: relative;
+  cursor: crosshair;
+}
+
 .pq-chart-shell .workspace-chart {
   height: 160px;
+}
+
+.pq-chart-cursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--accent);
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .pq-chart-legend {

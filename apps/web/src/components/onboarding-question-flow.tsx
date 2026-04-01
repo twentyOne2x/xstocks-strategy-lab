@@ -19,6 +19,23 @@ import {
 import { formatCurrency, formatPercent, getWorkspaceSpotlightData } from "@/lib/data-source";
 import { getAssetHref, getCleanRationale, getVenueDisplay } from "@/lib/holdings-display";
 
+function humanizeState(state: string): string {
+  const map: Record<string, string> = {
+    active: "Active",
+    paused: "Paused",
+    watch: "Monitoring",
+    view_ready: "Ready to view",
+    blocked: "Blocked",
+    funding_required: "Needs funding",
+    connect_required: "Connect wallet",
+    activation_ready: "Ready",
+    explore: "Exploring",
+    settled: "Settled",
+    pending: "Pending",
+  };
+  return map[state] ?? state.replaceAll("_", " ");
+}
+
 export function OnboardingQuestionFlow({
   answers,
   onAnswer,
@@ -450,6 +467,16 @@ function SimulatedWorkspace({
   const activity = blotter?.activity ?? [];
   const currentTour = tourDismissed ? null : tourSteps[tourStep];
   const highlightId = currentTour?.anchor ?? null;
+  const [chartHover, setChartHover] = useState<{ x: number; value: number } | null>(null);
+
+  // Scroll highlighted section into view when tour advances
+  useEffect(() => {
+    if (!highlightId) return;
+    const el = document.getElementById(highlightId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [highlightId]);
 
   return (
     <div className={`pq-workspace ${currentTour ? "pq-workspace-touring" : ""}`}>
@@ -461,7 +488,7 @@ function SimulatedWorkspace({
         </div>
         <div className="pq-preview-bar-actions">
           <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`} id="pq-deposit-cta">
-            {directionalPreviewOnly ? "Review preview" : "Open deposit preview"}
+            {directionalPreviewOnly ? "Review preview" : "Start deposit"}
           </Link>
           <button className="button button-ghost button-sm" onClick={onReset} type="button">
             Change answers
@@ -504,20 +531,33 @@ function SimulatedWorkspace({
                 <h2>{recommendation.title}</h2>
               </div>
               <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`}>
-                {directionalPreviewOnly ? "Preview" : "Open deposit preview"}
+                {directionalPreviewOnly ? "Preview" : "Start deposit"}
               </Link>
             </div>
 
-            {/* Performance surface */}
+            {/* Performance surface with hover */}
             <div className="pq-perf-surface">
               <div className="pq-perf-value">
                 <span className="section-kicker">Simulated value</span>
-                <strong className="pq-perf-amount">{formatCurrency(manifest.replay.endingCapital)}</strong>
+                <strong className="pq-perf-amount">
+                  {chartHover ? formatCurrency(chartHover.value) : formatCurrency(manifest.replay.endingCapital)}
+                </strong>
                 <span className="pq-perf-change pq-perf-change-positive">
-                  {formatPercent(manifest.replay.netReturnPct)}
+                  {chartHover
+                    ? formatPercent(((chartHover.value - manifest.replay.startingCapital) / manifest.replay.startingCapital) * 100)
+                    : formatPercent(manifest.replay.netReturnPct)}
                 </span>
               </div>
-              <div className="pq-chart-shell" aria-hidden="true">
+              <div
+                className="pq-chart-shell"
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const xPct = (e.clientX - rect.left) / rect.width;
+                  const idx = Math.min(Math.round(xPct * (values.length - 1)), values.length - 1);
+                  setChartHover({ x: xPct * 100, value: values[idx] });
+                }}
+                onMouseLeave={() => setChartHover(null)}
+              >
                 <svg className="workspace-chart" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="pqLine" x1="0%" x2="100%" y1="0%" y2="0%">
@@ -528,6 +568,9 @@ function SimulatedWorkspace({
                   <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
                   <path className="workspace-chart-line" d={path} style={{ stroke: "url(#pqLine)" }} />
                 </svg>
+                {chartHover && (
+                  <div className="pq-chart-cursor" style={{ left: `${chartHover.x}%` }} />
+                )}
               </div>
               <div className="pq-perf-meta">
                 <span>30-day simulated replay from {formatCurrency(manifest.replay.startingCapital)}</span>
@@ -620,22 +663,30 @@ function SimulatedWorkspace({
           <div className="pq-activity-grid">
             <div className="pq-activity-col">
               <span className="section-kicker">Positions</span>
-              {positions.length > 0 ? (
-                <div style={{ overflowX: "auto" }}>
-                  <table className="data-table">
-                    <thead><tr><th>Symbol</th><th>Exposure</th><th>State</th></tr></thead>
-                    <tbody>
-                      {positions.slice(0, 6).map((row) => (
-                        <tr key={row.id}>
-                          <td>{row.symbol}</td>
-                          <td>{row.exposureUsd}</td>
-                          <td><span className={`status-pill status-pill-${row.state}`}>{row.state}</span></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : <p className="panel-note">Positions appear after deposit.</p>}
+              {positions.length > 0 ? (() => {
+                const totalUsd = positions.reduce((sum, r) => sum + parseFloat(r.exposureUsd.replace(/[$,]/g, "") || "0"), 0);
+                return (
+                  <div style={{ overflowX: "auto" }}>
+                    <table className="data-table">
+                      <thead><tr><th>Symbol</th><th>Value</th><th>Weight</th><th>Status</th></tr></thead>
+                      <tbody>
+                        {positions.slice(0, 6).map((row) => {
+                          const usd = parseFloat(row.exposureUsd.replace(/[$,]/g, "") || "0");
+                          const pct = totalUsd > 0 ? ((usd / totalUsd) * 100).toFixed(1) : "—";
+                          return (
+                            <tr key={row.id}>
+                              <td>{row.symbol}</td>
+                              <td>{row.exposureUsd}</td>
+                              <td>{pct}%</td>
+                              <td><span className={`status-pill status-pill-${row.state}`}>{humanizeState(row.state)}</span></td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })() : <p className="panel-note">Positions appear after deposit.</p>}
             </div>
             <div className="pq-activity-col">
               <span className="section-kicker">Events</span>
@@ -645,7 +696,7 @@ function SimulatedWorkspace({
                     <div className="pq-event" key={event.id}>
                       <div className="pq-event-meta">
                         <span className="pq-event-time">{event.time}</span>
-                        <span className={`status-pill status-pill-${event.state}`}>{event.state.replaceAll("_", " ")}</span>
+                        <span className={`status-pill status-pill-${event.state}`}>{humanizeState(event.state)}</span>
                       </div>
                       <strong>{event.title}</strong>
                     </div>
