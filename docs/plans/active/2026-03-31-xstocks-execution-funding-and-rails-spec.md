@@ -138,6 +138,9 @@ Build/deploy fan-out assessment:
 2. [2026-03-31-xstocks-product-control-plane.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-product-control-plane.md)
    - Current relevance: high.
    - Decision: update via this sub-spec.
+3. [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
+   - Current relevance: high.
+   - Decision: inherit the activation-manifest boundary from it rather than redefining research promotion here.
 
 ## Spec'd-But-Unimplemented Table
 
@@ -145,6 +148,7 @@ Build/deploy fan-out assessment:
 | --- | --- | --- | --- | --- |
 | Venue hierarchy | primary and secondary execution rails | prose only | adapter contract and UI | integration/frontend |
 | Funding stack | Privy + LI.FI flow | prose only | integration and UI | integration/frontend |
+| Activation boundary | manifest-to-preflight contract | prose only | schema and route checks | integration/backend |
 | Truth labels | live/preview/blocked states | prose only | state wiring | frontend/backend |
 | Spread confirmation | secondary Ink rail truth | mentor report only | public or onsite artifact | external proof |
 
@@ -225,13 +229,30 @@ If exact xStocks-on-Euler live support is still not proven:
 2. use Morpho and Ethereum execution rails for truthful live proof,
 3. keep xStocks product logic first-class.
 
+## Activation Boundary Contract
+
+Execution must begin from:
+1. a promoted `activation_manifest`,
+2. current live xStocks state,
+3. current live route or vault state,
+4. user notional and wallet or smart-account state.
+
+Execution must not begin from:
+1. raw research candidates,
+2. failed challengers,
+3. experiment output that has not crossed the Strategy Lab promotion boundary.
+
+Canonical derivation rule:
+1. `activation_manifest` + live state -> `execution_plan`
+
 ## Smart-Account Contract
 
 The smart account should:
 1. receive the activation payload,
 2. enforce bounded permissions,
 3. remain separate from the intelligence engine,
-4. expose pause and turn-off controls.
+4. remain separate from the research harness,
+5. expose pause and turn-off controls.
 
 The smart account should not:
 1. hold full intelligence logic,
@@ -294,13 +315,14 @@ Banned default-path jargon:
 | --- | --- | --- | --- |
 | Freeze funding provider roles | activation flow depends on it | no | now |
 | Freeze primary/secondary venues | execution UI depends on it | no | now |
+| Freeze activation-manifest preflight contract | truthful execution depends on it | no | now |
 | Implement route labels and proof states | user truth depends on it | yes, on payloads | later |
 | Capture Spread proof | changes secondary-rail confidence | yes, on external artifact | later |
 
 ## Implementation Waves
 
 Wave 1:
-1. adapter hierarchy and truth labels.
+1. adapter hierarchy, truth labels, and activation-manifest preflight contract.
 
 Wave 2:
 1. funding and activation UX.
@@ -333,8 +355,9 @@ Wave 3:
 1. provider matrix by responsibility,
 2. one screenshot or screen recording of funding flow,
 3. one screenshot or evidence artifact of Morpho vault/yield sleeve,
-4. one route-context screenshot for execution,
-5. one demo note or README artifact describing what is live versus preview.
+4. one sample manifest-to-execution-plan preflight payload,
+5. one route-context screenshot for execution,
+6. one demo note or README artifact describing what is live versus preview.
 
 ## Verification Commands
 

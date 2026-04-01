@@ -9,7 +9,7 @@ Status: active
 Design `Market Intelligence` as a standalone product that:
 1. monitors xStocks-relevant market data and signal providers,
 2. produces one blackbox `signal_artifact`,
-3. feeds portfolio construction and directional recommendation without directly executing trades,
+3. feeds Strategy Lab, portfolio construction, and directional recommendation without directly executing trades,
 4. can also be rendered as a dedicated side-panel product surface inside the portfolio terminal.
 
 ## Non-goals
@@ -138,6 +138,10 @@ Build/deploy fan-out assessment:
    - Current relevance: medium.
    - Decision: reuse as display guidance only.
    - Why: it does not define signal semantics.
+3. [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
+   - Current relevance: high.
+   - Decision: inherit the promotion boundary from it.
+   - Why: signal artifacts may influence Strategy Lab and portfolio logic, but they do not bypass manifest promotion.
 
 ## Thread-Recurrence Audit
 
@@ -235,6 +239,7 @@ Minimum fields:
 2. Nansen enriches holder, entity, and wallet-flow context.
 3. Social/news inputs enrich narrative and event timing.
 4. The signal engine combines them into one artifact.
+5. Downstream consumers may use the signal artifact, but only promoted strategy manifests cross the frontend and activation boundary.
 
 ## Hero Intelligence Lanes
 

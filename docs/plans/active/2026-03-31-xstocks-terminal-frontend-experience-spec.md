@@ -28,7 +28,8 @@ The frontend should feel like:
 2. a place where views, themes, and public strategies are discoverable quickly,
 3. a place where wallet state, route state, vault context, and activation controls are explicit,
 4. a product that power users can scan quickly without losing first-run clarity,
-5. a terminal where `Market Intelligence` appears as a dedicated side panel rather than generic metadata.
+5. a terminal where `Market Intelligence` appears as a dedicated side panel rather than generic metadata,
+6. a terminal that shows promoted strategy winners without exposing raw lab churn.
 
 ## User-Journey Contract
 
@@ -113,7 +114,8 @@ Unshipped:
 2. frontend data dependencies,
 3. CTA language map,
 4. component ownership,
-5. visual proof artifacts.
+5. activation-manifest rendering contract,
+6. visual proof artifacts.
 
 ## Codebase Fit And Iteration-Speed Contract
 
@@ -147,6 +149,9 @@ Build/deploy fan-out assessment:
 3. [2026-03-31-xstocks-product-control-plane.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-product-control-plane.md)
    - Current relevance: high.
    - Decision: update via this sub-spec.
+4. [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
+   - Current relevance: very high.
+   - Decision: inherit the promoted-manifest boundary from it rather than redefining the lab surface here.
 
 ## Thread-Recurrence Audit
 
@@ -165,6 +170,7 @@ The repeated frontend asks collapse into:
 | Home terminal | theme-led first screen | prose only | actual UI | frontend |
 | Comparison workspace | replay + winner explanation | prose only | actual UI | frontend |
 | Detail screen | route/vault context | prose only | actual UI | frontend |
+| Research boundary | promoted-manifest-only UI contract | prose only | payloads and states | frontend/backend |
 | Bottom blotter | positions/history/activity | prose only | actual UI and data wiring | frontend/backend |
 
 ## Screen Contract
@@ -185,7 +191,8 @@ Must show:
 2. recommendation comparison,
 3. why one strategy or view won,
 4. current stance and confidence,
-5. lower blotter preview.
+5. validation badges for the promoted winner,
+6. lower blotter preview.
 
 ### 3. Detail screen
 
@@ -194,7 +201,8 @@ Must show:
 2. route and venue context,
 3. Morpho or Euler context where relevant,
 4. multiplier and PoR context,
-5. activation CTA.
+5. promoted-manifest provenance,
+6. activation CTA.
 
 ### 4. Activation and funding screen
 
@@ -203,7 +211,8 @@ Must show:
 2. funding options,
 3. route and rail summary,
 4. strategy permissions and reversibility,
-5. final activation CTA.
+5. manifest-derived activation summary,
+6. final activation CTA.
 
 ### 5. Activity workspace
 
@@ -230,7 +239,8 @@ Should contain:
 1. replay,
 2. comparison,
 3. intelligence summary,
-4. recommendation detail.
+4. recommendation detail,
+5. validation and methodology badges.
 
 ### Right rail
 
@@ -270,6 +280,31 @@ Rows may include:
 4. borrow events,
 5. fills,
 6. activation, pause, and replacement events.
+
+## Frontend Research Boundary Contract
+
+The frontend should consume only:
+1. promoted `activation_manifest` artifacts,
+2. current live state derived from xStocks and rail adapters,
+3. activity and position records.
+
+The frontend should not consume:
+1. failed challengers,
+2. raw `results.tsv` rows on the default path,
+3. unpromoted experimental strategies,
+4. internal `PROGRAM.md` or harness settings.
+
+Default visible research-derived artifacts:
+1. strategy title,
+2. short thesis,
+3. risk label,
+4. `validated` or `current default` badge,
+5. last promoted timestamp or summary,
+6. optional collapsed methodology drawer with dataset and evaluator version.
+
+The rule is:
+1. show the winner,
+2. hide the tournament.
 
 ## CTA Language Contract
 

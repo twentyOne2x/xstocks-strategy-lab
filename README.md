@@ -33,6 +33,13 @@ Use xStocks public data and a pinned research dataset to:
 2. show why one strategy won,
 3. activate a guarded strategy through a smart account.
 
+Internally, `Autopilot` should follow a real `Strategy Lab` contract:
+1. one frozen research harness,
+2. one narrow hot policy surface per mode,
+3. one append-only results ledger,
+4. one incumbent-versus-challenger promotion loop,
+5. one promoted activation manifest boundary for the frontend and activation flow.
+
 ### Directional Vault
 
 Use Euler primitives to:
@@ -128,6 +135,7 @@ More detail:
 5. [docs/FRONTEND_STYLE.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/FRONTEND_STYLE.md)
 6. [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md)
 7. [docs/plans/active/README.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/README.md)
+8. [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
 
 ## Monorepo Layout
 
@@ -140,7 +148,7 @@ apps/
 packages/
   shared/    shared types and schemas
   xstocks/   official xStocks API adapters
-  research/  autoresearch-style evaluation loop
+  research/  autoresearch-style evaluation loop (workflow pattern only, not the upstream GPU/Python repo)
   euler/     Euler market, preview, and execution helpers
   policy/    strategy and activation-policy compilation
 ```
