@@ -124,6 +124,126 @@ function resolveSlotIdFromBasketId(basketId) {
   return BASKET_SLOT_ID_BY_BASKET_ID.get(basketId) ?? null;
 }
 
+function humanizeSlotTitle(slotId) {
+  return STARTER_SLOT_BY_ID.get(slotId)?.title ?? slotId;
+}
+
+function buildQualificationReason(reasonCode, { selection, manifest }) {
+  const [, rawValue = ""] = String(reasonCode).split(/:(.+)/);
+
+  if (reasonCode.startsWith("mode_preference:")) {
+    if (rawValue === "directional") {
+      return {
+        code: reasonCode,
+        label: "Mode preference",
+        rationale:
+          "You explicitly opted into the directional lane, so qualification stayed on the preview-only directional path.",
+      };
+    }
+
+    if (rawValue === "basket") {
+      return {
+        code: reasonCode,
+        label: "Mode preference",
+        rationale:
+          "You selected the basket path, so qualification stayed on the promoted onboarding basket lane.",
+      };
+    }
+
+    return {
+      code: reasonCode,
+      label: "Mode preference",
+      rationale:
+        "You did not force a directional lane, so qualification failed toward the canonical promoted basket path.",
+    };
+  }
+
+  if (reasonCode === "slot_from_directional_opt_in") {
+    return {
+      code: reasonCode,
+      label: "Directional opt-in",
+      rationale:
+        "Directional remained an explicit opt-in, so qualification only selected the directional slot after that consent was present.",
+    };
+  }
+
+  if (reasonCode.startsWith("slot_from_selected_starter_slot:")) {
+    return {
+      code: reasonCode,
+      label: "Selected starter slot",
+      rationale: `The selected starter slot already points to ${humanizeSlotTitle(selection.slotId)}.`,
+    };
+  }
+
+  if (reasonCode.startsWith("slot_from_selected_starter_basket:")) {
+    return {
+      code: reasonCode,
+      label: "Selected starter basket",
+      rationale: `The selected starter basket maps directly to ${humanizeSlotTitle(selection.slotId)}.`,
+    };
+  }
+
+  if (reasonCode.startsWith("slot_from_theme:")) {
+    return {
+      code: reasonCode,
+      label: "Theme selection",
+      rationale: `Your theme answer routed qualification to ${humanizeSlotTitle(selection.slotId)} without inspecting raw research challengers.`,
+    };
+  }
+
+  if (reasonCode.startsWith("slot_from_public_strategy:")) {
+    return {
+      code: reasonCode,
+      label: "Public strategy selection",
+      rationale: `You selected the public strategy that resolves to ${humanizeSlotTitle(selection.slotId)}.`,
+    };
+  }
+
+  if (reasonCode.startsWith("slot_from_hero_asset:")) {
+    return {
+      code: reasonCode,
+      label: "Hero asset selection",
+      rationale: `The hero asset answer plus directional opt-in routed qualification to ${humanizeSlotTitle(selection.slotId)}.`,
+    };
+  }
+
+  if (reasonCode.startsWith("fallback:")) {
+    return {
+      code: reasonCode,
+      label: "Safe fallback",
+      rationale:
+        "The answers stayed open-ended enough that qualification failed closed to the canonical default onboarding basket.",
+    };
+  }
+
+  return {
+    code: reasonCode,
+    label: "Qualification rule",
+    rationale: `Qualification applied the canonical rule ${reasonCode} while resolving ${manifest.manifestId}.`,
+  };
+}
+
+function buildQualificationMatchSummary({ selection, manifest }) {
+  const reasons = selection.reasonCodes.map((reasonCode) =>
+    buildQualificationReason(reasonCode, { selection, manifest }),
+  );
+  const primaryReason =
+    reasons.find((reason) => reason.code !== `mode_preference:not_sure_yet`) ??
+    reasons[0];
+  const slotTitle = humanizeSlotTitle(selection.slotId);
+
+  return {
+    truthMode: "questionnaire_and_promoted_manifest_only",
+    slotId: selection.slotId,
+    mode: selection.mode,
+    safeFallbackApplied: selection.safeFallbackApplied,
+    summary: selection.safeFallbackApplied
+      ? `Qualification matched you to ${slotTitle} using the canonical safe-fallback path.`
+      : `Qualification matched you to ${slotTitle} because ${primaryReason.rationale.charAt(0).toLowerCase()}${primaryReason.rationale.slice(1)}`,
+    reasons,
+  };
+}
+
 function canonicalizeSelection(selection) {
   if (!selection) {
     return null;
@@ -410,6 +530,12 @@ export function deriveAgentQualification({
     user_notional_usd: requestedNotionalUsd,
     wallet_state: normalizedWalletState,
   });
+  const researchExplanationAvailable =
+    Object.hasOwn(manifest, "researchExplanationBundle") ||
+    Object.hasOwn(manifest, "explanationBundle");
+  const researchTuningSummaryAvailable =
+    Object.hasOwn(manifest, "researchTuningSummary") ||
+    Object.hasOwn(manifest, "tuningSummary");
 
   return agentQualificationSchema.parse({
     version: CONTRACT_VERSION,
@@ -423,12 +549,22 @@ export function deriveAgentQualification({
       surfaceId: "recommendation.explanationBundle",
       summary: recommendation.explanationSummary,
       bundle: recommendation.explanationBundle,
-      researchExplanationAvailable:
-        Object.hasOwn(manifest, "researchExplanationBundle") ||
-        Object.hasOwn(manifest, "explanationBundle"),
-      researchTuningSummaryAvailable:
-        Object.hasOwn(manifest, "researchTuningSummary") ||
-        Object.hasOwn(manifest, "tuningSummary"),
+      matchSummary: buildQualificationMatchSummary({
+        selection,
+        manifest,
+      }),
+      researchTruth: {
+        explanationSource: researchExplanationAvailable
+          ? "promoted_research_bundle"
+          : "canonical_promoted_manifest_only",
+        promotedManifestId: manifest.manifestId,
+        slotId: manifest.slotId,
+        researchBackedSurfacesBlocked: !researchExplanationAvailable,
+      },
+      researchExplanationBundle: manifest.researchExplanationBundle ?? null,
+      researchTuningSummary: manifest.researchTuningSummary ?? null,
+      researchExplanationAvailable,
+      researchTuningSummaryAvailable,
     },
     activationTruth: {
       surfaceTruth: executionPlan.surfaceTruth,

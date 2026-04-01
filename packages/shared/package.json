@@ -68,8 +68,8 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "lint": "tsc --noEmit -p tsconfig.json",
-    "test": "pnpm run build && node --test ./test/*.test.mjs",
+    "lint": "tsc --noEmit -p tsconfig.json && node --check src/rebalance.js",
+    "test": "pnpm run build && node --test ./test/*.test.mjs ./test/*.test.js",
     "check": "pnpm run lint && pnpm run test"
   },
   "dependencies": {

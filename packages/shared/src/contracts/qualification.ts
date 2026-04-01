@@ -16,6 +16,8 @@ import {
   basketRecommendationSchema,
   directionalRecommendationSchema,
   portfolioExplanationBundleSchema,
+  promotedBasketExplanationBundleSchema,
+  promotedBasketTuningSummarySchema,
 } from "./portfolio.js";
 
 export const qualificationSelectionSchema = z.object({
@@ -33,6 +35,33 @@ export const qualificationExplanationSurfaceSchema = z.object({
   surfaceId: z.literal("recommendation.explanationBundle"),
   summary: nonEmptyStringSchema,
   bundle: portfolioExplanationBundleSchema,
+  matchSummary: z.object({
+    truthMode: z.literal("questionnaire_and_promoted_manifest_only"),
+    slotId: strategySlotIdSchema,
+    mode: strategyModeSchema,
+    safeFallbackApplied: z.boolean(),
+    summary: nonEmptyStringSchema,
+    reasons: z
+      .array(
+        z.object({
+          code: nonEmptyStringSchema,
+          label: nonEmptyStringSchema,
+          rationale: nonEmptyStringSchema,
+        }),
+      )
+      .min(1),
+  }),
+  researchTruth: z.object({
+    explanationSource: z.enum([
+      "promoted_research_bundle",
+      "canonical_promoted_manifest_only",
+    ]),
+    promotedManifestId: nonEmptyStringSchema,
+    slotId: strategySlotIdSchema,
+    researchBackedSurfacesBlocked: z.boolean(),
+  }),
+  researchExplanationBundle: promotedBasketExplanationBundleSchema.nullable(),
+  researchTuningSummary: promotedBasketTuningSummarySchema.nullable(),
   researchExplanationAvailable: z.boolean(),
   researchTuningSummaryAvailable: z.boolean(),
 });

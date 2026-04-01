@@ -99,9 +99,49 @@ test("api qualification endpoint returns canonical onboarding outputs for all lo
         "recommendation.explanationBundle",
       );
       assert.equal(
+        qualification.explanationSurface.matchSummary.truthMode,
+        "questionnaire_and_promoted_manifest_only",
+      );
+      assert.equal(
+        qualification.explanationSurface.matchSummary.slotId,
+        fixture.expected.slotId,
+      );
+      assert.equal(
+        qualification.explanationSurface.researchTruth.promotedManifestId,
+        qualification.manifestId,
+      );
+      assert.equal(
         qualification.manifestRef.manifestId,
         qualification.manifestId,
       );
+
+      if (fixture.expected.mode === "basket") {
+        assert.equal(
+          qualification.explanationSurface.researchTruth.explanationSource,
+          "promoted_research_bundle",
+        );
+        assert.equal(
+          qualification.explanationSurface.researchExplanationBundle !== null,
+          true,
+        );
+        assert.equal(
+          qualification.explanationSurface.researchTruth.researchBackedSurfacesBlocked,
+          false,
+        );
+      } else {
+        assert.equal(
+          qualification.explanationSurface.researchTruth.explanationSource,
+          "canonical_promoted_manifest_only",
+        );
+        assert.equal(
+          qualification.explanationSurface.researchExplanationBundle,
+          null,
+        );
+        assert.equal(
+          qualification.explanationSurface.researchTruth.researchBackedSurfacesBlocked,
+          true,
+        );
+      }
     }
   } finally {
     await server.close();

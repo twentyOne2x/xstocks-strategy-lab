@@ -746,6 +746,12 @@ function normalizeResearchExplanationBundle(manifest, rawManifest) {
     );
   }
 
+  if (rawManifest?.researchExplanationBundle) {
+    return promotedBasketExplanationBundleSchema.parse(
+      rawManifest.researchExplanationBundle,
+    );
+  }
+
   return normalizeResearchExplanationBundleValue(
     rawManifest?.explanationBundle ?? rawManifest?.explanation_bundle ?? null,
   );
@@ -779,6 +785,12 @@ function normalizeResearchTuningSummaryValue(value) {
 function normalizeResearchTuningSummary(manifest, rawManifest) {
   if (manifest?.researchTuningSummary) {
     return promotedBasketTuningSummarySchema.parse(manifest.researchTuningSummary);
+  }
+
+  if (rawManifest?.researchTuningSummary) {
+    return promotedBasketTuningSummarySchema.parse(
+      rawManifest.researchTuningSummary,
+    );
   }
 
   return normalizeResearchTuningSummaryValue(
