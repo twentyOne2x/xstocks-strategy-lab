@@ -1,74 +1,61 @@
-# Equity Terminal Agent Skill
+# xStocks Public Agent Start
 
 Last reviewed: 2026-04-01
 
-This is the public agent-facing guide for Equity Terminal.
+This is the public getting-started surface for xstocks-side agents.
 
-It explains the product and capability model without exposing operator hosts, wallet secrets, treasury details, or private runbooks.
+It explains how to start, what can be claimed publicly, and where the public surface must stop. It does not expose private operator hosts, wallet secrets, treasury details, auth material, or hidden custody internals.
 
-This page is public product truth. It complements the repo-owned Hermes/operator skill and does not replace it.
+This page complements the repo-owned operator surface. It does not replace it.
 
-## What this agent can do
+## Fastest Truthful Public Start
 
-- discover promoted xStocks portfolios and default starting modes
-- qualify whether a portfolio is ready for the next activation step or should stay in preview
-- preview holdings, route, and funding requirements before execution
-- guide the user to connect a wallet
-- guide the user to fund with USDC on Ethereum
-- guide a user-approved execution flow on the approved rail
+1. Start at `/onboarding` to qualify the user into the promoted basket or directional lane.
+2. Use `/workspace/comparison` or `/workspace/detail/[manifestSlug]` to inspect holdings, route labels, funding requirements, and preview truth.
+3. Move to `/activate/[manifestSlug]` only after the user explicitly wants to continue.
+4. Keep the lane in preview if route truth, funding state, wallet state, or execution readiness is missing or ambiguous.
 
-## How the product works
+## What This Public Surface Can Do
 
-1. Discover a portfolio.
-2. Qualify it or choose the default portfolio.
-3. Preview holdings, route, and activation requirements.
-4. Connect a wallet.
-5. Fund with USDC on Ethereum mainnet.
-6. Sign and execute through the approved rail when the lane is live and ready.
+- explain the two current public entry modes: basket portfolios and directional preview
+- guide no-wallet-first discovery
+- help the user qualify into a promoted xStocks lane
+- explain holdings, route labels, and funding requirements before any deposit
+- explain that wallet connection, funding, and signing remain user-approved steps
+- fail closed instead of implying live execution when the lane is still preview-only
 
-Nothing should execute without explicit user approval.
+## Current Public Truth
 
-## Built on top of
+- xStocks-first and Ethereum-first remain the default public posture
+- the public start path is onboarding -> comparison/detail -> activate
+- wallet connection happens late and remains user-approved
+- user signatures are still required for execution
+- CoW Protocol and 1inch are the current verified Ethereum execution surfaces described in repo truth
+- Morpho `SPYx/AUSD` is the current truthful lending-proof path described in repo truth
+- exact live xStocks-on-Euler execution is not claimed here
+- Chainlink automation is still target-state only, not a live autonomy claim
 
-- `xStocks` for tokenized equity assets and portfolio or route state
-- `Privy` for wallet connection and the current embedded-wallet or smart-wallet direction
-- `CoW Protocol` for Ethereum quote and order routing on the promoted execution path
-- `Chainlink` as the intended automation rail for later phases
+## Public And Private Boundary
 
-## Control and safety model
+This public surface may explain:
 
-- self-custody first
-- policy-bound execution
-- no raw key exposure through this public surface
-- no hidden custody
+- onboarding and qualification
+- preview holdings, routes, and funding requirements
+- the late wallet-connect and user-signature model
+- why a lane is preview-only, live, or blocked if that status is visible on the served surface
 
-In practical terms:
+This public surface may not expose or imply:
 
-- the user connects and approves from their own wallet context
-- qualification and route checks happen before execution
-- private keys, seed phrases, and raw wallet secrets are not part of this skill surface
-- private operator and treasury workflows stay off the public route
+- private operator or Hermes host details
+- raw auth tokens or operator-only API access
+- wallet secrets, seed phrases, or raw key export
+- treasury balances, treasury operators, or treasury approval flows
+- hidden custody or autonomous execution
 
-## Agent wallet model
+## Stop Conditions
 
-Current public posture:
-
-- discovery, qualification, and preview are the primary public agent surfaces
-- wallet connection, funding, and execution remain user-approved steps
-- this page does not claim raw wallet-serving or autonomous wallet control
-
-Intended model:
-
-- agent wallet access should be capability-based, not secret-based
-- an agent should operate against bounded permissions, not raw key export
-
-## Current boundaries
-
-- Equity Terminal is xStocks-first and Ethereum-first for the current activation path
-- live execution is not claimed as autonomous
-- user signature is still required for execution
-- capability-based wallet serving is still an intended model unless a stronger public proof exists
-- Chainlink automation is a target-state integration, not a claim of live autonomous CRE execution
-- private Hermes runbooks, host details, treasury details, and wallet internals are intentionally omitted here
-
-If a portfolio, route, or funding state is not ready, the truthful behavior is to stay in preview and fail closed rather than imply execution readiness.
+- If the lane is still preview-only, say so plainly and stop there.
+- If the only evidence is mock, fallback, or ambiguous UI state, do not claim live readiness.
+- If route truth or funding truth is missing, fail closed.
+- If the user has not approved wallet, funding, or signing steps, do not imply activation.
+- If you need activation save, activity read, or execution proof, hand off to the repo-owned internal operator surface.
