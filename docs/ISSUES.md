@@ -87,12 +87,12 @@ Last updated: 2026-04-01
   - Date: 2026-04-01
   - Scope freeze: align only the current Ethereum basket lane truth in `packages/policy/**`, `apps/api/**`, and `apps/web/**`; do not reopen CRE, Mesh implementation, or downstream hosted execution-closure claims.
   - Verified starting truth: local policy and the current live default-basket catalog now treat the CoW basket as linked-wallet-first with `requiresSmartAccount=false` and `minFundingUsd=0`, while the truthful public deposit story remains narrower than a generic hosted on-ramp.
-  - Live host update on 2026-04-01: Railway serves `/api/public-agent-handoff`, `/health`, and `/api/catalog` with the default basket wallet metadata aligned to current readiness truth (`requiresSmartAccount=false`, `minFundingUsd=0`) even though the hosted/session-backed signer proof remains open.
-  - Acceptance addendum: close this lane only by making promoted-manifest exports, readiness output, saved activation truth, and public wording all describe the current basket as linked-wallet-first, smart-wallet-optional, and Mesh-absent, while keeping the hosted/session-backed signer proof explicitly open.
+  - Live host update on 2026-04-01: Railway serves `/api/public-agent-handoff`, `/health`, and `/api/catalog` with the default basket wallet metadata aligned to current readiness truth (`requiresSmartAccount=false`, `minFundingUsd=0`) even though full hosted execution closure remains open.
+  - Acceptance addendum: close this lane only by making promoted-manifest exports, readiness output, saved activation truth, and public wording all describe the current basket as linked-wallet-first, smart-wallet-optional, and Mesh-absent, while keeping full hosted execution closure explicitly open.
 - Executor prompt:
   - Canonicalize basket-lane wallet requirements at the policy layer so exported promoted-manifest metadata no longer contradicts readiness truth.
   - Tighten API and frontend wording so deposit surfaces state “no fixed minimum in policy / user-chosen notional” and avoid smart-wallet-required or live CRE claims.
-  - Verify with the requested local tests plus live Railway health/catalog probes, and keep the residual hosted/session-backed signer proof explicitly owned by `XSL-014`.
+  - Verify with the requested local tests plus live Railway health/catalog probes, and keep the residual hosted execution gap explicitly owned by `XSL-014`.
 - Checklist:
   - [x] report captured
   - [x] context added
@@ -103,7 +103,7 @@ Last updated: 2026-04-01
   - `curl -sS https://api-production-e70b.up.railway.app/health` now responds cleanly, and `curl --max-time 15 -sS 'https://api-production-e70b.up.railway.app/api/catalog?limit=2'` returns the default basket with `walletRequirements.requiresSmartAccount=false` and `walletRequirements.minFundingUsd=0`.
   - `curl -sS https://equityterminal.app/skill.md` now serves the current public-safe copy: late wallet connect, no public CRE claim, and wallet-funded self-serve deposit truth only.
   - Strict no-KYC/no-KYB on-ramp still does not exist. Wallet-funded USDC deposit remains the only truthful self-serve path; `privy_card` and `privy_exchange` remain optional hosted convenience rails that may require regulated verification.
-  - The venue-routed execution substrate is frozen in `XSL-014A`; the remaining hosted/session-backed signer proof stays owned by `XSL-014`.
+  - Full hosted execution closure remains partial and stays owned by `XSL-014`.
 
 ### XSL-005A Strict Self-Serve Deposit Truth Alignment
 
@@ -329,32 +329,6 @@ Last updated: 2026-04-01
 - Visual verification note:
   - Browser or screenshot proof was not captured in this turn, so the data-surface closure is backed by manifest, API, adapter, test, build, and typecheck verification rather than UI screenshots.
 
-### XSL-010B Onboarding Qualification Must Consume Backend Selection Truth
-
-- Type: frontend/integration
-- Status: active
-- Canonical owner lane: `XSL-010`
-- Date opened: 2026-04-02
-- Context: The onboarding questionnaire currently posts answers to `POST /api/qualify`, but the visible gate/workspace recommendation path still derives the final portfolio locally from `apps/web/src/lib/shared-contract-adapter.ts` and mock strategy metadata. As a result, backend autoresearch/qualification can resolve different slots while the UI still appears to return the same portfolio.
-- Suspected cause: `apps/web/src/components/onboarding-terminal-experience.tsx` records qualification for funnel tracking only and ignores the returned `qualification.selection.slotId`, so the final manifest/preview path is not driven by backend qualification truth.
-- Fix intent: Make the completed onboarding flow consume backend qualification selection truth for the final selected slot/manifest while keeping the local adapter only as a fail-closed fallback.
-- Acceptance criteria:
-  1. The completed onboarding flow uses the returned backend qualification slot when `POST /api/qualify` succeeds.
-  2. The final gate/workspace manifest selection no longer depends solely on local mock strategy choice when backend qualification truth exists.
-  3. Distinct answer profiles that already resolve to different slots in canonical qualification proof also drive different onboarding manifests in the web flow.
-  4. If the qualification request fails, the UI fails closed to the existing local fallback instead of pretending the backend result was applied.
-- Complexity: small
-- Executor prompt:
-  - Touch only the onboarding qualification/result path in `apps/web/**` plus the narrow issue artifact needed for this slice.
-  - Keep the backend as the source of truth once `/api/qualify` returns, and keep the local adapter as fallback only.
-  - Do not widen into questionnaire copy churn, execution logic, or unrelated frontend redesign.
-- Checklist:
-  - [x] report captured
-  - [x] context added
-  - [ ] fix applied
-  - [ ] tests run
-  - [ ] visual/screenshot verification
-
 ### XSL-011 Rebalance Automation And Execution Orchestration
 
 - Type: runtime/integration
@@ -483,29 +457,31 @@ Last updated: 2026-04-01
 - Latest reconciliation note:
   - Local truth now includes real Privy frontend hooks, backend JWT or JWKS verification, canonical funnel-event persistence, `/api/reporting/xstocks`, `/api/funnel-events/xstocks`, `/ops/xstocks`, `GET /api/public-agent-handoff`, and the repo-owned internal agent skill chain plus smoke runbooks.
   - Production-host truth remains partial: the Railway API exposes the public handoff and reporting routes, `/api/reporting/xstocks` still fails closed for missing operator token, `https://equityterminal.app/ops/xstocks` still renders the access gate, and hosted `skill.md` now matches the repo-owned public-safe copy on key public claims.
-  - Ordered open blockers remain: `XSL-009` served-truth plus browser-proof closure, `XSL-014` hosted/session-backed signer proof, `XSL-015` hosted reporting-token configuration and remaining lower-bound funnel fields, and `XSL-016` Hermes remote smoke plus authenticated/funded proof closure.
+  - Ordered open blockers remain: `XSL-009` served-truth plus browser-proof closure, `XSL-014` structural CoW incompatibility for the current promoted basket plus still-unproven signed submission, `XSL-015` hosted reporting-token configuration and remaining lower-bound funnel fields, and `XSL-016` Hermes remote smoke plus authenticated/funded proof closure.
 
 ### XSL-014 First Authenticated Execution Proof And Production Closure
 
 - Type: frontend/backend/integration
 - Status: active
-- Reconciliation state: partial / quote-boundary proven / structurally blocked basket
-- Context: the live site serves the current Equity Terminal shell, the frontend now has real Privy connect code, `apps/api` now has real Privy auth verification, and the repo now carries one hosted linked-wallet activation plus partial CoW quote-boundary proof bundle; the remaining gap is a fresh hosted/session-backed signer proof input, not backend verification config.
-- Suspected cause: frontend, backend auth, and live-proof slices all landed, but the final authenticated runtime inputs and served-copy reconciliation did not.
-- Fix intent: create one execution-grade workstream that closes the first truthful activation lane from real homepage through authenticated Privy session, user-approved CoW execution, and operator-visible production proof.
+- Reconciliation state: partial / backend-config-proven / live-session-proof-pending
+- Context: the live site serves the current Equity Terminal shell, the frontend now has real Privy connect code, `apps/api` now has real Privy auth verification, and `XSL-014A` completed the venue-routed manual execution substrate, but there is still no fresh hosted/session-backed signer proof because live user-session input remains missing or expires before the proof can continue. Hosted activation and detail surfaces still overclaim some live or automation truth, and operator visibility remains only partially configured.
+- Suspected cause: frontend connect, backend verification, and venue-routing substrate work all landed, but the final hosted proof input collection and served-copy reconciliation lagged them.
+- Fix intent: keep one owner for the remaining hosted/session-backed signer proof lane on top of the completed venue-routed substrate, separate backend verification config from live user-session proof input, and stop at the exact blocker if proof still cannot complete.
 - Acceptance criteria:
-  1. Homepage quality is upgraded from intermediary card to real homepage without regressing brand hierarchy or honesty.
-  2. Frontend Privy connect is real and activation state is truthful.
-  3. Backend verifies Privy auth using configured secret/JWKS inputs.
-  4. One real small user-approved CoW execution reaches the furthest truthful boundary possible, with exact blocker stated if it still cannot complete.
-  5. Operator visibility and alerting for this lane are present enough that the product can be called deployable only when that proof exists.
+  1. Backend verification config is explicitly verified separately from live user-session proof input.
+  2. Frontend Privy connect and authenticated owner binding remain fixed prerequisites rather than open design work.
+  3. One real small hosted/session-backed signer proof reaches the furthest truthful boundary possible on the completed venue-routed substrate, with exact blocker stated if it still cannot complete.
+  4. Operator visibility and alerting for this lane are present enough that the product can be called deployable only when that proof exists.
+  5. This lane does not reopen venue design work already completed under `XSL-014A`.
 - Complexity: high
 - Plan links:
   - [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md)
 - Continuation note:
   - Date: 2026-04-01
+  - `XSL-014A` is completed and frozen. Do not reopen venue design or route-contract work from this lane.
   - Scope freeze: continue only in `apps/api/**`, `packages/shared/**`, `packages/policy/**`, `packages/xstocks/**`, and `apps/worker/**` only if runtime truth strictly requires it. Do not touch `apps/web`, do not reopen homepage/frontend/auth lanes unless quoteability work proves a remaining auth/readiness mismatch, and do not reopen 1inch, Bridge, CRE, Chainlink, issuer, or Hermes lanes.
   - Verified starting truth from the latest handoff: backend Privy auth verification is real, authenticated owner binding is real, readiness for the current Ethereum basket CoW lane was aligned away from the stale manifest `minFundingUsd: 1000` plus mandatory smart-account default, activation can reach `ready`, execution request creation works, and live CoW quote attempts reach the external venue boundary.
+  - Explicit proof split: backend Privy verification config is a completed precondition; the remaining proof input is a fresh verified user session token from a real hosted or authenticated context.
   - Resolved continuation finding: the earlier route-token mismatch is no longer current truth. Production probing now confirms the live basket lane is wrapper-correct for CoW routing, and `NVDAx` quotes successfully at the promoted basket's current leg size when the verified Ethereum `wrapperAddress` is used.
   - Hosted proof update: production probing against Railway now confirms the current live basket lane is wrapper-correct for CoW routing. A real authenticated linked-wallet run at `$25` saved activation `act_88d4997e-aa80-42a3-8580-8af877fcb3e7`, created execution request `execreq_1196c5af-f577-4428-a355-4e67b793b7da`, and captured runtime-store plus execution-request artifacts under `tmp/proof/2026-04-01T17-25-58.460Z/`.
   - Hosted quoteability truth: the promoted basket is not all-leg quoteable at the minimal proof notional. `NVDAx` reached `awaiting_approval`, `MSFTx`, `METAx`, and `AMZNx` returned exact `NoLiquidity` blockers, `AAPLx` and `GOOGLx` returned exact `InternalServerError` blockers, and the `AUSD` yield-buffer leg remained deferred by design.
@@ -750,14 +726,15 @@ Last updated: 2026-04-01
   - Strongest truthful closure: the manual venue-routed execution substrate exists through the signer-owned approval and submission boundary, and no autonomous execution was added.
   - Exact blocker artifact: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-01T21-55-55.559Z/summary.json)
   - Exact blocker: `Privy access token is expired.` A fresh verified user session is still required before live signer-owned 1inch submission proof can proceed.
+  - Remaining proof-input work stays under `XSL-014`; it does not reopen venue-routing design under `XSL-014A`.
 
 ### XSL-018 Event-Triggered Rebalance Control Plane
 
 - Type: program/frontend/backend/runtime
 - Status: active
-- Context: the user now wants the canonical app to own event-driven rebalance end to end: stub a news event in the right-side panel, stage the portfolio implication, hit one top-level `Execute all` control, run the mainnet rebalance, and later let `CRE` or provider-triggered events reuse the same execution path. Current truth is still fragmented: `XSL-011B` proves signed review ingress, `XSL-014A` is completed and frozen as the backend venue-routed execution substrate, and the canonical frontend still has no real rebalance control surface.
-- Suspected cause: the repo proved review ingress and venue quoteability as separate lanes first, but never created the control-plane owner that joins event intake, execution staging, and later automation into one path.
-- Fix intent: create one umbrella owner for event-triggered rebalance, with sub-specs for provider-review-to-execution handoff, a right-rail control surface plus top-level `Execute all`, and the hosted/session-backed signer proof that still sits above the completed execution substrate.
+- Context: the user now wants the canonical app to own event-driven rebalance end to end: stub a news event in the right-side panel, stage the portfolio implication, hit one top-level `Execute all` control, run the mainnet rebalance, and later let `CRE` or provider-triggered events reuse the same execution path. Current truth is still fragmented: `XSL-011B` proves signed review ingress, `XSL-014A` now proves the backend venue-routed execution substrate through signer-owned 1inch + CoW manual execution, and the canonical frontend still has no real rebalance control surface.
+- Suspected cause: the repo proved review ingress and venue-routed execution substrate separately first, but never created the control-plane owner that joins provider intake, execution staging, frontend control, and final hosted signer proof into one path.
+- Fix intent: keep one umbrella owner for event-triggered rebalance, reuse completed `XSL-014A` as a frozen dependency, and drive the remaining residual order through provider-review handoff first, control surface second, and hosted/session-backed signer proof last.
 - Acceptance criteria:
   1. An umbrella control-plane spec exists and links every required execution-grade sub-spec.
   2. The canonical frontend right rail can create or stub a rebalance-driving event and show resulting portfolio implication plus execution readiness.
@@ -771,7 +748,8 @@ Last updated: 2026-04-01
   - [2026-04-01-xstocks-provider-to-execution-handoff-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-provider-to-execution-handoff-spec.md)
 - Executor prompt:
   - Treat this as a decomposed program, not one giant mixed diff.
-  - Land the provider-review-to-execution handoff first, then the frontend control surface, then the hosted/session-backed signer proof.
+  - Reuse completed `XSL-014A`; do not reopen venue design.
+  - Land the provider-review-to-execution handoff first, then the frontend control surface, then hosted/session-backed signer proof on the completed substrate.
   - Keep explicit operator action as the first closure target; only then widen into later automation using the same path.
 - Checklist:
   - [ ] report captured
@@ -816,6 +794,6 @@ Last updated: 2026-04-01
 
 ## 2026-04-01 Final Residual Backlog
 
-1. `XSL-018B`: hand accepted provider review into the same execution path instead of stopping forever at `awaiting_operator`.
-2. `XSL-018A`: add the canonical right-rail event-triggered rebalance surface plus one truthful top-level `Execute all` control.
-3. `XSL-014`: gather hosted/session-backed signer proof above the completed venue substrate.
+1. `XSL-018B`: hand accepted provider review into the completed `XSL-014A` execution path instead of stopping forever at `awaiting_operator`.
+2. `XSL-018A`: add the canonical right-rail event-triggered rebalance surface plus one truthful top-level `Execute all` control on top of that handoff.
+3. hosted/session-backed signer proof: capture a fresh verified user session input and one hosted signer-backed proof on the completed venue-routed substrate; treat backend Privy verification config as a precondition, not remaining design work.

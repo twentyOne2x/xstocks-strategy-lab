@@ -157,8 +157,8 @@ Build/deploy fan-out assessment:
 
 ### Publicly verified primary execution rails
 
-1. `Cow Swap` on Ethereum
-2. `1inch` on Ethereum
+1. `1inch` on Ethereum for the completed venue-routed manual xStocks substrate where proven
+2. `Cow Swap` on Ethereum for the directly quoteable subset and truthful secondary route
 
 ### Publicly verified primary lending and yield rails
 
@@ -181,8 +181,8 @@ MVP adapter posture:
 3. no best-execution bundling across many venues.
 
 Recommended mapping:
-1. primary: `Cow Swap`
-2. secondary: `1inch`
+1. primary: `1inch`
+2. secondary: `Cow Swap`
 
 Deferred:
 1. `0x`
@@ -346,9 +346,9 @@ Wave 3:
 ## Hosted / Deployed / Production Boundary
 
 1. local-only: current planning
-2. deployed-host verified: authenticated linked-wallet activation save, execution-request creation, per-leg CoW quote sweep across `25`, `50`, `100`, `250`, and `500` USD gross, and runtime-store capture all exist for the current promoted Ethereum basket lane.
-3. production-host verified: partial only. One real `$25` hosted linked-wallet proof reaches CoW `awaiting_approval` on `NVDAx`, proving the current live lane can save activation, create execution, and reach the approval boundary for at least one core leg.
-4. still unproven: a full promoted-basket signed submission plus receipt, because no all-leg executable floor was observed through `500` USD gross and the remaining core legs are structurally blocked on current CoW venue truth (`MSFTx`, `AAPLx`, `METAx`, `AMZNx`, `GOOGLx`).
+2. deployed-host verified: authenticated linked-wallet activation save, execution-request creation, per-leg CoW quote sweep across `25`, `50`, `100`, `250`, and `500` USD gross, runtime-store capture, and the completed `XSL-014A` venue-routed manual execution substrate all exist for the current promoted Ethereum basket lane.
+3. production-host verified: partial only. One real `$25` hosted linked-wallet proof reaches CoW `awaiting_approval` on `NVDAx`, and the completed `XSL-014A` substrate separately proves truthful `oneinch_fusion` request, approval-payload, and submission-attempt persistence up to the exact hosted-session blocker.
+4. still unproven: a full promoted-basket signed submission plus receipt, because no all-leg executable floor was observed through `500` USD gross, the remaining core legs are structurally blocked on current CoW venue truth (`MSFTx`, `AAPLx`, `METAx`, `AMZNx`, `GOOGLx`), and hosted/session-backed signer proof still requires fresh verified user-session input.
 
 ## Exact Current CoW Universe
 
@@ -425,5 +425,5 @@ This workstream is complete only when:
 1. 2026-04-01: verified that Railway serves `/api/public-agent-handoff`, `/health`, and `/api/catalog`, and that the live default-basket catalog now exports linked-wallet-first wallet metadata with `requiresSmartAccount=false` and `minFundingUsd=0`.
 2. 2026-04-01: aligned the repo-owned wording so wallet-funded transfer is the canonical self-serve deposit truth, `privy_card` and `privy_exchange` are convenience rails only, and Mesh stays explicit absent/deferred.
 3. 2026-04-01: captured a real hosted authenticated proof run for the promoted basket at `$25`; activation save and execution-request creation succeeded, `NVDAx` reached `awaiting_approval`, and the remaining core legs failed with exact CoW venue blockers instead of route-construction ambiguity.
-4. 2026-04-01: post-proof reconciliation confirms the remaining execution/funding gap is no longer catalog-wallet-metadata drift; the venue-routed execution substrate is frozen in `XSL-014A`, and the remaining hosted/session-backed signer proof stays open under `XSL-014`, plus the exact self-serve deposit truth that wallet-funded USDC transfer remains the only truthful no-KYC/no-KYB path.
+4. 2026-04-01: post-proof reconciliation confirms the remaining execution/funding gap is no longer catalog-wallet-metadata drift. `XSL-014A` completed the venue-routed manual substrate, and the remaining `XSL-014` residual is hosted/session-backed signer proof input plus the exact self-serve deposit truth that wallet-funded USDC transfer remains the only truthful no-KYC/no-KYB path.
 5. 2026-04-01: direct standalone CoW universe scanning across all repo-owned Ethereum xStocks now confirms only `NVDAx`, `TSLAx`, and `SPYx` quote directly; no product-usable CoW-only onboarding basket exists under current venue truth, so onboarding execution stays preview-only.
