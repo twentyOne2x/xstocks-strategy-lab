@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@xstocks-strategy-lab/shared": "workspace:*",
-    "@xstocks/research": "workspace:*"
+    "@xstocks/research": "workspace:*",
+    "@xstocks/policy": "workspace:*",
+    "@xstocks/api": "workspace:*"
   }
 }

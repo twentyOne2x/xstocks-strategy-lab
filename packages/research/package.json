@@ -9,6 +9,8 @@
     "check": "node ./src/index.js validate && node --test ./src/__tests__/*.test.js"
   },
   "dependencies": {
-    "@xstocks-strategy-lab/shared": "workspace:*"
+    "@xstocks-strategy-lab/shared": "workspace:*",
+    "@xstocks-strategy-lab/euler": "workspace:*",
+    "@xstocks-strategy-lab/xstocks": "workspace:*"
   }
 }
