@@ -12,6 +12,7 @@ import {
   xstocksFunnelEventSchema,
   xstocksReportingSnapshotSchema,
 } from "../../../packages/shared/dist/contracts/reporting.js";
+import { providerRebalanceReceiptSchema } from "../../../packages/shared/dist/contracts/provider-rebalance.js";
 import {
   activationManifestRefSchema,
   chainSchema,
@@ -619,6 +620,7 @@ export const API_ENDPOINTS = Object.freeze({
   ACTIVATIONS: "/api/activations",
   ACTIVITY: "/api/activity",
   EXECUTIONS: "/api/executions",
+  PROVIDER_REBALANCE_EVENTS: "/api/internal/rebalances/provider-events",
   AUTORESEARCH_RUNTIME: "/api/runtime/autoresearch",
   AUTORESEARCH_RUNTIME_RECEIPTS: "/api/internal/autoresearch/receipts",
   XSTOCKS_FUNNEL_EVENTS: "/api/funnel-events/xstocks",
@@ -704,6 +706,12 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
       "limit?",
     ],
     response: "execution_read_v1",
+  },
+  provider_rebalance_event_ingest: {
+    method: "POST",
+    path: API_ENDPOINTS.PROVIDER_REBALANCE_EVENTS,
+    body: ["provider review event JSON", "Authorization: Bearer <ES256K ETH-JWT>"],
+    response: "provider_rebalance_event_ingest_v1",
   },
   autoresearch_runtime_read: {
     method: "GET",
@@ -808,6 +816,13 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     generatedAt: timestampSchema,
     limit: z.number().int().positive(),
     items: z.array(executionRequestSchema),
+  }),
+  provider_rebalance_event_ingest: z.object({
+    version: apiContractVersionSchema,
+    generatedAt: timestampSchema,
+    accepted: z.boolean(),
+    receipt: providerRebalanceReceiptSchema,
+    rebalanceOrchestration: rebalanceOrchestrationSchema.nullable(),
   }),
   autoresearch_runtime_read: z.object({
     version: apiContractVersionSchema,

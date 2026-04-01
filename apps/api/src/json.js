@@ -12,6 +12,16 @@ export async function writeJsonFile(filePath, value) {
 }
 
 export async function readJsonRequestBody(request) {
+  const raw = await readTextRequestBody(request);
+
+  if (raw.length === 0) {
+    return {};
+  }
+
+  return JSON.parse(raw);
+}
+
+export async function readTextRequestBody(request) {
   const chunks = [];
 
   for await (const chunk of request) {
@@ -19,10 +29,10 @@ export async function readJsonRequestBody(request) {
   }
 
   if (chunks.length === 0) {
-    return {};
+    return "";
   }
 
-  return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  return Buffer.concat(chunks).toString("utf8");
 }
 
 export function sendJson(response, statusCode, payload) {
@@ -31,7 +41,7 @@ export function sendJson(response, statusCode, payload) {
   response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   response.setHeader(
     "Access-Control-Allow-Headers",
-    "Content-Type,Authorization,X-Privy-Identity-Token",
+    "Content-Type,Authorization,X-Privy-Identity-Token,X-Reporting-Token,X-Autoresearch-Proof-Token",
   );
   response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.end(`${JSON.stringify(payload, null, 2)}\n`);

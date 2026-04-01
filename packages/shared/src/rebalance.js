@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 export const REBALANCE_STATES = Object.freeze([
   "preview_only",
   "rebalance_recommended",
@@ -49,6 +51,42 @@ export const MANUAL_COW_REVIEW_START_STATES = Object.freeze([
   "failed",
 ]);
 
+export const PROVIDER_REBALANCE_RECEIPT_DECISIONS = Object.freeze([
+  "accepted",
+  "rejected",
+]);
+
+export const PROVIDER_REBALANCE_RECEIPT_REASON_CODES = Object.freeze([
+  "accepted_review_only",
+  "activation_not_found",
+  "authorization_missing",
+  "authorization_scheme_invalid",
+  "duplicate_delivery",
+  "internal_error",
+  "jwt_audience_invalid",
+  "jwt_digest_missing",
+  "jwt_digest_mismatch",
+  "jwt_expired",
+  "jwt_id_missing",
+  "jwt_issued_in_future",
+  "jwt_malformed",
+  "jwt_not_yet_valid",
+  "jwt_signature_invalid",
+  "jwt_signer_invalid",
+  "manual_lane_not_ready",
+  "promoted_manifest_mismatch",
+  "provider_auth_not_configured",
+  "provider_trigger_failed_closed",
+  "replayed_jwt_id",
+  "replayed_request_digest",
+  "request_digest_invalid",
+  "request_digest_mismatch",
+  "request_json_invalid",
+  "request_schema_invalid",
+  "review_state_not_opened",
+  "slot_mismatch",
+]);
+
 const PROVIDER_CLASSIFICATION_RANK = Object.freeze({
   implemented: 4,
   prototype: 3,
@@ -69,6 +107,46 @@ function uniqueStrings(values) {
 function createTransitionId(prefix, occurredAt) {
   const compactTime = String(occurredAt ?? new Date().toISOString()).replace(/[^\d]/g, "");
   return `${prefix}_${compactTime}`;
+}
+
+function stableClone(value) {
+  if (Array.isArray(value)) {
+    return value.map((entry) => stableClone(entry));
+  }
+
+  if (value && typeof value === "object") {
+    return Object.keys(value)
+      .sort((left, right) => left.localeCompare(right))
+      .reduce((accumulator, key) => {
+        const nextValue = stableClone(value[key]);
+
+        if (nextValue !== undefined) {
+          accumulator[key] = nextValue;
+        }
+
+        return accumulator;
+      }, {});
+  }
+
+  return value;
+}
+
+export function createSha256Digest(value) {
+  const payload =
+    typeof value === "string" || Buffer.isBuffer(value)
+      ? value
+      : JSON.stringify(stableClone(value));
+
+  return `sha256:${createHash("sha256").update(payload).digest("hex")}`;
+}
+
+export function createProviderRebalanceRequestDigest(request) {
+  if (!request || typeof request !== "object") {
+    throw new Error("Provider rebalance request digest requires an object payload.");
+  }
+
+  const { requestDigest: _ignoredRequestDigest, ...digestPayload } = request;
+  return createSha256Digest(digestPayload);
 }
 
 export function getRuntimeOwnerForTrigger(triggerSource) {

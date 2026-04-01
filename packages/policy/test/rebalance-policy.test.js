@@ -57,3 +57,34 @@ test("provider-triggered requests fail closed when Chainlink proof is absent", (
   assert.ok(rebalance.blockers.includes("provider_trigger_unproven"));
   assert.ok(rebalance.blockers.includes("missing_provider_adapter"));
 });
+
+test("provider-triggered requests open awaiting_operator when signed review proof exists", () => {
+  const rebalance = deriveRebalanceOrchestration({
+    ...baseInput,
+    triggerSource: "provider_triggered",
+    chainlinkBoundary: {
+      providerId: "chainlink",
+      label: "Chainlink-oriented rebalance trigger boundary",
+      classification: "implemented",
+      automationClassification: "implemented",
+      creClassification: "implemented",
+      signedEventValidation: true,
+      reviewProofArtifacts: ["provider_receipt_1"],
+      executionProofArtifacts: [],
+      reviewProven: true,
+      executionProven: false,
+      canTriggerReview: true,
+      canExecute: false,
+      missing: [],
+      notes: [],
+    },
+  });
+
+  assert.equal(rebalance.state, "awaiting_operator");
+  assert.equal(rebalance.runtimeOwner, "operator_manual");
+  assert.equal(rebalance.triggerSource, "provider_triggered");
+  assert.equal(rebalance.automationTruth.providerTriggeredProven, true);
+  assert.ok(
+    rebalance.automationTruth.supportedTriggerSources.includes("provider_triggered"),
+  );
+});

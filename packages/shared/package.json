@@ -50,6 +50,10 @@
       "types": "./dist/contracts/reporting.d.ts",
       "import": "./dist/contracts/reporting.js"
     },
+    "./contracts/provider-rebalance": {
+      "types": "./dist/contracts/provider-rebalance.d.ts",
+      "import": "./dist/contracts/provider-rebalance.js"
+    },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants/index.js"

@@ -137,17 +137,27 @@ function createRebalanceId(slotId) {
   return `rebalance_${normalizedSlotId}`;
 }
 
-function buildAutomationTruth() {
+function buildAutomationTruth({ providerTriggeredProven = false } = {}) {
+  const supportedTriggerSources = [...SUPPORTED_TRIGGER_SOURCES];
+
+  if (providerTriggeredProven) {
+    supportedTriggerSources.push(REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED);
+  }
+
   return {
     operatorManualRequired: true,
     autonomousExecutionProven: false,
-    providerTriggeredProven: false,
-    supportedTriggerSources: SUPPORTED_TRIGGER_SOURCES,
+    providerTriggeredProven,
+    supportedTriggerSources,
     notes: [
       "Operator confirmation remains required before any rebalance execution claim.",
       "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
-      "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
-      "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist.",
+      providerTriggeredProven
+        ? "Provider-triggered review is proven only for validated signed ingress events and still stops at awaiting_operator."
+        : "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
+      providerTriggeredProven
+        ? "Validated provider-triggered review is review-only and cannot create, sign, submit, or settle CoW orders autonomously."
+        : "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist.",
     ],
   };
 }
@@ -322,6 +332,7 @@ function createSnapshot({
   latestActivation,
   recommendation,
   executionPlan,
+  automationTruth,
   state,
   triggerSource,
   runtimeOwner,
@@ -359,7 +370,7 @@ function createSnapshot({
     surfaceTruth: executionPlan.surfaceTruth,
     blockers,
     warnings,
-    automationTruth: buildAutomationTruth(),
+    automationTruth,
     nextAction: buildNextAction({
       state,
       manifest,
@@ -380,6 +391,7 @@ export function deriveRebalanceOrchestration({
   trigger_source = REBALANCE_TRIGGER_SOURCE.OPERATOR_MANUAL,
   runtime_owner = null,
   scheduled_for = null,
+  provider_triggered_proven = false,
   now = new Date().toISOString(),
   resume = false,
 }) {
@@ -388,6 +400,12 @@ export function deriveRebalanceOrchestration({
   const triggerSource = assertKnownTriggerSource(trigger_source);
   const latestActivation = latest_activation;
   const latestRebalance = latest_rebalance;
+  const providerTriggeredProven =
+    provider_triggered_proven === true ||
+    latestRebalance?.automationTruth?.providerTriggeredProven === true;
+  const automationTruth = buildAutomationTruth({
+    providerTriggeredProven,
+  });
   const hasActivationBaseline = Boolean(latestActivation);
   const manifestDriftDetected =
     hasActivationBaseline && latestActivation.manifestId !== manifest.manifestId;
@@ -433,13 +451,25 @@ export function deriveRebalanceOrchestration({
       rationale: latestRebalance.rationale ?? narrative.rationale,
       now,
       latestRebalance,
+      automationTruth:
+        providerTriggeredProven
+          ? automationTruth
+          : latestRebalance.automationTruth ?? automationTruth,
     });
   }
 
   let state = REBALANCE_ORCHESTRATION_STATE.PREVIEW_ONLY;
   let scheduledFor = null;
 
-  if (!SUPPORTED_TRIGGER_SOURCES.includes(triggerSource)) {
+  if (
+    triggerSource === REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED &&
+    !providerTriggeredProven
+  ) {
+    state = REBALANCE_ORCHESTRATION_STATE.BLOCKED;
+  } else if (
+    triggerSource !== REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED &&
+    !SUPPORTED_TRIGGER_SOURCES.includes(triggerSource)
+  ) {
     state = REBALANCE_ORCHESTRATION_STATE.BLOCKED;
   } else if (!hasActivationBaseline) {
     state = REBALANCE_ORCHESTRATION_STATE.PREVIEW_ONLY;
@@ -453,12 +483,15 @@ export function deriveRebalanceOrchestration({
   } else if (triggerSource === REBALANCE_TRIGGER_SOURCE.SCHEDULED_CRON) {
     state = REBALANCE_ORCHESTRATION_STATE.SCHEDULED;
     scheduledFor = scheduled_for ?? now;
+  } else if (triggerSource === REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED) {
+    state = REBALANCE_ORCHESTRATION_STATE.AWAITING_OPERATOR;
   } else {
     state = REBALANCE_ORCHESTRATION_STATE.REBALANCE_RECOMMENDED;
   }
 
   const blockers =
-    triggerSource === REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED
+    triggerSource === REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED &&
+    !providerTriggeredProven
       ? [...CHAINLINK_TRIGGER_BLOCKERS]
       : triggerSource === REBALANCE_TRIGGER_SOURCE.POLICY_EVENT
         ? [...POLICY_EVENT_BLOCKERS]
@@ -488,6 +521,7 @@ export function deriveRebalanceOrchestration({
       ...executionPlan,
       blockers,
     },
+    automationTruth,
     state,
     triggerSource,
     runtimeOwner,

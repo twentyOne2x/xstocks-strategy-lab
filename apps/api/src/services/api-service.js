@@ -2,10 +2,19 @@ import { randomUUID, timingSafeEqual } from "node:crypto";
 
 import { activityEventSchema } from "../../../../packages/shared/dist/contracts/activity.js";
 import {
+  providerRebalanceReceiptSchema,
+  providerRebalanceReviewRequestSchema,
+} from "../../../../packages/shared/dist/contracts/provider-rebalance.js";
+import {
   xstocksFunnelEventIngestRequestSchema,
   xstocksFunnelEventSchema,
 } from "../../../../packages/shared/dist/contracts/reporting.js";
 import {
+  createProviderRebalanceRequestDigest,
+  createSha256Digest,
+} from "../../../../packages/shared/src/rebalance.js";
+import {
+  applyRebalanceTransition,
   deriveRebalanceOrchestration,
   createActivationManifestRef,
   compileQuestionnaireQualification,
@@ -80,6 +89,9 @@ const PUBLIC_AGENT_APIS = Object.freeze([
     purpose: "Read the explicit public-to-internal handoff boundary.",
   },
 ]);
+const PROVIDER_REBALANCE_ROUTE_PATH = API_ENDPOINTS.PROVIDER_REBALANCE_EVENTS;
+const PROVIDER_REBALANCE_REVIEW_NOTE =
+  "Validated external provider input may only open operator review; it cannot create, sign, submit, or confirm a CoW order.";
 const AUTHENTICATED_AGENT_APIS = Object.freeze([
   {
     method: "POST",
@@ -1196,18 +1208,99 @@ function buildCowQuoteAttemptContext({
   };
 }
 
-function buildCowQuoteFailureMessage({ leg, quoteAttempt, error }) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
+function parseCowErrorPayload(rawBody) {
+  if (typeof rawBody !== "string" || rawBody.trim().length === 0) {
+    return null;
+  }
 
-  return [
+  try {
+    const parsed = JSON.parse(rawBody);
+
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return null;
+    }
+
+    return {
+      errorType:
+        typeof parsed.errorType === "string" ? parsed.errorType : null,
+      description:
+        typeof parsed.description === "string" &&
+        parsed.description.trim().length > 0
+          ? parsed.description.trim()
+          : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function deriveCowQuoteBlockerClass({ statusCode, errorType }) {
+  if (errorType === "NoLiquidity") {
+    return "cow_no_liquidity";
+  }
+
+  if (errorType === "InternalServerError") {
+    return "cow_internal_server_error";
+  }
+
+  if (Number.isInteger(statusCode) && statusCode > 0) {
+    return `cow_quote_http_${statusCode}`;
+  }
+
+  return "cow_quote_error";
+}
+
+function normalizeCowQuoteFailure(error) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const statusMatch = errorMessage.match(
+    /^CoW quote request failed with status (?<status>\d+):\s*(?<body>.*)$/su,
+  );
+  const statusCode = statusMatch?.groups?.status
+    ? Number.parseInt(statusMatch.groups.status, 10)
+    : null;
+  const rawBody =
+    statusMatch?.groups?.body && statusMatch.groups.body.trim().length > 0
+      ? statusMatch.groups.body.trim()
+      : null;
+  const parsedPayload = parseCowErrorPayload(rawBody);
+  const errorType = parsedPayload?.errorType ?? null;
+  const errorDescription = parsedPayload?.description ?? null;
+
+  return {
+    message: errorMessage,
+    statusCode,
+    rawBody,
+    errorType,
+    errorDescription,
+    blockerClass: deriveCowQuoteBlockerClass({
+      statusCode,
+      errorType,
+    }),
+  };
+}
+
+function buildCowQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
+  const parts = [
     `CoW quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
     `buyToken=${quoteAttempt.buyToken ?? "missing"}`,
     `sellToken=${quoteAttempt.sellToken ?? "missing"}`,
     `sellAmountBeforeFee=${quoteAttempt.sellAmountBeforeFee}`,
     `targetNotionalUsd=${formatUsdAmount(leg.targetNotionalUsd)}`,
     `receiver=${quoteAttempt.receiver ?? "missing"}`,
-    `reason=${errorMessage}`,
-  ].join(" ");
+    `blockerClass=${quoteFailure.blockerClass}`,
+  ];
+
+  if (quoteFailure.errorType) {
+    parts.push(`venueErrorType=${quoteFailure.errorType}`);
+  }
+
+  if (quoteFailure.errorDescription) {
+    parts.push(`venueErrorDescription=${quoteFailure.errorDescription}`);
+  }
+
+  parts.push(`reason=${quoteFailure.message}`);
+
+  return parts.join(" ");
 }
 
 function stripExecutionQuoteBlockers(messages = []) {
@@ -1616,6 +1709,7 @@ export function createApiService({
   cowExecutionClient = null,
   ethereumRpcClient = null,
   privyAuthService = null,
+  providerRebalanceAuthService = null,
   reportingToken = null,
   autoresearchProofToken = null,
   now = () => new Date().toISOString(),
@@ -1930,6 +2024,8 @@ export function createApiService({
     boundaryPayload,
     latestActivation,
     latestRebalance,
+    triggerSource = latestRebalance?.triggerSource,
+    providerTriggeredProven = false,
   }) {
     return deriveRebalanceOrchestration({
       activation_manifest: manifest,
@@ -1937,9 +2033,54 @@ export function createApiService({
       execution_plan: boundaryPayload.executionPlan,
       latest_activation: latestActivation,
       latest_rebalance: latestRebalance,
-      trigger_source: latestRebalance?.triggerSource,
+      trigger_source: triggerSource,
+      provider_triggered_proven: providerTriggeredProven,
       now: now(),
     });
+  }
+
+  function formatZodIssues(error) {
+    return error.issues
+      .map((issue) => {
+        const path = issue.path.length > 0 ? issue.path.join(".") : "request";
+        return `${path}: ${issue.message}`;
+      })
+      .join("; ");
+  }
+
+  function mapRejectedProviderReviewState(rebalance) {
+    if (!rebalance) {
+      return {
+        reasonCodes: ["review_state_not_opened"],
+        reasonDetail: "Provider-triggered review did not produce a rebalance snapshot.",
+      };
+    }
+
+    if (rebalance.state === "preview_only") {
+      return {
+        reasonCodes: ["review_state_not_opened"],
+        reasonDetail: rebalance.rationale,
+      };
+    }
+
+    if (rebalance.state === "blocked" || rebalance.state === "paused") {
+      return {
+        reasonCodes: ["manual_lane_not_ready"],
+        reasonDetail: rebalance.rationale,
+      };
+    }
+
+    if (rebalance.state === "rebalance_deferred") {
+      return {
+        reasonCodes: ["review_state_not_opened"],
+        reasonDetail: rebalance.rationale,
+      };
+    }
+
+    return {
+      reasonCodes: ["review_state_not_opened"],
+      reasonDetail: rebalance.rationale,
+    };
   }
 
   async function loadActivationById(activationId, requestContext) {
@@ -1985,6 +2126,134 @@ export function createApiService({
       requestContext: authenticatedRequestContext,
     });
     return executionRequest;
+  }
+
+  async function loadProviderRebalanceContext(requestPayload) {
+    const [activation] = await runtimeStore.listActivations({
+      activationId: requestPayload.activationId,
+    });
+
+    if (!activation) {
+      return {
+        activation: null,
+        record: null,
+        boundaryPayload: null,
+        latestRebalance: null,
+      };
+    }
+
+    const record = await resolvePromotedRecord({
+      slotId: activation.slotId ?? requestPayload.slotId,
+    });
+    const manifest = record.manifest;
+    const { liveXStocksState, liveRouteState } = await loadLiveState(manifest);
+    const boundaryPayload = deriveBoundaryPayload({
+      manifest,
+      liveXStocksState,
+      liveRouteState,
+      requestedNotionalUsd:
+        activation.requestedNotionalUsd ??
+        manifest.walletRequirements.minFundingUsd,
+      walletState: activation.walletState,
+    });
+    const latestRebalance = await runtimeStore.getLatestRebalance({
+      slotId: manifest.slotId,
+    });
+
+    return {
+      activation: serializeActivation(activation),
+      record,
+      boundaryPayload,
+      latestRebalance,
+    };
+  }
+
+  async function persistProviderReceipt({
+    decision,
+    statusCode,
+    reasonCodes,
+    reasonDetail,
+    rawBodyDigest,
+    routePath,
+    requestPayload = null,
+    authResult = null,
+    duplicateOfReceiptId = null,
+    rebalance = null,
+    stateChanged = false,
+    receivedAt,
+  }) {
+    const receipt = providerRebalanceReceiptSchema.parse({
+      version: DEFAULT_RESPONSE_VERSION,
+      receiptId: `provider_receipt_${randomUUID()}`,
+      decision,
+      statusCode,
+      providerId: requestPayload?.providerId ?? null,
+      deliveryId: requestPayload?.deliveryId ?? null,
+      eventId: requestPayload?.eventId ?? null,
+      triggerSource: "provider_triggered",
+      routePath,
+      receivedAt,
+      processedAt: now(),
+      requestDigest: requestPayload?.requestDigest ?? null,
+      rawBodyDigest,
+      signerAddress: authResult?.signerAddress ?? authResult?.jwt?.issuer ?? null,
+      reasonCodes,
+      reasonDetail,
+      duplicateOfReceiptId,
+      stateChanged,
+      rebalanceId: rebalance?.rebalanceId ?? null,
+      rebalanceState: rebalance?.state ?? null,
+      targetManifestId: rebalance?.targetManifestId ?? null,
+      baselineManifestId: rebalance?.baselineManifestId ?? null,
+      rebalanceBlockers: rebalance?.blockers ?? [],
+      request: requestPayload,
+      jwt: authResult?.jwt ?? null,
+    });
+
+    return runtimeStore.appendProviderReceipt({
+      receipt,
+    });
+  }
+
+  async function finalizeProviderRebalanceEvent({
+    decision,
+    statusCode,
+    reasonCodes,
+    reasonDetail,
+    rawBodyDigest,
+    routePath,
+    requestPayload = null,
+    authResult = null,
+    duplicateOfReceiptId = null,
+    rebalance = null,
+    stateChanged = false,
+    receivedAt,
+  }) {
+    const receipt = await persistProviderReceipt({
+      decision,
+      statusCode,
+      reasonCodes,
+      reasonDetail,
+      rawBodyDigest,
+      routePath,
+      requestPayload,
+      authResult,
+      duplicateOfReceiptId,
+      rebalance,
+      stateChanged,
+      receivedAt,
+    });
+
+    return {
+      statusCode,
+      payload: parseApiResponse("provider_rebalance_event_ingest", {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        accepted: decision === "accepted",
+        receipt,
+        rebalanceOrchestration: serializeRebalance(rebalance),
+      }),
+    };
   }
 
   function replaceExecutionLeg(executionRequest, nextLeg) {
@@ -2934,6 +3203,14 @@ export function createApiService({
             ...persisted,
           });
         } catch (error) {
+          const quoteAttempt = buildCowQuoteAttemptContext({
+            leg,
+            signerAddress: resolveExecutionSignerAddress(
+              activation.walletState,
+            ),
+            settlementAddress: executionRequest.settlementAddress,
+          });
+          const quoteFailure = normalizeCowQuoteFailure(error);
           const blockedLeg = {
             ...nextLegBase,
             state: "blocked",
@@ -2941,14 +3218,8 @@ export function createApiService({
               ...nextLegBase.blockers,
               buildCowQuoteFailureMessage({
                 leg,
-                quoteAttempt: buildCowQuoteAttemptContext({
-                  leg,
-                  signerAddress: resolveExecutionSignerAddress(
-                    activation.walletState,
-                  ),
-                  settlementAddress: executionRequest.settlementAddress,
-                }),
-                error,
+                quoteAttempt,
+                quoteFailure,
               }),
             ]),
             venueStatus: {
@@ -2959,15 +3230,13 @@ export function createApiService({
               lastCheckedAt: null,
               updatedAt: now(),
               rawStatus: {
-                ...buildCowQuoteAttemptContext({
-                  leg,
-                  signerAddress: resolveExecutionSignerAddress(
-                    activation.walletState,
-                  ),
-                  settlementAddress: executionRequest.settlementAddress,
-                }),
-                error:
-                  error instanceof Error ? error.message : String(error),
+                ...quoteAttempt,
+                error: quoteFailure.message,
+                errorStatusCode: quoteFailure.statusCode,
+                errorType: quoteFailure.errorType,
+                errorDescription: quoteFailure.errorDescription,
+                errorBody: quoteFailure.rawBody,
+                blockerClass: quoteFailure.blockerClass,
               },
             },
           };
@@ -3269,6 +3538,279 @@ export function createApiService({
         limit,
         items,
       });
+    },
+
+    async ingestProviderRebalanceEvent({
+      request,
+      routePath = PROVIDER_REBALANCE_ROUTE_PATH,
+      rawBody = "",
+    } = {}) {
+      const receivedAt = now();
+      const rawBodyDigest = createSha256Digest(rawBody);
+      let requestPayload = null;
+      let authResult = null;
+
+      try {
+        let parsedBody;
+
+        try {
+          parsedBody = rawBody.trim().length === 0 ? {} : JSON.parse(rawBody);
+        } catch {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 400,
+            reasonCodes: ["request_json_invalid"],
+            reasonDetail: "Provider request body must be valid JSON.",
+            rawBodyDigest,
+            routePath,
+            receivedAt,
+          });
+        }
+
+        try {
+          requestPayload = providerRebalanceReviewRequestSchema.parse(parsedBody);
+        } catch (error) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 422,
+            reasonCodes: ["request_schema_invalid"],
+            reasonDetail:
+              error?.issues
+                ? formatZodIssues(error)
+                : "Provider request body does not match the shared schema.",
+            rawBodyDigest,
+            routePath,
+            receivedAt,
+          });
+        }
+
+        const computedRequestDigest = createProviderRebalanceRequestDigest(
+          requestPayload,
+        );
+
+        if (requestPayload.requestDigest !== computedRequestDigest) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 401,
+            reasonCodes: ["request_digest_mismatch"],
+            reasonDetail: "Provider requestDigest does not match the canonical request payload.",
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            receivedAt,
+          });
+        }
+
+        authResult =
+          providerRebalanceAuthService?.authenticateAuthorizationHeader(
+            request?.headers?.authorization ?? null,
+            {
+              providerId: requestPayload.providerId,
+              expectedDigest: computedRequestDigest,
+            },
+          ) ?? {
+            ok: false,
+            statusCode: 503,
+            reasonCode: "provider_auth_not_configured",
+            detail:
+              "Provider-triggered rebalance auth service is not configured in this runtime.",
+          };
+
+        if (!authResult.ok) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: authResult.statusCode,
+            reasonCodes: [authResult.reasonCode],
+            reasonDetail: authResult.detail,
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            receivedAt,
+          });
+        }
+
+        const conflicts = await runtimeStore.findProviderReceiptConflicts({
+          providerId: requestPayload.providerId,
+          deliveryId: requestPayload.deliveryId,
+          signerAddress: authResult.signerAddress,
+          jwtId: authResult.jwt.jwtId,
+          requestDigest: requestPayload.requestDigest,
+        });
+
+        if (conflicts.delivery) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 409,
+            reasonCodes: ["duplicate_delivery"],
+            reasonDetail: "Provider deliveryId has already been processed.",
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            duplicateOfReceiptId: conflicts.delivery.receiptId,
+            receivedAt,
+          });
+        }
+
+        if (conflicts.jwtId) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 409,
+            reasonCodes: ["replayed_jwt_id"],
+            reasonDetail: "Provider token jti has already been processed for this signer.",
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            duplicateOfReceiptId: conflicts.jwtId.receiptId,
+            receivedAt,
+          });
+        }
+
+        if (conflicts.requestDigest) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 409,
+            reasonCodes: ["replayed_request_digest"],
+            reasonDetail: "Provider request digest has already been processed for this signer.",
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            duplicateOfReceiptId: conflicts.requestDigest.receiptId,
+            receivedAt,
+          });
+        }
+
+        const providerContext = await loadProviderRebalanceContext(requestPayload);
+
+        if (!providerContext.activation) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 404,
+            reasonCodes: ["activation_not_found"],
+            reasonDetail:
+              "Provider event activationId does not match any stored activation runtime context.",
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            receivedAt,
+          });
+        }
+
+        if (providerContext.activation.slotId !== requestPayload.slotId) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 409,
+            reasonCodes: ["slot_mismatch"],
+            reasonDetail:
+              "Provider event slotId does not match the stored activation runtime context.",
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            receivedAt,
+          });
+        }
+
+        if (
+          requestPayload.claimedManifestId &&
+          providerContext.record.manifest.manifestId !== requestPayload.claimedManifestId
+        ) {
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 409,
+            reasonCodes: ["promoted_manifest_mismatch"],
+            reasonDetail:
+              "Provider event claimedManifestId does not match the current promoted manifest.",
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            receivedAt,
+          });
+        }
+
+        let rebalance = buildRebalanceOrchestration({
+          manifest: providerContext.record.manifest,
+          boundaryPayload: providerContext.boundaryPayload,
+          latestActivation: providerContext.activation,
+          latestRebalance: providerContext.latestRebalance,
+          triggerSource: "provider_triggered",
+          providerTriggeredProven: true,
+        });
+
+        if (rebalance.state === "scheduled") {
+          rebalance = applyRebalanceTransition({
+            current_rebalance: rebalance,
+            next_state: "awaiting_operator",
+            trigger_source: "provider_triggered",
+            note: PROVIDER_REBALANCE_REVIEW_NOTE,
+            now: now(),
+          });
+        }
+
+        if (rebalance.state !== "awaiting_operator") {
+          const rejection = mapRejectedProviderReviewState(rebalance);
+
+          return finalizeProviderRebalanceEvent({
+            decision: "rejected",
+            statusCode: 409,
+            reasonCodes: rejection.reasonCodes,
+            reasonDetail: rejection.reasonDetail,
+            rawBodyDigest,
+            routePath,
+            requestPayload,
+            authResult,
+            rebalance,
+            receivedAt,
+          });
+        }
+
+        const persistedRebalance = await runtimeStore.upsertRebalance({
+          rebalance,
+          eventType: "provider_triggered_review",
+        });
+        const latestRebalance = providerContext.latestRebalance;
+        const stateChanged =
+          !latestRebalance ||
+          latestRebalance.state !== persistedRebalance.state ||
+          latestRebalance.triggerSource !== persistedRebalance.triggerSource ||
+          latestRebalance.updatedAt !== persistedRebalance.updatedAt ||
+          latestRebalance.targetManifestId !== persistedRebalance.targetManifestId;
+
+        return finalizeProviderRebalanceEvent({
+          decision: "accepted",
+          statusCode: 202,
+          reasonCodes: ["accepted_review_only"],
+          reasonDetail:
+            "Validated provider event opened operator review only; the manual CoW boundary remains unchanged.",
+          rawBodyDigest,
+          routePath,
+          requestPayload,
+          authResult,
+          rebalance: persistedRebalance,
+          stateChanged,
+          receivedAt,
+        });
+      } catch (error) {
+        return finalizeProviderRebalanceEvent({
+          decision: "rejected",
+          statusCode: 500,
+          reasonCodes: ["internal_error"],
+          reasonDetail:
+            error instanceof Error
+              ? error.message
+              : "Provider-triggered rebalance review failed unexpectedly.",
+          rawBodyDigest,
+          routePath,
+          requestPayload,
+          authResult,
+          receivedAt,
+        });
+      }
     },
 
     async readAutoresearchRuntime(query = {}) {

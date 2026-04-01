@@ -4,7 +4,7 @@ import { readJsonFile, writeJsonFile } from "../json.js";
 
 function createDefaultState(now) {
   return {
-    schemaVersion: "2026-04-01.runtime-store.v8",
+    schemaVersion: "2026-04-01.runtime-store.v9",
     meta: {
       createdAt: now(),
       updatedAt: now(),
@@ -12,6 +12,7 @@ function createDefaultState(now) {
     activations: [],
     activityEvents: [],
     funnelEvents: [],
+    providerReceipts: [],
     rebalances: [],
     executionRequests: [],
     autoresearchRuntime: {
@@ -343,6 +344,92 @@ function normalizeRebalance(rebalance, index, now) {
     ).map((entry, historyIndex) =>
       normalizeRebalanceHistoryEntry(entry, historyIndex, now),
     ),
+  };
+}
+
+function normalizeProviderJwtSummary(jwt) {
+  if (!jwt || typeof jwt !== "object") {
+    return null;
+  }
+
+  const audience = Array.isArray(jwt.audience ?? jwt.aud)
+    ? jwt.audience ?? jwt.aud
+    : typeof (jwt.audience ?? jwt.aud) === "string"
+      ? [jwt.audience ?? jwt.aud]
+      : [];
+
+  return {
+    alg: normalizeNonEmptyString(jwt.alg),
+    kid: normalizeNonEmptyString(jwt.kid),
+    issuer: normalizeEthereumAddress(firstDefined(jwt.issuer, jwt.iss, null)),
+    subject: normalizeNonEmptyString(firstDefined(jwt.subject, jwt.sub, null)),
+    audience: audience.map((value) => String(value)),
+    jwtId: normalizeNonEmptyString(firstDefined(jwt.jwtId, jwt.jwt_id, jwt.jti, null)),
+    issuedAt: firstDefined(jwt.issuedAt, jwt.issued_at, null),
+    expiresAt: firstDefined(jwt.expiresAt, jwt.expires_at, null),
+    notBefore: firstDefined(jwt.notBefore, jwt.not_before, null),
+    digest: normalizeNonEmptyString(firstDefined(jwt.digest, jwt.requestDigest, null)),
+  };
+}
+
+function normalizeProviderReceipt(receipt, index, now) {
+  if (!receipt || typeof receipt !== "object") {
+    return receipt;
+  }
+
+  return {
+    version: receipt.version ?? "1",
+    receiptId:
+      receipt.receiptId ??
+      receipt.receipt_id ??
+      `provider_receipt_${index + 1}`,
+    decision: receipt.decision ?? "rejected",
+    statusCode: Number(firstDefined(receipt.statusCode, receipt.status_code, 500)),
+    providerId: normalizeNonEmptyString(firstDefined(receipt.providerId, receipt.provider_id, null)),
+    deliveryId: normalizeNonEmptyString(firstDefined(receipt.deliveryId, receipt.delivery_id, null)),
+    eventId: normalizeNonEmptyString(firstDefined(receipt.eventId, receipt.event_id, null)),
+    triggerSource:
+      receipt.triggerSource ?? receipt.trigger_source ?? "provider_triggered",
+    routePath:
+      receipt.routePath ?? receipt.route_path ?? "/api/internal/rebalances/provider-events",
+    receivedAt: firstDefined(receipt.receivedAt, receipt.received_at, now()),
+    processedAt: firstDefined(receipt.processedAt, receipt.processed_at, now()),
+    requestDigest: normalizeNonEmptyString(firstDefined(receipt.requestDigest, receipt.request_digest, null)),
+    rawBodyDigest:
+      receipt.rawBodyDigest ??
+      receipt.raw_body_digest ??
+      "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    signerAddress: normalizeEthereumAddress(
+      firstDefined(receipt.signerAddress, receipt.signer_address, null),
+    ),
+    reasonCodes: (receipt.reasonCodes ?? receipt.reason_codes ?? []).map((value) =>
+      String(value)
+    ),
+    reasonDetail:
+      receipt.reasonDetail ?? receipt.reason_detail ?? "Provider receipt recorded.",
+    duplicateOfReceiptId: normalizeNonEmptyString(
+      firstDefined(
+        receipt.duplicateOfReceiptId,
+        receipt.duplicate_of_receipt_id,
+        null,
+      ),
+    ),
+    stateChanged: Boolean(
+      firstDefined(receipt.stateChanged, receipt.state_changed, false),
+    ),
+    rebalanceId: normalizeNonEmptyString(firstDefined(receipt.rebalanceId, receipt.rebalance_id, null)),
+    rebalanceState: normalizeNonEmptyString(firstDefined(receipt.rebalanceState, receipt.rebalance_state, null)),
+    targetManifestId: normalizeNonEmptyString(
+      firstDefined(receipt.targetManifestId, receipt.target_manifest_id, null),
+    ),
+    baselineManifestId: normalizeNonEmptyString(
+      firstDefined(receipt.baselineManifestId, receipt.baseline_manifest_id, null),
+    ),
+    rebalanceBlockers: (receipt.rebalanceBlockers ?? receipt.rebalance_blockers ?? []).map(
+      (value) => String(value),
+    ),
+    request: receipt.request ?? null,
+    jwt: normalizeProviderJwtSummary(receipt.jwt),
   };
 }
 
@@ -976,6 +1063,11 @@ function normalizeState(state, now) {
     funnelEvents: (state.funnelEvents ?? state.funnel_events ?? []).map(
       (event, index) => normalizeFunnelEvent(event, index, now),
     ),
+    providerReceipts: (
+      state.providerReceipts ??
+      state.provider_receipts ??
+      []
+    ).map((receipt, index) => normalizeProviderReceipt(receipt, index, now)),
     rebalances: (state.rebalances ?? []).map((rebalance, index) =>
       normalizeRebalance(rebalance, index, now),
     ),
@@ -1119,6 +1211,95 @@ export function createRuntimeStore({
 
       const state = await readState();
       return state.funnelEvents.some((event) => event.subjectId === subjectId);
+    },
+    async appendProviderReceipt({ receipt }) {
+      const state = await readState();
+      const normalizedReceipt = normalizeProviderReceipt(receipt, 0, now);
+      state.providerReceipts.unshift(normalizedReceipt);
+      state.providerReceipts.sort((left, right) =>
+        String(right.receivedAt).localeCompare(String(left.receivedAt)),
+      );
+      await writeState(state);
+      return normalizedReceipt;
+    },
+    async listProviderReceipts({
+      providerId,
+      deliveryId,
+      signerAddress,
+      jwtId,
+      requestDigest,
+      limit = 100,
+    } = {}) {
+      const state = await readState();
+      let providerReceipts = [...state.providerReceipts];
+
+      if (providerId) {
+        providerReceipts = providerReceipts.filter(
+          (receipt) => receipt.providerId === providerId,
+        );
+      }
+
+      if (deliveryId) {
+        providerReceipts = providerReceipts.filter(
+          (receipt) => receipt.deliveryId === deliveryId,
+        );
+      }
+
+      if (signerAddress) {
+        const normalizedSignerAddress = normalizeEthereumAddress(signerAddress);
+        providerReceipts = providerReceipts.filter(
+          (receipt) => receipt.signerAddress === normalizedSignerAddress,
+        );
+      }
+
+      if (jwtId) {
+        providerReceipts = providerReceipts.filter(
+          (receipt) => receipt.jwt?.jwtId === jwtId,
+        );
+      }
+
+      if (requestDigest) {
+        providerReceipts = providerReceipts.filter(
+          (receipt) => receipt.requestDigest === requestDigest,
+        );
+      }
+
+      return providerReceipts.slice(0, limit);
+    },
+    async findProviderReceiptConflicts({
+      providerId,
+      deliveryId,
+      signerAddress,
+      jwtId,
+      requestDigest,
+    } = {}) {
+      const state = await readState();
+      const normalizedSignerAddress = normalizeEthereumAddress(signerAddress);
+
+      return {
+        delivery:
+          state.providerReceipts.find(
+            (receipt) =>
+              receipt.providerId === providerId &&
+              receipt.deliveryId === deliveryId,
+          ) ?? null,
+        jwtId:
+          !normalizedSignerAddress || !jwtId
+            ? null
+            : state.providerReceipts.find(
+              (receipt) =>
+                receipt.signerAddress === normalizedSignerAddress &&
+                receipt.jwt?.jwtId === jwtId,
+            ) ?? null,
+        requestDigest:
+          !normalizedSignerAddress || !requestDigest
+            ? null
+            : state.providerReceipts.find(
+              (receipt) =>
+                receipt.signerAddress === normalizedSignerAddress &&
+                receipt.requestDigest === requestDigest,
+            ) ?? null,
+      };
     },
     async listActivity({
       activationId,
@@ -1274,6 +1455,7 @@ export function createRuntimeStore({
         activations: [...state.activations],
         activityEvents: [...state.activityEvents],
         funnelEvents: [...state.funnelEvents],
+        providerReceipts: [...state.providerReceipts],
         executionRequests: [...state.executionRequests],
         autoresearchRuntime: state.autoresearchRuntime,
         autoresearchRuns: [...state.autoresearchRuns],

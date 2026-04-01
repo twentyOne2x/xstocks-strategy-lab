@@ -9,3 +9,4 @@ export * from "./activity.js";
 export * from "./execution.js";
 export * from "./research.js";
 export * from "./reporting.js";
+export * from "./provider-rebalance.js";
