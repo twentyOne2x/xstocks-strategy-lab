@@ -36,6 +36,25 @@ function humanizeState(state: string): string {
   return map[state] ?? state.replaceAll("_", " ");
 }
 
+const HIDDEN_OPTION_IDS = new Set(["unsure", "unset"]);
+const SKIP_OPTION_PRIORITY = ["unsure", "unset", "default_requested"] as const;
+
+function getVisibleQuestionOptions(question: OnboardingQuestion) {
+  const visibleOptions = question.options.filter((option) => !HIDDEN_OPTION_IDS.has(option.id));
+  return visibleOptions.length > 0 ? visibleOptions : question.options;
+}
+
+function getSkipQuestionOption(question: OnboardingQuestion) {
+  for (const optionId of SKIP_OPTION_PRIORITY) {
+    const option = question.options.find((candidate) => candidate.id === optionId);
+    if (option) {
+      return option;
+    }
+  }
+
+  return null;
+}
+
 export function OnboardingQuestionFlow({
   answers,
   onAnswer,
@@ -46,6 +65,7 @@ export function OnboardingQuestionFlow({
   recommendation,
   allAnswered,
   recommendedManifest,
+  qualification,
   blotter,
   previewStatus,
 }: {
@@ -72,13 +92,16 @@ export function OnboardingQuestionFlow({
   const answeredPrimaryCount = primaryQuestions.filter((q) => answers[q.id] !== undefined).length;
 
   if (allAnswered) {
-    return <PostQuestionnaireWorkspace
-      recommendation={recommendation}
-      manifest={recommendedManifest}
-      blotter={blotter}
-      onReset={onReset}
-      previewStatus={previewStatus}
-    />;
+    return (
+      <PostQuestionnaireWorkspace
+        recommendation={recommendation}
+        manifest={recommendedManifest}
+        qualification={qualification}
+        blotter={blotter}
+        onReset={onReset}
+        previewStatus={previewStatus}
+      />
+    );
   }
 
   const currentPrimary = primaryQuestions.find((q) => answers[q.id] === undefined);
@@ -99,6 +122,8 @@ export function OnboardingQuestionFlow({
   const questionToShow = pendingConditional ?? currentPrimary;
   const isPrimary = !questionToShow.conditional;
   const displayStep = isPrimary ? answeredPrimaryCount + 1 : answeredPrimaryCount;
+  const visibleOptions = getVisibleQuestionOptions(questionToShow);
+  const skipOption = getSkipQuestionOption(questionToShow);
 
   return (
     <div className="onboarding-flow">
@@ -119,10 +144,23 @@ export function OnboardingQuestionFlow({
       </div>
 
       <div className="onboarding-flow-question">
-        <h2>{questionToShow.prompt}</h2>
-        <p>{questionToShow.helper}</p>
+        <div className="onboarding-question-head">
+          <div>
+            <h2>{questionToShow.prompt}</h2>
+            <p>{questionToShow.helper}</p>
+          </div>
+          {skipOption ? (
+            <button
+              className="ob-skip-btn"
+              onClick={() => onAnswer(questionToShow.id, skipOption.id)}
+              type="button"
+            >
+              Skip / not sure
+            </button>
+          ) : null}
+        </div>
         <div className="onboarding-option-grid">
-          {questionToShow.options.map((option) => (
+          {visibleOptions.map((option) => (
             <button
               className="onboarding-option"
               key={option.id}
@@ -172,12 +210,14 @@ function buildChartPath(values: number[]) {
 function PostQuestionnaireWorkspace({
   recommendation,
   manifest,
+  qualification,
   blotter,
   onReset,
   previewStatus,
 }: {
   recommendation: StrategyRecommendation;
   manifest: PromotedManifest;
+  qualification: QualificationFlowResult;
   blotter?: BlotterData;
   onReset: () => void;
   previewStatus?: {
@@ -207,6 +247,7 @@ function PostQuestionnaireWorkspace({
     return (
       <RecommendationGate
         recommendation={recommendation}
+        qualification={qualification}
         manifest={manifest}
         bundle={bundle}
         directionalPreviewOnly={directionalPreviewOnly}
@@ -223,6 +264,7 @@ function PostQuestionnaireWorkspace({
       blotter={blotter}
       directionalPreviewOnly={directionalPreviewOnly}
       recommendation={recommendation}
+      qualification={qualification}
       onReset={onReset}
       tourStep={tourStep}
       tourDismissed={tourDismissed}
@@ -328,15 +370,18 @@ function AnalysisTransition({
 
 function RecommendationGate({
   recommendation,
+  qualification,
   manifest,
+  bundle,
   directionalPreviewOnly,
   onEnterWorkspace,
   onReset,
   previewStatus,
 }: {
   recommendation: StrategyRecommendation;
+  qualification: QualificationFlowResult;
   manifest: PromotedManifest;
-  bundle: { whatThisPortfolioDoes: string };
+  bundle: ReturnType<typeof getRecommendationExplanationBundle>;
   directionalPreviewOnly: boolean;
   onEnterWorkspace: () => void;
   onReset: () => void;
@@ -345,20 +390,24 @@ function RecommendationGate({
   const spotlight = getWorkspaceSpotlightData(manifest);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
+  const keyDrivers = qualification.whyRecommended.slice(0, 3);
+  const fitNotes = qualification.fitNotes.slice(0, 2);
+  const leadComponents = bundle.components.slice(0, 4);
 
   return (
     <div className="pq-gate">
       <div className="pq-gate-inner">
         <span className="landing-kicker">Your portfolio is ready</span>
         <h1 className="pq-gate-title">{recommendation.title}</h1>
+        <p className="pq-gate-sub">{qualification.summary}</p>
 
         {/* Mini replay chart */}
         <div className="pq-gate-chart" aria-hidden="true">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
               <linearGradient id="gateLine" x1="0%" x2="100%" y1="0%" y2="0%">
-                <stop offset="0%" stopColor="#1FD59A" />
-                <stop offset="100%" stopColor="#5FCEF0" />
+                <stop offset="0%" stopColor="#ff1800" />
+                <stop offset="100%" stopColor="#0a0a0a" />
               </linearGradient>
             </defs>
             <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
@@ -409,6 +458,49 @@ function RecommendationGate({
           </div>
         </div>
 
+        <div className="pq-gate-explain-grid">
+          <article className="panel-card panel-card-subtle pq-gate-panel">
+            <span className="section-kicker">Why this fits you</span>
+            <div className="pq-gate-list">
+              {keyDrivers.map((reason) => (
+                <div className="pq-gate-list-item" key={reason}>
+                  <strong>{reason}</strong>
+                </div>
+              ))}
+              {fitNotes.map((note) => (
+                <p className="panel-note" key={note}>{note}</p>
+              ))}
+            </div>
+          </article>
+
+          <article className="panel-card panel-card-subtle pq-gate-panel">
+            <span className="section-kicker">What changes next</span>
+            <div className="info-stack">
+              <div>
+                <span>How it changes</span>
+                <strong>{bundle.howItChanges}</strong>
+              </div>
+              <div>
+                <span>Next rebalance trigger</span>
+                <strong>{bundle.whatWouldTriggerNextRebalance}</strong>
+              </div>
+              <div>
+                <span>Who this is best for</span>
+                <strong>{bundle.bestFor}</strong>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div className="pq-gate-holdings">
+          {leadComponents.map((component) => (
+            <div className="pq-gate-holding" key={component.componentId}>
+              <strong>{component.title}</strong>
+              <span>{component.sleeve}</span>
+            </div>
+          ))}
+        </div>
+
         {/* Policy chips */}
         <div className="pq-gate-chips">
           {recommendation.behavior_chips.slice(0, 4).map((chip) => (
@@ -428,6 +520,7 @@ function RecommendationGate({
         <p className="pq-gate-note">
           {directionalPreviewOnly ? "Preview only. Self-custody." : "Simulation — no money moves until you deposit."}
         </p>
+        <p className="pq-gate-note">{bundle.howToReadReplay}</p>
         {previewStatus ? <p className="pq-gate-note">{previewStatus.message}</p> : null}
       </div>
     </div>
@@ -441,6 +534,7 @@ function SimulatedWorkspace({
   blotter,
   directionalPreviewOnly,
   recommendation,
+  qualification,
   onReset,
   tourStep,
   tourDismissed,
@@ -452,6 +546,7 @@ function SimulatedWorkspace({
   blotter?: BlotterData;
   directionalPreviewOnly: boolean;
   recommendation: StrategyRecommendation;
+  qualification: QualificationFlowResult;
   onReset: () => void;
   tourStep: number;
   tourDismissed: boolean;
@@ -468,6 +563,7 @@ function SimulatedWorkspace({
   const currentTour = tourDismissed ? null : tourSteps[tourStep];
   const highlightId = currentTour?.anchor ?? null;
   const [chartHover, setChartHover] = useState<{ x: number; value: number } | null>(null);
+  const bundle = getRecommendationExplanationBundle(manifest);
 
   // Scroll highlighted section into view when tour advances
   useEffect(() => {
@@ -561,8 +657,8 @@ function SimulatedWorkspace({
                 <svg className="workspace-chart" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="pqLine" x1="0%" x2="100%" y1="0%" y2="0%">
-                      <stop offset="0%" stopColor="#1FD59A" />
-                      <stop offset="100%" stopColor="#5FCEF0" />
+                      <stop offset="0%" stopColor="#ff1800" />
+                      <stop offset="100%" stopColor="#0a0a0a" />
                     </linearGradient>
                   </defs>
                   <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
@@ -581,9 +677,38 @@ function SimulatedWorkspace({
             <div className="pq-summary-strip">
               <div><span>Holdings</span><strong>{manifest.allocations.length}</strong></div>
               <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
-              <div><span>Rebalance</span><strong>Scheduled</strong></div>
+              <div><span>Rebalance</span><strong>{recommendation.rebalance_cadence.replaceAll("_", " ")}</strong></div>
               <div><span>Funding</span><strong>User-chosen notional</strong></div>
             </div>
+
+            <div className="pq-summary-explain">
+              <article className="panel-card panel-card-subtle">
+                <span className="section-kicker">Why this fits you</span>
+                <div className="pq-summary-list">
+                  {qualification.whyRecommended.slice(0, 3).map((reason) => (
+                    <div className="pq-summary-list-item" key={reason}>
+                      <strong>{reason}</strong>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="panel-card panel-card-subtle">
+                <span className="section-kicker">What changes next</span>
+                <div className="info-stack">
+                  <div>
+                    <span>How it changes</span>
+                    <strong>{bundle.howItChanges}</strong>
+                  </div>
+                  <div>
+                    <span>Rebalance trigger</span>
+                    <strong>{bundle.whatWouldTriggerNextRebalance}</strong>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <p className="panel-note">{bundle.howToReadReplay}</p>
           </section>
 
           {/* How it works — concise */}
@@ -631,6 +756,7 @@ function SimulatedWorkspace({
       <section className={`pq-fw-section ${highlightId === "pq-holdings" ? "pq-highlight" : ""}`} id="pq-holdings">
         <div className="pq-fw-inner">
           <span className="section-kicker">Holdings · {manifest.allocations.length} assets</span>
+          <p className="panel-note">{bundle.howItIsBuilt}</p>
           <div style={{ overflowX: "auto" }}>
             <table className="data-table">
               <thead><tr><th>Asset</th><th>Weight</th><th>Role</th></tr></thead>

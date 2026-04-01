@@ -99,9 +99,9 @@ export function TerminalShell({
     <main className="app-frame">
       <header className="topbar">
         <Link className="brand-cluster" href="/">
-          <div className="brand-mark">ET</div>
+          <div className="brand-mark">24-7</div>
           <div>
-            <span className="section-kicker">Equity Terminal</span>
+            <span className="section-kicker">24-7 Markets</span>
             <h1>Powered by xStocks</h1>
           </div>
         </Link>

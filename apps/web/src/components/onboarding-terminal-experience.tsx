@@ -29,9 +29,9 @@ function BrandBar() {
   return (
     <div className="app-brand-bar">
       <Link className="landing-brand" href="/">
-        <div className="landing-brand-text">
-          <span className="landing-brand-name">Equity Terminal</span>
-          <span className="landing-brand-powered">Powered by xStocks</span>
+        <div className="brand-lockup brand-lockup-sm">
+          <span className="brand-247">24-7</span>
+          <span className="brand-markets">MARKETS</span>
         </div>
       </Link>
     </div>

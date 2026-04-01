@@ -2,29 +2,27 @@ import Link from "next/link";
 
 import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 
-function ChartIcon({ size = 32 }: { size?: number }) {
+function BrandLockup({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  const s = size === "lg" ? "brand-lockup-lg" : size === "sm" ? "brand-lockup-sm" : "";
   return (
-    <svg aria-hidden="true" className="landing-icon" fill="none" height={size} viewBox="0 0 128 128" width={size} xmlns="http://www.w3.org/2000/svg">
-      <rect fill="#0B0F0E" height="128" rx="28" width="128" />
-      <rect fill="none" height="122" rx="25" stroke="#1F2927" strokeWidth="1.5" width="122" x="3" y="3" />
-      <polyline fill="none" points="28,88 48,72 62,78 80,52 100,36" stroke="#1FD59A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" />
-      <circle cx="100" cy="36" fill="#5FCEF0" r="4" />
-    </svg>
+    <div className={`brand-lockup ${s}`}>
+      <span className="brand-247">24-7</span>
+      <span className="brand-markets">MARKETS</span>
+    </div>
   );
 }
 
 const infraPartners = [
   { name: "xStocks", role: "Tokenized equities infrastructure", href: "https://xstocks.fi" },
-  { name: "Privy", role: "Wallet connection and auth by Privy", href: "https://privy.io" },
-  { name: "CoW Protocol", role: "Swaps powered by CoW Protocol", href: "https://cow.fi" },
-  { name: "Chainlink CRE", role: "Deferred provider-trigger lane", href: "https://chain.link" },
+  { name: "Privy", role: "Wallet connection and auth", href: "https://privy.io" },
+  { name: "CoW Protocol", role: "Swaps and execution", href: "https://cow.fi" },
 ];
 
 const faq = [
   { q: "What are tokenized equities?", a: "Real US stocks represented as tokens on Ethereum. Each xStocks token is backed 1:1 by the underlying equity." },
-  { q: "How much do I need to start?", a: "Choose a USDC notional that fits you. The current Ethereum basket lane does not enforce a fixed platform minimum in policy." },
-  { q: "Who holds my assets?", a: "You do. Assets stay in the wallet you connect through Privy. Equity Terminal never takes custody." },
-  { q: "How is the portfolio maintained?", a: "The product can surface rebalance reviews, but every live execution step stays user-approved. Live CRE-triggered automation is not claimed here." },
+  { q: "How much do I need to start?", a: "Choose a USDC amount that fits you. No fixed platform minimum." },
+  { q: "Who holds my assets?", a: "You do. Assets stay in the wallet you connect through Privy. 24-7 Markets never takes custody." },
+  { q: "How is the portfolio maintained?", a: "The product surfaces rebalance reviews. Every live execution step stays user-approved." },
   { q: "What if I want to stop?", a: "Pause or exit anytime. Your positions stay in your wallet." },
 ];
 
@@ -37,16 +35,12 @@ export function HomeTerminal() {
       <header className="landing-header">
         <div className="landing-header-inner">
           <Link className="landing-brand" href="/">
-            <ChartIcon size={36} />
-            <div className="landing-brand-text">
-              <span className="landing-brand-name">Equity Terminal</span>
-              <span className="landing-brand-powered">Powered by xStocks</span>
-            </div>
+            <BrandLockup size="sm" />
           </Link>
           <nav className="landing-header-nav">
             <a className="landing-header-link" href="#how-it-works">How it works</a>
             <a className="landing-header-link" href="#faq">FAQ</a>
-            <Link className="button button-primary button-lg" href="/onboarding">
+            <Link className="button button-secondary button-lg" href="/onboarding">
               Find my portfolio
             </Link>
           </nav>
@@ -56,18 +50,15 @@ export function HomeTerminal() {
       {/* ── Hero ── */}
       <section className="landing-hero">
         <div className="landing-hero-inner">
-          <h1 className="landing-h1">
-            Tokenized equities. Your wallet. Your rules.
-          </h1>
+          <BrandLockup size="lg" />
+          <div className="landing-hero-tagline">Powered by xStocks</div>
           <p className="landing-hero-sub">
-            Equity Terminal matches you to a portfolio of tokenized US equities
-            powered by xStocks. Privy handles auth and wallet connection,
-            CoW Protocol is the current Ethereum execution rail, and every live
-            step stays user-approved. Preview every holding before you connect
-            a wallet or fund USDC.
+            Tokenized equity portfolios you actually control.
+            Matched to your profile. Preview every holding.
+            Fund with USDC. Self-custody the whole way.
           </p>
           <div className="landing-hero-cta">
-            <Link className="button button-primary button-xl" href="/onboarding">
+            <Link className="button button-secondary button-xl" href="/onboarding">
               Find my portfolio
             </Link>
           </div>
@@ -100,25 +91,25 @@ export function HomeTerminal() {
             <div className="landing-flow-step">
               <div className="landing-flow-num">1</div>
               <h3>Answer 7 questions</h3>
-              <p>Risk tolerance, theme preference, rebalance style. Takes about 45 seconds.</p>
+              <p>Risk tolerance, theme preference, rebalance style.</p>
             </div>
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
               <div className="landing-flow-num">2</div>
               <h3>Get your match</h3>
-              <p>We compare candidates and show you the portfolio that fits your profile.</p>
+              <p>We compare candidates and show you the best fit.</p>
             </div>
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
               <div className="landing-flow-num">3</div>
               <h3>Preview everything</h3>
-              <p>See every holding, weight, and rebalancing rule before you commit anything.</p>
+              <p>Every holding, weight, and rebalancing rule.</p>
             </div>
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
               <div className="landing-flow-num">4</div>
               <h3>Fund when ready</h3>
-              <p>Connect a wallet and fund USDC when you are ready. The current basket lane does not enforce a fixed platform minimum in policy.</p>
+              <p>Connect wallet and deposit USDC.</p>
             </div>
           </div>
         </div>
@@ -132,19 +123,19 @@ export function HomeTerminal() {
           <div className="landing-features">
             <div className="landing-feature">
               <strong>Full custody</strong>
-              <p>Your assets stay in the wallet you connect through Privy. Equity Terminal never takes custody.</p>
+              <p>Your assets stay in the wallet you connect through Privy.</p>
             </div>
             <div className="landing-feature">
               <strong>Total transparency</strong>
-              <p>Every holding, every weight, every trade route — visible before and after you deposit.</p>
+              <p>Every holding, every weight, every trade route — visible.</p>
             </div>
             <div className="landing-feature">
-              <strong>User-approved maintenance</strong>
-              <p>Rebalance reviews can be surfaced over time, but live execution still requires your approval and a real signed action.</p>
+              <strong>User-approved</strong>
+              <p>Every execution step requires your signed approval.</p>
             </div>
             <div className="landing-feature">
-              <strong>User-sized funding</strong>
-              <p>Choose the USDC notional that fits you. The current basket lane does not enforce a fixed platform minimum in policy.</p>
+              <strong>Flexible funding</strong>
+              <p>Choose the USDC amount that fits you. Pause or exit anytime.</p>
             </div>
           </div>
         </div>
@@ -170,10 +161,7 @@ export function HomeTerminal() {
       <section className="landing-section landing-bottom-cta">
         <div className="landing-section-inner landing-section-center">
           <h2 className="landing-h2">See which portfolio fits you.</h2>
-          <p className="landing-hero-sub" style={{ textAlign: "center", maxWidth: "44ch", marginInline: "auto" }}>
-            Seven questions. Under a minute. Preview everything before you deposit.
-          </p>
-          <Link className="button button-primary button-xl" href="/onboarding">
+          <Link className="button button-secondary button-xl" href="/onboarding">
             Find my portfolio
           </Link>
         </div>
@@ -183,11 +171,8 @@ export function HomeTerminal() {
       <footer className="landing-footer">
         <div className="landing-footer-inner">
           <div className="landing-footer-brand">
-            <ChartIcon size={40} />
-            <div>
-              <strong>Equity Terminal</strong>
-              <span>Powered by xStocks</span>
-            </div>
+            <BrandLockup size="sm" />
+            <span className="landing-footer-powered">Powered by xStocks</span>
           </div>
           <div className="landing-footer-col">
             <strong>Product</strong>
