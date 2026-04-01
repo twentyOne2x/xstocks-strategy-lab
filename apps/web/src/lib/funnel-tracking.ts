@@ -10,6 +10,20 @@ export type XStocksWebFunnelStage =
   | "activation_viewed"
   | "wallet_connected";
 
+export interface XStocksQualificationReadData {
+  qualification?: {
+    selection?: {
+      slotId?: string;
+      mode?: string;
+    };
+    manifestRef?: {
+      slotId?: string;
+      mode?: string;
+      manifestId?: string;
+    };
+  };
+}
+
 function canUseStorage() {
   return typeof window !== "undefined" && Boolean(window.localStorage);
 }
@@ -102,7 +116,7 @@ export async function recordXStocksQualification({
   questionAnswers,
 }: {
   questionAnswers: Record<string, string>;
-}) {
+}): Promise<XStocksQualificationReadData | null> {
   let subjectId = readStoredSubjectId();
 
   if (!subjectId) {

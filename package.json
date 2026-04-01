@@ -15,5 +15,14 @@
     "@prisma/client": "6.19.2",
     "prisma": "6.19.2",
     "turbo": "^2.5.0"
-  }
+  },
+  "version": "1.0.0",
+  "description": "Fresh repo created on 2026-03-31 during the xStocks hackathon window.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

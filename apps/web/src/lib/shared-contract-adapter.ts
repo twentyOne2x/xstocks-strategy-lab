@@ -662,52 +662,10 @@ export function buildOnboardingProfile(answers: Record<string, string>): Onboard
   };
 }
 
-export function buildStrategyRecommendation(profile: OnboardingProfile): StrategyRecommendation {
-  // Base lane mapping
-  let modeId: LocalStrategySlotId;
-  if (profile.resolved.goal_preference === "broad_exposure") {
-    modeId = "onboarding.default_basket";
-  } else if (profile.resolved.goal_preference === "theme_tilt") {
-    modeId = "onboarding.alt_basket_1";
-  } else {
-    modeId = "onboarding.alt_basket_2";
-  }
-
-  // Directional override
-  if (profile.resolved.directional_eligible) {
-    modeId = "advanced.default_directional";
-  }
-
-  // Downshift alt_basket_2 to alt_basket_1
-  if (modeId === "onboarding.alt_basket_2") {
-    if (
-      profile.resolved.expression_band === "simple" ||
-      profile.rebalance_preference === "low_touch" ||
-      profile.automation_comfort === "low" ||
-      profile.drawdown_sensitivity === "high" ||
-      profile.certainty_level === "low"
-    ) {
-      modeId = "onboarding.alt_basket_1";
-    }
-  }
-
-  // Downshift alt_basket_1 to default_basket
-  if (modeId === "onboarding.alt_basket_1") {
-    if (
-      profile.theme_preference === "unsure" ||
-      profile.certainty_level === "low" ||
-      profile.uncertainty_path === "default_requested" ||
-      profile.not_sure_count >= 3
-    ) {
-      modeId = "onboarding.default_basket";
-    }
-  }
-
-  // Force safe fallback
-  if (profile.resolved.safe_fallback_applied) {
-    modeId = "onboarding.default_basket";
-  }
-
+function buildStrategyRecommendationForResolvedMode(
+  profile: OnboardingProfile,
+  modeId: LocalStrategySlotId,
+): StrategyRecommendation {
   const title = MODE_TITLES[modeId] ?? "Core xStocks Basket";
   const isDirectional = modeId === "advanced.default_directional";
 
@@ -788,6 +746,62 @@ export function buildStrategyRecommendation(profile: OnboardingProfile): Strateg
     },
     behavior_chips: behaviorChips,
   };
+}
+
+export function buildStrategyRecommendationForMode(
+  profile: OnboardingProfile,
+  modeId: LocalStrategySlotId,
+): StrategyRecommendation {
+  return buildStrategyRecommendationForResolvedMode(profile, modeId);
+}
+
+export function buildStrategyRecommendation(profile: OnboardingProfile): StrategyRecommendation {
+  // Base lane mapping
+  let modeId: LocalStrategySlotId;
+  if (profile.resolved.goal_preference === "broad_exposure") {
+    modeId = "onboarding.default_basket";
+  } else if (profile.resolved.goal_preference === "theme_tilt") {
+    modeId = "onboarding.alt_basket_1";
+  } else {
+    modeId = "onboarding.alt_basket_2";
+  }
+
+  // Directional override
+  if (profile.resolved.directional_eligible) {
+    modeId = "advanced.default_directional";
+  }
+
+  // Downshift alt_basket_2 to alt_basket_1
+  if (modeId === "onboarding.alt_basket_2") {
+    if (
+      profile.resolved.expression_band === "simple" ||
+      profile.rebalance_preference === "low_touch" ||
+      profile.automation_comfort === "low" ||
+      profile.drawdown_sensitivity === "high" ||
+      profile.certainty_level === "low"
+    ) {
+      modeId = "onboarding.alt_basket_1";
+    }
+  }
+
+  // Downshift alt_basket_1 to default_basket
+  if (modeId === "onboarding.alt_basket_1") {
+    if (
+      profile.theme_preference === "unsure" ||
+      profile.certainty_level === "low" ||
+      profile.uncertainty_path === "default_requested" ||
+      profile.not_sure_count >= 3
+    ) {
+      modeId = "onboarding.default_basket";
+    }
+  }
+
+  // Force safe fallback
+  if (profile.resolved.safe_fallback_applied) {
+    modeId = "onboarding.default_basket";
+  }
+
+  return buildStrategyRecommendationForResolvedMode(profile, modeId);
 }
 
 /** Maps mode_id to the manifest slug used in mock data */
@@ -906,6 +920,17 @@ export function buildQualificationFlowResult({
           href: `/workspace/detail/${recommendedStrategy.manifestSlug}`,
         };
   const fitNotes = selectedOptions.map((option) => option.qualification.fitNote);
+  const optimizationMethod = {
+    label: "Optimisation method",
+    pillLabel: "OPTIMISATION METHOD: AUTORESEARCH",
+    summary:
+      "Repo-owned qualification and portfolio selection loop, not a hard-coded browser pick.",
+    details: [
+      `Your answers narrow the slot and mode first, then the backend qualifies you into ${activeSlotId}.`,
+      "Strategy Lab autoresearch replay-tests candidate portfolios, promotes the current winning manifest into the slot registry, and keeps that loop on a repo-owned Railway worker runtime.",
+      "The onboarding gate and workspace then render the backend-selected promoted manifest instead of inventing a local-only portfolio.",
+    ],
+  };
   const profileRows = [
     {
       label: "Preferred chain",
@@ -988,6 +1013,7 @@ export function buildQualificationFlowResult({
     nextStepLabel: nextStep.label,
     nextStepHref: nextStep.href,
     fitNotes,
+    optimizationMethod,
     checks: [
       {
         label: "Discovery fit",

@@ -7,6 +7,7 @@ import {
   buildOnboardingProfile,
   buildQualificationFlowResult,
   buildStrategyRecommendation,
+  buildStrategyRecommendationForMode,
   recommendStrategyFromAnswers,
 } from "./shared-contract-adapter";
 
@@ -97,6 +98,28 @@ describe("shared contract adapter", () => {
     expect(recommendation.mode_id).toBe("onboarding.default_basket");
   });
 
+  it("can align recommendation copy to a backend-selected slot", () => {
+    const answers = {
+      q_goal_preference: "broad_exposure",
+      q_expression_preference: "simple",
+      q_risk_level: "medium",
+      q_rebalance_preference: "scheduled",
+      q_directional_appetite: "long_only",
+      q_automation_comfort: "medium",
+      q_certainty: "medium",
+    };
+
+    const profile = buildOnboardingProfile(answers);
+    const recommendation = buildStrategyRecommendationForMode(
+      profile,
+      "onboarding.alt_basket_1",
+    );
+
+    expect(recommendation.mode_id).toBe("onboarding.alt_basket_1");
+    expect(recommendation.title).toBe("Theme Tilt Basket");
+    expect(recommendation.stance).toBe("long_only");
+  });
+
   it("builds qualification flow result with deposit CTA", () => {
     const answers = {
       q_goal_preference: "broad_exposure",
@@ -126,5 +149,11 @@ describe("shared contract adapter", () => {
     expect(result.depositCtaLabel).toMatch(/Deposit/);
     expect(result.checks.length).toBeGreaterThan(0);
     expect(result.profileContract.activeSlotId).toBe("onboarding.default_basket");
+    expect(result.optimizationMethod.pillLabel).toBe(
+      "OPTIMISATION METHOD: AUTORESEARCH",
+    );
+    expect(result.optimizationMethod.details[0]).toContain(
+      "onboarding.default_basket",
+    );
   });
 });

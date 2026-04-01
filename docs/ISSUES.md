@@ -283,6 +283,9 @@ Last updated: 2026-04-01
   - Verified local truth: the questionnaire now exposes one consistent skip/not-sure action on every current question; policy keeps deterministic fail-closed defaults; certainty skip resolves to the exploring path while explicit `default_requested` remains the stronger safe-default request.
   - Verification: `pnpm --filter @xstocks-strategy-lab/web build`, `node --test packages/policy/test/policy.test.js`, and `pnpm --filter @xstocks-strategy-lab/web test` passed on 2026-04-01. Browser screenshots were captured under `/tmp/xsl-010-browser` for onboarding entry, onboarding gate, onboarding workspace, comparison, and detail.
   - Remaining blocker for full `XSL-010` closure: this tranche does not yet close the landing-hook rewrite or the operator-facing autoresearch tuning rubric/proof path defined in the owner spec.
+  - Date: 2026-04-02
+  - Scope addendum: add one post-questionnaire explainability pill on the onboarding recommendation gate that explicitly labels the optimisation method as `AUTORESEARCH`, with hover copy explaining the repo-owned qualification -> promoted-manifest -> slot-registry loop in plain language.
+  - Guardrail: keep this slice inside `apps/web/**` plus the shared onboarding adapter contract only; do not widen into execution, CRE, or broader landing-copy changes.
 - Executor prompt:
   - Keep skip/not-sure truthful and product-safe, keep qualification deterministic and fail closed, and only add explainability blocks that improve the promoted-manifest-only path without turning the landing page into a portfolio workspace.
 - Checklist:

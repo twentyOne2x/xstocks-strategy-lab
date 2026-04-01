@@ -627,6 +627,12 @@ export interface QualificationFlowResult {
   nextStepLabel: string;
   nextStepHref: string;
   fitNotes: string[];
+  optimizationMethod: {
+    label: string;
+    pillLabel: string;
+    summary: string;
+    details: string[];
+  };
   checks: QualificationCheck[];
   profileRows: StructuredObjectRow[];
   recommendationRows: StructuredObjectRow[];

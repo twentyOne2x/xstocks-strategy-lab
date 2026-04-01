@@ -18,9 +18,13 @@ import {
   buildOnboardingProfile,
   buildQualificationFlowResult,
   buildStrategyRecommendation,
+  buildStrategyRecommendationForMode,
   recommendStrategyFromAnswers,
 } from "@/lib/shared-contract-adapter";
-import { recordXStocksQualification } from "@/lib/funnel-tracking";
+import {
+  recordXStocksQualification,
+  type XStocksQualificationReadData,
+} from "@/lib/funnel-tracking";
 
 import { OnboardingQuestionFlow } from "@/components/onboarding-question-flow";
 import { BrandLockup } from "@/components/home-terminal";
@@ -69,6 +73,21 @@ function AppFooter() {
   );
 }
 
+function isKnownStrategySlotId(
+  slotId: string | null | undefined,
+): slotId is
+  | "onboarding.default_basket"
+  | "onboarding.alt_basket_1"
+  | "onboarding.alt_basket_2"
+  | "advanced.default_directional" {
+  return (
+    slotId === "onboarding.default_basket" ||
+    slotId === "onboarding.alt_basket_1" ||
+    slotId === "onboarding.alt_basket_2" ||
+    slotId === "advanced.default_directional"
+  );
+}
+
 export function OnboardingTerminalExperience({
   questions,
   recommendedStrategies,
@@ -80,25 +99,35 @@ export function OnboardingTerminalExperience({
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [started, setStarted] = useState(() => searchParams?.has("preset") ?? false);
   const [apiChrome, setApiChrome] = useState<TerminalChromeProps | null>(null);
+  const [apiQualification, setApiQualification] = useState<XStocksQualificationReadData | null>(null);
   const [apiPreviewError, setApiPreviewError] = useState<string | null>(null);
   const [apiPreviewLoading, setApiPreviewLoading] = useState(false);
   const [previewReloadKey] = useState(0);
   const qualificationTrackedRef = useRef<string | null>(null);
 
   const profile = buildOnboardingProfile(answers);
-  const recommendation = buildStrategyRecommendation(profile);
-
-  const recommendedStrategy = recommendStrategyFromAnswers({
+  const localRecommendation = buildStrategyRecommendation(profile);
+  const localRecommendedStrategy = recommendStrategyFromAnswers({
     answers,
     questions,
     recommendedStrategies,
   });
-  const recommendedManifest =
-    getPromotedManifest(recommendedStrategy.manifestSlug) ?? getFeaturedManifest();
-  const fallbackChrome = {
-    ...getTerminalChrome("onboarding", recommendedManifest.slot_id),
-    selectedManifest: recommendedManifest,
-  } satisfies TerminalChromeProps;
+  const localRecommendedManifest =
+    getPromotedManifest(localRecommendedStrategy.manifestSlug) ?? getFeaturedManifest();
+  const apiQualifiedSlotId = apiQualification?.qualification?.selection?.slotId;
+  const effectiveSlotId = isKnownStrategySlotId(apiQualifiedSlotId)
+    ? apiQualifiedSlotId
+    : localRecommendedManifest.slot_id;
+  const recommendation = isKnownStrategySlotId(apiQualifiedSlotId)
+    ? buildStrategyRecommendationForMode(profile, apiQualifiedSlotId)
+    : localRecommendation;
+  const fallbackChrome =
+    getTerminalChrome("onboarding", effectiveSlotId) satisfies TerminalChromeProps;
+  const recommendedManifest = apiChrome?.selectedManifest ?? fallbackChrome.selectedManifest;
+  const recommendedStrategy =
+    recommendedStrategies.find(
+      (strategy) => strategy.manifestSlug === recommendedManifest.slug,
+    ) ?? localRecommendedStrategy;
 
   const qualification = buildQualificationFlowResult({
     answers,
@@ -116,6 +145,7 @@ export function OnboardingTerminalExperience({
     let active = true;
 
     if (!allPrimaryAnswered) {
+      setApiQualification(null);
       setApiChrome(null);
       setApiPreviewError(null);
       setApiPreviewLoading(false);
@@ -124,10 +154,11 @@ export function OnboardingTerminalExperience({
       };
     }
 
+    setApiChrome(null);
     setApiPreviewLoading(true);
     setApiPreviewError(null);
 
-    getTerminalChromeAsync("onboarding", recommendedManifest.slot_id, {
+    getTerminalChromeAsync("onboarding", effectiveSlotId, {
       allowMockFallback: false,
     })
       .then((chrome) => {
@@ -151,7 +182,7 @@ export function OnboardingTerminalExperience({
     return () => {
       active = false;
     };
-  }, [allPrimaryAnswered, previewReloadKey, recommendedManifest.slot_id]);
+  }, [allPrimaryAnswered, effectiveSlotId, previewReloadKey]);
 
   useEffect(() => {
     if (!allPrimaryAnswered) {
@@ -167,9 +198,20 @@ export function OnboardingTerminalExperience({
     qualificationTrackedRef.current = answersSignature;
     void recordXStocksQualification({
       questionAnswers: answers,
-    }).catch(() => {
-      qualificationTrackedRef.current = null;
-    });
+    })
+      .then((result) => {
+        if (qualificationTrackedRef.current !== answersSignature) {
+          return;
+        }
+        setApiQualification(result);
+      })
+      .catch(() => {
+        if (qualificationTrackedRef.current !== answersSignature) {
+          return;
+        }
+        qualificationTrackedRef.current = null;
+        setApiQualification(null);
+      });
   }, [allPrimaryAnswered, answers]);
 
   function handleAnswer(questionId: string, optionId: string) {
@@ -193,6 +235,7 @@ export function OnboardingTerminalExperience({
 
   function handleReset() {
     qualificationTrackedRef.current = null;
+    setApiQualification(null);
     setAnswers({});
     setStarted(false);
   }

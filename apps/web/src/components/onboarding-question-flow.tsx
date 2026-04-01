@@ -564,6 +564,23 @@ function RecommendationGate({
           })}
         </div>
 
+        <div className="pq-gate-method">
+          <span className="section-kicker">{qualification.optimizationMethod.label}</span>
+          <div className="pq-gate-method-trigger" tabIndex={0}>
+            <span className="token-pill pq-gate-method-pill">
+              {qualification.optimizationMethod.pillLabel}
+            </span>
+            <div className="pq-gate-method-tooltip">
+              <strong>{qualification.optimizationMethod.summary}</strong>
+              <div className="pq-gate-method-tooltip-list">
+                {qualification.optimizationMethod.details.map((detail) => (
+                  <p key={detail}>{detail}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="pq-gate-cta">
           <button className="button button-primary button-xl" onClick={onEnterWorkspace} type="button">
             See my portfolio
