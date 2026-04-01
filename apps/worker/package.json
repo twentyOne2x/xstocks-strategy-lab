@@ -11,5 +11,9 @@
     "wave:basket": "node ./src/run-basket-research-wave.js",
     "autoresearch:run": "node ./src/autoresearch-runtime.js",
     "autoresearch:railway-cron": "node ./src/autoresearch-railway-cron.js"
+  },
+  "dependencies": {
+    "@xstocks-strategy-lab/shared": "workspace:*",
+    "@xstocks/research": "workspace:*"
   }
 }
