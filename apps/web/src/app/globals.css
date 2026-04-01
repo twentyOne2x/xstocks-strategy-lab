@@ -1415,6 +1415,43 @@ button { font: inherit; }
   transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ── Analysis Profile Card ── */
+
+.analysis-profile-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: rgba(255, 255, 255, 0.015);
+  text-align: left;
+  display: grid;
+  gap: 12px;
+}
+
+.analysis-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.analysis-profile-item span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.analysis-profile-item strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text);
+  font-size: 0.95rem;
+  text-transform: capitalize;
+}
+
 .analysis-steps {
   display: grid;
   gap: 8px;
@@ -2122,6 +2159,40 @@ button { font: inherit; }
   font-size: 1.35rem;
 }
 
+/* ── Gate fit grid ── */
+
+.pq-gate-fit {
+  display: grid;
+  gap: 10px;
+  padding: 16px 20px;
+  border: 1px solid rgba(31, 213, 154, 0.2);
+  border-radius: var(--radius-panel);
+  background: rgba(31, 213, 154, 0.03);
+}
+
+.pq-gate-fit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pq-gate-fit-item span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pq-gate-fit-item strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text);
+  font-size: 0.92rem;
+  text-transform: capitalize;
+}
+
 /* ── Gate chips ── */
 
 .pq-gate-chips {
@@ -2330,6 +2401,59 @@ button { font: inherit; }
   font-size: 2rem;
   font-weight: 700;
   color: var(--text);
+}
+
+/* ── Performance surface ── */
+
+.pq-perf-surface {
+  display: grid;
+  gap: 12px;
+}
+
+.pq-perf-value {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pq-perf-amount {
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.pq-perf-change {
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: var(--font-mono), monospace;
+}
+
+.pq-perf-change-positive {
+  color: var(--positive);
+}
+
+.pq-perf-meta {
+  display: flex;
+  gap: 20px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* ── Tour caption ── */
+
+.pq-tour-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.pq-tour-caption {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.4;
 }
 
 /* ── Summary metric strip ── */

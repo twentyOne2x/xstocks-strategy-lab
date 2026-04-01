@@ -131,11 +131,11 @@ export function OnboardingQuestionFlow({
    ──────────────────────────────────────────────────────── */
 
 const tourSteps = [
-  { id: "welcome", label: "Your portfolio", anchor: "pq-summary" },
-  { id: "holdings", label: "Holdings", anchor: "pq-holdings" },
-  { id: "intelligence", label: "Market signals", anchor: "pq-rail" },
-  { id: "activity", label: "Activity feed", anchor: "pq-activity-section" },
-  { id: "activate", label: "Deposit", anchor: "pq-deposit-cta" },
+  { id: "welcome", label: "Portfolio summary", caption: "Your matched portfolio with simulated replay performance", anchor: "pq-summary" },
+  { id: "holdings", label: "Holdings", caption: "The specific assets, weights, and venues in your portfolio", anchor: "pq-holdings" },
+  { id: "intelligence", label: "Market signals", caption: "What is driving the portfolio right now and recent changes", anchor: "pq-rail" },
+  { id: "activity", label: "Activity", caption: "Simulated positions and events — real after you deposit", anchor: "pq-activity-section" },
+  { id: "activate", label: "Deposit", caption: "Fund your wallet to activate — $10 minimum, pause anytime", anchor: "pq-deposit-cta" },
 ];
 
 function buildChartPath(values: number[]) {
@@ -218,7 +218,7 @@ function PostQuestionnaireWorkspace({
   );
 }
 
-/* ── Analysis Transition — staged progress between questionnaire and gate ── */
+/* ── Analysis Transition — profile-aware staged progress ── */
 
 function AnalysisTransition({
   recommendation,
@@ -233,42 +233,36 @@ function AnalysisTransition({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useRef(false);
 
+  // Profile inputs that drove the match — shown alongside progress
+  const profileInputs = [
+    { label: "Risk", value: recommendation.risk_band },
+    { label: "Stance", value: recommendation.stance.replaceAll("_", " ") },
+    { label: "Activity", value: recommendation.activity_level },
+    { label: "Rebalance", value: recommendation.rebalance_cadence.replaceAll("_", " ") },
+  ];
+
   const steps = [
-    { label: "Analyzing your profile", detail: `Risk: ${recommendation.risk_band} · Rebalance: ${recommendation.rebalance_cadence.replaceAll("_", " ")}` },
-    { label: "Comparing portfolio candidates", detail: `${manifest.allocations.length} holdings across ${manifest.frontend.risk_label.toLowerCase()} risk` },
-    { label: "Checking risk fit", detail: `Drawdown band: ${recommendation.risk_band} · Stance: ${recommendation.stance.replaceAll("_", " ")}` },
-    { label: "Building recommendation", detail: recommendation.title },
-    { label: "Preparing your preview", detail: "Almost ready" },
+    { label: "Analyzing profile", detail: `${recommendation.risk_band} risk · ${recommendation.stance.replaceAll("_", " ")}` },
+    { label: "Comparing candidates", detail: `${manifest.allocations.length} holdings · ${manifest.frontend.risk_label} risk` },
+    { label: "Checking risk fit", detail: `Max drawdown ${formatPercent(manifest.replay.maxDrawdownPct)}` },
+    { label: "Building match", detail: recommendation.title },
+    { label: "Preparing preview", detail: `${formatPercent(manifest.replay.netReturnPct)} simulated return` },
   ];
 
   useEffect(() => {
     prefersReducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (prefersReducedMotion.current) {
-      // Skip animation entirely for reduced-motion users
-      onComplete();
-      return;
-    }
+    if (prefersReducedMotion.current) { onComplete(); return; }
 
     const durations = [700, 800, 700, 600, 500];
     let step = 0;
-
     function advance() {
       step++;
-      if (step >= steps.length) {
-        // Brief pause on last step before transitioning
-        timerRef.current = setTimeout(onComplete, 400);
-        return;
-      }
+      if (step >= steps.length) { timerRef.current = setTimeout(onComplete, 400); return; }
       setActiveStep(step);
       timerRef.current = setTimeout(advance, durations[step]);
     }
-
     timerRef.current = setTimeout(advance, durations[0]);
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -286,21 +280,25 @@ function AnalysisTransition({
           <div className="analysis-progress-fill" style={{ width: `${progress}%` }} />
         </div>
 
+        {/* Profile inputs card — shows what drove the match */}
+        <div className="analysis-profile-card">
+          <span className="section-kicker">Your profile</span>
+          <div className="analysis-profile-grid">
+            {profileInputs.map((input) => (
+              <div className="analysis-profile-item" key={input.label}>
+                <span>{input.label}</span>
+                <strong>{input.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="analysis-steps">
           {steps.map((s, i) => (
-            <div
-              className={`analysis-step ${i < activeStep ? "analysis-step-done" : ""} ${i === activeStep ? "analysis-step-active" : ""}`}
-              key={s.label}
-            >
+            <div className={`analysis-step ${i < activeStep ? "analysis-step-done" : ""} ${i === activeStep ? "analysis-step-active" : ""}`} key={s.label}>
               <span className="analysis-step-dot" />
               <span>{s.label}</span>
             </div>
-          ))}
-        </div>
-
-        <div className="analysis-profile-chips">
-          {recommendation.behavior_chips.slice(0, 5).map((chip) => (
-            <span className="token-pill" key={chip}>{chip}</span>
           ))}
         </div>
       </div>
@@ -308,7 +306,7 @@ function AnalysisTransition({
   );
 }
 
-/* ── Recommendation Gate — visual, exciting ── */
+/* ── Recommendation Gate — with "Why this fits" section ── */
 
 function RecommendationGate({
   recommendation,
@@ -324,11 +322,7 @@ function RecommendationGate({
   directionalPreviewOnly: boolean;
   onEnterWorkspace: () => void;
   onReset: () => void;
-  previewStatus?: {
-    tone: "loading" | "error";
-    message: string;
-    onRetry?: () => void;
-  } | null;
+  previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
   const spotlight = getWorkspaceSpotlightData(manifest);
   const values = spotlight.points.map((p) => p.value);
@@ -357,11 +351,11 @@ function RecommendationGate({
         {/* Stat chips */}
         <div className="pq-gate-stats">
           <div className="pq-gate-stat">
-            <span>Return</span>
+            <span>30-day return</span>
             <strong>{formatPercent(manifest.replay.netReturnPct)}</strong>
           </div>
           <div className="pq-gate-stat">
-            <span>Drawdown</span>
+            <span>Max drawdown</span>
             <strong>{formatPercent(manifest.replay.maxDrawdownPct)}</strong>
           </div>
           <div className="pq-gate-stat">
@@ -374,19 +368,35 @@ function RecommendationGate({
           </div>
         </div>
 
+        {/* Why this fits you — profile-to-portfolio mapping */}
+        <div className="pq-gate-fit">
+          <span className="section-kicker">Why this fits you</span>
+          <div className="pq-gate-fit-grid">
+            <div className="pq-gate-fit-item">
+              <span>You chose</span>
+              <strong>{recommendation.risk_band} risk</strong>
+            </div>
+            <div className="pq-gate-fit-item">
+              <span>Portfolio is</span>
+              <strong>{manifest.frontend.risk_label} risk · {manifest.allocations.length} names</strong>
+            </div>
+            <div className="pq-gate-fit-item">
+              <span>Rebalance</span>
+              <strong>{recommendation.rebalance_cadence.replaceAll("_", " ")}</strong>
+            </div>
+            <div className="pq-gate-fit-item">
+              <span>Stance</span>
+              <strong>{recommendation.stance.replaceAll("_", " ")}</strong>
+            </div>
+          </div>
+        </div>
+
         {/* Policy chips */}
         <div className="pq-gate-chips">
           {recommendation.behavior_chips.slice(0, 4).map((chip) => (
             <span className="token-pill" key={chip}>{chip}</span>
           ))}
         </div>
-
-        {/* Fit bullets */}
-        <ul className="why-recommended">
-          {recommendation.why_recommended.slice(0, 2).map((r) => (
-            <li key={r}>{r}</li>
-          ))}
-        </ul>
 
         <div className="pq-gate-cta">
           <button className="button button-primary button-xl" onClick={onEnterWorkspace} type="button">
@@ -400,14 +410,13 @@ function RecommendationGate({
         <p className="pq-gate-note">
           {directionalPreviewOnly ? "Preview only. Self-custody." : "Simulation — no money moves until you deposit."}
         </p>
-
         {previewStatus ? <p className="pq-gate-note">{previewStatus.message}</p> : null}
       </div>
     </div>
   );
 }
 
-/* ── Simulated Workspace — visual, bigger CTAs, component-anchored tour ── */
+/* ── Simulated Workspace — with performance surface + improved tour ── */
 
 function SimulatedWorkspace({
   manifest,
@@ -430,11 +439,7 @@ function SimulatedWorkspace({
   tourDismissed: boolean;
   onTourNext: () => void;
   onTourDismiss: () => void;
-  previewStatus?: {
-    tone: "loading" | "error";
-    message: string;
-    onRetry?: () => void;
-  } | null;
+  previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
@@ -463,7 +468,7 @@ function SimulatedWorkspace({
         </div>
       </div>
 
-      {/* ── Component-anchored tour ── */}
+      {/* ── Component-anchored tour with captions ── */}
       {currentTour && (
         <div className="pq-tour-bar">
           <div className="pq-tour-bar-inner">
@@ -472,7 +477,10 @@ function SimulatedWorkspace({
                 <span className={`pq-tour-dot ${i === tourStep ? "pq-tour-dot-active" : ""} ${i < tourStep ? "pq-tour-dot-done" : ""}`} key={i} />
               ))}
             </div>
-            <span className="pq-tour-label">{currentTour.label}</span>
+            <div className="pq-tour-text">
+              <span className="pq-tour-label">{currentTour.label}</span>
+              <span className="pq-tour-caption">{currentTour.caption}</span>
+            </div>
             <div className="pq-tour-actions">
               <button className="button button-primary button-sm" onClick={onTourNext} type="button">
                 {tourStep < tourSteps.length - 1 ? "Next" : "Done"}
@@ -485,7 +493,7 @@ function SimulatedWorkspace({
         </div>
       )}
 
-      {/* ── Portfolio summary + deposit ── */}
+      {/* ── Portfolio summary with performance surface ── */}
       <div className="pq-grid">
         <div className="pq-main">
           <section className={`pq-summary ${highlightId === "pq-summary" ? "pq-highlight" : ""}`} id="pq-summary">
@@ -494,30 +502,43 @@ function SimulatedWorkspace({
                 <span className="section-kicker">Your portfolio</span>
                 <h2>{recommendation.title}</h2>
               </div>
-              <Link className="button button-primary" href={`/activate/${manifest.slug}`}>
+              <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`}>
                 {directionalPreviewOnly ? "Preview" : "Deposit $10+"}
               </Link>
             </div>
 
-            {/* Chart */}
-            <div className="pq-chart-shell" aria-hidden="true">
-              <svg className="workspace-chart" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="pqLine" x1="0%" x2="100%" y1="0%" y2="0%">
-                    <stop offset="0%" stopColor="#1FD59A" />
-                    <stop offset="100%" stopColor="#5FCEF0" />
-                  </linearGradient>
-                </defs>
-                <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
-                <path className="workspace-chart-line" d={path} style={{ stroke: "url(#pqLine)" }} />
-              </svg>
+            {/* Performance surface */}
+            <div className="pq-perf-surface">
+              <div className="pq-perf-value">
+                <span className="section-kicker">Simulated value</span>
+                <strong className="pq-perf-amount">{formatCurrency(manifest.replay.endingCapital)}</strong>
+                <span className="pq-perf-change pq-perf-change-positive">
+                  {formatPercent(manifest.replay.netReturnPct)}
+                </span>
+              </div>
+              <div className="pq-chart-shell" aria-hidden="true">
+                <svg className="workspace-chart" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="pqLine" x1="0%" x2="100%" y1="0%" y2="0%">
+                      <stop offset="0%" stopColor="#1FD59A" />
+                      <stop offset="100%" stopColor="#5FCEF0" />
+                    </linearGradient>
+                  </defs>
+                  <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
+                  <path className="workspace-chart-line" d={path} style={{ stroke: "url(#pqLine)" }} />
+                </svg>
+              </div>
+              <div className="pq-perf-meta">
+                <span>30-day simulated replay from {formatCurrency(manifest.replay.startingCapital)}</span>
+                <span>Max drawdown: {formatPercent(manifest.replay.maxDrawdownPct)}</span>
+              </div>
             </div>
 
             <div className="pq-summary-strip">
-              <div><span>Replay</span><strong>{formatCurrency(manifest.replay.startingCapital)} → {formatCurrency(manifest.replay.endingCapital)}</strong></div>
-              <div><span>Return</span><strong>{formatPercent(manifest.replay.netReturnPct)}</strong></div>
-              <div><span>Drawdown</span><strong>{formatPercent(manifest.replay.maxDrawdownPct)}</strong></div>
+              <div><span>Holdings</span><strong>{manifest.allocations.length}</strong></div>
               <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
+              <div><span>Rebalance</span><strong>Scheduled</strong></div>
+              <div><span>Min deposit</span><strong>$10</strong></div>
             </div>
           </section>
 
@@ -568,14 +589,7 @@ function SimulatedWorkspace({
           <span className="section-kicker">Holdings · {manifest.allocations.length} assets</span>
           <div style={{ overflowX: "auto" }}>
             <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Asset</th>
-                  <th>Weight</th>
-                  <th>Role</th>
-                  <th>Venue</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Asset</th><th>Weight</th><th>Role</th><th>Venue</th></tr></thead>
               <tbody>
                 {manifest.allocations.map((row) => (
                   <tr key={`${row.symbol}-${row.sleeve}`}>
@@ -591,7 +605,7 @@ function SimulatedWorkspace({
         </div>
       </section>
 
-      {/* ── Activity — full-width tabbed panel ── */}
+      {/* ── Activity — full-width ── */}
       <section className={`pq-fw-section pq-fw-section-alt ${highlightId === "pq-activity-section" ? "pq-highlight" : ""}`} id="pq-activity-section">
         <div className="pq-fw-inner">
           <div className="pq-activity-header">
