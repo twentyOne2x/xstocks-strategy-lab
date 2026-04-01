@@ -472,6 +472,9 @@ function normalizeExecutionQuote(quote) {
         quote.price_impact_percent,
         null,
       ),
+      orderHash: quote.orderHash ?? quote.order_hash ?? null,
+      signerAddress: quote.signerAddress ?? quote.signer_address ?? null,
+      receiver: quote.receiver ?? null,
       fee: quote.fee ?? {
         receiver: quote.feeReceiver ?? quote.fee_receiver ?? null,
         bps: quote.feeBps ?? quote.fee_bps ?? 0,

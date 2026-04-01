@@ -685,10 +685,10 @@ Last updated: 2026-04-01
 ### XSL-014A Venue-Routed Mainnet Execution
 
 - Type: runtime/integration/api
-- Status: active
+- Status: completed
 - Canonical owner lane: `XSL-014`
-- Context: the repo now has materially stronger venue truth than when `XSL-014` started. 1inch Fusion quoteability is proven for most core xStocks names on Ethereum, while `CoW` remains a narrower direct-quote venue. The exact blocker is now structural: `apps/api/src/rebalance-service.js` still stages only the manual `CoW` lane, so the repo cannot yet turn the new `1inch + CoW` route truth into a real venue-routed mainnet execution path.
-- Suspected cause: route truth and proof moved faster than the execution-request contract. The package layer knows about `1inch`, but the execution service still assumes every manual rebalance leg is `CoW`.
+- Context: the repo now owns a venue-routed execution substrate for authenticated basket execution requests. CoW remains the default manual venue, 1inch Fusion is now a signer-owned manual venue, and both venues persist through the same execution request contract rather than parallel proof notes.
+- Suspected cause: route truth and proof moved faster than the execution-request contract. The package layer knew about `1inch`, but the execution service still assumed every manual rebalance leg was `CoW`.
 - Fix intent: create one execution-grade sub-lane that upgrades mainnet execution from CoW-only to truthful per-leg venue routing with `1inch` primary where proven, `CoW` where directly proven, and exact blocker persistence everywhere else.
 - Acceptance criteria:
   1. The repo owns a venue-routed execution request contract rather than a CoW-only execution request.
@@ -698,22 +698,30 @@ Last updated: 2026-04-01
 - Complexity: high
 - Plan links:
   - [2026-04-01-xstocks-venue-routed-mainnet-execution-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-venue-routed-mainnet-execution-spec.md)
+- Resolution doc:
+  - [2026-04-01-xstocks-oneinch-manual-execution-substrate.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-oneinch-manual-execution-substrate.md)
 - Executor prompt:
   - Extend the current execution lane in `apps/api/**`, `packages/xstocks/**`, `packages/shared/**`, and `packages/policy/**` so it no longer hardcodes `CoW` for every manual execution leg.
   - Keep route truth exact per leg and preserve explicit signer approval.
   - Carry one small real mainnet proof to the furthest truthful boundary and stop with one exact blocker if submission still cannot happen.
 - Checklist:
-  - [ ] report captured
-  - [ ] context added
-  - [ ] fix applied
-  - [ ] tests run
-  - [ ] proof artifacts captured
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] proof artifacts captured
+- Resolution note:
+  - The canonical execution substrate now lives in `packages/shared/src/contracts/execution.ts` and `apps/api/src/services/api-service.js`, and it carries both `cow_swap` and `oneinch_fusion` through the same signer-owned request and leg lifecycle.
+  - `apps/api` now persists a 1inch quote, signer-owned EIP-712 approval payload, signed submission attempt, venue status, and receipt or blocker without adding autonomous execution.
+  - Strongest truthful closure: the manual venue-routed execution substrate exists through the signer-owned approval and submission boundary, and no autonomous execution was added.
+  - Exact blocker artifact: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-01T21-55-55.559Z/summary.json)
+  - Exact blocker: `Privy access token is expired.` A fresh verified user session is still required before live signer-owned 1inch submission proof can proceed.
 
 ### XSL-018 Event-Triggered Rebalance Control Plane
 
 - Type: program/frontend/backend/runtime
 - Status: active
-- Context: the user now wants the canonical app to own event-driven rebalance end to end: stub a news event in the right-side panel, stage the portfolio implication, hit one top-level `Execute all` control, run the mainnet rebalance, and later let `CRE` or provider-triggered events reuse the same execution path. Current truth is fragmented: `XSL-011B` proves signed review ingress only, the backend execution lane is still CoW-only, and the canonical frontend has no real rebalance control surface.
+- Context: the user now wants the canonical app to own event-driven rebalance end to end: stub a news event in the right-side panel, stage the portfolio implication, hit one top-level `Execute all` control, run the mainnet rebalance, and later let `CRE` or provider-triggered events reuse the same execution path. Current truth is still fragmented: `XSL-011B` proves signed review ingress, `XSL-014A` now proves the backend venue-routed execution substrate through signer-owned 1inch + CoW manual execution, and the canonical frontend still has no real rebalance control surface.
 - Suspected cause: the repo proved review ingress and venue quoteability as separate lanes first, but never created the control-plane owner that joins event intake, execution staging, and later automation into one path.
 - Fix intent: create one umbrella owner for event-triggered rebalance, with sub-specs for venue-routed mainnet execution, a right-rail control surface plus top-level `Execute all`, and provider-review-to-execution handoff.
 - Acceptance criteria:
@@ -760,7 +768,7 @@ Last updated: 2026-04-01
 - Type: backend/runtime/orchestration
 - Status: active
 - Canonical owner lane: `XSL-018`
-- Context: accepted provider review is real, but it still dead-ends at `awaiting_operator` rather than feeding the canonical execution path.
+- Context: accepted provider review is real, but it still dead-ends at `awaiting_operator` rather than feeding the canonical execution path now owned by `XSL-014A`.
 - Suspected cause: the provider-review lane and the manual execution lane were proven separately and never joined by one handoff contract.
 - Fix intent: hand accepted provider review into the same execution request path used by manual operator-triggered `Execute all`, and reserve any later automation for that same path.
 - Plan links:
@@ -774,10 +782,9 @@ Last updated: 2026-04-01
 
 ## 2026-04-01 Final Residual Backlog
 
-1. `XSL-014A`: wire the venue-routed mainnet execution lane so `1inch + CoW` is real execution truth rather than separate venue proof notes.
-2. `XSL-018A`: add the canonical right-rail event-triggered rebalance surface plus one truthful top-level `Execute all` control.
-3. `XSL-018B`: hand accepted provider review into the same execution path instead of stopping forever at `awaiting_operator`.
-4. `XSL-017`: inventory which wallet, venue, provider-review, and asset surfaces are actually meaningful on testnet; freeze one faucet-funded proof path; and keep mainnet xStocks issuer or liquidity truth explicitly separate from any testnet success.
-5. `XSL-015`: configure hosted `XSTOCKS_REPORTING_TOKEN` and `XSTOCKS_OPS_DASHBOARD_TOKEN`, then reverify `/api/reporting/xstocks` and `/ops/xstocks`; keep `funding_required` explicitly lower-bound until the repo owns a pre-save funding event.
-6. `XSL-016`: run the Hermes remote smoke plus authenticated/funded proof path with a real user token, or capture the exact blocker if auth, funding, or operator access still prevents closure.
+1. `XSL-018A`: add the canonical right-rail event-triggered rebalance surface plus one truthful top-level `Execute all` control.
+2. `XSL-018B`: hand accepted provider review into the same execution path instead of stopping forever at `awaiting_operator`.
+3. `XSL-017`: inventory which wallet, venue, provider-review, and asset surfaces are actually meaningful on testnet; freeze one faucet-funded proof path; and keep mainnet xStocks issuer or liquidity truth explicitly separate from any testnet success.
+4. `XSL-015`: configure hosted `XSTOCKS_REPORTING_TOKEN` and `XSTOCKS_OPS_DASHBOARD_TOKEN`, then reverify `/api/reporting/xstocks` and `/ops/xstocks`; keep `funding_required` explicitly lower-bound until the repo owns a pre-save funding event.
+5. `XSL-016`: run the Hermes remote smoke plus authenticated/funded proof path with a real user token, or capture the exact blocker if auth, funding, or operator access still prevents closure.
 7. `XSL-009`: capture one browser proof pack for onboarding -> workspace -> activation and remove served `Chainlink CRE` or `Status live` copy that currently outruns the production API truth.

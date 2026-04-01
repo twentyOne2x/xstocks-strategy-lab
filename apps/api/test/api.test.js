@@ -31,6 +31,7 @@ const DEFAULT_MANIFEST_ID = JSON.parse(
   readFileSync(SLOT_REGISTRY_PATH, "utf8"),
 ).slots["onboarding.default_basket"].currentManifestRef.manifestId;
 const TEST_COW_ORDER_UID = `0x${"b".repeat(112)}`;
+const TEST_ONEINCH_ORDER_HASH = `0x${"c".repeat(64)}`;
 const TEST_COW_SIGNATURE = `0x${"ab".repeat(65)}`;
 const TEST_SETTLEMENT_TX_HASH = `0x${"a".repeat(64)}`;
 const TEST_PRIVY_APP_ID = "privy-app-test";
@@ -813,51 +814,122 @@ function createCowExecutionClientStub({
 
 function createOneInchExecutionClientStub({
   quoteId = "oneinch_quote_1",
+  orderHash = TEST_ONEINCH_ORDER_HASH,
   fromTokenAmount = "20000000",
   toTokenAmount = "113576036691965274",
   recommendedPreset = "fast",
+  orderStatus = {
+    orderHash: TEST_ONEINCH_ORDER_HASH,
+    status: "filled",
+    cancelTxHash: null,
+    settlementTxHash: TEST_SETTLEMENT_TX_HASH,
+    fills: [
+      {
+        txHash: TEST_SETTLEMENT_TX_HASH,
+        filledMakerAmount: "25000000",
+        filledAuctionTakerAmount: "123450000000000000",
+        takerFeeAmount: null,
+      },
+    ],
+    raw: {
+      status: "filled",
+    },
+  },
 } = {}) {
+  const quotePayload = {
+    quoteId,
+    fromTokenAmount,
+    toTokenAmount,
+    feeToken: "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+    presets: {
+      [recommendedPreset]: {
+        auctionDuration: 180,
+        startAuctionIn: 0,
+        bankFee: "0",
+        initialRateBump: 0,
+        auctionStartAmount: toTokenAmount,
+        auctionEndAmount: toTokenAmount,
+        tokenFee: "0",
+        exclusiveResolver: null,
+        estP: 0,
+        allowPartialFills: false,
+        allowMultipleFills: false,
+        gasCost: {
+          gasBumpEstimate: 0,
+          gasPriceEstimate: "0",
+        },
+        points: [],
+        startAmount: toTokenAmount,
+      },
+    },
+    fee: {
+      receiver: "0x9999999999999999999999999999999999999999",
+      bps: 0,
+      whitelistDiscountPercent: 0,
+    },
+    integratorFee: 0,
+    integratorFeeShare: 0,
+    settlementAddress: "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+    whitelist: [],
+    recommended_preset: recommendedPreset,
+    recommendedPreset,
+    priceImpactPercent: 0.12,
+  };
+
   return {
     async requestQuote(input) {
       return {
-        quoteId,
-        fromTokenAmount:
-          input.amount ?? fromTokenAmount,
-        toTokenAmount,
+        ...quotePayload,
+        fromTokenAmount: input.amount ?? fromTokenAmount,
         feeToken: input.toTokenAddress,
-        presets: {
-          [recommendedPreset]: {
-            auctionDuration: 180,
-            startAuctionIn: 0,
-            bankFee: "0",
-            initialRateBump: 0,
-            auctionStartAmount: toTokenAmount,
-            auctionEndAmount: toTokenAmount,
-            tokenFee: "0",
-            exclusiveResolver: null,
-            estP: 0,
-            allowPartialFills: false,
-            allowMultipleFills: false,
-            gasCost: {
-              gasBumpEstimate: 0,
-              gasPriceEstimate: "0",
-            },
-            points: [],
-            startAmount: toTokenAmount,
+      };
+    },
+    async prepareOrder(input) {
+      return {
+        quote: {
+          ...quotePayload,
+          fromTokenAmount: input.amount ?? fromTokenAmount,
+          feeToken: input.toTokenAddress,
+        },
+        quoteId,
+        orderHash,
+        order: {
+          salt: "1",
+          makerAsset: input.fromTokenAddress,
+          takerAsset: input.toTokenAddress,
+          maker: input.walletAddress.toLowerCase(),
+          receiver: (input.receiver ?? input.walletAddress).toLowerCase(),
+        },
+        extension: "0x",
+        typedData: {
+          domain: {
+            name: "1inch Fusion",
+            version: "1",
+            chainId: 1,
+            verifyingContract: "0x111111125421ca6dc452d289314280a0f8842a65",
+          },
+          types: {
+            Order: [],
+          },
+          message: {
+            orderHash,
           },
         },
-        fee: {
-          receiver: "0x9999999999999999999999999999999999999999",
-          bps: 0,
-          whitelistDiscountPercent: 0,
-        },
-        integratorFee: 0,
-        integratorFeeShare: 0,
-        settlementAddress: "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
-        whitelist: [],
-        recommended_preset: recommendedPreset,
-        priceImpactPercent: 0.12,
+        signerAddress: input.walletAddress.toLowerCase(),
+        receiver: (input.receiver ?? input.walletAddress).toLowerCase(),
       };
+    },
+    async submitOrder() {
+      return {
+        orderHash,
+        raw: {
+          orderHash,
+          status: "submitted",
+        },
+      };
+    },
+    async getOrderStatus() {
+      return orderStatus;
     },
   };
 }
@@ -2063,7 +2135,92 @@ test("execution dual-RFQs CoW and 1inch but keeps CoW selected when both venues 
   }
 });
 
-test("execution falls back to 1inch quote readiness when CoW returns no liquidity", async () => {
+test("execution can pin a manual execution request to 1inch and persist signer-owned approval payloads", async () => {
+  const harness = await startServerWithSyntheticExecutableDefaultBasket({
+    cowExecutionClient: createCowExecutionClientStub(),
+    oneInchExecutionClient: createOneInchExecutionClientStub(),
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 25,
+        walletState: {
+          walletConnected: true,
+          walletAddress: harness.auth.primary.walletAddress,
+          fundedNotionalUsd: 25,
+        },
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+        executionRouteId: "1inch.ethereum",
+      }),
+    });
+    const createPayload = await createResponse.json();
+    const quoteLeg = createPayload.data.executionRequest.legs.find(
+      (leg) => leg.state === "pending",
+    );
+
+    assert.equal(createResponse.status, 200);
+    assert.equal(createPayload.data.executionRequest.adapterId, "oneinch_fusion");
+    assert.equal(quoteLeg.adapterId, "oneinch_fusion");
+    assert.equal(quoteLeg.requiredRouteId, "1inch.ethereum");
+
+    const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+      }),
+    });
+    const quotePayload = await quoteResponse.json();
+    const quotedLeg = quotePayload.data.executionRequest.legs.find(
+      (leg) => leg.legId === quoteLeg.legId,
+    );
+
+    assert.equal(quoteResponse.status, 200);
+    assert.equal(quotedLeg.state, "awaiting_approval");
+    assert.equal(quotedLeg.quote.kind, "oneinch_fusion");
+    assert.equal(quotedLeg.adapterId, "oneinch_fusion");
+    assert.equal(quotedLeg.venueId, "1inch.ethereum");
+    assert.equal(quotedLeg.requiredRouteId, "1inch.ethereum");
+    assert.equal(quotedLeg.approval.status, "awaiting_user");
+    assert.equal(quotedLeg.approval.approvalTarget, "oneinch_fusion_order");
+    assert.equal(
+      quotedLeg.approval.orderToSign.orderHash,
+      TEST_ONEINCH_ORDER_HASH,
+    );
+    assert.equal(
+      quotedLeg.approval.signerAddress,
+      harness.auth.primary.walletAddress.toLowerCase(),
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("execution falls back to signer-owned 1inch approval when CoW returns no liquidity", async () => {
   const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: {
       async requestQuote() {
@@ -2134,12 +2291,13 @@ test("execution falls back to 1inch quote readiness when CoW returns no liquidit
     );
 
     assert.equal(quoteResponse.status, 200);
-    assert.equal(quotePayload.data.executionRequest.state, "quote_ready");
-    assert.equal(quotedLeg.state, "quote_ready");
+    assert.equal(quotePayload.data.executionRequest.state, "awaiting_approval");
+    assert.equal(quotedLeg.state, "awaiting_approval");
     assert.equal(quotedLeg.quote.kind, "oneinch_fusion");
     assert.equal(quotedLeg.adapterId, "oneinch_fusion");
     assert.equal(quotedLeg.venueId, "1inch.ethereum");
-    assert.equal(quotedLeg.approval, null);
+    assert.equal(quotedLeg.approval.status, "awaiting_user");
+    assert.equal(quotedLeg.approval.approvalTarget, "oneinch_fusion_order");
     assert.notEqual(quotedLeg.receivingTokenAddress, quoteLeg.receivingTokenAddress);
     assert.match(quotedLeg.receivingTokenAddress, /^0x1/u);
     assert.equal(
@@ -2153,10 +2311,6 @@ test("execution falls back to 1inch quote readiness when CoW returns no liquidit
     assert.equal(
       quotedLeg.venueStatus.rawStatus.quoteAttempts.oneinch_fusion.status,
       "quoted",
-    );
-    assert.match(
-      quotedLeg.warnings.join(" "),
-      /1inch Fusion quote capture is proven/i,
     );
   } finally {
     await harness.close();
@@ -2591,7 +2745,7 @@ test("execution submission fails closed when no user signature is supplied", asy
   }
 });
 
-test("execution submission fails closed when the selected quote is 1inch-only", async () => {
+test("execution quote, approval, submission, and receipt actions persist live 1inch Fusion truth", async () => {
   const harness = await startServerWithSyntheticExecutableDefaultBasket({
     cowExecutionClient: {
       async requestQuote() {
@@ -2607,6 +2761,7 @@ test("execution submission fails closed when the selected quote is 1inch-only", 
       },
     },
     oneInchExecutionClient: createOneInchExecutionClientStub(),
+    ethereumRpcClient: createEthereumRpcClientStub(),
   });
 
   try {
@@ -2642,7 +2797,7 @@ test("execution submission fails closed when the selected quote is 1inch-only", 
       (leg) => leg.state === "pending",
     );
 
-    await fetch(`${harness.baseUrl}/api/executions`, {
+    const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -2656,6 +2811,14 @@ test("execution submission fails closed when the selected quote is 1inch-only", 
         legId: quoteLeg.legId,
       }),
     });
+    const quotePayload = await quoteResponse.json();
+    const quotedLeg = quotePayload.data.executionRequest.legs.find(
+      (leg) => leg.legId === quoteLeg.legId,
+    );
+
+    assert.equal(quoteResponse.status, 200);
+    assert.equal(quotedLeg.state, "awaiting_approval");
+    assert.equal(quotedLeg.approval.approvalTarget, "oneinch_fusion_order");
 
     const submissionResponse = await fetch(`${harness.baseUrl}/api/executions`, {
       method: "POST",
@@ -2668,12 +2831,19 @@ test("execution submission fails closed when the selected quote is 1inch-only", 
       }),
     });
     const submissionPayload = await submissionResponse.json();
-
-    assert.equal(submissionResponse.status, 409);
-    assert.match(
-      submissionPayload.error,
-      /1inch Fusion quote capture is proven/i,
+    const submittedLeg = submissionPayload.data.executionRequest.legs.find(
+      (leg) => leg.legId === quoteLeg.legId,
     );
+
+    assert.equal(submissionResponse.status, 200);
+    assert.equal(submittedLeg.state, "confirmed");
+    assert.equal(submittedLeg.quote.kind, "oneinch_fusion");
+    assert.equal(submittedLeg.approval.status, "submitted");
+    assert.equal(submittedLeg.approval.venueOrderId, TEST_ONEINCH_ORDER_HASH);
+    assert.equal(submittedLeg.venueStatus.venueOrderId, TEST_ONEINCH_ORDER_HASH);
+    assert.equal(submittedLeg.venueStatus.status, "confirmed");
+    assert.equal(submittedLeg.receipt.txHash, TEST_SETTLEMENT_TX_HASH);
+    assert.equal(submittedLeg.receipt.receiptStatus, "confirmed");
   } finally {
     await harness.close();
   }

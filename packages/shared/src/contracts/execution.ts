@@ -28,6 +28,28 @@ export const executionRequestStateSchema = z.enum(
 );
 export type ExecutionRequestState = z.infer<typeof executionRequestStateSchema>;
 
+export const EXECUTION_RUNTIME_OWNER_VALUES = [
+  "operator_manual",
+  "policy_bounded_automation",
+] as const;
+export const executionRuntimeOwnerSchema = z.enum(
+  EXECUTION_RUNTIME_OWNER_VALUES,
+);
+export type ExecutionRuntimeOwner = z.infer<typeof executionRuntimeOwnerSchema>;
+
+export const EXECUTION_TRIGGER_SOURCE_VALUES = [
+  "operator_manual",
+  "execute_all",
+  "provider_staging",
+  "policy_bounded_automation",
+] as const;
+export const executionTriggerSourceSchema = z.enum(
+  EXECUTION_TRIGGER_SOURCE_VALUES,
+);
+export type ExecutionTriggerSource = z.infer<
+  typeof executionTriggerSourceSchema
+>;
+
 export const EXECUTION_LEG_STATE_VALUES = [
   "pending",
   "deferred",
@@ -149,6 +171,9 @@ export const oneInchFusionQuoteSchema = z.object({
   settlementAddress: nonEmptyStringSchema,
   recommendedPreset: nonEmptyStringSchema,
   priceImpactPercent: z.union([z.number().finite(), nonEmptyStringSchema]).nullable(),
+  orderHash: nonEmptyStringSchema.nullable().optional(),
+  signerAddress: nonEmptyStringSchema.nullable().optional(),
+  receiver: nonEmptyStringSchema.nullable().optional(),
   fee: z.object({
     receiver: nonEmptyStringSchema,
     bps: z.number().finite(),
@@ -255,8 +280,8 @@ export const executionRequestSchema = z.object({
   slotId: strategySlotIdSchema,
   chain: chainSchema,
   mode: strategyModeSchema,
-  runtimeOwner: z.literal("operator_manual"),
-  triggerSource: z.literal("operator_manual"),
+  runtimeOwner: executionRuntimeOwnerSchema,
+  triggerSource: executionTriggerSourceSchema,
   adapterId: nonEmptyStringSchema,
   activationManifestRef: activationManifestRefSchema,
   requestedNotionalUsd: z.number().finite().nonnegative(),
