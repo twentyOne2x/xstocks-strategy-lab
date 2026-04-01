@@ -911,6 +911,21 @@ button { font: inherit; }
 .memo-row { padding: 12px; }
 .memo-row strong { color: var(--text); font-size: 0.85rem; }
 
+/* ── App Brand Bar ── */
+
+.app-brand-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 12px 24px;
+  background: rgba(11, 15, 14, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
 /* ── Onboarding Entry Screen ── */
 
 .onboarding-entry {

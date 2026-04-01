@@ -23,6 +23,20 @@ import {
 import { recordXStocksQualification } from "@/lib/funnel-tracking";
 
 import { OnboardingQuestionFlow } from "@/components/onboarding-question-flow";
+import Link from "next/link";
+
+function BrandBar() {
+  return (
+    <div className="app-brand-bar">
+      <Link className="landing-brand" href="/">
+        <div className="landing-brand-text">
+          <span className="landing-brand-name">Equity Terminal</span>
+          <span className="landing-brand-powered">Powered by xStocks</span>
+        </div>
+      </Link>
+    </div>
+  );
+}
 import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 
 export function OnboardingTerminalExperience({
@@ -38,7 +52,7 @@ export function OnboardingTerminalExperience({
   const [apiChrome, setApiChrome] = useState<TerminalChromeProps | null>(null);
   const [apiPreviewError, setApiPreviewError] = useState<string | null>(null);
   const [apiPreviewLoading, setApiPreviewLoading] = useState(false);
-  const [previewReloadKey, setPreviewReloadKey] = useState(0);
+  const [previewReloadKey] = useState(0);
   const qualificationTrackedRef = useRef<string | null>(null);
 
   const profile = buildOnboardingProfile(answers);
@@ -172,8 +186,8 @@ export function OnboardingTerminalExperience({
   if (!started) {
     return (
       <div className="onboarding-entry">
+        <BrandBar />
         <div className="onboarding-entry-card">
-          <span className="landing-kicker">Equity Terminal</span>
           <h1>Build your portfolio.</h1>
           <p>7 questions. Under a minute. Preview everything before you fund.</p>
           <div className="ob-entry-cta-row">
@@ -199,6 +213,7 @@ export function OnboardingTerminalExperience({
   if (!allPrimaryAnswered) {
     return (
       <>
+        <BrandBar />
         <XStocksFunnelStageTracker stage="onboarding_started" />
         <OnboardingQuestionFlow
           answers={answers}
@@ -235,18 +250,12 @@ export function OnboardingTerminalExperience({
         qualification={qualification}
         blotter={apiChrome?.blotter ?? fallbackChrome.blotter}
         previewStatus={
-          apiPreviewError
+          apiPreviewLoading && !apiChrome && !apiPreviewError
             ? {
-                tone: "error",
-                message: `${apiPreviewError} Showing the local preview for now.`,
-                onRetry: () => setPreviewReloadKey((current) => current + 1),
+                tone: "loading" as const,
+                message: "Loading live data...",
               }
-            : apiPreviewLoading || !apiChrome
-              ? {
-                  tone: "loading",
-                  message: "Loading live holdings and activity in the background.",
-                }
-              : null
+            : null
         }
       />
     </>

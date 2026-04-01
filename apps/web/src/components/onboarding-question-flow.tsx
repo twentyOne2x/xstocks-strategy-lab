@@ -17,7 +17,7 @@ import {
   isDirectionalPreviewOnly,
 } from "@/lib/portfolio-ui";
 import { formatCurrency, formatPercent, getWorkspaceSpotlightData } from "@/lib/data-source";
-import { getAssetHref, getCleanRationale, getVenueDisplay } from "@/lib/holdings-display";
+import { getAssetHref, getCleanRationale } from "@/lib/holdings-display";
 
 function humanizeState(state: string): string {
   const map: Record<string, string> = {
@@ -150,7 +150,7 @@ export function OnboardingQuestionFlow({
 
 const tourSteps = [
   { id: "welcome", label: "Portfolio summary", caption: "Your matched portfolio with simulated replay performance", anchor: "pq-summary" },
-  { id: "holdings", label: "Holdings", caption: "The specific assets, weights, and venues in your portfolio", anchor: "pq-holdings" },
+  { id: "holdings", label: "Holdings", caption: "The specific assets and weights in your portfolio", anchor: "pq-holdings" },
   { id: "intelligence", label: "Market signals", caption: "What is driving the portfolio right now and recent changes", anchor: "pq-rail" },
   { id: "activity", label: "Activity", caption: "Simulated positions and events — real after you deposit", anchor: "pq-activity-section" },
   { id: "activate", label: "Deposit", caption: "Choose a USDC notional when you are ready, then fund your wallet to activate.", anchor: "pq-deposit-cta" },
@@ -633,17 +633,15 @@ function SimulatedWorkspace({
           <span className="section-kicker">Holdings · {manifest.allocations.length} assets</span>
           <div style={{ overflowX: "auto" }}>
             <table className="data-table">
-              <thead><tr><th>Asset</th><th>Weight</th><th>Role</th><th>Venue</th></tr></thead>
+              <thead><tr><th>Asset</th><th>Weight</th><th>Role</th></tr></thead>
               <tbody>
                 {manifest.allocations.map((row) => {
                   const assetHref = getAssetHref(row.symbol);
-                  const venue = getVenueDisplay(row.venue);
                   return (
                     <tr key={`${row.symbol}-${row.sleeve}`}>
                       <td>{assetHref ? <a className="table-link" href={assetHref} target="_blank" rel="noopener noreferrer">{row.symbol}</a> : <strong>{row.symbol}</strong>}</td>
                       <td>{row.targetWeight}</td>
                       <td>{getCleanRationale(row.rationale, row.sleeve)}</td>
-                      <td>{venue.href ? <a className="table-link" href={venue.href} target="_blank" rel="noopener noreferrer">{venue.label}</a> : venue.label}</td>
                     </tr>
                   );
                 })}
@@ -708,7 +706,7 @@ function SimulatedWorkspace({
         </div>
       </section>
 
-      {previewStatus ? <p className="panel-note" style={{ padding: "16px", textAlign: "center" }}>{previewStatus.message}</p> : null}
+      {previewStatus && previewStatus.tone === "loading" ? <p className="panel-note" style={{ padding: "16px", textAlign: "center" }}>{previewStatus.message}</p> : null}
     </div>
   );
 }
