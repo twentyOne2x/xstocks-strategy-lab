@@ -1,15 +1,31 @@
-import { XSTOCKS_REPORTING_LADDER_STAGE_VALUES } from "../../../../packages/shared/dist/contracts/reporting.js";
+import {
+  XSTOCKS_FUNNEL_LEDGER_STAGE_VALUES,
+  XSTOCKS_REPORTING_LADDER_STAGE_VALUES,
+} from "../../../../packages/shared/dist/contracts/reporting.js";
 
 const REPORTING_STAGE_ORDER = Object.freeze([
   ...XSTOCKS_REPORTING_LADDER_STAGE_VALUES,
 ]);
-const MISSING_STAGE_DEFINITIONS = Object.freeze({
+const CANONICAL_FUNNEL_STAGE_SET = new Set(XSTOCKS_FUNNEL_LEDGER_STAGE_VALUES);
+const STAGE_DEFINITIONS = Object.freeze({
   landing_viewed: "Unique visitors who reached the landing surface.",
-  onboarding_started: "Users who started onboarding.",
-  qualification_completed: "Users who completed qualification.",
-  portfolio_recommended: "Users who received a portfolio recommendation.",
+  onboarding_started: "Visitors who explicitly started onboarding.",
+  qualification_completed:
+    "Visitors whose onboarding answers were re-derived by the API into a valid qualification result.",
+  portfolio_recommended:
+    "Visitors who received a portfolio recommendation from an API-verified qualification result.",
   activation_viewed:
-    "Users who reached the activation surface before any save or execution event.",
+    "Visitors who reached a promoted activation surface resolved by manifestId or slotId.",
+  wallet_connected:
+    "Authenticated Privy users with one verified linked wallet recorded at the connection boundary.",
+  funding_required:
+    "Users with a saved activation snapshot currently blocked on funding.",
+  quote_ready: "Users or wallets with at least one persisted quoted execution leg.",
+  awaiting_approval:
+    "Users or wallets with at least one persisted execution leg awaiting user approval.",
+  submitted: "Users or wallets with at least one persisted submitted execution leg.",
+  confirmed: "Users or wallets with at least one persisted confirmed execution leg.",
+  failed: "Users or wallets with at least one persisted failed execution leg.",
 });
 
 function roundUsd(value) {
@@ -43,6 +59,7 @@ function maskAddress(value) {
 
 function createAccumulator() {
   return {
+    subjects: new Set(),
     users: new Set(),
     wallets: new Set(),
     smartWallets: new Set(),
@@ -52,19 +69,9 @@ function createAccumulator() {
   };
 }
 
-function nullStageCounts() {
-  return {
-    users: null,
-    wallets: null,
-    smartWallets: null,
-    activations: null,
-    executionRequests: null,
-    executionLegs: null,
-  };
-}
-
 function finalizeAccumulator(accumulator) {
   return {
+    subjects: accumulator.subjects.size,
     users: accumulator.users.size,
     wallets: accumulator.wallets.size,
     smartWallets: accumulator.smartWallets.size,
@@ -72,6 +79,18 @@ function finalizeAccumulator(accumulator) {
     executionRequests: accumulator.executionRequests.size,
     executionLegs: accumulator.executionLegs.size,
   };
+}
+
+function accumulatorHasRecords(accumulator) {
+  return (
+    accumulator.subjects.size > 0 ||
+    accumulator.users.size > 0 ||
+    accumulator.wallets.size > 0 ||
+    accumulator.smartWallets.size > 0 ||
+    accumulator.activations.size > 0 ||
+    accumulator.executionRequests.size > 0 ||
+    accumulator.executionLegs.size > 0
+  );
 }
 
 function getActivationUserId(activation) {
@@ -136,6 +155,22 @@ function addActivationContext(accumulator, activation) {
 
   if (activation?.activationId) {
     accumulator.activations.add(activation.activationId);
+  }
+}
+
+function addFunnelEventContext(accumulator, event) {
+  if (event?.subjectId) {
+    accumulator.subjects.add(event.subjectId);
+  }
+
+  if (event?.owner?.userId) {
+    accumulator.users.add(event.owner.userId);
+  }
+
+  const walletAddress = normalizeAddress(event?.walletAddress);
+
+  if (walletAddress) {
+    accumulator.wallets.add(walletAddress);
   }
 }
 
@@ -362,26 +397,6 @@ function aggregateRuntimeBlockers({ activations, executionRequests, activationBy
 function buildFixedBlockers() {
   return [
     {
-      blockerId: "missing_pre_activation_funnel_ledger",
-      severity: "critical",
-      title: "Pre-activation funnel stages are not durably captured.",
-      detail:
-        "landing_viewed, onboarding_started, qualification_completed, and portfolio_recommended remain unavailable because this repo still has no canonical pre-activation funnel or event ledger.",
-      affectedStage: "landing_viewed",
-      affectedUsers: null,
-      affectedExecutionRequests: null,
-    },
-    {
-      blockerId: "missing_activation_view_ledger",
-      severity: "critical",
-      title: "Activation views are not durably captured.",
-      detail:
-        "activation_viewed remains unavailable because the repo stores activation saves, not activation page views.",
-      affectedStage: "activation_viewed",
-      affectedUsers: null,
-      affectedExecutionRequests: null,
-    },
-    {
       blockerId: "missing_partner_auth_model",
       severity: "warning",
       title: "Partner self-serve auth is not implemented in-repo.",
@@ -392,12 +407,12 @@ function buildFixedBlockers() {
       affectedExecutionRequests: null,
     },
     {
-      blockerId: "wallet_connect_lower_bound_only",
+      blockerId: "funding_required_lower_bound_only",
       severity: "warning",
-      title: "Wallet-connected counts are lower-bound only.",
+      title: "Funding-required counts are still lower-bound.",
       detail:
-        "wallet_connected and funding_required counts start at saved authenticated activation snapshots. Connect attempts that never reached activation save are not captured.",
-      affectedStage: "wallet_connected",
+        "funding_required still begins at saved activation snapshots. The repo does not yet have a canonical funding-state event ledger before activation save.",
+      affectedStage: "funding_required",
       affectedUsers: null,
       affectedExecutionRequests: null,
     },
@@ -411,6 +426,9 @@ export function buildXStocksReportingSnapshot({
   const activations = [...(snapshot?.activations ?? [])].sort((left, right) =>
     right.updatedAt.localeCompare(left.updatedAt),
   );
+  const funnelEvents = [...(snapshot?.funnelEvents ?? [])].sort((left, right) =>
+    right.occurredAt.localeCompare(left.occurredAt),
+  );
   const executionRequests = [...(snapshot?.executionRequests ?? [])].sort(
     (left, right) => right.updatedAt.localeCompare(left.updatedAt),
   );
@@ -419,6 +437,7 @@ export function buildXStocksReportingSnapshot({
   );
   const userLabels = buildLabelMap(
     [
+      ...funnelEvents.map((event) => event?.owner?.userId ?? null),
       ...activations.map((activation) => getActivationUserId(activation)),
       ...executionRequests.map((request) =>
         getRequestUserId(request, activationById.get(request.activationId) ?? null),
@@ -426,56 +445,42 @@ export function buildXStocksReportingSnapshot({
     ],
     "usr",
   );
+  const funnelEventsByStage = new Map(
+    REPORTING_STAGE_ORDER.map((stage) => [
+      stage,
+      funnelEvents.filter((event) => event.stage === stage),
+    ]),
+  );
 
   const ladder = REPORTING_STAGE_ORDER.map((stage, index) => {
-    if (
-      [
-        "landing_viewed",
-        "onboarding_started",
-        "qualification_completed",
-        "portfolio_recommended",
-        "activation_viewed",
-      ].includes(stage)
-    ) {
-      return {
-        stage,
-        order: index + 1,
-        coverage: "missing",
-        definition: MISSING_STAGE_DEFINITIONS[stage],
-        source: "no_repo_ledger",
-        reached: nullStageCounts(),
-        notes: [
-          "This repo does not persist a canonical event for this pre-activation stage yet.",
-        ],
-        blockers: [
-          "No canonical pre-activation funnel ledger exists in this repo yet.",
-        ],
-      };
-    }
-
     const accumulator = createAccumulator();
     const notes = [];
     const blockers = [];
     let coverage = "canonical";
     let source = "runtime_store.execution_requests";
-    let definition = `Users or wallets that reached ${stage.replaceAll("_", " ")}.`;
+    let definition = STAGE_DEFINITIONS[stage];
 
-    if (stage === "wallet_connected") {
-      coverage = "lower_bound";
-      source = "runtime_store.activations.walletState";
-      definition =
-        "Users with a saved authenticated activation snapshot that records a connected wallet.";
-      notes.push(
-        "Counts begin at activation save. Wallet connects that never reached activation save are not captured.",
+    if (CANONICAL_FUNNEL_STAGE_SET.has(stage)) {
+      source = "runtime_store.funnel_events";
+
+      if (stage === "landing_viewed") {
+        notes.push(
+          "Counts are unique repo-owned funnel subjects, not inferred person identities.",
+        );
+      }
+
+      if (stage === "wallet_connected") {
+        notes.push(
+          "Counts require a verified Privy-authenticated user and one linked wallet address.",
+        );
+      }
+
+      (funnelEventsByStage.get(stage) ?? []).forEach((event) =>
+        addFunnelEventContext(accumulator, event),
       );
-      activations
-        .filter((activation) => activation?.walletState?.walletConnected)
-        .forEach((activation) => addActivationContext(accumulator, activation));
     } else if (stage === "funding_required") {
       coverage = "lower_bound";
       source = "runtime_store.activations.executionPlanSnapshot";
-      definition =
-        "Users with a saved activation snapshot currently blocked on funding.";
       notes.push(
         "Counts begin at activation save and do not capture users who left before persisting an activation snapshot.",
       );
@@ -514,7 +519,7 @@ export function buildXStocksReportingSnapshot({
       });
     }
 
-    if (accumulator.users.size === 0) {
+    if (!accumulatorHasRecords(accumulator)) {
       blockers.push("No matching repo-owned records exist yet.");
     }
 
@@ -540,9 +545,14 @@ export function buildXStocksReportingSnapshot({
   const confirmedRequestIds = new Set();
   const failedRequestIds = new Set();
   const overallUsers = new Set();
-  const overallConnectedWallets = new Set();
   const overallSmartWallets = new Set();
   const reconciliationLines = [];
+
+  funnelEvents.forEach((event) => {
+    if (event?.owner?.userId) {
+      overallUsers.add(event.owner.userId);
+    }
+  });
 
   activations.forEach((activation) => {
     const userId = getActivationUserId(activation);
@@ -551,10 +561,6 @@ export function buildXStocksReportingSnapshot({
 
     if (userId) {
       overallUsers.add(userId);
-    }
-
-    if (walletAddress) {
-      overallConnectedWallets.add(walletAddress);
     }
 
     if (smartWalletAddress) {
@@ -570,10 +576,6 @@ export function buildXStocksReportingSnapshot({
 
     if (userId) {
       overallUsers.add(userId);
-    }
-
-    if (walletAddress) {
-      overallConnectedWallets.add(walletAddress);
     }
 
     if (smartWalletAddress) {
@@ -691,22 +693,34 @@ export function buildXStocksReportingSnapshot({
     },
     truthBoundary: {
       durableUserIdentity:
-        "Distinct user truth begins only when an authenticated activation or execution request is saved.",
+        "Distinct user truth begins only when the repo verifies Privy-authenticated user ownership. Anonymous funnel subjects stay separate from authenticated users and wallets.",
       preActivationFunnelLedger:
-        "landing_viewed, onboarding_started, qualification_completed, portfolio_recommended, and activation_viewed are not durably captured yet.",
+        "landing_viewed, onboarding_started, qualification_completed, portfolio_recommended, and activation_viewed are now canonical first-party funnel-subject events owned by this repo.",
       activationViewLedger:
-        "The repo stores activation saves, not activation page views.",
+        "activation_viewed is captured from the activation surface only after the manifest resolves through repo-owned contracts.",
       walletConnectionCoverage:
-        "wallet_connected and funding_required are lower-bound activation-snapshot counts, not full connect-attempt truth.",
+        "wallet_connected is canonical from Privy-authenticated wallet events; funding_required remains lower-bound from saved activation snapshots only.",
       executionVolumeCoverage:
         "submitted_volume_usd and confirmed_volume_usd are canonical sums of stored execution legs only.",
       notes: [
-        "There is no anonymous or pre-activation durable identity ledger in this repo yet.",
+        "Anonymous funnel subjects are durable browser-scoped repo identifiers, not person identity claims.",
+        "The repo still does not prove continuity from an anonymous subject to a later authenticated activation unless that bridge was recorded in the same subject stream.",
         "Execution volume excludes preview, recommendation, wallet-connect-only, and quote-only activity.",
       ],
     },
     ladder,
     metrics: {
+      funnel: {
+        landingViewed: stageByName.get("landing_viewed")?.reached.subjects ?? 0,
+        onboardingStarted:
+          stageByName.get("onboarding_started")?.reached.subjects ?? 0,
+        qualificationCompleted:
+          stageByName.get("qualification_completed")?.reached.subjects ?? 0,
+        portfolioRecommended:
+          stageByName.get("portfolio_recommended")?.reached.subjects ?? 0,
+        activationViewed:
+          stageByName.get("activation_viewed")?.reached.subjects ?? 0,
+      },
       users: {
         authenticated: overallUsers.size,
         walletConnected: stageByName.get("wallet_connected")?.reached.users ?? 0,
@@ -719,7 +733,7 @@ export function buildXStocksReportingSnapshot({
         failed: stageByName.get("failed")?.reached.users ?? 0,
       },
       wallets: {
-        connected: overallConnectedWallets.size,
+        connected: stageByName.get("wallet_connected")?.reached.wallets ?? 0,
         smart: overallSmartWallets.size,
         quoteReady: stageByName.get("quote_ready")?.reached.wallets ?? 0,
         awaitingApproval:

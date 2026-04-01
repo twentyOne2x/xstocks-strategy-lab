@@ -2,6 +2,10 @@ import { randomUUID, timingSafeEqual } from "node:crypto";
 
 import { activityEventSchema } from "../../../../packages/shared/dist/contracts/activity.js";
 import {
+  xstocksFunnelEventIngestRequestSchema,
+  xstocksFunnelEventSchema,
+} from "../../../../packages/shared/dist/contracts/reporting.js";
+import {
   deriveRebalanceOrchestration,
   createActivationManifestRef,
   compileQuestionnaireQualification,
@@ -36,6 +40,7 @@ const OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "cow_swap";
 const YIELD_BUFFER_DEFERRED_WARNING =
   "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve.";
 const COW_ORDER_UID_PATTERN = /^0x([A-Fa-f0-9]{112})$/u;
+const XSTOCKS_FUNNEL_SUBJECT_PREFIX = "subj";
 const BLOCKED_REQUEST_FIELDS = [
   "activation_manifest",
   "strategy_candidate",
@@ -91,6 +96,16 @@ function normalizeOrderUid(value) {
 
   const normalized = value.trim();
   return COW_ORDER_UID_PATTERN.test(normalized) ? normalized : null;
+}
+
+function getOptionalSubjectId(payload = {}) {
+  const subjectId = firstDefined(payload.subjectId, payload.subject_id);
+
+  if (subjectId === undefined || subjectId === null || subjectId === "") {
+    return null;
+  }
+
+  return String(subjectId).trim();
 }
 
 function readOperatorTokenFromRequest(request) {
@@ -971,6 +986,71 @@ function findFundingStablecoin(deployment, symbol) {
   );
 }
 
+function resolveCowReceivingToken(deployment) {
+  if (!deployment) {
+    return {
+      address: null,
+      source: "missing",
+    };
+  }
+
+  if (deployment.wrapperAddress) {
+    return {
+      address: deployment.wrapperAddress,
+      source: "wrapperAddress",
+    };
+  }
+
+  if (deployment.address) {
+    return {
+      address: deployment.address,
+      source: "deployment.address",
+    };
+  }
+
+  return {
+    address: null,
+    source: "missing",
+  };
+}
+
+function formatUsdAmount(value) {
+  return Number(normalizeUsd(value, 0)).toFixed(2);
+}
+
+function buildCowQuoteAttemptContext({
+  leg,
+  signerAddress,
+  settlementAddress,
+}) {
+  return {
+    sellToken: leg.paymentTokenAddress,
+    buyToken: leg.receivingTokenAddress,
+    receiver: settlementAddress,
+    owner: signerAddress,
+    kind: "sell",
+    sellAmountBeforeFee: toAtomicAmount(
+      leg.targetNotionalUsd,
+      leg.paymentTokenDecimals ?? 6,
+    ),
+    targetNotionalUsd: Number(formatUsdAmount(leg.targetNotionalUsd)),
+  };
+}
+
+function buildCowQuoteFailureMessage({ leg, quoteAttempt, error }) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  return [
+    `CoW quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
+    `buyToken=${quoteAttempt.buyToken ?? "missing"}`,
+    `sellToken=${quoteAttempt.sellToken ?? "missing"}`,
+    `sellAmountBeforeFee=${quoteAttempt.sellAmountBeforeFee}`,
+    `targetNotionalUsd=${formatUsdAmount(leg.targetNotionalUsd)}`,
+    `receiver=${quoteAttempt.receiver ?? "missing"}`,
+    `reason=${errorMessage}`,
+  ].join(" ");
+}
+
 function stripExecutionQuoteBlockers(messages = []) {
   return messages.filter(
     (message) =>
@@ -1024,11 +1104,12 @@ function createExecutionLeg({
 
   const deployment = findEthereumDeployment(fetchedAsset);
   const fundingStablecoin = findFundingStablecoin(deployment, fundingAssetSymbol);
+  const receivingToken = resolveCowReceivingToken(deployment);
   const blockers = [];
 
-  if (!deployment?.address) {
+  if (!receivingToken.address) {
     blockers.push(
-      `Ethereum deployment is missing for ${allocation.assetSymbol}, so CoW quoting cannot proceed.`,
+      `Ethereum CoW buy-token metadata is missing for ${allocation.assetSymbol}; neither wrapperAddress nor deployment.address is available.`,
     );
   }
 
@@ -1072,14 +1153,17 @@ function createExecutionLeg({
     paymentAssetSymbol: fundingAssetSymbol,
     paymentTokenAddress: fundingStablecoin?.address ?? null,
     paymentTokenDecimals: fundingStablecoin?.decimals ?? null,
-    receivingTokenAddress: deployment?.address ?? null,
+    receivingTokenAddress: receivingToken.address,
     receivingTokenDecimals: null,
     settlementAddress,
     state: blockers.length > 0 ? "blocked" : "pending",
     blockers,
-    warnings: [
+    warnings: uniqueStrings([
       "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
-    ],
+      receivingToken.source === "wrapperAddress"
+        ? `${allocation.assetSymbol} will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.`
+        : null,
+    ]),
     quote: null,
     approval: null,
     venueStatus: null,
@@ -1466,6 +1550,124 @@ export function createApiService({
     return normalizedAnswers;
   }
 
+  function createFunnelSubjectId() {
+    return `${XSTOCKS_FUNNEL_SUBJECT_PREFIX}_${randomUUID()}`;
+  }
+
+  async function resolveFunnelSubject(
+    subjectId,
+    { allowCreate = false, required = false } = {},
+  ) {
+    if (!subjectId) {
+      if (allowCreate) {
+        return {
+          subjectId: createFunnelSubjectId(),
+          createdSubject: true,
+        };
+      }
+
+      if (required) {
+        throw new HttpError(
+          400,
+          "subjectId is required for this canonical funnel event.",
+        );
+      }
+
+      return {
+        subjectId: null,
+        createdSubject: false,
+      };
+    }
+
+    const exists = await runtimeStore.hasFunnelSubject(subjectId);
+
+    if (!exists) {
+      throw new HttpError(
+        409,
+        `Unknown funnel subject ${subjectId}. Restart from a repo-owned tracked surface before emitting follow-on events.`,
+      );
+    }
+
+    return {
+      subjectId,
+      createdSubject: false,
+    };
+  }
+
+  function buildFunnelEventDedupeKey({
+    stage,
+    subjectId,
+    manifestId = null,
+    recommendationId = null,
+    walletAddress = null,
+  }) {
+    if (stage === "portfolio_recommended") {
+      return [
+        stage,
+        subjectId,
+        manifestId ?? "none",
+        recommendationId ?? "none",
+      ].join(":");
+    }
+
+    if (stage === "activation_viewed") {
+      return [stage, subjectId, manifestId ?? "none"].join(":");
+    }
+
+    if (stage === "wallet_connected") {
+      return [stage, subjectId, walletAddress ?? "none"].join(":");
+    }
+
+    return [stage, subjectId].join(":");
+  }
+
+  function createFunnelEvent({
+    stage,
+    subjectId,
+    owner = null,
+    walletAddress = null,
+    manifest = null,
+    recommendationId = null,
+    source,
+    verificationMethod,
+  }) {
+    const normalizedWalletAddress = normalizeEthereumAddress(walletAddress);
+    const manifestId = manifest?.manifestId ?? null;
+    const slotId = manifest?.slotId ?? null;
+
+    return xstocksFunnelEventSchema.parse({
+      version: DEFAULT_RESPONSE_VERSION,
+      eventId: `funnel_evt_${randomUUID()}`,
+      stage,
+      occurredAt: now(),
+      subjectId,
+      owner,
+      walletAddress: normalizedWalletAddress,
+      manifestId,
+      slotId,
+      recommendationId: recommendationId ?? null,
+      source,
+      verificationMethod,
+      dedupeKey: buildFunnelEventDedupeKey({
+        stage,
+        subjectId,
+        manifestId,
+        recommendationId,
+        walletAddress: normalizedWalletAddress,
+      }),
+    });
+  }
+
+  async function persistFunnelEvents(events = []) {
+    if (!events.length) {
+      return [];
+    }
+
+    return runtimeStore.upsertFunnelEvents({
+      funnelEvents: events,
+    });
+  }
+
   async function loadLiveState(manifest) {
     return liveStateRepository.loadBoundaryState({ manifest });
   }
@@ -1838,6 +2040,90 @@ export function createApiService({
       };
     },
 
+    async ingestXStocksFunnelEvent(body = {}, { requestContext = null } = {}) {
+      let request;
+
+      try {
+        request = xstocksFunnelEventIngestRequestSchema.parse(body);
+      } catch (error) {
+        throw new HttpError(
+          400,
+          error instanceof Error ? error.message : "Invalid funnel event payload.",
+        );
+      }
+
+      const requestedSubjectId = getOptionalSubjectId(request);
+      const { subjectId, createdSubject } = await resolveFunnelSubject(
+        requestedSubjectId,
+        {
+          allowCreate: true,
+        },
+      );
+
+      let manifest = null;
+      let owner = null;
+      let walletAddress = null;
+      let verificationMethod = "web_subject_known";
+
+      if (request.stage === "landing_viewed") {
+        verificationMethod = createdSubject
+          ? "web_subject_bootstrap"
+          : "web_subject_known";
+      } else if (request.stage === "onboarding_started") {
+        verificationMethod = createdSubject
+          ? "web_subject_bootstrap"
+          : "web_subject_known";
+      } else if (request.stage === "activation_viewed") {
+        if (!request.manifestId && !request.slotId) {
+          throw new HttpError(
+            400,
+            "activation_viewed requires manifestId or slotId.",
+          );
+        }
+
+        manifest = await resolveManifest(request);
+        verificationMethod = "manifest_activation_route";
+      } else {
+        const authenticatedRequestContext =
+          requireAuthenticatedRequestContext(requestContext);
+        walletAddress =
+          authenticatedRequestContext.linkedWalletAddresses[0] ??
+          authenticatedRequestContext.linkedEmbeddedWalletAddresses[0] ??
+          null;
+
+        if (!walletAddress) {
+          throw new HttpError(
+            409,
+            "wallet_connected requires one verified linked wallet address.",
+          );
+        }
+
+        owner = authenticatedRequestContext.owner;
+        verificationMethod = "privy_wallet_auth";
+      }
+
+      const events = await persistFunnelEvents([
+        createFunnelEvent({
+          stage: request.stage,
+          subjectId,
+          owner,
+          walletAddress,
+          manifest,
+          source: "web",
+          verificationMethod,
+        }),
+      ]);
+
+      return parseApiResponse("xstocks_funnel_event_ingest", {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        request,
+        subjectId,
+        createdSubject,
+        events,
+      });
+    },
+
     async getRecommendation(query = {}) {
       assertNoRawCandidatePayload(query);
       const manifest = await resolveManifest(query);
@@ -1894,6 +2180,33 @@ export function createApiService({
         });
       } catch (error) {
         throw new HttpError(400, error.message);
+      }
+
+      const requestedSubjectId = getOptionalSubjectId(body);
+
+      if (requestedSubjectId) {
+        const { subjectId } = await resolveFunnelSubject(requestedSubjectId, {
+          required: true,
+        });
+
+        await persistFunnelEvents([
+          createFunnelEvent({
+            stage: "qualification_completed",
+            subjectId,
+            manifest,
+            recommendationId: qualification.recommendation.recommendationId,
+            source: "api",
+            verificationMethod: "questionnaire_qualification",
+          }),
+          createFunnelEvent({
+            stage: "portfolio_recommended",
+            subjectId,
+            manifest,
+            recommendationId: qualification.recommendation.recommendationId,
+            source: "api",
+            verificationMethod: "questionnaire_qualification",
+          }),
+        ]);
       }
 
       return parseApiResponse("qualification_read", {
@@ -2315,18 +2628,12 @@ export function createApiService({
 
         try {
           const signerAddress = resolveExecutionSignerAddress(activation.walletState);
-
-          const quote = await cowExecutionClient.requestQuote({
-            sellToken: leg.paymentTokenAddress,
-            buyToken: leg.receivingTokenAddress,
-            owner: signerAddress,
-            receiver: executionRequest.settlementAddress,
-            kind: "sell",
-            sellAmountBeforeFee: toAtomicAmount(
-              leg.targetNotionalUsd,
-              leg.paymentTokenDecimals ?? 6,
-            ),
+          const quoteAttempt = buildCowQuoteAttemptContext({
+            leg,
+            signerAddress,
+            settlementAddress: executionRequest.settlementAddress,
           });
+          const quote = await cowExecutionClient.requestQuote(quoteAttempt);
           const storedQuote = toStoredExecutionQuote(quote, now());
           const quotedLeg = {
             ...nextLegBase,
@@ -2342,6 +2649,7 @@ export function createApiService({
               updatedAt: now(),
               rawStatus: {
                 quoteId: storedQuote.quoteId,
+                ...quoteAttempt,
               },
             },
           };
@@ -2370,10 +2678,37 @@ export function createApiService({
             state: "blocked",
             blockers: uniqueStrings([
               ...nextLegBase.blockers,
-              `CoW quote request failed: ${
-                error instanceof Error ? error.message : String(error)
-              }`,
+              buildCowQuoteFailureMessage({
+                leg,
+                quoteAttempt: buildCowQuoteAttemptContext({
+                  leg,
+                  signerAddress: resolveExecutionSignerAddress(
+                    activation.walletState,
+                  ),
+                  settlementAddress: executionRequest.settlementAddress,
+                }),
+                error,
+              }),
             ]),
+            venueStatus: {
+              venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+              venueOrderId: null,
+              status: "quote_failed",
+              settlementTxHash: null,
+              lastCheckedAt: null,
+              updatedAt: now(),
+              rawStatus: {
+                ...buildCowQuoteAttemptContext({
+                  leg,
+                  signerAddress: resolveExecutionSignerAddress(
+                    activation.walletState,
+                  ),
+                  settlementAddress: executionRequest.settlementAddress,
+                }),
+                error:
+                  error instanceof Error ? error.message : String(error),
+              },
+            },
           };
           const persisted = await persistExecutionRequest({
             executionRequest: replaceExecutionLeg(nextRequestBase, blockedLeg),

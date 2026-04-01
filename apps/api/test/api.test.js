@@ -332,6 +332,11 @@ function createReportingHeaders(token = TEST_REPORTING_TOKEN) {
 
 function createStaticLiveStateRepository() {
   function createFetchedAsset(assetSymbol) {
+    const normalizedSymbol = Buffer.from(assetSymbol)
+      .toString("hex")
+      .padEnd(39, "0")
+      .slice(0, 39);
+
     return {
       assetSymbol,
       asset:
@@ -341,7 +346,8 @@ function createStaticLiveStateRepository() {
               deployments: [
                 {
                   network: "Ethereum",
-                  address: `0x${assetSymbol.toLowerCase().replace(/[^a-z0-9]/g, "").padEnd(40, "0").slice(0, 40)}`,
+                  address: `0x1${normalizedSymbol}`,
+                  wrapperAddress: `0x2${normalizedSymbol}`,
                   supportsAtomicSwaps: true,
                   stablecoins: [
                     {
@@ -1587,6 +1593,14 @@ test("authenticated CoW activation can reach quote readiness at a small requeste
     assert.equal(quoteResponse.status, 200);
     assert.equal(quotedLeg.state, "awaiting_approval");
     assert.equal(
+      quotedLeg.receivingTokenAddress,
+      quoteLeg.receivingTokenAddress,
+    );
+    assert.equal(
+      quotedLeg.quote.order.buyToken,
+      quoteLeg.receivingTokenAddress,
+    );
+    assert.equal(
       quotedLeg.quote.order.receiver,
       harness.auth.primary.walletAddress.toLowerCase(),
     );
@@ -1698,6 +1712,7 @@ test("execution quote, approval, submission, and receipt actions persist live Co
     assert.equal(quotedLeg.quote.kind, "cow_swap");
     assert.equal(quotedLeg.quote.quoteId, "1126290448");
     assert.equal(quotedLeg.quote.owner, harness.auth.primary.walletAddress.toLowerCase());
+    assert.equal(quotedLeg.quote.order.buyToken, quoteLeg.receivingTokenAddress);
     assert.equal(
       quotedLeg.quote.order.receiver,
       harness.auth.primary.smartWalletAddress.toLowerCase(),
@@ -1743,6 +1758,95 @@ test("execution quote, approval, submission, and receipt actions persist live Co
       ),
       true,
     );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("execution quote failures persist exact CoW request diagnostics instead of a generic blocker", async () => {
+  const harness = await startServer({
+    cowExecutionClient: {
+      async requestQuote() {
+        throw new Error(
+          'CoW quote request failed with status 404: {"errorType":"NoLiquidity","description":"no route found"}',
+        );
+      },
+      async submitOrder() {
+        return TEST_COW_ORDER_UID;
+      },
+      async getOrder() {
+        return null;
+      },
+    },
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 25,
+        walletState: {
+          walletConnected: true,
+          walletAddress: harness.auth.primary.walletAddress,
+          fundedNotionalUsd: 25,
+        },
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+      }),
+    });
+    const createPayload = await createResponse.json();
+    const quoteLeg = createPayload.data.executionRequest.legs.find(
+      (leg) => leg.state === "pending",
+    );
+
+    const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+      }),
+    });
+    const quotePayload = await quoteResponse.json();
+    const blockedLeg = quotePayload.data.executionRequest.legs.find(
+      (leg) => leg.legId === quoteLeg.legId,
+    );
+
+    assert.equal(quoteResponse.status, 200);
+    assert.equal(blockedLeg.state, "blocked");
+    assert.match(blockedLeg.blockers[0], /sellAmountBeforeFee=4500000/i);
+    assert.match(blockedLeg.blockers[0], /targetNotionalUsd=4\.50/i);
+    assert.match(blockedLeg.blockers[0], /NoLiquidity/i);
+    assert.equal(blockedLeg.venueStatus.status, "quote_failed");
+    assert.equal(
+      blockedLeg.venueStatus.rawStatus.buyToken,
+      quoteLeg.receivingTokenAddress,
+    );
+    assert.equal(
+      blockedLeg.venueStatus.rawStatus.sellAmountBeforeFee,
+      "4500000",
+    );
+    assert.match(blockedLeg.venueStatus.rawStatus.error, /NoLiquidity/i);
   } finally {
     await harness.close();
   }
@@ -2081,6 +2185,34 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
     return payload.data.executionRequest;
   }
 
+  async function ingestFunnelEvent(
+    body,
+    { user = "primary", authenticated = false } = {},
+  ) {
+    const response = await fetch(
+      `${harness.baseUrl}/api/funnel-events/xstocks`,
+      {
+        method: "POST",
+        headers: authenticated
+          ? {
+              "Content-Type": "application/json",
+              ...harness.auth.headers({
+                user,
+                includeIdentityToken: false,
+              }),
+            }
+          : {
+              "Content-Type": "application/json",
+            },
+        body: JSON.stringify(body),
+      },
+    );
+    const payload = await response.json();
+
+    assert.equal(response.status, 200);
+    return payload.data;
+  }
+
   async function quoteExecutionLeg(executionRequestId, legId, { user = "primary" } = {}) {
     const response = await fetch(`${harness.baseUrl}/api/executions`, {
       method: "POST",
@@ -2121,6 +2253,42 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
   }
 
   try {
+    const primaryLanding = await ingestFunnelEvent({
+      stage: "landing_viewed",
+    });
+    await ingestFunnelEvent({
+      stage: "onboarding_started",
+      subjectId: primaryLanding.subjectId,
+    });
+    await ingestFunnelEvent({
+      stage: "activation_viewed",
+      subjectId: primaryLanding.subjectId,
+      manifestId: DEFAULT_MANIFEST_ID,
+    });
+    await ingestFunnelEvent(
+      {
+        stage: "wallet_connected",
+        subjectId: primaryLanding.subjectId,
+      },
+      {
+        authenticated: true,
+      },
+    );
+
+    const otherLanding = await ingestFunnelEvent({
+      stage: "landing_viewed",
+    });
+    await ingestFunnelEvent(
+      {
+        stage: "wallet_connected",
+        subjectId: otherLanding.subjectId,
+      },
+      {
+        user: "other",
+        authenticated: true,
+      },
+    );
+
     const fundingRequiredActivation = await createActivation({
       walletState: {
         walletConnected: true,
@@ -2203,6 +2371,9 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
     assert.equal(reportResponse.status, 200);
     assert.equal(report.privacy.walletAddresses, "masked");
     assert.equal(report.privacy.rawUserIds, "hidden");
+    assert.equal(report.metrics.funnel.landingViewed, 2);
+    assert.equal(report.metrics.funnel.onboardingStarted, 1);
+    assert.equal(report.metrics.funnel.activationViewed, 1);
     assert.equal(report.metrics.users.authenticated, 2);
     assert.equal(report.metrics.wallets.connected, 2);
     assert.equal(report.metrics.wallets.smart, 2);
@@ -2218,15 +2389,19 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
     assert.equal(report.metrics.volumeUsd.confirmed, expectedConfirmedVolume);
     assert.equal(
       report.ladder.find((stage) => stage.stage === "landing_viewed").coverage,
-      "missing",
+      "canonical",
     );
     assert.equal(
       report.ladder.find((stage) => stage.stage === "wallet_connected").coverage,
-      "lower_bound",
+      "canonical",
     );
     assert.equal(
       report.ladder.find((stage) => stage.stage === "submitted").coverage,
       "canonical",
+    );
+    assert.equal(
+      report.ladder.find((stage) => stage.stage === "wallet_connected").reached.subjects,
+      2,
     );
     assert.equal(
       report.ladder.find((stage) => stage.stage === "quote_ready").reached.executionRequests,
@@ -2246,7 +2421,13 @@ test("xstocks reporting route returns masked truthful metrics reconciled to exec
     );
     assert.equal(
       report.blockers.some(
-        (blocker) => blocker.blockerId === "missing_pre_activation_funnel_ledger",
+        (blocker) => blocker.blockerId === "missing_partner_auth_model",
+      ),
+      true,
+    );
+    assert.equal(
+      report.blockers.some(
+        (blocker) => blocker.blockerId === "funding_required_lower_bound_only",
       ),
       true,
     );

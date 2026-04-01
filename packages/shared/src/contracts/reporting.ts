@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 import {
+  contractVersionSchema,
   nonEmptyStringSchema,
+  strategySlotIdSchema,
   timestampSchema,
 } from "./common.js";
+import { authenticatedOwnerSchema } from "./auth.js";
 import {
   executionLegStateSchema,
   executionRequestStateSchema,
@@ -28,6 +31,107 @@ export const xstocksReportingLadderStageSchema = z.enum(
 );
 export type XStocksReportingLadderStage = z.infer<
   typeof xstocksReportingLadderStageSchema
+>;
+
+export const XSTOCKS_FUNNEL_LEDGER_STAGE_VALUES = [
+  "landing_viewed",
+  "onboarding_started",
+  "qualification_completed",
+  "portfolio_recommended",
+  "activation_viewed",
+  "wallet_connected",
+] as const;
+export const xstocksFunnelLedgerStageSchema = z.enum(
+  XSTOCKS_FUNNEL_LEDGER_STAGE_VALUES,
+);
+export type XStocksFunnelLedgerStage = z.infer<
+  typeof xstocksFunnelLedgerStageSchema
+>;
+
+export const XSTOCKS_FUNNEL_INGEST_STAGE_VALUES = [
+  "landing_viewed",
+  "onboarding_started",
+  "activation_viewed",
+  "wallet_connected",
+] as const;
+export const xstocksFunnelIngestStageSchema = z.enum(
+  XSTOCKS_FUNNEL_INGEST_STAGE_VALUES,
+);
+export type XStocksFunnelIngestStage = z.infer<
+  typeof xstocksFunnelIngestStageSchema
+>;
+
+export const XSTOCKS_FUNNEL_EVENT_SOURCE_VALUES = ["web", "api"] as const;
+export const xstocksFunnelEventSourceSchema = z.enum(
+  XSTOCKS_FUNNEL_EVENT_SOURCE_VALUES,
+);
+export type XStocksFunnelEventSource = z.infer<
+  typeof xstocksFunnelEventSourceSchema
+>;
+
+export const XSTOCKS_FUNNEL_VERIFICATION_METHOD_VALUES = [
+  "web_subject_bootstrap",
+  "web_subject_known",
+  "questionnaire_qualification",
+  "manifest_activation_route",
+  "privy_wallet_auth",
+] as const;
+export const xstocksFunnelVerificationMethodSchema = z.enum(
+  XSTOCKS_FUNNEL_VERIFICATION_METHOD_VALUES,
+);
+export type XStocksFunnelVerificationMethod = z.infer<
+  typeof xstocksFunnelVerificationMethodSchema
+>;
+
+const ethereumAddressSchema = z
+  .string()
+  .trim()
+  .regex(/^0x([A-Fa-f0-9]{40})$/u);
+
+export const xstocksFunnelEventSchema = z.object({
+  version: contractVersionSchema,
+  eventId: nonEmptyStringSchema,
+  stage: xstocksFunnelLedgerStageSchema,
+  occurredAt: timestampSchema,
+  subjectId: nonEmptyStringSchema,
+  owner: authenticatedOwnerSchema.nullable(),
+  walletAddress: ethereumAddressSchema.nullable(),
+  manifestId: nonEmptyStringSchema.nullable(),
+  slotId: strategySlotIdSchema.nullable(),
+  recommendationId: nonEmptyStringSchema.nullable(),
+  source: xstocksFunnelEventSourceSchema,
+  verificationMethod: xstocksFunnelVerificationMethodSchema,
+  dedupeKey: nonEmptyStringSchema,
+});
+export type XStocksFunnelEvent = z.infer<typeof xstocksFunnelEventSchema>;
+
+const optionalSubjectIdSchema = nonEmptyStringSchema.optional();
+
+export const xstocksFunnelEventIngestRequestSchema = z.discriminatedUnion(
+  "stage",
+  [
+    z.object({
+      stage: z.literal("landing_viewed"),
+      subjectId: optionalSubjectIdSchema,
+    }),
+    z.object({
+      stage: z.literal("onboarding_started"),
+      subjectId: optionalSubjectIdSchema,
+    }),
+    z.object({
+      stage: z.literal("activation_viewed"),
+      subjectId: optionalSubjectIdSchema,
+      manifestId: nonEmptyStringSchema.optional(),
+      slotId: strategySlotIdSchema.optional(),
+    }),
+    z.object({
+      stage: z.literal("wallet_connected"),
+      subjectId: optionalSubjectIdSchema,
+    }),
+  ],
+);
+export type XStocksFunnelEventIngestRequest = z.infer<
+  typeof xstocksFunnelEventIngestRequestSchema
 >;
 
 export const XSTOCKS_REPORTING_COVERAGE_VALUES = [
@@ -57,6 +161,7 @@ export type XStocksReportingBlockerSeverity = z.infer<
 const nullableCountSchema = z.number().int().nonnegative().nullable();
 
 export const xstocksReportingStageCountsSchema = z.object({
+  subjects: nullableCountSchema,
   users: nullableCountSchema,
   wallets: nullableCountSchema,
   smartWallets: nullableCountSchema,
@@ -117,6 +222,13 @@ export type XStocksReportingTruthBoundary = z.infer<
 >;
 
 export const xstocksReportingMetricsSchema = z.object({
+  funnel: z.object({
+    landingViewed: z.number().int().nonnegative(),
+    onboardingStarted: z.number().int().nonnegative(),
+    qualificationCompleted: z.number().int().nonnegative(),
+    portfolioRecommended: z.number().int().nonnegative(),
+    activationViewed: z.number().int().nonnegative(),
+  }),
   users: z.object({
     authenticated: z.number().int().nonnegative(),
     walletConnected: z.number().int().nonnegative(),
