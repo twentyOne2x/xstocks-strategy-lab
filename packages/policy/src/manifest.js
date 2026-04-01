@@ -17,7 +17,10 @@ import {
   targetDirectionalExpressionSchema,
 } from "./shared-contracts.js";
 import { deriveCowExecutionSurfaceForManifest } from "../../research/src/cow-execution-truth.js";
-import { deriveCanonicalWalletRequirements } from "./wallet-requirements.js";
+import {
+  deriveCanonicalWalletRequirements,
+  usesCowEthereumBasketExecutionLane,
+} from "./wallet-requirements.js";
 
 const DEFAULT_TOP_UP_ASSET = "USDC";
 const DEFAULT_FUNDING_PROVIDER = "privy";
@@ -954,8 +957,17 @@ function buildNormalizedPromotedManifest(
     },
     normalizedManifest.frontend?.badges ?? [],
   );
+  const cowConstrainedManifest = {
+    ...normalizedManifest,
+    requiredRoutes: executionBoundary.requiredRoutes,
+    targetAllocations,
+  };
+  const shouldConstrainToCowSurface =
+    manifest.mode === "basket" &&
+    routeValidation &&
+    usesCowEthereumBasketExecutionLane(cowConstrainedManifest);
   const constrainedRouteValidation =
-    manifest.mode === "basket" && routeValidation
+    shouldConstrainToCowSurface
       ? {
           ...routeValidation,
           executionEligibility: cowExecutionSurface.executionEligibility,
@@ -974,13 +986,16 @@ function buildNormalizedPromotedManifest(
           validationBadges: cowExecutionSurface.frontendBadges,
         }
       : routeValidation;
+  const frontendBadges = shouldConstrainToCowSurface
+    ? cowExecutionSurface.frontendBadges
+    : normalizedManifest.frontend?.badges ?? [];
 
   return {
     ...normalizedManifest,
     promoted: true,
     frontend: {
       ...normalizedManifest.frontend,
-      badges: cowExecutionSurface.frontendBadges,
+      badges: frontendBadges,
     },
     executionBoundary,
     requiredAssets: executionBoundary.requiredAssets,

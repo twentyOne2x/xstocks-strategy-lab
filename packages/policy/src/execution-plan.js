@@ -20,6 +20,7 @@ import {
 } from "../../research/src/cow-execution-truth.js";
 import { deriveReadinessWalletRequirements } from "./readiness-policy.js";
 import { createSmartAccountProviderScaffold } from "./smart-account.js";
+import { usesCowEthereumBasketExecutionLane } from "./wallet-requirements.js";
 
 function createIndex(items, key) {
   return new Map((items ?? []).map((item) => [item[key], item]));
@@ -71,7 +72,11 @@ function applyRouteValidationConstraint(routeTruthLabel, manifestRouteTruthLabel
 
 function deriveAssetChecks(manifest, liveXStocksState) {
   const assetIndex = createIndex(liveXStocksState?.assets ?? [], "assetSymbol");
-  const cowQuoteabilityAssessment = getCowQuoteabilityAssessmentForManifest(manifest);
+  const cowQuoteabilityAssessment = usesCowEthereumBasketExecutionLane(manifest)
+    ? getCowQuoteabilityAssessmentForManifest(manifest)
+    : {
+        blockedCoreSymbols: [],
+      };
   const blockedCowSymbols = new Map(
     cowQuoteabilityAssessment.blockedCoreSymbols.map((symbol) => [
       symbol.symbol,
@@ -485,6 +490,33 @@ function buildSteps({
   normalizedWalletState,
   smartAccountInspection,
 }) {
+  const executionRouteId =
+    manifest.requiredRoutes.find((route) => route.routeKind === "execution")?.routeId ??
+    null;
+  const quoteStepTitle =
+    executionRouteId === "1inch.ethereum"
+      ? "Request 1inch quote"
+      : executionRouteId === "cow_swap.ethereum"
+        ? "Request CoW quote"
+        : "Request venue quote";
+  const approvalStepTitle =
+    executionRouteId === "1inch.ethereum"
+      ? "Approve 1inch order"
+      : executionRouteId === "cow_swap.ethereum"
+        ? "Approve CoW order"
+        : "Approve execution order";
+  const quoteStepDetail =
+    executionRouteId === "1inch.ethereum"
+      ? "All required rails, wallet, and funding checks are satisfied for 1inch quote preparation."
+      : executionRouteId === "cow_swap.ethereum"
+        ? "All required rails, wallet, and funding checks are satisfied for CoW quote preparation."
+        : "All required rails, wallet, and funding checks are satisfied for venue-routed quote preparation.";
+  const approvalStepDetail =
+    executionRouteId === "1inch.ethereum"
+      ? "The user must sign and approve the 1inch Fusion order before submission."
+      : executionRouteId === "cow_swap.ethereum"
+        ? "The user must sign and approve the CoW order before submission."
+        : "The user must sign and approve the selected venue order before submission.";
   const smartAccountStepComplete =
     smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.READY ||
     smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.NOT_REQUIRED;
@@ -546,20 +578,20 @@ function buildSteps({
     },
     {
       stepId: "request_cow_quote",
-      title: "Request CoW quote",
+      title: quoteStepTitle,
       status: execution_state === EXECUTION_STATE.READY ? "pending" : "blocked",
       detail:
         execution_state === EXECUTION_STATE.READY
-          ? "All required rails, wallet, and funding checks are satisfied for CoW quote preparation."
-          : "CoW quoting remains preview-only until every required rail and wallet check passes.",
+          ? quoteStepDetail
+          : "Live quote preparation remains preview-only until every required rail and wallet check passes.",
     },
     {
       stepId: "approve_cow_order",
-      title: "Approve CoW order",
+      title: approvalStepTitle,
       status: execution_state === EXECUTION_STATE.READY ? "pending" : "blocked",
       detail:
         execution_state === EXECUTION_STATE.READY
-          ? "The user must sign and approve the CoW order before submission."
+          ? approvalStepDetail
           : "Order approval remains blocked until the quote and readiness checks are satisfied.",
     },
   ];

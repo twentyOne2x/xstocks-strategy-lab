@@ -18,7 +18,7 @@
     "badges": [
       "validated_strategy",
       "promoted_manifest",
-      "preview_only"
+      "basket_live_ready"
     ]
   },
   "validation": {
@@ -94,8 +94,8 @@
   ],
   "requiredRoutes": [
     {
-      "routeId": "cow_swap.ethereum",
-      "label": "Cow Swap on Ethereum",
+      "routeId": "1inch.ethereum",
+      "label": "1inch on Ethereum",
       "routeKind": "execution",
       "requiredFor": "core_xstocks"
     },
@@ -108,10 +108,10 @@
   ],
   "required_routes": [
     {
-      "route_id": "cow_swap.ethereum",
+      "route_id": "1inch.ethereum",
       "route_kind": "execution",
       "required_for": "core_xstocks",
-      "label": "Cow Swap on Ethereum"
+      "label": "1inch on Ethereum"
     },
     {
       "route_id": "flowdesk.ausd-rwa-strategy",
@@ -122,16 +122,16 @@
   ],
   "walletRequirements": {
     "requiresWallet": true,
-    "requiresSmartAccount": true,
-    "minFundingUsd": 1000,
+    "requiresSmartAccount": false,
+    "minFundingUsd": 0,
     "preferredFundingProvider": "privy",
     "preferredBridgeProvider": "lifi",
     "topUpAsset": "USDC"
   },
   "wallet_requirements": {
     "requires_wallet": true,
-    "requires_smart_account": true,
-    "min_funding_usd": 1000,
+    "requires_smart_account": false,
+    "min_funding_usd": 0,
     "preferred_funding_provider": "privy",
     "preferred_bridge_provider": "lifi",
     "top_up_asset": "USDC"
@@ -194,10 +194,10 @@
     ],
     "required_routes": [
       {
-        "route_id": "cow_swap.ethereum",
+        "route_id": "1inch.ethereum",
         "route_kind": "execution",
         "required_for": "core_xstocks",
-        "label": "Cow Swap on Ethereum"
+        "label": "1inch on Ethereum"
       },
       {
         "route_id": "flowdesk.ausd-rwa-strategy",
@@ -247,8 +247,8 @@
     "target_directional_expressions": [],
     "wallet_requirements": {
       "requires_wallet": true,
-      "requires_smart_account": true,
-      "min_funding_usd": 1000,
+      "requires_smart_account": false,
+      "min_funding_usd": 0,
       "preferred_funding_provider": "privy",
       "preferred_bridge_provider": "lifi",
       "top_up_asset": "USDC"
@@ -290,8 +290,8 @@
     ],
     "requiredRoutes": [
       {
-        "routeId": "cow_swap.ethereum",
-        "label": "Cow Swap on Ethereum",
+        "routeId": "1inch.ethereum",
+        "label": "1inch on Ethereum",
         "routeKind": "execution",
         "requiredFor": "core_xstocks"
       },
@@ -304,8 +304,8 @@
     ],
     "walletRequirements": {
       "requiresWallet": true,
-      "requiresSmartAccount": true,
-      "minFundingUsd": 1000,
+      "requiresSmartAccount": false,
+      "minFundingUsd": 0,
       "preferredFundingProvider": "privy",
       "preferredBridgeProvider": "lifi",
       "topUpAsset": "USDC"
@@ -319,19 +319,19 @@
     ]
   },
   "routeValidation": {
-    "executionEligibility": "preview_only",
-    "surfaceTruth": "preview",
+    "executionEligibility": "executable",
+    "surfaceTruth": "live",
     "routeTruthLabels": [
       {
-        "routeId": "cow_swap.ethereum",
-        "label": "Cow Swap on Ethereum",
+        "routeId": "1inch.ethereum",
+        "label": "1inch on Ethereum",
         "routeKind": "execution",
         "chain": "ethereum",
         "verificationTier": "public_verified",
-        "truthLabel": "preview",
-        "availability": "preview_only",
+        "truthLabel": "live",
+        "availability": "available",
         "requiredFor": "core_xstocks",
-        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs MSFTx, AAPLx, METAx, AMZNx, GOOGLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+        "reason": "Authenticated 1inch Fusion quote proof now covers NVDAx, MSFTx, AAPLx, METAx, AMZNx, and GOOGLx for the promoted default basket at 20, 25, 50, and 100 USD gross."
       },
       {
         "routeId": "flowdesk.ausd-rwa-strategy",
@@ -346,29 +346,29 @@
       }
     ],
     "proofNotes": [
-      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, SPYx.",
-      "This basket still requires MSFTx, AAPLx, METAx, AMZNx, GOOGLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
+      "Authenticated 1inch Fusion quote proof on 2026-04-01 cleared NVDAx, MSFTx, AAPLx, METAx, AMZNx, and GOOGLx for the promoted default basket at 20, 25, 50, and 100 USD gross.",
+      "Saved activations can now truthfully reach ready/executable for the core xStocks sleeve through the venue-routed 1inch path, while the AUSD yield-buffer sleeve remains a verified route and an intentional manual follow-up in the first operator-manual lane."
     ],
     "validationBadges": [
       "validated_strategy",
       "promoted_manifest",
-      "preview_only"
+      "basket_live_ready"
     ]
   },
   "route_validation": {
-    "execution_eligibility": "preview_only",
-    "surface_truth": "preview",
+    "execution_eligibility": "executable",
+    "surface_truth": "live",
     "route_truth_labels": [
       {
-        "route_id": "cow_swap.ethereum",
-        "label": "Cow Swap on Ethereum",
+        "route_id": "1inch.ethereum",
+        "label": "1inch on Ethereum",
         "route_kind": "execution",
         "chain": "ethereum",
         "verification_tier": "public_verified",
-        "truth_label": "preview",
-        "availability": "preview_only",
+        "truth_label": "live",
+        "availability": "available",
         "required_for": "core_xstocks",
-        "reason": "Direct standalone USDC -> xStock CoW quotes on Ethereum currently clear only for NVDAx, TSLAx, SPYx; required core legs MSFTx, AAPLx, METAx, AMZNx, GOOGLx remain blocked (cow_no_liquidity), so this basket stays recommendation-only."
+        "reason": "Authenticated 1inch Fusion quote proof now covers NVDAx, MSFTx, AAPLx, METAx, AMZNx, and GOOGLx for the promoted default basket at 20, 25, 50, and 100 USD gross."
       },
       {
         "route_id": "flowdesk.ausd-rwa-strategy",
@@ -383,13 +383,13 @@
       }
     ],
     "proof_notes": [
-      "Direct standalone USDC -> xStock CoW quotes across the repo-owned Ethereum xStocks universe currently succeed only for NVDAx, TSLAx, SPYx.",
-      "This basket still requires MSFTx, AAPLx, METAx, AMZNx, GOOGLx, which remain blocked on current CoW venue truth (cow_no_liquidity), so activation stays preview-only until basket or venue truth changes."
+      "Authenticated 1inch Fusion quote proof on 2026-04-01 cleared NVDAx, MSFTx, AAPLx, METAx, AMZNx, and GOOGLx for the promoted default basket at 20, 25, 50, and 100 USD gross.",
+      "Saved activations can now truthfully reach ready/executable for the core xStocks sleeve through the venue-routed 1inch path, while the AUSD yield-buffer sleeve remains a verified route and an intentional manual follow-up in the first operator-manual lane."
     ],
     "validation_badges": [
       "validated_strategy",
       "promoted_manifest",
-      "preview_only"
+      "basket_live_ready"
     ]
   },
   "replay": {

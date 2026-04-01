@@ -1,15 +1,32 @@
 import { normalizeUsd } from "./contracts.js";
 
-export function usesCowEthereumBasketExecutionLane(manifest) {
-  const executionRoutes = (manifest?.requiredRoutes ?? []).filter(
+function getExecutionRoutes(manifest) {
+  return (manifest?.requiredRoutes ?? []).filter(
     (route) => route.routeKind === "execution",
   );
+}
+
+export function usesCowEthereumBasketExecutionLane(manifest) {
+  const executionRoutes = getExecutionRoutes(manifest);
 
   return (
     manifest?.mode === "basket" &&
     manifest?.chain === "ethereum" &&
     executionRoutes.length > 0 &&
     executionRoutes.every((route) => route.routeId === "cow_swap.ethereum")
+  );
+}
+
+export function usesLinkedWalletEthereumBasketExecutionLane(manifest) {
+  const executionRoutes = getExecutionRoutes(manifest);
+
+  return (
+    manifest?.mode === "basket" &&
+    manifest?.chain === "ethereum" &&
+    executionRoutes.length > 0 &&
+    executionRoutes.every((route) =>
+      ["cow_swap.ethereum", "1inch.ethereum"].includes(route.routeId),
+    )
   );
 }
 
@@ -28,7 +45,7 @@ export function deriveCanonicalWalletRequirements(
     topUpAsset: walletRequirements.topUpAsset ?? "USDC",
   };
 
-  if (!usesCowEthereumBasketExecutionLane(manifest)) {
+  if (!usesLinkedWalletEthereumBasketExecutionLane(manifest)) {
     return normalizedWalletRequirements;
   }
 

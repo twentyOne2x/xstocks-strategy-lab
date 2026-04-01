@@ -271,6 +271,8 @@ function buildWalletState({
 function summarizeLeg(leg) {
   return {
     legId: leg.legId,
+    assetSymbol: leg.assetSymbol ?? null,
+    sleeve: leg.sleeve,
     state: leg.state,
     quoteKind: leg.quote?.kind ?? null,
     quoteId: leg.quote?.quoteId ?? null,
@@ -296,12 +298,49 @@ function summarizeLeg(leg) {
   };
 }
 
-function selectActionableLeg(executionRequest) {
+function selectActionableLegs(executionRequest) {
+  return executionRequest.legs.filter((leg) => leg.state !== "deferred");
+}
+
+function summarizeExecutionRequest(executionRequest) {
+  const actionableLegs = selectActionableLegs(executionRequest);
+  const deferredLegs = executionRequest.legs.filter((leg) => leg.state === "deferred");
+
+  return {
+    state: executionRequest.state,
+    totalLegCount: executionRequest.legs.length,
+    actionableLegCount: actionableLegs.length,
+    deferredLegCount: deferredLegs.length,
+    legs: actionableLegs.map(summarizeLeg),
+    deferredLegs: deferredLegs.map(summarizeLeg),
+  };
+}
+
+function parseSignatureMap(rawValue) {
+  if (typeof rawValue !== "string" || rawValue.trim().length === 0) {
+    return new Map();
+  }
+
+  const parsed = JSON.parse(rawValue);
+
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error(
+      "XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON must be a JSON object keyed by legId or assetSymbol.",
+    );
+  }
+
+  return new Map(
+    Object.entries(parsed)
+      .filter(([, value]) => typeof value === "string" && value.trim().length > 0)
+      .map(([key, value]) => [key, value.trim()]),
+  );
+}
+
+function resolveSignatureForLeg(leg, signatureMap, fallbackSignature = null) {
   return (
-    executionRequest.legs.find((leg) => leg.state === "pending") ??
-    executionRequest.legs.find((leg) => leg.state === "awaiting_approval") ??
-    executionRequest.legs[0] ??
-    null
+    signatureMap.get(leg.legId) ??
+    (leg.assetSymbol ? signatureMap.get(leg.assetSymbol) : null) ??
+    fallbackSignature
   );
 }
 
@@ -317,7 +356,7 @@ const proofTimestamp = new Date().toISOString().replaceAll(":", "-");
 const proofDir = resolve(REPO_ROOT, "tmp/proof", `oneinch-fusion-${proofTimestamp}`);
 
 function resolveFailureStage(summary) {
-  if (summary.leg) {
+  if (summary.executionRequest) {
     return "submission_or_status";
   }
 
@@ -351,7 +390,8 @@ const summary = {
   blocker: null,
   activationId: null,
   executionRequestId: null,
-  leg: null,
+  executionRequest: null,
+  submissionResults: [],
 };
 
 try {
@@ -378,6 +418,9 @@ try {
     optionalEnv("XSTOCKS_ONEINCH_SIGNATURE") ??
     optionalEnv("XSTOCKS_ORDER_SIGNATURE") ??
     optionalEnv("XSTOCKS_COW_ORDER_SIGNATURE");
+  const signatureMap = parseSignatureMap(
+    optionalEnv("XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON"),
+  );
   const authHeaders = createAuthHeaders(accessToken, identityToken);
   const privyAuthService = createPrivyAuthService({
     appId,
@@ -451,76 +494,136 @@ try {
   });
   summary.executionRequestId = executionCreation.executionRequest.executionRequestId;
   summary.state = executionCreation.executionRequest.state;
+  summary.executionRequest = summarizeExecutionRequest(
+    executionCreation.executionRequest,
+  );
   await writeArtifact(proofDir, "execution-create.json", executionCreation);
 
-  const initialLeg = selectActionableLeg(executionCreation.executionRequest);
+  const actionableLegs = selectActionableLegs(executionCreation.executionRequest);
 
-  if (!initialLeg) {
-    throw new Error("Execution request did not produce an actionable leg to quote.");
+  if (actionableLegs.length === 0) {
+    throw new Error(
+      "Execution request did not produce any actionable legs to quote.",
+    );
   }
 
-  const quoteResult = await requestJson(baseUrl, "/api/executions", {
-    headers: authHeaders,
-    body: {
-      action: "quote_leg",
-      executionRequestId: executionCreation.executionRequest.executionRequestId,
-      legId: initialLeg.legId,
-    },
-  });
-  await writeArtifact(proofDir, "quote.json", quoteResult);
+  const quoteResults = [];
+  let latestExecutionRequest = executionCreation.executionRequest;
 
-  const quotedLeg =
-    quoteResult.executionRequest.legs.find((leg) => leg.legId === initialLeg.legId) ??
-    null;
-
-  if (!quotedLeg) {
-    throw new Error("Quoted execution leg could not be found after 1inch quoting.");
-  }
-
-  summary.state = quotedLeg.state;
-  summary.leg = summarizeLeg(quotedLeg);
-
-  if (!orderSignature) {
-    summary.blocker = {
-      code: "missing_user_signature",
-      stage: "awaiting_signature",
-      message:
-        "A signer-owned 1inch Fusion EIP-712 signature is still required before backend submission can be recorded.",
-      quoteId: quotedLeg.quote?.quoteId ?? null,
-      orderHash:
-        quotedLeg.approval?.orderToSign?.orderHash ??
-        quotedLeg.quote?.orderHash ??
-        null,
-    };
-  } else {
-    const submissionResult = await requestJson(baseUrl, "/api/executions", {
+  for (const leg of actionableLegs) {
+    const quoteResult = await requestJson(baseUrl, "/api/executions", {
       headers: authHeaders,
       body: {
-        action: "record_submission",
+        action: "quote_leg",
         executionRequestId: executionCreation.executionRequest.executionRequestId,
-        legId: initialLeg.legId,
-        signature: orderSignature,
+        legId: leg.legId,
       },
     });
-    await writeArtifact(proofDir, "submission.json", submissionResult);
 
-    const submittedLeg =
-      submissionResult.executionRequest.legs.find(
-        (leg) => leg.legId === initialLeg.legId,
+    const quotedLeg =
+      quoteResult.executionRequest.legs.find(
+        (nextLeg) => nextLeg.legId === leg.legId,
       ) ?? null;
 
-    if (!submittedLeg) {
+    if (!quotedLeg) {
       throw new Error(
-        "Submitted execution leg could not be found after 1inch submission.",
+        `Quoted execution leg ${leg.legId} could not be found after 1inch quoting.`,
       );
     }
 
-    summary.state = submittedLeg.state;
-    summary.leg = summarizeLeg(submittedLeg);
-    summary.activityEvents = submissionResult.activityEvents.map((event) => ({
-      eventType: event.eventType,
-      summary: event.summary,
+    quoteResults.push({
+      legId: leg.legId,
+      assetSymbol: leg.assetSymbol ?? null,
+      state: quotedLeg.state,
+      summary: summarizeLeg(quotedLeg),
+    });
+    latestExecutionRequest = quoteResult.executionRequest;
+  }
+  await writeArtifact(proofDir, "quotes.json", quoteResults);
+
+  summary.state = latestExecutionRequest.state;
+  summary.executionRequest = summarizeExecutionRequest(latestExecutionRequest);
+
+  const blockedLegs = summary.executionRequest.legs.filter(
+    (leg) => leg.state === "blocked" || (leg.blockers?.length ?? 0) > 0,
+  );
+  const quotedLegs = summary.executionRequest.legs.filter(
+    (leg) => leg.state === "awaiting_approval" || leg.state === "quote_ready",
+  );
+
+  if (blockedLegs.length > 0) {
+    summary.blocker = {
+      code: "basket_leg_blocked",
+      stage: "quote",
+      message:
+        "At least one actionable basket leg remained blocked after 1inch quote attempts.",
+      legs: blockedLegs,
+    };
+  } else if (quotedLegs.length === 0) {
+    summary.blocker = {
+      code: "no_quoteable_legs",
+      stage: "quote",
+      message:
+        "The basket did not produce any quoted 1inch legs after the authenticated multi-leg run.",
+    };
+  } else {
+    const signaturesByLeg = quotedLegs.map((leg) => ({
+      leg,
+      signature: resolveSignatureForLeg(
+        leg,
+        signatureMap,
+        quotedLegs.length === 1 ? orderSignature : null,
+      ),
     }));
+    const unsignedLegs = signaturesByLeg
+      .filter((entry) => !entry.signature)
+      .map((entry) => ({
+        legId: entry.leg.legId,
+        assetSymbol: entry.leg.assetSymbol,
+        quoteId: entry.leg.quoteId,
+        orderHash: entry.leg.orderHash,
+      }));
+
+    if (unsignedLegs.length > 0) {
+      summary.blocker = {
+        code: "missing_user_signature",
+        stage: "awaiting_signature",
+        message:
+          quotedLegs.length === 1
+            ? "A signer-owned 1inch Fusion EIP-712 signature is still required before backend submission can be recorded."
+            : `Signer-owned 1inch Fusion EIP-712 signatures are still required for ${unsignedLegs.length} quoted core legs before backend submission can be recorded.`,
+        legs: unsignedLegs,
+      };
+    } else {
+      let latestSubmissionRequest = latestExecutionRequest;
+
+      for (const { leg, signature } of signaturesByLeg) {
+        const submissionResult = await requestJson(baseUrl, "/api/executions", {
+          headers: authHeaders,
+          body: {
+            action: "record_submission",
+            executionRequestId: executionCreation.executionRequest.executionRequestId,
+            legId: leg.legId,
+            signature,
+          },
+        });
+
+        latestSubmissionRequest = submissionResult.executionRequest;
+        summary.submissionResults.push({
+          legId: leg.legId,
+          assetSymbol: leg.assetSymbol,
+          executionRequestState: submissionResult.executionRequest.state,
+          activityEvents: submissionResult.activityEvents.map((event) => ({
+            eventType: event.eventType,
+            summary: event.summary,
+          })),
+        });
+      }
+
+      summary.state = latestSubmissionRequest.state;
+      summary.executionRequest = summarizeExecutionRequest(latestSubmissionRequest);
+      await writeArtifact(proofDir, "submissions.json", summary.submissionResults);
+    }
   }
   await writeArtifact(proofDir, "summary.json", summary);
 

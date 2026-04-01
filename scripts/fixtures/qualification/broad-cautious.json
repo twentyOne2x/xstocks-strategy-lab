@@ -27,7 +27,7 @@
     "starterBasketId": "mag-7",
     "selectionType": "theme",
     "selectionKey": "mag-7",
-    "executionState": "blocked",
+    "executionState": "funding_required",
     "executionEligibility": "preview_only",
     "directionalPreviewOnly": false,
     "activationReady": false

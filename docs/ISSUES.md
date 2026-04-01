@@ -1,6 +1,6 @@
 # Issues
 
-Last updated: 2026-04-01
+Last updated: 2026-04-02
 
 ## 2026-04-01 Live Gap Canonical Owners
 
@@ -422,6 +422,41 @@ Last updated: 2026-04-01
   - [ ] fix applied
   - [ ] tests run
   - [ ] visual/screenshot verification not applicable unless a hosted auth/readiness mismatch is rediscovered
+
+### XSL-014B Venue-Routed Activation Readiness And Full-Basket Proof
+
+- Type: backend/integration/policy
+- Status: completed
+- Canonical owner lane: `XSL-014`
+- Date opened: 2026-04-02
+- Context: the current promoted `onboarding.default_basket` manifest now points to `basket-starter-h6-p100-c5-cap18-a0-r300-v1`, and the repo already owns venue-routed authenticated execution plus live 1inch quote proof for its required core names. However, the saved activation snapshot still freezes `executionState=blocked` / `executionEligibility=preview_only`, so authenticated 1inch proof stops before multi-leg quote or approval work can begin.
+- Suspected cause: activation readiness still derives from a CoW-only manifest truth surface. The promoted manifest still requires `cow_swap.ethereum`, `packages/policy/src/manifest.js` still constrains basket route validation back to CoW execution truth, and `packages/policy/src/execution-plan.js` still applies CoW-only asset quoteability warnings even though `apps/api` can already route authenticated execution to `1inch.ethereum`.
+- Fix intent: resolve the readiness mismatch above the landed venue-routed execution substrate, keep the current promoted default basket only if present 1inch truth supports it, and drive an authenticated multi-leg 1inch proof to the furthest truthful boundary without widening into `apps/web/**`, CRE/provider ingress, or unrelated docs cleanup.
+- Acceptance criteria:
+  1. The repo records exactly why the promoted default basket remains preview-only today.
+  2. If the current promoted basket is truthfully executable under venue-routed 1inch truth, the minimum manifest and policy surfaces are updated so saved activations can become `ready` / `executable`.
+  3. If the current promoted basket is not truthfully executable, the lane fails closed with the exact blocker and does not relabel the basket as executable.
+  4. The authenticated 1inch proof is rerun against the truthful target and captures multi-leg execution readiness, approval payloads, submission boundary, or one exact blocker.
+  5. Scope stays in `packages/policy/**`, `packages/research/manifests/**`, `apps/api/**`, and the narrow issue or plan docs only.
+- Complexity: medium
+- Plan: [2026-04-02-xstocks-default-basket-venue-routed-readiness.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-02-xstocks-default-basket-venue-routed-readiness.md)
+- Executor prompt:
+  - Audit the current promoted default-basket manifest, policy adaptation, readiness derivation, and 1inch proof artifacts to determine whether current promoted truth can move from CoW-only preview to venue-routed executable.
+  - Touch only `packages/policy/**`, `packages/research/manifests/**`, `apps/api/**`, and the narrow tracking docs needed for `XSL-014B`.
+  - Keep the current promoted basket if and only if live 1inch quote proof supports every required core leg; otherwise stop fail-closed and keep the basket preview-only.
+  - Re-run the authenticated 1inch proof with the truthful target and report the strongest exact claim plus the exact remaining blocker.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] proof artifacts captured
+- Resolution note:
+  - The promoted `c5` basket now truthfully adapts to `1inch.ethereum`, and saved activations for the promoted default basket can reach `surfaceTruth=live`, `executionState=ready`, and `executionEligibility=executable` when authenticated wallet readiness and requested notional are supplied.
+  - Strongest truthful claim: the current promoted `c5` basket is executable now under venue-routed 1inch truth through a multi-leg signer-owned quote and approval boundary for `NVDAx`, `MSFTx`, `AAPLx`, `METAx`, `AMZNx`, and `GOOGLx`.
+  - Exact remaining execution boundary: six quoted core legs now stop at `awaiting_approval`, and signer-owned 1inch Fusion EIP-712 signatures are still required before backend submission can be recorded.
+  - The `AUSD` yield-buffer leg remains intentionally deferred/manual and is not included in the signer-owned 1inch core execution claim.
+  - Proof artifact: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-01T23-02-30.237Z/summary.json)
 
 ### XSL-015 Partner Tracking And xStocks Reporting Dashboard
 

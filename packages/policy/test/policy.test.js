@@ -90,6 +90,15 @@ function createBoundaryState(manifest) {
           notes: "Verified Ethereum execution rail.",
         },
         {
+          routeId: "1inch.ethereum",
+          label: "1inch on Ethereum",
+          routeKind: "execution",
+          chain: "ethereum",
+          verificationTier: "public_verified",
+          availability: "available",
+          notes: "Verified Ethereum execution rail.",
+        },
+        {
           routeId: "flowdesk.ausd-rwa-strategy",
           label: "Flowdesk AUSD RWA Strategy",
           routeKind: "vault",
@@ -236,9 +245,9 @@ test("research-provided execution boundary keeps route truth but canonicalizes b
   assert.deepEqual(basketManifest.requiredRoutes, rawBasketManifest.executionBoundary.requiredRoutes);
   assert.equal(
     rawBasketManifest.executionBoundary.walletRequirements.requiresSmartAccount,
-    true,
+    false,
   );
-  assert.equal(rawBasketManifest.executionBoundary.walletRequirements.minFundingUsd, 1000);
+  assert.equal(rawBasketManifest.executionBoundary.walletRequirements.minFundingUsd, 0);
   assert.deepEqual(basketManifest.walletRequirements, {
     requiresWallet: true,
     requiresSmartAccount: false,
@@ -280,7 +289,7 @@ test("promoted manifests are required at the execution boundary", () => {
   );
 });
 
-test("verified rails with no wallet stay preview-only until wallet connection", () => {
+test("verified venue-routed rails stay preview-only until wallet connection", () => {
   const executionPlan = deriveExecutionPlan({
     activation_manifest: basketManifest,
     live_xstocks_state: basketBoundaryState.liveXStocksState,
@@ -290,11 +299,12 @@ test("verified rails with no wallet stay preview-only until wallet connection", 
   });
 
   assert.equal(executionPlan.surfaceTruth, "preview");
-  assert.equal(executionPlan.executionState, "blocked");
-  assert.equal(executionPlan.routeTruthLabels[0].truthState, "preview");
+  assert.equal(executionPlan.executionState, "wallet_required");
+  assert.equal(executionPlan.executionEligibility, "preview_only");
+  assert.equal(executionPlan.routeTruthLabels[0].truthState, "live");
 });
 
-test("current promoted basket stays preview-only after wallet connection because required CoW legs remain unquoteable", () => {
+test("current promoted c5 basket becomes ready after wallet connection and sufficient funding under venue-routed 1inch truth", () => {
   const executionPlan = deriveExecutionPlan({
     activation_manifest: basketManifest,
     live_xstocks_state: basketBoundaryState.liveXStocksState,
@@ -311,12 +321,15 @@ test("current promoted basket stays preview-only after wallet connection because
     },
   });
 
-  assert.equal(executionPlan.surfaceTruth, "preview");
-  assert.equal(executionPlan.executionState, "blocked");
-  assert.equal(executionPlan.executionEligibility, "preview_only");
+  assert.equal(executionPlan.surfaceTruth, "live");
+  assert.equal(executionPlan.executionState, "ready");
+  assert.equal(executionPlan.executionEligibility, "executable");
   assert.equal(executionPlan.blockers.length, 0);
-  assert.match(executionPlan.warnings.join(" "), /MSFTx/i);
-  assert.match(executionPlan.warnings.join(" "), /cow_no_liquidity/i);
+  assert.equal(executionPlan.warnings.length, 0);
+  assert.equal(
+    executionPlan.steps.find((step) => step.stepId === "request_cow_quote")?.title,
+    "Request 1inch quote",
+  );
 });
 
 test("synthetic quoteable basket becomes live after wallet connection and sufficient funding", () => {
@@ -955,12 +968,6 @@ for (const fixtureName of [
     });
     const manifest = await loadResearchManifest(fixture.expected.slotId);
     const boundaryState = createBoundaryState(manifest);
-    const expectedExecutionState =
-      fixture.expected.mode === "basket" ? "blocked" : fixture.expected.executionState;
-    const expectedActivationReady =
-      fixture.expected.mode === "basket" ? false : fixture.expected.activationReady;
-    const expectedExecutionEligibility =
-      fixture.expected.mode === "basket" ? "preview_only" : fixture.expected.executionEligibility;
     const qualification = deriveAgentQualification({
       onboarding_answers: normalizedAnswers,
       activation_manifest: manifest,
@@ -978,7 +985,7 @@ for (const fixtureName of [
     );
     assert.equal(
       qualification.activationTruth.executionState,
-      expectedExecutionState,
+      fixture.expected.executionState,
     );
     assert.equal(
       qualification.activationTruth.directionalPreviewOnly,
@@ -986,11 +993,11 @@ for (const fixtureName of [
     );
     assert.equal(
       qualification.activationTruth.activationReady,
-      expectedActivationReady,
+      fixture.expected.activationReady,
     );
     assert.equal(
       qualification.activationTruth.executionEligibility,
-      expectedExecutionEligibility,
+      fixture.expected.executionEligibility,
     );
     assert.equal(
       qualification.explanationSurface.surfaceId,

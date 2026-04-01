@@ -1,5 +1,5 @@
 import {
-  type Address,
+  Address,
   FusionSDK,
   type HttpProviderConnector,
   NetworkEnum,
@@ -337,7 +337,7 @@ export function createOneInchFusionApiClient(
             }
           : {}),
         ...(input.receiver
-          ? { receiver: input.receiver as unknown as Address }
+          ? { receiver: new Address(input.receiver) }
           : {}),
       })
       const orderHash = normalizeOrderHash(order.getOrderHash(networkId))

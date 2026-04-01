@@ -382,6 +382,40 @@ function createAutoresearchProofHeaders(
   };
 }
 
+function routeTruthToAvailability(routeTruth) {
+  switch (routeTruth) {
+    case "live":
+      return "available";
+    case "preview":
+    case "mentor_confirmed":
+    case "unverified":
+      return "preview_only";
+    case "blocked":
+    default:
+      return "missing";
+  }
+}
+
+function defaultRouteNotes(requiredRoute, manifest) {
+  if (requiredRoute.routeKind === "directional_market") {
+    return "Local API test harness keeps directional routes preview-only unless independent live proof exists.";
+  }
+
+  return `Local API test harness assumes ${requiredRoute.label ?? requiredRoute.routeId} is available for ${manifest.slotId}.`;
+}
+
+function defaultVerificationTier(requiredRoute) {
+  return requiredRoute.routeKind === "directional_market"
+    ? "unverified"
+    : "public_verified";
+}
+
+function defaultAvailability(requiredRoute) {
+  return requiredRoute.routeKind === "directional_market"
+    ? "preview_only"
+    : "available";
+}
+
 function createChainlinkCreEventBody(overrides = {}) {
   return {
     version: "1",
@@ -442,6 +476,13 @@ function createStaticLiveStateRepository() {
 
   return {
     async loadBoundaryState({ manifest }) {
+      const routeValidationIndex = new Map(
+        (manifest.routeValidation?.routeTruthLabels ?? []).map((routeTruth) => [
+          routeTruth.routeId,
+          routeTruth,
+        ]),
+      );
+
       return {
         liveXStocksState: {
           stateVersion: "api-test.xstocks.v1",
@@ -456,35 +497,26 @@ function createStaticLiveStateRepository() {
         liveRouteState: {
           stateVersion: "api-test.routes.v1",
           asOf: "2026-03-31T12:00:00.000Z",
-          routes: [
-            {
-              routeId: "cow_swap.ethereum",
-              label: "Cow Swap on Ethereum",
-              routeKind: "execution",
-              chain: "ethereum",
-              verificationTier: "public_verified",
-              availability: "available",
-              notes: "Verified Ethereum execution rail.",
-            },
-            {
-              routeId: "flowdesk.ausd-rwa-strategy",
-              label: "Flowdesk AUSD RWA Strategy",
-              routeKind: "yield_vault",
-              chain: "ethereum",
-              verificationTier: "public_verified",
-              availability: "available",
-              notes: "Verified AUSD yield-buffer sleeve.",
-            },
-            {
-              routeId: "euler.ethereum.directional",
-              label: "Euler Directional",
-              routeKind: "directional_market",
-              chain: "ethereum",
-              verificationTier: "unverified",
-              availability: "preview_only",
-              notes: "Directional lane remains preview-only until exact live proof exists.",
-            },
-          ],
+          routes: manifest.requiredRoutes.map((requiredRoute) => {
+            const routeTruth = routeValidationIndex.get(requiredRoute.routeId);
+
+            return {
+              routeId: requiredRoute.routeId,
+              label: requiredRoute.label ?? requiredRoute.routeId,
+              routeKind: requiredRoute.routeKind,
+              chain: manifest.chain,
+              verificationTier:
+                routeTruth?.verificationTier ??
+                defaultVerificationTier(requiredRoute),
+              availability:
+                routeTruth?.availability ??
+                (routeTruth
+                  ? routeTruthToAvailability(routeTruth.truthState)
+                  : defaultAvailability(requiredRoute)),
+              notes:
+                routeTruth?.reason ?? defaultRouteNotes(requiredRoute, manifest),
+            };
+          }),
         },
       };
     },
@@ -933,7 +965,7 @@ test("catalog read returns promoted-manifest-backed results from research", asyn
     assert.match(defaultItem.manifest.explanation.thesis, /xStocks basket|yield buffer/i);
     assert.ok(defaultItem.manifest.explanation.holdingRationales.length > 0);
     assert.ok(defaultItem.manifest.explanation.bundle.components.length > 0);
-    assert.equal(defaultItem.defaultRequestedNotionalUsd, 1000);
+    assert.equal(defaultItem.defaultRequestedNotionalUsd, 0);
     assert.equal(defaultItem.executionPreview.surfaceTruth, "preview");
     assert.ok(
       payload.data.items.every(
@@ -1052,6 +1084,38 @@ test("activation preview read stays fail-closed for preview-only directional man
   }
 });
 
+test("activation preview exports ready venue-routed truth for the current promoted c5 basket", async () => {
+  const harness = await startServer();
+
+  try {
+    const response = await fetch(
+      `${harness.baseUrl}/api/activation-preview?slotId=onboarding.default_basket&userNotionalUsd=25&walletConnected=true&walletAddress=${TEST_WALLET_ADDRESS}&fundedNotionalUsd=25`,
+    );
+    const payload = await response.json();
+    const smartWalletStep = payload.data.executionPlan.steps.find(
+      (step) => step.stepId === "prepare_smart_account",
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.data.manifest.walletRequirements.requiresSmartAccount, false);
+    assert.equal(payload.data.manifest.walletRequirements.minFundingUsd, 0);
+    assert.equal(payload.data.executionPlan.surfaceTruth, "live");
+    assert.equal(payload.data.executionPlan.executionState, "ready");
+    assert.equal(payload.data.executionPlan.executionEligibility, "executable");
+    assert.equal(payload.data.executionPlan.smartAccount.readiness, "not_required");
+    assert.equal(payload.data.executionPlan.fundingPath.minRequiredUsd, 25);
+    assert.equal(smartWalletStep?.title, "Smart wallet optional");
+    assert.match(smartWalletStep?.detail ?? "", /optional/i);
+    assert.equal(
+      payload.data.executionPlan.steps.find((step) => step.stepId === "request_cow_quote")
+        ?.title,
+      "Request 1inch quote",
+    );
+    assert.equal(payload.data.executionPlan.warnings.length, 0);
+  } finally {
+    await harness.close();
+  }
+});
 test("public agent handoff read returns a public-safe preview boundary", async () => {
   const harness = await startServer();
 
@@ -1097,7 +1161,7 @@ test("public agent handoff read returns a public-safe preview boundary", async (
   }
 });
 
-test("public agent handoff read can mark a lane ready for authenticated activation without exposing private details", async () => {
+test("public agent handoff read can mark the current promoted c5 basket ready for authenticated activation without exposing private details", async () => {
   const harness = await startServer();
 
   try {
@@ -1121,6 +1185,10 @@ test("public agent handoff read can mark a lane ready for authenticated activati
       "ready_for_authenticated_activation",
     );
     assert.equal(payload.data.handoff.directAuthenticatedBridgeExists, false);
+    assert.match(
+      payload.data.handoff.reason,
+      /truthful executable readiness snapshot/i,
+    );
     assert.match(
       payload.data.handoff.authenticatedBoundary,
       /Privy-authenticated user context|authenticated ownership/i,
@@ -1199,6 +1267,10 @@ test("activation save persists canonical activation and activity records", async
     assert.equal(activationResponse.status, 201);
     assert.equal(activationPayload.data.activation.status, "ready");
     assert.equal(activationPayload.data.activityEvents.length, 1);
+    assert.equal(
+      activationPayload.data.executionPlan.executionEligibility,
+      "executable",
+    );
 
     const activityResponse = await fetch(
       `${harness.baseUrl}/api/activity?activationId=${activationPayload.data.activation.activationId}`,

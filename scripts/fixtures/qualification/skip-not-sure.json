@@ -27,7 +27,7 @@
     "starterBasketId": "mag-7",
     "selectionType": "public_strategy",
     "selectionKey": "onboarding.default_basket",
-    "executionState": "blocked",
+    "executionState": "funding_required",
     "executionEligibility": "preview_only",
     "directionalPreviewOnly": false,
     "activationReady": false
