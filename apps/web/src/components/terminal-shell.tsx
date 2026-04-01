@@ -62,7 +62,7 @@ function RightRail({ chrome }: { chrome: TerminalChromeProps }) {
           </div>
           <div>
             <span>Rebalancing</span>
-            <strong>{describeRebalanceState(orchestration)} · Chainlink CRE</strong>
+            <strong>{describeRebalanceState(orchestration)} · user-approved review</strong>
           </div>
           <div>
             <span>Network</span>

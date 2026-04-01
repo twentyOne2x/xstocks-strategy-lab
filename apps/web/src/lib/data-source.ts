@@ -168,6 +168,10 @@ export function getSmartAccountPanelData(manifest: PromotedManifest): SmartAccou
   const maxLeverage = bundle.activationPayload.permissions.maxLeverage;
   const orchestration = manifest.preview?.rebalanceOrchestration ?? null;
   const automationLabel = describeRebalanceAutomationTruth(orchestration);
+  const buyingPower =
+    manifest.market_intelligence.walletState.fundingLabel === "No fixed minimum in policy"
+      ? "No fixed minimum"
+      : manifest.market_intelligence.walletState.fundingLabel;
 
   return {
     readinessLabel: "Preview — deposit opens activation",
@@ -178,7 +182,7 @@ export function getSmartAccountPanelData(manifest: PromotedManifest): SmartAccou
     addressLabel: "Provision on wallet link",
     ownerLabel: "Preview until deposit",
     fundingAsset: bundle.activationPayload.fundingAssetSymbol,
-    buyingPower: `$${bundle.activationPayload.fundingAmountUsd.toLocaleString()}`,
+    buyingPower,
     policyLabel: `${manifest.mode} preview with pause controls`,
     syncLabel: `Refreshed ${new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC`,
     automationLabel,
@@ -263,6 +267,7 @@ export async function getTerminalChromeAsync(
     enrichedManifest = attachPreviewTruthToManifest(enrichedManifest, {
       recommendation: workspace.workspace.recommendation,
       rebalanceOrchestration: workspace.workspace.rebalanceOrchestration,
+      executionPreview: workspace.workspace.executionPlanPreview,
     });
     manifestsForUi = allManifests.map((manifest) =>
       manifest.slot_id === enrichedManifest.slot_id ? enrichedManifest : manifest,

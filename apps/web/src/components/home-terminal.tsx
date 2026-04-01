@@ -15,16 +15,16 @@ function ChartIcon({ size = 32 }: { size?: number }) {
 
 const infraPartners = [
   { name: "xStocks", role: "Tokenized equities infrastructure", href: "https://xstocks.fi" },
-  { name: "Privy", role: "Smart wallets and auth by Privy", href: "https://privy.io" },
+  { name: "Privy", role: "Wallet connection and auth by Privy", href: "https://privy.io" },
   { name: "CoW Protocol", role: "Swaps powered by CoW Protocol", href: "https://cow.fi" },
-  { name: "Chainlink CRE", role: "Automated rebalancing rails", href: "https://chain.link" },
+  { name: "Chainlink CRE", role: "Deferred provider-trigger lane", href: "https://chain.link" },
 ];
 
 const faq = [
   { q: "What are tokenized equities?", a: "Real US stocks represented as tokens on Ethereum. Each xStocks token is backed 1:1 by the underlying equity." },
-  { q: "How much do I need to start?", a: "As little as $10 in USDC. No minimums, no lock-ups." },
-  { q: "Who holds my assets?", a: "You do. Assets stay in your Privy smart wallet. Equity Terminal never takes custody." },
-  { q: "How is the portfolio maintained?", a: "Chainlink CRE automation monitors the strategy and triggers rebalancing when needed, with execution routed through CoW Protocol while your assets stay in your wallet." },
+  { q: "How much do I need to start?", a: "Choose a USDC notional that fits you. The current Ethereum basket lane does not enforce a fixed platform minimum in policy." },
+  { q: "Who holds my assets?", a: "You do. Assets stay in the wallet you connect through Privy. Equity Terminal never takes custody." },
+  { q: "How is the portfolio maintained?", a: "The product can surface rebalance reviews, but every live execution step stays user-approved. Live CRE-triggered automation is not claimed here." },
   { q: "What if I want to stop?", a: "Pause or exit anytime. Your positions stay in your wallet." },
 ];
 
@@ -57,14 +57,14 @@ export function HomeTerminal() {
       <section className="landing-hero">
         <div className="landing-hero-inner">
           <h1 className="landing-h1">
-            xStocks portfolios you actually control.
+            Tokenized equities. Your wallet. Your rules.
           </h1>
           <p className="landing-hero-sub">
             Equity Terminal matches you to a portfolio of tokenized US equities
-            powered by xStocks. Smart wallets and auth run through Privy,
-            swaps execute through CoW Protocol, and Chainlink CRE keeps the
-            strategy automated. Preview every holding before you fund and get
-            started with as little as $10.
+            powered by xStocks. Privy handles auth and wallet connection,
+            CoW Protocol is the current Ethereum execution rail, and every live
+            step stays user-approved. Preview every holding before you connect
+            a wallet or fund USDC.
           </p>
           <div className="landing-hero-cta">
             <Link className="button button-primary button-xl" href="/onboarding">
@@ -79,7 +79,6 @@ export function HomeTerminal() {
         <div className="landing-infra-band-inner">
           <div className="landing-infra-label">
             <span className="landing-section-kicker">Built on top of</span>
-            <p>Every layer is an independent, verifiable system.</p>
           </div>
           <div className="landing-infra-cards">
             {infraPartners.map((p) => (
@@ -119,7 +118,7 @@ export function HomeTerminal() {
             <div className="landing-flow-step">
               <div className="landing-flow-num">4</div>
               <h3>Fund when ready</h3>
-              <p>Deposit USDC to activate. $10 minimum. Pause or exit whenever you want.</p>
+              <p>Connect a wallet and fund USDC when you are ready. The current basket lane does not enforce a fixed platform minimum in policy.</p>
             </div>
           </div>
         </div>
@@ -133,19 +132,19 @@ export function HomeTerminal() {
           <div className="landing-features">
             <div className="landing-feature">
               <strong>Full custody</strong>
-              <p>Your assets live in a Privy smart wallet that only you control. No seed phrase needed.</p>
+              <p>Your assets stay in the wallet you connect through Privy. Equity Terminal never takes custody.</p>
             </div>
             <div className="landing-feature">
               <strong>Total transparency</strong>
               <p>Every holding, every weight, every trade route — visible before and after you deposit.</p>
             </div>
             <div className="landing-feature">
-              <strong>Automated maintenance</strong>
-              <p>Chainlink CRE monitors the portfolio and keeps the strategy on rails as allocations drift over time.</p>
+              <strong>User-approved maintenance</strong>
+              <p>Rebalance reviews can be surfaced over time, but live execution still requires your approval and a real signed action.</p>
             </div>
             <div className="landing-feature">
-              <strong>$10 to start</strong>
-              <p>No minimums, no lock-ups, no hidden fees. Pause or exit anytime with your full balance.</p>
+              <strong>User-sized funding</strong>
+              <p>Choose the USDC notional that fits you. The current basket lane does not enforce a fixed platform minimum in policy.</p>
             </div>
           </div>
         </div>

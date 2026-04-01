@@ -136,7 +136,7 @@ const tourSteps = [
   { id: "holdings", label: "Holdings", caption: "The specific assets, weights, and venues in your portfolio", anchor: "pq-holdings" },
   { id: "intelligence", label: "Market signals", caption: "What is driving the portfolio right now and recent changes", anchor: "pq-rail" },
   { id: "activity", label: "Activity", caption: "Simulated positions and events — real after you deposit", anchor: "pq-activity-section" },
-  { id: "activate", label: "Deposit", caption: "Fund your wallet to activate — $10 minimum, pause anytime", anchor: "pq-deposit-cta" },
+  { id: "activate", label: "Deposit", caption: "Choose a USDC notional when you are ready, then fund your wallet to activate.", anchor: "pq-deposit-cta" },
 ];
 
 function buildChartPath(values: number[]) {
@@ -461,7 +461,7 @@ function SimulatedWorkspace({
         </div>
         <div className="pq-preview-bar-actions">
           <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`} id="pq-deposit-cta">
-            {directionalPreviewOnly ? "Review preview" : "Deposit $10+"}
+            {directionalPreviewOnly ? "Review preview" : "Open deposit preview"}
           </Link>
           <button className="button button-ghost button-sm" onClick={onReset} type="button">
             Change answers
@@ -504,7 +504,7 @@ function SimulatedWorkspace({
                 <h2>{recommendation.title}</h2>
               </div>
               <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`}>
-                {directionalPreviewOnly ? "Preview" : "Deposit $10+"}
+                {directionalPreviewOnly ? "Preview" : "Open deposit preview"}
               </Link>
             </div>
 
@@ -539,16 +539,16 @@ function SimulatedWorkspace({
               <div><span>Holdings</span><strong>{manifest.allocations.length}</strong></div>
               <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
               <div><span>Rebalance</span><strong>Scheduled</strong></div>
-              <div><span>Min deposit</span><strong>$10</strong></div>
+              <div><span>Funding</span><strong>User-chosen notional</strong></div>
             </div>
           </section>
 
           {/* How it works — concise */}
           <section className="panel-card pq-how">
             <div className="pq-how-row">
-              <div><span className="section-kicker">Rebalance</span><strong>Automated via Chainlink CRE</strong></div>
-              <div><span className="section-kicker">Custody</span><strong>Self-custody via Privy</strong></div>
-              <div><span className="section-kicker">Execution</span><strong>CoW Protocol</strong></div>
+              <div><span className="section-kicker">Rebalance</span><strong>User-approved review path</strong></div>
+              <div><span className="section-kicker">Custody</span><strong>Wallet linked via Privy</strong></div>
+              <div><span className="section-kicker">Execution</span><strong>CoW Protocol on Ethereum</strong></div>
             </div>
           </section>
         </div>

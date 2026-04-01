@@ -59,7 +59,7 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
             <ActivationStep
               step={2}
               title={`Fund with ${contracts.activationPayload.fundingAssetSymbol}`}
-              description={`Minimum $${contracts.activationPayload.fundingAmountUsd.toLocaleString("en-US")} via card, exchange, or wallet transfer.`}
+              description="Fund via card, exchange, or wallet transfer. The current basket lane follows the notional you choose and does not enforce a fixed platform minimum in policy."
               status={funnelState === "funding_required" ? "next" : "locked"}
             >
               {funnelState === "funding_required" && (
@@ -85,7 +85,7 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
           </div>
           <div>
             <span>Deposit asset</span>
-            <strong>{contracts.activationPayload.fundingAssetSymbol} · ${contracts.activationPayload.fundingAmountUsd.toLocaleString("en-US")}</strong>
+            <strong>{contracts.activationPayload.fundingAssetSymbol} · user-chosen notional</strong>
           </div>
           <div>
             <span>Reversible</span>

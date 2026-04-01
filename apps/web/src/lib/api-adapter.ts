@@ -24,6 +24,7 @@ import type {
   ApiBasketExplanationBundle,
   ApiBasketTuningSummary,
   ApiExecutionPlan,
+  ApiExecutionPreview,
   ApiLiveState,
   ApiManifestView,
   ApiPortfolioExplanationBundle,
@@ -283,15 +284,68 @@ export function attachPreviewTruthToManifest(
   options: {
     recommendation?: ApiRecommendation | null;
     rebalanceOrchestration?: ApiRebalanceOrchestration | null;
+    executionPreview?: ApiExecutionPreview | ApiExecutionPlan | null;
   },
 ): PromotedManifest {
   const preview = manifest.preview ?? {
     recommendationExplanationBundle: null,
     rebalanceOrchestration: null,
   };
+  const executionState = options.executionPreview?.executionState ?? null;
+  const readinessState =
+    executionState === "ready"
+      ? "activation_ready"
+      : executionState === "wallet_required"
+        ? "connect_required"
+        : executionState === "funding_required"
+          ? "funding_required"
+          : executionState === "smart_account_required" ||
+              executionState === "smart_account_pending"
+            ? "connect_required"
+            : executionState === "blocked"
+              ? "blocked"
+              : null;
+  const fundingLabel =
+    readinessState === "activation_ready"
+      ? "Requested notional looks funded"
+      : readinessState === "funding_required"
+        ? "Additional USDC funding required"
+        : manifest.market_intelligence.walletState.fundingLabel;
+  const accountLabel =
+    readinessState === "connect_required"
+      ? "Connect wallet to reveal deposit destination"
+      : readinessState === "activation_ready"
+        ? "Linked wallet path is ready"
+        : manifest.market_intelligence.walletState.accountLabel;
 
   return {
     ...manifest,
+    activation_template:
+      readinessState === null
+        ? manifest.activation_template
+        : {
+            ...manifest.activation_template,
+            required_state: readinessState,
+          },
+    market_intelligence:
+      readinessState === null
+        ? manifest.market_intelligence
+        : {
+            ...manifest.market_intelligence,
+            walletState: {
+              ...manifest.market_intelligence.walletState,
+              state: readinessState,
+              accountLabel,
+              fundingLabel,
+            },
+          },
+    live_state:
+      readinessState === null
+        ? manifest.live_state
+        : {
+            ...manifest.live_state,
+            state: readinessState,
+          },
     preview: {
       recommendationExplanationBundle: options.recommendation?.explanationBundle
         ? adaptExplanationBundle(options.recommendation.explanationBundle)
@@ -416,11 +470,11 @@ export function adaptManifestToFrontend(
       last_validated_at: manifest.validation.promotedAt,
     },
     activation_template: {
-      route_summary: `Fund ${manifest.activationTemplate.fundingAssetSymbol}, execute through verified routes on ${manifest.chain}.`,
+      route_summary: `Move ${manifest.activationTemplate.fundingAssetSymbol} from your own wallet, then execute through verified routes on ${manifest.chain}.`,
       allowed_actions: ["Connect wallet", "Fund wallet", "Activate strategy", "Pause strategy"],
       funding_options: [
         `${manifest.activationTemplate.fundingAssetSymbol} transfer`,
-        "Smart account balance",
+        "Privy-linked wallet balance",
       ],
       rails: execRoutes.map((r) => r.label),
       reversible: manifest.permissions.allowPause || manifest.permissions.allowTurnOff,
@@ -505,7 +559,7 @@ export function adaptManifestToFrontend(
         backupVenue,
         reserveWindow: manifest.walletRequirements.minFundingUsd > 0
           ? `Min $${manifest.walletRequirements.minFundingUsd} required`
-          : "No minimum",
+          : "No fixed minimum in policy",
         multiplierWindow: manifest.targetDirectionalExpression
           ? `${(manifest.targetDirectionalExpression.grossExposurePct / 100).toFixed(2)}x`
           : "1.00x spot",
@@ -514,10 +568,12 @@ export function adaptManifestToFrontend(
       },
       walletState: {
         state: userState,
-        accountLabel: manifest.walletRequirements.requiresWallet ? "Wallet required" : "No wallet connected",
+        accountLabel: manifest.walletRequirements.requiresWallet
+          ? "Wallet connection happens at activation"
+          : "No wallet required",
         fundingLabel: manifest.walletRequirements.minFundingUsd > 0
           ? `Min $${manifest.walletRequirements.minFundingUsd} to activate`
-          : "Preview mode",
+          : "No fixed minimum in policy",
         permissionSummary: "Permissions appear at activation.",
       },
       vaultState: {
