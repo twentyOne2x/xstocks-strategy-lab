@@ -526,13 +526,13 @@ export async function fetchCatalog(surface?: string): Promise<ApiCatalogData | n
   return apiFetch<ApiCatalogData>(`/api/catalog${qs}`);
 }
 
-export async function fetchWorkspace(slotId: string, notionalUsd = 2500): Promise<ApiWorkspaceData | null> {
+export async function fetchWorkspace(slotId: string, notionalUsd = 10): Promise<ApiWorkspaceData | null> {
   return apiFetch<ApiWorkspaceData>(
     `/api/workspace?slotId=${encodeURIComponent(slotId)}&userNotionalUsd=${notionalUsd}`,
   );
 }
 
-export async function fetchActivationPreview(slotId: string, notionalUsd = 2500): Promise<ApiActivationPreviewData | null> {
+export async function fetchActivationPreview(slotId: string, notionalUsd = 10): Promise<ApiActivationPreviewData | null> {
   return apiFetch<ApiActivationPreviewData>(
     `/api/activation-preview?slotId=${encodeURIComponent(slotId)}&userNotionalUsd=${notionalUsd}`,
   );
@@ -544,7 +544,7 @@ export async function fetchActivity(slotId: string): Promise<ApiActivityData | n
   );
 }
 
-export async function fetchRecommendation(slotId: string, notionalUsd = 2500): Promise<ApiRecommendation | null> {
+export async function fetchRecommendation(slotId: string, notionalUsd = 10): Promise<ApiRecommendation | null> {
   return apiFetch<ApiRecommendation>(
     `/api/recommendations?slotId=${encodeURIComponent(slotId)}&userNotionalUsd=${notionalUsd}`,
   );

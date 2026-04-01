@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type {
   OnboardingQuestion,
@@ -20,8 +20,10 @@ import {
   buildStrategyRecommendation,
   recommendStrategyFromAnswers,
 } from "@/lib/shared-contract-adapter";
+import { recordXStocksQualification } from "@/lib/funnel-tracking";
 
 import { OnboardingQuestionFlow } from "@/components/onboarding-question-flow";
+import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 
 export function OnboardingTerminalExperience({
   questions,
@@ -37,6 +39,7 @@ export function OnboardingTerminalExperience({
   const [apiPreviewError, setApiPreviewError] = useState<string | null>(null);
   const [apiPreviewLoading, setApiPreviewLoading] = useState(false);
   const [previewReloadKey, setPreviewReloadKey] = useState(0);
+  const qualificationTrackedRef = useRef<string | null>(null);
 
   const profile = buildOnboardingProfile(answers);
   const recommendation = buildStrategyRecommendation(profile);
@@ -106,6 +109,25 @@ export function OnboardingTerminalExperience({
     };
   }, [allPrimaryAnswered, previewReloadKey, recommendedManifest.slot_id]);
 
+  useEffect(() => {
+    if (!allPrimaryAnswered) {
+      return;
+    }
+
+    const answersSignature = JSON.stringify(answers);
+
+    if (qualificationTrackedRef.current === answersSignature) {
+      return;
+    }
+
+    qualificationTrackedRef.current = answersSignature;
+    void recordXStocksQualification({
+      questionAnswers: answers,
+    }).catch(() => {
+      qualificationTrackedRef.current = null;
+    });
+  }, [allPrimaryAnswered, answers]);
+
   function handleAnswer(questionId: string, optionId: string) {
     setAnswers((current) => ({ ...current, [questionId]: optionId }));
   }
@@ -126,6 +148,7 @@ export function OnboardingTerminalExperience({
   }
 
   function handleReset() {
+    qualificationTrackedRef.current = null;
     setAnswers({});
     setStarted(false);
   }
@@ -175,51 +198,57 @@ export function OnboardingTerminalExperience({
   // Question flow (full screen, no terminal shell)
   if (!allPrimaryAnswered) {
     return (
+      <>
+        <XStocksFunnelStageTracker stage="onboarding_started" />
+        <OnboardingQuestionFlow
+          answers={answers}
+          onAnswer={handleAnswer}
+          onBack={handleBack}
+          onReset={handleReset}
+          onFastPath={handleFastPath}
+          questions={questions}
+          profile={profile}
+          recommendation={recommendation}
+          allAnswered={false}
+          recommendedManifest={recommendedManifest}
+          recommendedStrategy={recommendedStrategy}
+          qualification={qualification}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <XStocksFunnelStageTracker stage="onboarding_started" />
       <OnboardingQuestionFlow
         answers={answers}
         onAnswer={handleAnswer}
         onBack={handleBack}
         onReset={handleReset}
-        onFastPath={handleFastPath}
         questions={questions}
         profile={profile}
         recommendation={recommendation}
-        allAnswered={false}
-        recommendedManifest={recommendedManifest}
+        allAnswered={true}
+        recommendedManifest={apiChrome?.selectedManifest ?? fallbackChrome.selectedManifest}
         recommendedStrategy={recommendedStrategy}
         qualification={qualification}
-      />
-    );
-  }
-
-  return (
-    <OnboardingQuestionFlow
-      answers={answers}
-      onAnswer={handleAnswer}
-      onBack={handleBack}
-      onReset={handleReset}
-      questions={questions}
-      profile={profile}
-      recommendation={recommendation}
-      allAnswered={true}
-      recommendedManifest={apiChrome?.selectedManifest ?? fallbackChrome.selectedManifest}
-      recommendedStrategy={recommendedStrategy}
-      qualification={qualification}
-      blotter={apiChrome?.blotter ?? fallbackChrome.blotter}
-      previewStatus={
-        apiPreviewError
-          ? {
-              tone: "error",
-              message: `${apiPreviewError} Showing the local preview for now.`,
-              onRetry: () => setPreviewReloadKey((current) => current + 1),
-            }
-          : apiPreviewLoading || !apiChrome
+        blotter={apiChrome?.blotter ?? fallbackChrome.blotter}
+        previewStatus={
+          apiPreviewError
             ? {
-                tone: "loading",
-                message: "Loading live holdings and activity in the background.",
+                tone: "error",
+                message: `${apiPreviewError} Showing the local preview for now.`,
+                onRetry: () => setPreviewReloadKey((current) => current + 1),
               }
-            : null
-      }
-    />
+            : apiPreviewLoading || !apiChrome
+              ? {
+                  tone: "loading",
+                  message: "Loading live holdings and activity in the background.",
+                }
+              : null
+        }
+      />
+    </>
   );
 }

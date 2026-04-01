@@ -10,6 +10,7 @@ import {
 import { buildManifestContractBundle } from "@/lib/shared-contract-adapter";
 
 import { WalletConnectButton, useWalletState } from "@/components/wallet-connect-button";
+import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 
 export function ActivationScreen({ manifest }: ActivationScreenProps) {
   const contracts = buildManifestContractBundle(manifest);
@@ -24,6 +25,11 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
 
   return (
     <div className="screen-stack">
+      <XStocksFunnelStageTracker
+        stage="activation_viewed"
+        manifestId={manifest.manifest_id}
+        slotId={manifest.slot_id}
+      />
       <article className="activation-primary-card">
         <div className="panel-heading">
           <span className="section-kicker">
