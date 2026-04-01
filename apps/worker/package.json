@@ -1,0 +1,13 @@
+{
+  "name": "@xstocks/worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit:basket": "node ./src/audit-basket-surface.js",
+    "build": "node ./src/check.js",
+    "lint": "node ./src/check.js",
+    "test": "node --test ./src/__tests__/*.test.js",
+    "check": "node ./src/check.js && node --test ./src/__tests__/*.test.js",
+    "wave:basket": "node ./src/run-basket-research-wave.js"
+  }
+}

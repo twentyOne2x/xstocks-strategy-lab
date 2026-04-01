@@ -1,0 +1,198 @@
+{
+  "prices_version": "prices.monthly.2025_full_year_stress_v2",
+  "frequency": "monthly",
+  "points": [
+    {
+      "date": "2025-01-31",
+      "prices": {
+        "AAPLx": 100,
+        "AMZNx": 100,
+        "GOOGLx": 100,
+        "METAx": 100,
+        "MSFTx": 100,
+        "NVDAx": 100,
+        "TSLAx": 100,
+        "AMDx": 100,
+        "AVGOx": 100,
+        "ORCLx": 100,
+        "SPYx": 100
+      }
+    },
+    {
+      "date": "2025-02-28",
+      "prices": {
+        "AAPLx": 102,
+        "AMZNx": 103,
+        "GOOGLx": 101,
+        "METAx": 104,
+        "MSFTx": 102,
+        "NVDAx": 108,
+        "TSLAx": 98,
+        "AMDx": 107,
+        "AVGOx": 105,
+        "ORCLx": 101,
+        "SPYx": 101
+      }
+    },
+    {
+      "date": "2025-03-31",
+      "prices": {
+        "AAPLx": 105,
+        "AMZNx": 106,
+        "GOOGLx": 103,
+        "METAx": 107,
+        "MSFTx": 105,
+        "NVDAx": 115,
+        "TSLAx": 96,
+        "AMDx": 112,
+        "AVGOx": 110,
+        "ORCLx": 103,
+        "SPYx": 103
+      }
+    },
+    {
+      "date": "2025-04-30",
+      "prices": {
+        "AAPLx": 107,
+        "AMZNx": 109,
+        "GOOGLx": 104,
+        "METAx": 110,
+        "MSFTx": 107,
+        "NVDAx": 122,
+        "TSLAx": 99,
+        "AMDx": 117,
+        "AVGOx": 114,
+        "ORCLx": 105,
+        "SPYx": 104
+      }
+    },
+    {
+      "date": "2025-05-31",
+      "prices": {
+        "AAPLx": 110,
+        "AMZNx": 111,
+        "GOOGLx": 106,
+        "METAx": 112,
+        "MSFTx": 109,
+        "NVDAx": 128,
+        "TSLAx": 101,
+        "AMDx": 119,
+        "AVGOx": 116,
+        "ORCLx": 107,
+        "SPYx": 106
+      }
+    },
+    {
+      "date": "2025-06-30",
+      "prices": {
+        "AAPLx": 112,
+        "AMZNx": 114,
+        "GOOGLx": 108,
+        "METAx": 115,
+        "MSFTx": 111,
+        "NVDAx": 135,
+        "TSLAx": 103,
+        "AMDx": 121,
+        "AVGOx": 118,
+        "ORCLx": 110,
+        "SPYx": 108
+      }
+    },
+    {
+      "date": "2025-07-31",
+      "prices": {
+        "AAPLx": 110,
+        "AMZNx": 112,
+        "GOOGLx": 106,
+        "METAx": 111,
+        "MSFTx": 109,
+        "NVDAx": 120,
+        "TSLAx": 95,
+        "AMDx": 108,
+        "AVGOx": 108,
+        "ORCLx": 107,
+        "SPYx": 105
+      }
+    },
+    {
+      "date": "2025-08-31",
+      "prices": {
+        "AAPLx": 108,
+        "AMZNx": 109,
+        "GOOGLx": 103,
+        "METAx": 107,
+        "MSFTx": 106,
+        "NVDAx": 108,
+        "TSLAx": 88,
+        "AMDx": 96,
+        "AVGOx": 100,
+        "ORCLx": 105,
+        "SPYx": 101
+      }
+    },
+    {
+      "date": "2025-09-30",
+      "prices": {
+        "AAPLx": 113,
+        "AMZNx": 111,
+        "GOOGLx": 105,
+        "METAx": 110,
+        "MSFTx": 112,
+        "NVDAx": 116,
+        "TSLAx": 92,
+        "AMDx": 102,
+        "AVGOx": 106,
+        "ORCLx": 107,
+        "SPYx": 104
+      }
+    },
+    {
+      "date": "2025-10-31",
+      "prices": {
+        "AAPLx": 116,
+        "AMZNx": 115,
+        "GOOGLx": 108,
+        "METAx": 114,
+        "MSFTx": 117,
+        "NVDAx": 129,
+        "TSLAx": 97,
+        "AMDx": 115,
+        "AVGOx": 117,
+        "ORCLx": 110,
+        "SPYx": 108
+      }
+    },
+    {
+      "date": "2025-11-30",
+      "prices": {
+        "AAPLx": 119,
+        "AMZNx": 119,
+        "GOOGLx": 111,
+        "METAx": 117,
+        "MSFTx": 121,
+        "NVDAx": 142,
+        "TSLAx": 101,
+        "AMDx": 126,
+        "AVGOx": 124,
+        "ORCLx": 113,
+        "SPYx": 111
+      }
+    },
+    {
+      "date": "2025-12-31",
+      "prices": {
+        "AAPLx": 121,
+        "AMZNx": 120,
+        "GOOGLx": 112,
+        "METAx": 118,
+        "MSFTx": 124,
+        "NVDAx": 136,
+        "TSLAx": 97,
+        "AMDx": 118,
+        "AVGOx": 120,
+        "ORCLx": 115,
+        "SPYx": 112
+      }
+    }
+  ]
+}

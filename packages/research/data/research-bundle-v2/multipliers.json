@@ -1,0 +1,8 @@
+{
+  "multipliers_version": "multipliers_v1",
+  "defaults": {
+    "mode": "total_return_multiplier",
+    "value": 1
+  },
+  "overrides": []
+}

@@ -1,0 +1,407 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Chain {
+  ETHEREUM @map("ethereum")
+}
+
+enum StrategyMode {
+  BASKET      @map("basket")
+  DIRECTIONAL @map("directional")
+}
+
+enum OnboardingModePreference {
+  BASKET         @map("basket")
+  DIRECTIONAL    @map("directional")
+  NOT_SURE_YET   @map("not_sure_yet")
+}
+
+enum DiscoveryScopeType {
+  THEME           @map("theme")
+  HERO_ASSET      @map("hero_asset")
+  PUBLIC_STRATEGY @map("public_strategy")
+}
+
+enum StrategySlotId {
+  ONBOARDING_DEFAULT_BASKET   @map("onboarding.default_basket")
+  ONBOARDING_ALT_BASKET_1     @map("onboarding.alt_basket_1")
+  ONBOARDING_ALT_BASKET_2     @map("onboarding.alt_basket_2")
+  ADVANCED_DEFAULT_DIRECTIONAL @map("advanced.default_directional")
+}
+
+enum GuestSessionStatus {
+  ACTIVE    @map("active")
+  EXPIRED   @map("expired")
+  CONVERTED @map("converted")
+}
+
+enum StarterBasketStatus {
+  ACTIVE   @map("active")
+  ARCHIVED @map("archived")
+}
+
+enum ResearchRunStatus {
+  PENDING   @map("pending")
+  RUNNING   @map("running")
+  COMPLETED @map("completed")
+  FAILED    @map("failed")
+  CANCELED  @map("canceled")
+}
+
+enum CandidateResultStatus {
+  CANDIDATE @map("candidate")
+  REJECTED  @map("rejected")
+  PROMOTED  @map("promoted")
+  INVALID   @map("invalid")
+}
+
+enum RecommendationState {
+  CURRENT_PORTFOLIO_ONLY @map("current_portfolio_only")
+  RECOMMENDATION_READY   @map("recommendation_ready")
+  REBALANCE_RECOMMENDED  @map("rebalance_recommended")
+  REBALANCE_DEFERRED     @map("rebalance_deferred")
+  REBALANCED             @map("rebalanced")
+  BLOCKED                @map("blocked")
+}
+
+enum RailTruthState {
+  LIVE             @map("live")
+  PREVIEW          @map("preview")
+  BLOCKED          @map("blocked")
+  MENTOR_CONFIRMED @map("mentor_confirmed")
+  UNVERIFIED       @map("unverified")
+}
+
+enum SmartAccountStatus {
+  PENDING  @map("pending")
+  READY    @map("ready")
+  PAUSED   @map("paused")
+  DISABLED @map("disabled")
+}
+
+enum ActivationStatus {
+  PREVIEW   @map("preview")
+  READY     @map("ready")
+  SUBMITTED @map("submitted")
+  ACTIVE    @map("active")
+  PAUSED    @map("paused")
+  FAILED    @map("failed")
+  CANCELED  @map("canceled")
+}
+
+enum ActivityScopeType {
+  GUEST_SESSION      @map("guest_session")
+  USER               @map("user")
+  SMART_ACCOUNT      @map("smart_account")
+  ACTIVATION         @map("activation")
+  RECOMMENDATION     @map("recommendation")
+  DIRECTIONAL_PREVIEW @map("directional_preview")
+}
+
+model GuestSession {
+  id                    String                   @id @default(cuid())
+  sessionToken          String                   @unique
+  status                GuestSessionStatus       @default(ACTIVE)
+  preferredChain        Chain                    @default(ETHEREUM)
+  modePreference        OnboardingModePreference?
+  selectedScopeType     DiscoveryScopeType?
+  selectedScopeKey      String?
+  selectedSlotId        StrategySlotId?
+  selectedStarterBasketId String?
+  onboardingAnswersJson Json?
+  userProfileJson       Json?
+  lastViewedComparisonKey String?
+  expiresAt             DateTime
+  linkedUserId          String?
+  lastRecommendationId  String?
+  lastDirectionalPreviewId String?
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+
+  linkedUser            User?                    @relation("GuestSessionUser", fields: [linkedUserId], references: [id], onDelete: SetNull)
+  recommendations       Recommendation[]         @relation("GuestSessionRecommendations")
+  lastRecommendation    Recommendation?          @relation("GuestSessionLastRecommendation", fields: [lastRecommendationId], references: [id], onDelete: SetNull)
+  directionalPreviews   DirectionalPreview[]     @relation("GuestSessionDirectionalPreviews")
+  lastDirectionalPreview DirectionalPreview?     @relation("GuestSessionLastDirectionalPreview", fields: [lastDirectionalPreviewId], references: [id], onDelete: SetNull)
+  activityEvents        ActivityEvent[]          @relation("GuestSessionActivityEvents")
+
+  @@index([expiresAt])
+  @@index([linkedUserId])
+  @@map("guest_sessions")
+}
+
+model User {
+  id                   String               @id @default(cuid())
+  primaryWalletAddress String?              @unique
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  guestSessions        GuestSession[]       @relation("GuestSessionUser")
+  profile              Profile?
+  recommendations      Recommendation[]     @relation("UserRecommendations")
+  directionalPreviews  DirectionalPreview[] @relation("UserDirectionalPreviews")
+  smartAccounts        SmartAccount[]
+  activations          Activation[]
+  activityEvents       ActivityEvent[]      @relation("UserActivityEvents")
+
+  @@map("users")
+}
+
+model Profile {
+  id                 String                    @id @default(cuid())
+  userId             String                    @unique
+  preferredChain     Chain                     @default(ETHEREUM)
+  modePreference     OnboardingModePreference
+  selectedScopeType  DiscoveryScopeType
+  selectedScopeKey   String
+  activeSlotId       StrategySlotId
+  starterBasketId    String?
+  directionalAllowed Boolean                   @default(false)
+  yieldBufferAllowed Boolean                   @default(true)
+  onboardingAnswersJson Json?
+  profileJson        Json
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+
+  user               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([activeSlotId])
+  @@map("profiles")
+}
+
+model StarterBasket {
+  id              String              @id @default(cuid())
+  basketId        String              @unique
+  title           String
+  chain           Chain               @default(ETHEREUM)
+  defaultSlotId   StrategySlotId?
+  status          StarterBasketStatus @default(ACTIVE)
+  basketJson      Json
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  recommendations Recommendation[]
+
+  @@unique([defaultSlotId])
+  @@index([status])
+  @@map("starter_baskets")
+}
+
+model ResearchRun {
+  id                String              @id @default(cuid())
+  runId             String              @unique
+  stage             String
+  mode              StrategyMode
+  slotId            StrategySlotId
+  objectiveId       String
+  status            ResearchRunStatus   @default(PENDING)
+  manualVersion     String
+  evaluatorVersion  String
+  researchDatasetId String
+  validationSetId   String
+  universeId        String
+  chain             Chain               @default(ETHEREUM)
+  liveTruthSourceId String
+  startedAt         DateTime            @default(now())
+  completedAt       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  candidateResults  CandidateResult[]
+
+  @@index([mode, slotId, status])
+  @@index([startedAt])
+  @@map("research_runs")
+}
+
+model CandidateResult {
+  id                     String                @id @default(cuid())
+  researchRunId          String
+  slotId                 StrategySlotId
+  mode                   StrategyMode
+  candidateRef           String
+  status                 CandidateResultStatus @default(CANDIDATE)
+  incumbentRunId         String?
+  manifestId             String?
+  manifestStrategyVersion String?
+  activationManifestRefJson Json?
+  guardrailPass          Boolean
+  primaryScore           Float?
+  incumbentScore         Float?
+  deltaScore             Float?
+  resultRowJson          Json
+  activationManifestJson Json?
+  promotedAt             DateTime?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+
+  researchRun            ResearchRun           @relation(fields: [researchRunId], references: [id], onDelete: Cascade)
+  recommendations        Recommendation[]
+  directionalPreviews    DirectionalPreview[]
+
+  @@index([researchRunId])
+  @@index([slotId, mode, status])
+  @@index([manifestId])
+  @@map("candidate_results")
+}
+
+model Recommendation {
+  id                     String               @id @default(cuid())
+  guestSessionId         String?
+  userId                 String?
+  starterBasketId        String?
+  candidateResultId      String?
+  sourceResearchRunId    String?
+  sourceCandidateRef     String?
+  slotId                 StrategySlotId
+  mode                   StrategyMode         @default(BASKET)
+  state                  RecommendationState  @default(RECOMMENDATION_READY)
+  manifestId             String
+  manifestStrategyVersion String
+  activationManifestRefJson Json?
+  signalArtifactIds      String[]             @default([])
+  recommendationJson     Json
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  guestSession           GuestSession?        @relation("GuestSessionRecommendations", fields: [guestSessionId], references: [id], onDelete: SetNull)
+  lastViewedByGuestSessions GuestSession[]    @relation("GuestSessionLastRecommendation")
+  user                   User?                @relation("UserRecommendations", fields: [userId], references: [id], onDelete: SetNull)
+  starterBasket          StarterBasket?       @relation(fields: [starterBasketId], references: [id], onDelete: SetNull)
+  candidateResult        CandidateResult?     @relation(fields: [candidateResultId], references: [id], onDelete: SetNull)
+  activations            Activation[]
+  activityEvents         ActivityEvent[]
+
+  @@index([guestSessionId, createdAt])
+  @@index([userId, createdAt])
+  @@index([slotId, state])
+  @@index([manifestId])
+  @@map("recommendations")
+}
+
+model DirectionalPreview {
+  id                     String               @id @default(cuid())
+  guestSessionId         String?
+  userId                 String?
+  candidateResultId      String?
+  sourceResearchRunId    String?
+  sourceCandidateRef     String?
+  slotId                 StrategySlotId       @default(ADVANCED_DEFAULT_DIRECTIONAL)
+  manifestId             String
+  manifestStrategyVersion String
+  activationManifestRefJson Json?
+  assetSymbol            String
+  chain                  Chain                @default(ETHEREUM)
+  truthState             RailTruthState       @default(PREVIEW)
+  signalArtifactIds      String[]             @default([])
+  previewJson            Json
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  guestSession           GuestSession?        @relation("GuestSessionDirectionalPreviews", fields: [guestSessionId], references: [id], onDelete: SetNull)
+  lastViewedByGuestSessions GuestSession[]    @relation("GuestSessionLastDirectionalPreview")
+  user                   User?                @relation("UserDirectionalPreviews", fields: [userId], references: [id], onDelete: SetNull)
+  candidateResult        CandidateResult?     @relation(fields: [candidateResultId], references: [id], onDelete: SetNull)
+  activations            Activation[]
+  activityEvents         ActivityEvent[]
+
+  @@index([guestSessionId, createdAt])
+  @@index([userId, createdAt])
+  @@index([slotId, truthState])
+  @@index([manifestId])
+  @@map("directional_previews")
+}
+
+model SmartAccount {
+  id              String             @id @default(cuid())
+  userId          String
+  chain           Chain              @default(ETHEREUM)
+  address         String             @unique
+  providerId      String?
+  status          SmartAccountStatus @default(PENDING)
+  metadataJson    Json?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activations     Activation[]
+  activityEvents  ActivityEvent[]
+
+  @@index([userId, status])
+  @@map("smart_accounts")
+}
+
+model Activation {
+  id                    String            @id @default(cuid())
+  userId                String
+  smartAccountId        String?
+  recommendationId      String?
+  directionalPreviewId  String?
+  manifestId            String
+  manifestStrategyVersion String
+  slotId                StrategySlotId
+  mode                  StrategyMode
+  chain                 Chain             @default(ETHEREUM)
+  status                ActivationStatus  @default(PREVIEW)
+  activationManifestRefJson Json?
+  activationManifestJson Json
+  activationPayloadJson Json
+  activationSnapshotJson Json?
+  executionPlanSnapshotJson Json?
+  activatedAt           DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  smartAccount          SmartAccount?     @relation(fields: [smartAccountId], references: [id], onDelete: SetNull)
+  recommendation        Recommendation?   @relation(fields: [recommendationId], references: [id], onDelete: SetNull)
+  directionalPreview    DirectionalPreview? @relation(fields: [directionalPreviewId], references: [id], onDelete: SetNull)
+  activityEvents        ActivityEvent[]
+
+  @@index([userId, createdAt])
+  @@index([smartAccountId])
+  @@index([manifestId])
+  @@index([status])
+  @@map("activations")
+}
+
+model ActivityEvent {
+  id                  String             @id @default(cuid())
+  guestSessionId      String?
+  userId              String?
+  smartAccountId      String?
+  activationId        String?
+  recommendationId    String?
+  directionalPreviewId String?
+  manifestId          String?
+  slotId              StrategySlotId?
+  scopeType           ActivityScopeType
+  eventType           String
+  summary             String
+  status              String?
+  chain               Chain              @default(ETHEREUM)
+  occurredAt          DateTime
+  detailsJson         Json?
+  eventJson           Json
+  createdAt           DateTime           @default(now())
+
+  guestSession        GuestSession?      @relation("GuestSessionActivityEvents", fields: [guestSessionId], references: [id], onDelete: SetNull)
+  user                User?              @relation("UserActivityEvents", fields: [userId], references: [id], onDelete: SetNull)
+  smartAccount        SmartAccount?      @relation(fields: [smartAccountId], references: [id], onDelete: SetNull)
+  activation          Activation?        @relation(fields: [activationId], references: [id], onDelete: SetNull)
+  recommendation      Recommendation?    @relation(fields: [recommendationId], references: [id], onDelete: SetNull)
+  directionalPreview  DirectionalPreview? @relation(fields: [directionalPreviewId], references: [id], onDelete: SetNull)
+
+  @@index([guestSessionId, occurredAt])
+  @@index([userId, occurredAt])
+  @@index([activationId, occurredAt])
+  @@index([manifestId, occurredAt])
+  @@index([eventType, occurredAt])
+  @@map("activity_events")
+}

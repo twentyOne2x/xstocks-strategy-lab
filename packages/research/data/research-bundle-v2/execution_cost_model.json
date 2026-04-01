@@ -1,0 +1,8 @@
+{
+  "cost_model_id": "research_costs_v1",
+  "periods_per_year": 12,
+  "turnover_cost_bps_per_100pct": 35,
+  "fixed_rebalance_gas_bps": 10,
+  "max_turnover_ann_pct": 180,
+  "max_concentration_pct": 25
+}

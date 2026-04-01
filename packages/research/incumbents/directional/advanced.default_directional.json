@@ -1,0 +1,70 @@
+{
+  "version": "1",
+  "incumbentId": "advanced.default_directional:directional-preview-v1",
+  "slotId": "advanced.default_directional",
+  "mode": "directional",
+  "chain": "ethereum",
+  "strategyVersion": "directional-preview-v1",
+  "promotedAt": "2026-04-01T11:00:18.855Z",
+  "previousIncumbentId": null,
+  "runId": "preview_stub-advanced.default_directional-20260401T110018855z-directional-preview-v1",
+  "frontend": {
+    "title": "Directional default preview",
+    "subtitle": "Preview-only incumbent for the advanced directional lane.",
+    "riskLabel": "high",
+    "summary": "Preview-only SPYx directional incumbent that stays blocked for execution until exact live xStocks-on-Euler proof is independently verified.",
+    "badges": [
+      "promoted_manifest",
+      "preview_only",
+      "route_unverified"
+    ]
+  },
+  "validation": {
+    "datasetVersion": "research-bundle-v2",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "objectiveId": "directional_calmar_after_cost_v1",
+    "score": 0,
+    "deltaVsIncumbent": null,
+    "promotedAt": "2026-04-01T11:00:18.855Z"
+  },
+  "fallback": {
+    "previousIncumbentId": null,
+    "disableConditions": [
+      "slot_not_promoted",
+      "preview_only",
+      "route_unverified",
+      "directional_activation_disabled"
+    ]
+  },
+  "status": "promoted_preview",
+  "activationTemplate": {
+    "mode": "directional",
+    "templateId": "xstocks_directional_expression_v1",
+    "fundingAssetSymbol": "USDC",
+    "assetSymbol": "SPYx",
+    "targetDirectionalExpression": {
+      "view": "conviction_long",
+      "assetSymbol": "SPYx",
+      "grossExposurePct": 60,
+      "netExposurePct": 60,
+      "targetLtvPct": 35
+    }
+  },
+  "research": {
+    "candidateRef": "directional-preview:advanced.default_directional:SPYx:v2",
+    "venueId": "euler",
+    "assetSymbol": "SPYx",
+    "borrowAssetSymbol": "AUSD",
+    "truthState": "unverified",
+    "healthFactor": 1.857143,
+    "liquidationDistancePct": 60.114,
+    "targetDirectionalExpression": {
+      "view": "conviction_long",
+      "assetSymbol": "SPYx",
+      "grossExposurePct": 60,
+      "netExposurePct": 60,
+      "targetLtvPct": 35
+    },
+    "previewOnly": true
+  }
+}

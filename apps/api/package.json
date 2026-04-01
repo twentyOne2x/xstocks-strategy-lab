@@ -1,0 +1,13 @@
+{
+  "name": "@xstocks/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ./src/index.js",
+    "build": "node ./scripts/lint.js",
+    "lint": "node ./scripts/lint.js",
+    "proof:cow": "node ./scripts/privy-cow-proof.js",
+    "test": "node --test",
+    "check": "node ./scripts/lint.js && node --test"
+  }
+}

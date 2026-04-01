@@ -1,0 +1,34 @@
+{
+  "scenarioId": "directional-opt-in",
+  "label": "Directional opt-in",
+  "description": "Explicit directional opt-in user who should be routed to the preview-only directional slot.",
+  "answers": {
+    "q_goal_preference": "leaders",
+    "q_expression_preference": "active",
+    "q_risk_level": "high",
+    "q_drawdown_sensitivity": "low",
+    "q_rebalance_preference": "active",
+    "q_directional_appetite": "directional",
+    "q_automation_comfort": "high",
+    "q_certainty": "high"
+  },
+  "walletState": {
+    "walletConnected": true,
+    "walletAddress": "0x00000000000000000000000000000000000000b4",
+    "fundedNotionalUsd": 0,
+    "smartAccount": {
+      "status": "ready",
+      "address": "0x0000000000000000000000000000000000000b44"
+    }
+  },
+  "expected": {
+    "slotId": "advanced.default_directional",
+    "mode": "directional",
+    "selectionType": "hero_asset",
+    "selectionKey": "SPYx",
+    "executionState": "blocked",
+    "executionEligibility": "preview_only",
+    "directionalPreviewOnly": true,
+    "activationReady": false
+  }
+}

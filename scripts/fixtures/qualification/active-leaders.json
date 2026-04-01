@@ -1,0 +1,35 @@
+{
+  "scenarioId": "active-leaders",
+  "label": "Active leaders basket",
+  "description": "Leader-first active basket user who should land on the active leaders basket slot.",
+  "answers": {
+    "q_goal_preference": "leaders",
+    "q_expression_preference": "active",
+    "q_risk_level": "high",
+    "q_drawdown_sensitivity": "low",
+    "q_rebalance_preference": "active",
+    "q_directional_appetite": "long_only",
+    "q_automation_comfort": "high",
+    "q_certainty": "high"
+  },
+  "walletState": {
+    "walletConnected": true,
+    "walletAddress": "0x00000000000000000000000000000000000000b3",
+    "fundedNotionalUsd": 0,
+    "smartAccount": {
+      "status": "ready",
+      "address": "0x0000000000000000000000000000000000000b33"
+    }
+  },
+  "expected": {
+    "slotId": "onboarding.alt_basket_2",
+    "mode": "basket",
+    "starterBasketId": "us-tech-leaders",
+    "selectionType": "theme",
+    "selectionKey": "us-tech-leaders",
+    "executionState": "funding_required",
+    "executionEligibility": "preview_only",
+    "directionalPreviewOnly": false,
+    "activationReady": false
+  }
+}

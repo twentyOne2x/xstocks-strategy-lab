@@ -7,9 +7,13 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "check": "turbo run check"
+    "check": "turbo run check",
+    "prisma:generate": "prisma generate --schema prisma/schema.prisma",
+    "prisma:validate": "prisma validate --schema prisma/schema.prisma"
   },
   "devDependencies": {
+    "@prisma/client": "6.19.2",
+    "prisma": "6.19.2",
     "turbo": "^2.5.0"
   }
 }

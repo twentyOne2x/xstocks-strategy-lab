@@ -1,0 +1,13 @@
+{
+  "market_set_id": "euler.ethereum.placeholder_v1",
+  "status": "placeholder",
+  "markets": [
+    {
+      "base_asset": "SPYx",
+      "borrow_asset": "AUSD",
+      "max_ltv_pct": 65,
+      "min_health_buffer_pct": 15,
+      "liquidity_tier": "demo"
+    }
+  ]
+}

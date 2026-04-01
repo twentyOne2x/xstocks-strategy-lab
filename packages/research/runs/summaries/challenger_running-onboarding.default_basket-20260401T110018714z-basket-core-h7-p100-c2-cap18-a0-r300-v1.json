@@ -1,0 +1,526 @@
+{
+  "version": "1",
+  "runId": "challenger_running-onboarding.default_basket-20260401T110018714z-basket-core-h7-p100-c2-cap18-a0-r300-v1",
+  "completedAtUtc": "2026-04-01T11:00:18.714Z",
+  "stage": "challenger_running",
+  "mode": "basket",
+  "slotId": "onboarding.default_basket",
+  "status": "discard",
+  "objectiveId": "basket_excess_calmar_after_cost_v1",
+  "candidateRef": "basket-challenger:onboarding.default_basket:core-h7-p100-c2-cap18-a0-r300:v1",
+  "resultRow": {
+    "version": "1",
+    "runId": "challenger_running-onboarding.default_basket-20260401T110018714z-basket-core-h7-p100-c2-cap18-a0-r300-v1",
+    "completedAtUtc": "2026-04-01T11:00:18.714Z",
+    "stage": "challenger_running",
+    "mode": "basket",
+    "slotId": "onboarding.default_basket",
+    "objectiveId": "basket_excess_calmar_after_cost_v1",
+    "status": "discard",
+    "candidateRef": "basket-challenger:onboarding.default_basket:core-h7-p100-c2-cap18-a0-r300:v1",
+    "incumbentRunId": "challenger_running-onboarding.default_basket-20260401T110018704z-basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+    "manualVersion": "strategy_lab_program_v1",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "researchDatasetId": "research_bundle_v2",
+    "validationSetId": "validation.monthly.2025_full_year_stress_v2",
+    "universeId": "xstocks.ethereum.mainnet.core-v1",
+    "chainId": "ethereum",
+    "liveTruthSourceId": "xstocks_public_api_v1",
+    "primaryScore": 0.998019,
+    "incumbentScore": 1.405954,
+    "deltaScore": -0.407935,
+    "guardrailPass": true,
+    "returnAnnPct": 24.6448,
+    "maxDrawdownPct": 11.5077,
+    "turnoverAnnPct": 0,
+    "costsTotalBps": 0,
+    "description": "basket_policy_profile;profile_id=broader_core_same_breadth_lighter_cash;candidate_family_id=core_low_cash;candidate_family_class=core_universe_capital_mix;anchor_basket=mag7;selection_universe=core_universe;top_n=7;starter_bias_pct=0;weighting_curve=signal_score_proportional;weight_exponent=1;cap_policy=single_name_max_weight_pct;max_weight_pct=18;cap_redistribution=redistribute_proportionally_to_uncapped_names;cash_sleeve=static_target_weight;cash_asset=AUSD;cash_weight_pct=2;rebalance_policy=absolute_drift_threshold_bps;rebalance_threshold_bps=300",
+    "benchmarkId": "basket.sp500_core_v1",
+    "constituentCountAvg": 7,
+    "weightMaxPct": 16.5511,
+    "grossExposureAvgPct": null,
+    "netExposureAvgPct": null,
+    "leverageAvg": null,
+    "borrowCostBps": null,
+    "eulerMarketSetId": null,
+    "eulerHealthMin": null
+  },
+  "bundle": {
+    "researchDatasetId": "research_bundle_v2",
+    "datasetVersion": "research-bundle-v2",
+    "validationSetId": "validation.monthly.2025_full_year_stress_v2",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "chainId": "ethereum",
+    "liveTruthSourceId": "xstocks_public_api_v1"
+  },
+  "guardrailPass": true,
+  "candidate": {
+    "candidateRef": "basket-challenger:onboarding.default_basket:core-h7-p100-c2-cap18-a0-r300:v1",
+    "mode": "basket",
+    "slotId": "onboarding.default_basket",
+    "strategyVersion": "basket-core-h7-p100-c2-cap18-a0-r300-v1",
+    "basketId": "mag7",
+    "benchmarkId": "basket.sp500_core_v1",
+    "description": "basket_policy_profile;profile_id=broader_core_same_breadth_lighter_cash;candidate_family_id=core_low_cash;candidate_family_class=core_universe_capital_mix;anchor_basket=mag7;selection_universe=core_universe;top_n=7;starter_bias_pct=0;weighting_curve=signal_score_proportional;weight_exponent=1;cap_policy=single_name_max_weight_pct;max_weight_pct=18;cap_redistribution=redistribute_proportionally_to_uncapped_names;cash_sleeve=static_target_weight;cash_asset=AUSD;cash_weight_pct=2;rebalance_policy=absolute_drift_threshold_bps;rebalance_threshold_bps=300",
+    "policy": {
+      "policyId": "broader_core_same_breadth_lighter_cash",
+      "selectionUniverse": "core_universe",
+      "holdingsCount": 7,
+      "starterBiasPct": 0,
+      "signalPower": 1,
+      "cashWeight": 0.02,
+      "maxWeightPct": 18,
+      "rebalanceThresholdBps": 300
+    },
+    "policyProfile": {
+      "profileId": "broader_core_same_breadth_lighter_cash",
+      "profileVersion": "v1",
+      "slotId": "onboarding.default_basket",
+      "anchorBasketId": "mag7",
+      "benchmarkId": "basket.sp500_core_v1",
+      "parameters": {
+        "breadth": {
+          "topN": 7
+        },
+        "weighting": {
+          "rankingSignalId": "baseline_signal_score",
+          "curveId": "signal_score_proportional",
+          "exponent": 1
+        },
+        "capPolicy": {
+          "mode": "single_name_max_weight_pct",
+          "maxWeightPct": 18,
+          "redistributionMode": "redistribute_proportionally_to_uncapped_names"
+        },
+        "cashSleeve": {
+          "mode": "static_target_weight",
+          "assetSymbol": "AUSD",
+          "targetWeightPct": 2
+        },
+        "rebalance": {
+          "mode": "absolute_drift_threshold_bps",
+          "thresholdBps": 300
+        },
+        "starterAnchoring": {
+          "selectionUniverse": "core_universe",
+          "starterBiasPct": 0
+        }
+      }
+    },
+    "taxonomy": {
+      "taxonomyVersion": "v1",
+      "templateId": "broader_core_same_breadth_lighter_cash",
+      "familyId": "core_low_cash",
+      "familyLabel": "Core Low Cash",
+      "familyClassId": "core_universe_capital_mix",
+      "familyClassLabel": "Core-universe capital mix",
+      "operatorSummary": "Widens into the core universe and lowers the AUSD sleeve while keeping breadth unchanged."
+    },
+    "plan": {
+      "targetWeights": [
+        {
+          "symbol": "NVDAx",
+          "weight": 0.165511,
+          "assetName": "NVIDIA"
+        },
+        {
+          "symbol": "AMDx",
+          "weight": 0.148089,
+          "assetName": "AMD"
+        },
+        {
+          "symbol": "AVGOx",
+          "weight": 0.142281,
+          "assetName": "Broadcom"
+        },
+        {
+          "symbol": "MSFTx",
+          "weight": 0.137926,
+          "assetName": "Microsoft"
+        },
+        {
+          "symbol": "AAPLx",
+          "weight": 0.132119,
+          "assetName": "Apple"
+        },
+        {
+          "symbol": "METAx",
+          "weight": 0.129215,
+          "assetName": "Meta"
+        },
+        {
+          "symbol": "AMZNx",
+          "weight": 0.124859,
+          "assetName": "Amazon"
+        }
+      ],
+      "cashWeight": 0.02,
+      "rebalanceThresholdBps": 300,
+      "reasonCodes": [
+        "starter_basket:mag7",
+        "selection_universe:core_universe",
+        "holdings_count:7",
+        "starter_bias:0pct",
+        "ranking:baseline_signal_score",
+        "weighting_curve:signal_score_proportional",
+        "signal_power:1x",
+        "cash_weight:2pct",
+        "concentration_cap:18pct",
+        "rebalance_threshold:300bps"
+      ]
+    }
+  },
+  "metrics": {
+    "navFinal": 1.223774,
+    "returnAnnPct": 24.6448,
+    "maxDrawdownPct": 11.5077,
+    "turnoverAnnPct": 0,
+    "costsTotalBps": 0,
+    "constituentCountAvg": 7,
+    "weightMaxPct": 16.5511,
+    "rebalanceSimulation": {
+      "modelId": "path_dependent_rebalance_after_cost_v1",
+      "thresholdBps": 300,
+      "rebalanceEventCount": 0,
+      "rebalanceEventsAnn": 0,
+      "turnoverWindowPct": 0,
+      "turnoverAnnPct": 0,
+      "costsTotalBps": 0,
+      "maxObservedDriftBps": 237.3246,
+      "avgObservedDriftBps": 150.249,
+      "rebalanceDates": [],
+      "navFinal": 1.223774,
+      "netNavFinal": 1.223774,
+      "returnAnnPct": 24.6448,
+      "afterCostReturnAnnPct": 24.6448,
+      "maxDrawdownPct": 11.5077,
+      "netMaxDrawdownPct": 11.5077,
+      "observedWeightMaxPct": 18.9243
+    },
+    "legacyStaticWeight": {
+      "modelId": "static_weight_proxy_v1",
+      "navFinal": 1.226961,
+      "returnAnnPct": 24.9989,
+      "maxDrawdownPct": 11.2289,
+      "turnoverAnnPct": 98,
+      "costsTotalBps": 44.3
+    }
+  },
+  "benchmark": {
+    "benchmarkId": "basket.sp500_core_v1",
+    "basketId": "sp500_core",
+    "metrics": {
+      "navFinal": 1.12,
+      "returnAnnPct": 13.1599,
+      "maxDrawdownPct": 6.4815,
+      "turnoverAnnPct": 0,
+      "costsTotalBps": 0,
+      "constituentCountAvg": 1,
+      "weightMaxPct": 100,
+      "rebalanceSimulation": {
+        "modelId": "path_dependent_rebalance_after_cost_v1",
+        "thresholdBps": 0,
+        "rebalanceEventCount": 0,
+        "rebalanceEventsAnn": 0,
+        "turnoverWindowPct": 0,
+        "turnoverAnnPct": 0,
+        "costsTotalBps": 0,
+        "maxObservedDriftBps": 0,
+        "avgObservedDriftBps": 0,
+        "rebalanceDates": [],
+        "navFinal": 1.12,
+        "netNavFinal": 1.12,
+        "returnAnnPct": 13.1599,
+        "afterCostReturnAnnPct": 13.1599,
+        "maxDrawdownPct": 6.4815,
+        "netMaxDrawdownPct": 6.4815,
+        "observedWeightMaxPct": 100
+      },
+      "legacyStaticWeight": {
+        "modelId": "static_weight_proxy_v1",
+        "navFinal": 1.12,
+        "returnAnnPct": 13.1599,
+        "maxDrawdownPct": 6.4815,
+        "turnoverAnnPct": 100,
+        "costsTotalBps": 45
+      }
+    }
+  },
+  "score": {
+    "scoringModelId": "path_dependent_rebalance_after_cost_v1",
+    "primaryScore": 0.998019,
+    "legacyPrimaryScore": 1.054956,
+    "incumbentScore": 1.405954,
+    "deltaScore": -0.407935,
+    "promotionEpsilon": 0.05
+  },
+  "invalidators": [],
+  "explanationBundle": {
+    "truthMode": "promoted_incumbent_and_run_summary_only",
+    "incumbentState": "kept_promoted_run",
+    "strategyTaxonomy": {
+      "taxonomyVersion": "v1",
+      "templateId": "broader_core_same_breadth_lighter_cash",
+      "familyId": "core_low_cash",
+      "familyLabel": "Core Low Cash",
+      "familyClassId": "core_universe_capital_mix",
+      "familyClassLabel": "Core-universe capital mix",
+      "operatorSummary": "Widens into the core universe and lowers the AUSD sleeve while keeping breadth unchanged."
+    },
+    "reasonCodes": [
+      {
+        "code": "starter_basket:mag7",
+        "kind": "starter_basket",
+        "value": "mag7",
+        "label": "Starts from the pinned Mag 7 basket membership."
+      },
+      {
+        "code": "selection_universe:core_universe",
+        "kind": "selection_universe",
+        "value": "core_universe",
+        "label": "Selects names from the core universe."
+      },
+      {
+        "code": "holdings_count:7",
+        "kind": "holdings_count",
+        "value": "7",
+        "label": "Keeps the basket at 7 names."
+      },
+      {
+        "code": "starter_bias:0pct",
+        "kind": "starter_bias",
+        "value": "0pct",
+        "label": "Applies a 0% score boost to starter-basket names inside broader selection."
+      },
+      {
+        "code": "ranking:baseline_signal_score",
+        "kind": "ranking",
+        "value": "baseline_signal_score",
+        "label": "Ranks names by baseline signal score."
+      },
+      {
+        "code": "weighting_curve:signal_score_proportional",
+        "kind": "weighting_curve",
+        "value": "signal_score_proportional",
+        "label": "Weights names with the signal score proportional curve."
+      },
+      {
+        "code": "signal_power:1x",
+        "kind": "signal_power",
+        "value": "1x",
+        "label": "Raises ranking scores to the 1x power before weights are normalized."
+      },
+      {
+        "code": "cash_weight:2pct",
+        "kind": "cash_weight",
+        "value": "2pct",
+        "label": "Keeps 2% in the AUSD yield buffer."
+      },
+      {
+        "code": "concentration_cap:18pct",
+        "kind": "concentration_cap",
+        "value": "18pct",
+        "label": "Limits any single name to 18%."
+      },
+      {
+        "code": "rebalance_threshold:300bps",
+        "kind": "rebalance_threshold",
+        "value": "300bps",
+        "label": "Only rebalances after 300 bps of drift."
+      }
+    ],
+    "targetWeights": [
+      {
+        "rank": 1,
+        "symbol": "NVDAx",
+        "assetName": "NVIDIA",
+        "targetWeightPct": 16.5511
+      },
+      {
+        "rank": 2,
+        "symbol": "AMDx",
+        "assetName": "AMD",
+        "targetWeightPct": 14.8089
+      },
+      {
+        "rank": 3,
+        "symbol": "AVGOx",
+        "assetName": "Broadcom",
+        "targetWeightPct": 14.2281
+      },
+      {
+        "rank": 4,
+        "symbol": "MSFTx",
+        "assetName": "Microsoft",
+        "targetWeightPct": 13.7926
+      },
+      {
+        "rank": 5,
+        "symbol": "AAPLx",
+        "assetName": "Apple",
+        "targetWeightPct": 13.2119
+      },
+      {
+        "rank": 6,
+        "symbol": "METAx",
+        "assetName": "Meta",
+        "targetWeightPct": 12.9215
+      },
+      {
+        "rank": 7,
+        "symbol": "AMZNx",
+        "assetName": "Amazon",
+        "targetWeightPct": 12.4859
+      }
+    ],
+    "cashWeightPct": 2,
+    "rebalanceThresholdBps": 300,
+    "rebalanceThresholdPct": 3,
+    "benchmarkDelta": {
+      "benchmarkId": "basket.sp500_core_v1",
+      "returnAnnPct": 24.6448,
+      "benchmarkReturnAnnPct": 13.1599,
+      "afterCostReturnAnnPct": 24.6448,
+      "benchmarkAfterCostReturnAnnPct": 13.1599,
+      "excessReturnAfterCostPct": 11.4849,
+      "score": 0.998019,
+      "deltaVsIncumbent": -0.407935
+    },
+    "portfolioMetrics": {
+      "constituentCount": 7,
+      "concentrationPct": 16.5511,
+      "concentrationCapPct": 18,
+      "turnoverAnnPct": 0,
+      "costsTotalBps": 0,
+      "rebalanceSimulation": {
+        "modelId": "path_dependent_rebalance_after_cost_v1",
+        "thresholdBps": 300,
+        "rebalanceEventCount": 0,
+        "rebalanceEventsAnn": 0,
+        "turnoverWindowPct": 0,
+        "turnoverAnnPct": 0,
+        "costsTotalBps": 0,
+        "maxObservedDriftBps": 237.3246,
+        "avgObservedDriftBps": 150.249,
+        "rebalanceDates": [],
+        "navFinal": 1.223774,
+        "netNavFinal": 1.223774,
+        "returnAnnPct": 24.6448,
+        "afterCostReturnAnnPct": 24.6448,
+        "maxDrawdownPct": 11.5077,
+        "netMaxDrawdownPct": 11.5077,
+        "observedWeightMaxPct": 18.9243
+      },
+      "legacyStaticWeight": {
+        "modelId": "static_weight_proxy_v1",
+        "navFinal": 1.226961,
+        "returnAnnPct": 24.9989,
+        "maxDrawdownPct": 11.2289,
+        "turnoverAnnPct": 98,
+        "costsTotalBps": 44.3
+      }
+    },
+    "summaries": {
+      "construction": "98% stays in xStocks across 7 names. 2% remains in AUSD. Largest sleeves: NVDAx 16.55%, AMDx 14.81%, AVGOx 14.23%.",
+      "benchmark": "After estimated costs, the pinned run delivered 24.64% versus 13.16% for basket.sp500_core_v1, an excess of +11.48%.",
+      "rebalance": "Rebalance only when drift clears 300 bps. Authoritative path-dependent scoring implies 0% annualized turnover, 0 bps annualized costs, and 0 rebalances over the frozen window. Legacy static proxy would have printed 98% turnover and 44.3 bps total costs with 2% parked in AUSD.",
+      "realityCheck": "Authoritative scoring now uses 300 bps drift bands and implies 0% annualized turnover across 0 rebalance events; legacy static proxy remains available for comparison.",
+      "operator": "Core Low Cash keeps 98% in xStocks across 7 core universe names anchored to Mag 7, with 2% in AUSD. Top sleeves: NVDAx 16.55%, AMDx 14.81%, AVGOx 14.23%. Change from slot baseline: Selection universe: starter basket only -> core universe; Cash sleeve: 5% AUSD -> 2% AUSD. After estimated costs, the pinned run delivered 24.64% versus 13.16% for basket.sp500_core_v1, an excess of +11.48%."
+    }
+  },
+  "tuningSummary": {
+    "headline": "98% invested across 7 names selected from the core universe with 2% in AUSD and a 300 bps rebalance trigger.",
+    "strategyFamily": {
+      "taxonomyVersion": "v1",
+      "templateId": "broader_core_same_breadth_lighter_cash",
+      "familyId": "core_low_cash",
+      "familyLabel": "Core Low Cash",
+      "familyClassId": "core_universe_capital_mix",
+      "familyClassLabel": "Core-universe capital mix",
+      "operatorSummary": "Widens into the core universe and lowers the AUSD sleeve while keeping breadth unchanged."
+    },
+    "incumbentInterpretation": "Core Low Cash. 7-name core universe basket with 2% in AUSD. NVDAx is the largest sleeve at 16.55%. Under the authoritative path-dependent rebalance scorer, after costs it outperformed basket.sp500_core_v1 by 11.48% in the frozen window.",
+    "currentKnobs": [
+      {
+        "knobId": "candidate_family",
+        "label": "Candidate family",
+        "currentValue": "Core Low Cash",
+        "tuningImpact": "Widens into the core universe and lowers the AUSD sleeve while keeping breadth unchanged."
+      },
+      {
+        "knobId": "starter_basket",
+        "label": "Starter basket",
+        "currentValue": "Mag 7",
+        "tuningImpact": "Changes basket membership before weights are assigned."
+      },
+      {
+        "knobId": "selection_universe",
+        "label": "Selection universe",
+        "currentValue": "core universe",
+        "tuningImpact": "Widens the eligible pool beyond the starter basket without changing slot identity."
+      },
+      {
+        "knobId": "holdings_count",
+        "label": "Holdings breadth",
+        "currentValue": "7",
+        "tuningImpact": "Changes how many names survive ranking into the target basket."
+      },
+      {
+        "knobId": "starter_bias",
+        "label": "Starter anchor bias",
+        "currentValue": "0%",
+        "tuningImpact": "Keeps the slot anchored to its starter basket even when broader selection is enabled."
+      },
+      {
+        "knobId": "ranking_signal",
+        "label": "Ranking signal",
+        "currentValue": "baseline signal score",
+        "tuningImpact": "Changes which names rise or fall inside the current basket."
+      },
+      {
+        "knobId": "weighting_curve",
+        "label": "Weighting curve",
+        "currentValue": "signal score proportional",
+        "tuningImpact": "Changes how aggressively higher-ranked names dominate the basket."
+      },
+      {
+        "knobId": "signal_power",
+        "label": "Signal power",
+        "currentValue": "1x",
+        "tuningImpact": "Makes the weighting curve flatter or more conviction-heavy without changing the underlying signal."
+      },
+      {
+        "knobId": "cash_weight",
+        "label": "Cash sleeve",
+        "currentValue": "2%",
+        "tuningImpact": "Changes how much capital stays in AUSD instead of xStocks exposure."
+      },
+      {
+        "knobId": "concentration_cap",
+        "label": "Single-name cap",
+        "currentValue": "18%",
+        "tuningImpact": "Limits the maximum weight of one name."
+      },
+      {
+        "knobId": "rebalance_threshold",
+        "label": "Rebalance trigger",
+        "currentValue": "300 bps",
+        "tuningImpact": "Skips smaller drifts to reduce churn."
+      }
+    ],
+    "watchpoints": [
+      "NVDAx is the largest sleeve at 16.55% against a 18% single-name cap.",
+      "Authoritative rebalance simulation implies 0% turnover and 0 bps of annualized costs across 0 rebalance events.",
+      "Authoritative turnover is 0% with 0 bps of total costs.",
+      "Legacy static proxy would have printed 98% turnover and 44.3 bps of total costs.",
+      "7 names are selected from the core universe.",
+      "Benchmark edge after costs is 11.48% versus basket.sp500_core_v1."
+    ],
+    "operatorSummary": {
+      "whatThisIs": "Core Low Cash keeps 98% in xStocks across 7 core universe names anchored to Mag 7, with 2% in AUSD. Top sleeves: NVDAx 16.55%, AMDx 14.81%, AVGOx 14.23%.",
+      "changedFromBaseline": "Selection universe: starter basket only -> core universe; Cash sleeve: 5% AUSD -> 2% AUSD",
+      "whyThisIncumbent": "Core Low Cash. 7-name core universe basket with 2% in AUSD. NVDAx is the largest sleeve at 16.55%. Under the authoritative path-dependent rebalance scorer, after costs it outperformed basket.sp500_core_v1 by 11.48% in the frozen window.",
+      "whatToWatch": "NVDAx is the largest sleeve at 16.55% against a 18% single-name cap. Authoritative rebalance simulation implies 0% turnover and 0 bps of annualized costs across 0 rebalance events."
+    }
+  }
+}

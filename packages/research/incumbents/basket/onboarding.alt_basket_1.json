@@ -1,0 +1,130 @@
+{
+  "version": "1",
+  "incumbentId": "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1",
+  "slotId": "onboarding.alt_basket_1",
+  "mode": "basket",
+  "chain": "ethereum",
+  "strategyVersion": "basket-core-h5-p100-c2-cap22-a0-r275-v1",
+  "promotedAt": "2026-04-01T11:00:18.727Z",
+  "previousIncumbentId": "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r325-v1",
+  "runId": "challenger_running-onboarding.alt_basket_1-20260401T110018727z-basket-core-h5-p100-c2-cap22-a0-r275-v1",
+  "frontend": {
+    "title": "Autopilot: AI Infra",
+    "subtitle": "Alternative onboarding basket tilted toward AI infrastructure names.",
+    "riskLabel": "elevated",
+    "summary": "Higher-beta AI infrastructure basket for users who want a more concentrated compute and tooling tilt.",
+    "badges": [
+      "validated_strategy",
+      "promoted_manifest",
+      "basket_live_ready"
+    ]
+  },
+  "validation": {
+    "datasetVersion": "research-bundle-v2",
+    "evaluatorVersion": "strategy_lab_evaluator_v1",
+    "objectiveId": "basket_excess_calmar_after_cost_v1",
+    "score": 1.008909,
+    "deltaVsIncumbent": 0.050181,
+    "promotedAt": "2026-04-01T11:00:18.727Z"
+  },
+  "fallback": {
+    "previousIncumbentId": "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r325-v1",
+    "disableConditions": [
+      "slot_not_promoted",
+      "research_manifest_missing",
+      "xstocks_live_state_stale"
+    ]
+  },
+  "status": "promoted",
+  "activationTemplate": {
+    "mode": "basket",
+    "templateId": "xstocks_basket_allocations_v1",
+    "fundingAssetSymbol": "USDC",
+    "starterBasketId": "ai_infra",
+    "targetAllocations": [
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 22,
+        "assetSymbol": "NVDAx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 20.0829,
+        "assetSymbol": "AMDx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 19.2953,
+        "assetSymbol": "AVGOx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 18.7047,
+        "assetSymbol": "MSFTx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 17.9171,
+        "assetSymbol": "AAPLx"
+      },
+      {
+        "sleeve": "yield_buffer",
+        "targetWeightPct": 2,
+        "assetSymbol": "AUSD",
+        "venueId": "flowdesk_ausd_rwa_strategy"
+      }
+    ]
+  },
+  "research": {
+    "candidateRef": "basket-challenger:onboarding.alt_basket_1:core-h5-p100-c2-cap22-a0-r275:v1",
+    "basketId": "ai_infra",
+    "starterBasketId": "ai_infra",
+    "benchmarkId": "basket.sp500_core_v1",
+    "targetAllocations": [
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 22,
+        "assetSymbol": "NVDAx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 20.0829,
+        "assetSymbol": "AMDx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 19.2953,
+        "assetSymbol": "AVGOx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 18.7047,
+        "assetSymbol": "MSFTx"
+      },
+      {
+        "sleeve": "core_xstocks",
+        "targetWeightPct": 17.9171,
+        "assetSymbol": "AAPLx"
+      },
+      {
+        "sleeve": "yield_buffer",
+        "targetWeightPct": 2,
+        "assetSymbol": "AUSD",
+        "venueId": "flowdesk_ausd_rwa_strategy"
+      }
+    ],
+    "rebalanceThresholdBps": 275,
+    "reasonCodes": [
+      "starter_basket:ai_infra",
+      "selection_universe:core_universe",
+      "holdings_count:5",
+      "starter_bias:0pct",
+      "ranking:baseline_signal_score",
+      "weighting_curve:signal_score_proportional",
+      "signal_power:1x",
+      "cash_weight:2pct",
+      "concentration_cap:22pct",
+      "rebalance_threshold:275bps"
+    ]
+  }
+}

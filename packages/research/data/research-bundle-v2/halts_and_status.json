@@ -1,0 +1,18 @@
+{
+  "status_version": "halts_and_status_v1",
+  "freeze_windows": [],
+  "halts": [],
+  "asset_status": {
+    "AAPLx": "active",
+    "AMZNx": "active",
+    "GOOGLx": "active",
+    "METAx": "active",
+    "MSFTx": "active",
+    "NVDAx": "active",
+    "TSLAx": "active",
+    "AMDx": "active",
+    "AVGOx": "active",
+    "ORCLx": "active",
+    "SPYx": "active"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "scenarioId": "broad-cautious",
+  "label": "Broad / cautious basket",
+  "description": "Broad, cautious basket user who should stay on the default onboarding lane.",
+  "answers": {
+    "q_goal_preference": "broad_exposure",
+    "q_expression_preference": "simple",
+    "q_risk_level": "low",
+    "q_drawdown_sensitivity": "high",
+    "q_rebalance_preference": "low_touch",
+    "q_directional_appetite": "long_only",
+    "q_automation_comfort": "low",
+    "q_certainty": "medium"
+  },
+  "walletState": {
+    "walletConnected": true,
+    "walletAddress": "0x00000000000000000000000000000000000000b1",
+    "fundedNotionalUsd": 0,
+    "smartAccount": {
+      "status": "ready",
+      "address": "0x0000000000000000000000000000000000000b11"
+    }
+  },
+  "expected": {
+    "slotId": "onboarding.default_basket",
+    "mode": "basket",
+    "starterBasketId": "mag-7",
+    "selectionType": "theme",
+    "selectionKey": "mag-7",
+    "executionState": "funding_required",
+    "executionEligibility": "preview_only",
+    "directionalPreviewOnly": false,
+    "activationReady": false
+  }
+}

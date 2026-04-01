@@ -1,0 +1,11 @@
+{
+  "name": "@xstocks/research",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ./src/index.js validate",
+    "lint": "node ./src/index.js validate",
+    "test": "node --test ./src/__tests__/*.test.js",
+    "check": "node ./src/index.js validate && node --test ./src/__tests__/*.test.js"
+  }
+}
