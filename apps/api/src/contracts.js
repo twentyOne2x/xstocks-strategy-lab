@@ -7,7 +7,11 @@ import {
   activationPermissionSchema,
 } from "../../../packages/shared/dist/contracts/activation.js";
 import { executionRequestSchema } from "../../../packages/shared/dist/contracts/execution.js";
-import { xstocksReportingSnapshotSchema } from "../../../packages/shared/dist/contracts/reporting.js";
+import {
+  xstocksFunnelEventIngestRequestSchema,
+  xstocksFunnelEventSchema,
+  xstocksReportingSnapshotSchema,
+} from "../../../packages/shared/dist/contracts/reporting.js";
 import {
   activationManifestRefSchema,
   chainSchema,
@@ -510,6 +514,7 @@ export const API_ENDPOINTS = Object.freeze({
   ACTIVATIONS: "/api/activations",
   ACTIVITY: "/api/activity",
   EXECUTIONS: "/api/executions",
+  XSTOCKS_FUNNEL_EVENTS: "/api/funnel-events/xstocks",
   XSTOCKS_REPORTING: "/api/reporting/xstocks",
 });
 
@@ -587,6 +592,12 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
     ],
     response: "execution_read_v1",
   },
+  xstocks_funnel_event_ingest: {
+    method: "POST",
+    path: API_ENDPOINTS.XSTOCKS_FUNNEL_EVENTS,
+    body: ["stage", "subjectId?", "manifestId? | slotId?"],
+    response: "xstocks_funnel_event_ingest_v1",
+  },
   xstocks_reporting_read: {
     method: "GET",
     path: API_ENDPOINTS.XSTOCKS_REPORTING,
@@ -663,6 +674,14 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     generatedAt: timestampSchema,
     limit: z.number().int().positive(),
     items: z.array(executionRequestSchema),
+  }),
+  xstocks_funnel_event_ingest: z.object({
+    version: apiContractVersionSchema,
+    generatedAt: timestampSchema,
+    request: xstocksFunnelEventIngestRequestSchema,
+    subjectId: nonEmptyStringSchema,
+    createdSubject: z.boolean(),
+    events: z.array(xstocksFunnelEventSchema).min(1),
   }),
   xstocks_reporting_read: z.object({
     version: apiContractVersionSchema,

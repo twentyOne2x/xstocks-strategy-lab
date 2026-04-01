@@ -4,13 +4,14 @@ import { readJsonFile, writeJsonFile } from "../json.js";
 
 function createDefaultState(now) {
   return {
-    schemaVersion: "2026-04-01.runtime-store.v5",
+    schemaVersion: "2026-04-01.runtime-store.v6",
     meta: {
       createdAt: now(),
       updatedAt: now(),
     },
     activations: [],
     activityEvents: [],
+    funnelEvents: [],
     rebalances: [],
     executionRequests: [],
   };
@@ -18,6 +19,17 @@ function createDefaultState(now) {
 
 function firstDefined(...values) {
   return values.find((value) => value !== undefined);
+}
+
+function normalizeEthereumAddress(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return /^0x([A-Fa-f0-9]{40})$/u.test(normalized)
+    ? normalized.toLowerCase()
+    : null;
 }
 
 function normalizeAuthenticatedOwner(owner) {
@@ -97,6 +109,49 @@ function normalizeActivityEvent(event, index, now) {
         status: event.status ?? null,
         details: event.details ?? null,
       },
+  };
+}
+
+function normalizeFunnelEvent(event, index, now) {
+  if (!event || typeof event !== "object") {
+    return event;
+  }
+
+  const stage = event.stage ?? null;
+  const subjectId = event.subjectId ?? event.subject_id ?? null;
+  const manifestId = firstDefined(event.manifestId, event.manifest_id, null);
+  const slotId = firstDefined(event.slotId, event.slot_id, null);
+  const recommendationId = firstDefined(
+    event.recommendationId,
+    event.recommendation_id,
+    null,
+  );
+  const owner = normalizeAuthenticatedOwner(
+    event.owner ?? event.authenticated_owner,
+  );
+  const walletAddress = normalizeEthereumAddress(
+    firstDefined(event.walletAddress, event.wallet_address, null),
+  );
+
+  return {
+    version: event.version ?? "1",
+    eventId: event.eventId ?? event.event_id ?? `funnel_evt_${index + 1}`,
+    stage,
+    occurredAt: event.occurredAt ?? event.occurred_at ?? now(),
+    subjectId,
+    owner,
+    walletAddress,
+    manifestId,
+    slotId,
+    recommendationId,
+    source: event.source ?? "web",
+    verificationMethod:
+      event.verificationMethod ?? event.verification_method ?? "web_subject_known",
+    dedupeKey:
+      event.dedupeKey ??
+      event.dedupe_key ??
+      [stage, subjectId, manifestId ?? "none", recommendationId ?? "none"]
+        .join(":"),
   };
 }
 
@@ -546,6 +601,9 @@ function normalizeState(state, now) {
     activityEvents: (state.activityEvents ?? state.activity_events ?? []).map(
       (event, index) => normalizeActivityEvent(event, index, now),
     ),
+    funnelEvents: (state.funnelEvents ?? state.funnel_events ?? []).map(
+      (event, index) => normalizeFunnelEvent(event, index, now),
+    ),
     rebalances: (state.rebalances ?? []).map((rebalance, index) =>
       normalizeRebalance(rebalance, index, now),
     ),
@@ -609,6 +667,77 @@ export function createRuntimeStore({
       state.activityEvents.unshift(...activityEvents);
       await writeState(state);
       return { activation, activityEvents };
+    },
+    async upsertFunnelEvents({ funnelEvents = [] }) {
+      const state = await readState();
+      const persistedEvents = [];
+
+      for (const funnelEvent of funnelEvents) {
+        const normalizedEvent = normalizeFunnelEvent(funnelEvent, 0, now);
+        const existingIndex = state.funnelEvents.findIndex(
+          (item) => item.dedupeKey === normalizedEvent.dedupeKey,
+        );
+
+        if (existingIndex === -1) {
+          state.funnelEvents.unshift(normalizedEvent);
+          persistedEvents.push(normalizedEvent);
+        } else {
+          const existingEvent = state.funnelEvents[existingIndex];
+          state.funnelEvents.splice(existingIndex, 1, existingEvent);
+          persistedEvents.push(existingEvent);
+        }
+      }
+
+      state.funnelEvents.sort((left, right) =>
+        right.occurredAt.localeCompare(left.occurredAt),
+      );
+      await writeState(state);
+      return persistedEvents;
+    },
+    async listFunnelEvents({
+      stage,
+      subjectId,
+      ownerUserId,
+      manifestId,
+      slotId,
+      limit = 200,
+    } = {}) {
+      const state = await readState();
+      let funnelEvents = [...state.funnelEvents];
+
+      if (stage) {
+        funnelEvents = funnelEvents.filter((event) => event.stage === stage);
+      }
+
+      if (subjectId) {
+        funnelEvents = funnelEvents.filter((event) => event.subjectId === subjectId);
+      }
+
+      if (ownerUserId) {
+        funnelEvents = funnelEvents.filter(
+          (event) => event.owner?.userId === ownerUserId,
+        );
+      }
+
+      if (manifestId) {
+        funnelEvents = funnelEvents.filter(
+          (event) => event.manifestId === manifestId,
+        );
+      }
+
+      if (slotId) {
+        funnelEvents = funnelEvents.filter((event) => event.slotId === slotId);
+      }
+
+      return funnelEvents.slice(0, limit);
+    },
+    async hasFunnelSubject(subjectId) {
+      if (!subjectId) {
+        return false;
+      }
+
+      const state = await readState();
+      return state.funnelEvents.some((event) => event.subjectId === subjectId);
     },
     async listActivity({
       activationId,
@@ -763,6 +892,7 @@ export function createRuntimeStore({
         meta: state.meta,
         activations: [...state.activations],
         activityEvents: [...state.activityEvents],
+        funnelEvents: [...state.funnelEvents],
         executionRequests: [...state.executionRequests],
       };
     },

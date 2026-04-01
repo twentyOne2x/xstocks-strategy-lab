@@ -268,6 +268,19 @@ export function createApiServer(overrides = {}) {
         return;
       }
 
+      if (
+        request.method === "POST" &&
+        url.pathname === API_ENDPOINTS.XSTOCKS_FUNNEL_EVENTS
+      ) {
+        const body = await readJsonRequestBody(request);
+        const requestContext = await service.authenticateRequest(request);
+        const result = await service.ingestXStocksFunnelEvent(body, {
+          requestContext,
+        });
+        sendJson(response, 200, { data: result });
+        return;
+      }
+
       if (request.method === "POST" && url.pathname === API_ENDPOINTS.EXECUTIONS) {
         const body = await readJsonRequestBody(request);
         const requestContext = await service.authenticateRequest(request, {
