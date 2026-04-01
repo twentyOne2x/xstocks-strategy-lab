@@ -17,7 +17,6 @@ import {
   isDirectionalPreviewOnly,
 } from "@/lib/portfolio-ui";
 import { formatCurrency, formatPercent, getWorkspaceSpotlightData } from "@/lib/data-source";
-import { getManifestExplanationBundle } from "@/lib/portfolio-ui";
 
 export function OnboardingQuestionFlow({
   answers,
@@ -83,15 +82,6 @@ export function OnboardingQuestionFlow({
   const isPrimary = !questionToShow.conditional;
   const displayStep = isPrimary ? answeredPrimaryCount + 1 : answeredPrimaryCount;
 
-  const selectedChips: string[] = [];
-  for (const q of questions) {
-    const ans = answers[q.id];
-    if (ans) {
-      const opt = q.options.find((o) => o.id === ans);
-      if (opt) selectedChips.push(opt.label);
-    }
-  }
-
   return (
     <div className="onboarding-flow">
       <div className="onboarding-progress">
@@ -99,20 +89,15 @@ export function OnboardingQuestionFlow({
           <span className="section-kicker">
             {displayStep} of {primaryQuestions.length}
           </span>
-          {answeredPrimaryCount >= 3 && (
-            <span className="section-kicker">{recommendation.title}</span>
+          {onFastPath && answeredPrimaryCount <= 1 && (
+            <button className="ob-skip-btn" onClick={onFastPath} type="button">
+              Skip — pick for me
+            </button>
           )}
         </div>
         <div className="progress-track">
           <span style={{ width: `${(answeredPrimaryCount / primaryQuestions.length) * 100}%` }} />
         </div>
-        {selectedChips.length > 0 && (
-          <div className="onboarding-chip-row">
-            {selectedChips.map((chip) => (
-              <span className="onboarding-chip onboarding-chip-selected" key={chip}>{chip}</span>
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="onboarding-flow-question">
@@ -136,11 +121,6 @@ export function OnboardingQuestionFlow({
       <div className="onboarding-back-row">
         <button className="button button-ghost" onClick={onBack} type="button">Back</button>
         <button className="button button-ghost" onClick={onReset} type="button">Start over</button>
-        {onFastPath && answeredPrimaryCount <= 1 && (
-          <button className="button button-ghost" onClick={onFastPath} type="button">
-            Skip — pick for me
-          </button>
-        )}
       </div>
     </div>
   );
@@ -148,35 +128,14 @@ export function OnboardingQuestionFlow({
 
 /* ────────────────────────────────────────────────────────
    Post-questionnaire workspace
-   Full simulated product view with guided tour
    ──────────────────────────────────────────────────────── */
 
 const tourSteps = [
-  {
-    id: "welcome",
-    title: "This is your portfolio preview",
-    body: "Based on your answers, we matched you to a portfolio. Everything you see here is a simulation — no money has moved, and nothing executes until you say so.",
-  },
-  {
-    id: "holdings",
-    title: "Your holdings",
-    body: "These are the assets in your portfolio, with their target weights. The portfolio is built from tokenized equities that trade on Ethereum.",
-  },
-  {
-    id: "intelligence",
-    title: "Market intelligence",
-    body: "This panel shows what is driving the portfolio right now — market conditions, confidence level, and recent changes that affect your holdings.",
-  },
-  {
-    id: "activity",
-    title: "Preview activity",
-    body: "This section shows simulated transactions and position changes. Once you deposit, these become real. Until then, it is preview data only.",
-  },
-  {
-    id: "activate",
-    title: "When you are ready",
-    body: "Connect your wallet, deposit USDC, and the portfolio activates. You approve every rebalance before it runs. Pause or turn off at any time.",
-  },
+  { id: "welcome", label: "Your portfolio", anchor: "pq-summary" },
+  { id: "holdings", label: "Holdings", anchor: "pq-holdings" },
+  { id: "intelligence", label: "Market signals", anchor: "pq-rail" },
+  { id: "activity", label: "Activity feed", anchor: "pq-activity-section" },
+  { id: "activate", label: "Deposit", anchor: "pq-deposit-cta" },
 ];
 
 function buildChartPath(values: number[]) {
@@ -234,18 +193,14 @@ function PostQuestionnaireWorkspace({
     <SimulatedWorkspace
       manifest={manifest}
       blotter={blotter}
-      bundle={bundle}
       directionalPreviewOnly={directionalPreviewOnly}
       recommendation={recommendation}
       onReset={onReset}
       tourStep={tourStep}
       tourDismissed={tourDismissed}
       onTourNext={() => {
-        if (tourStep < tourSteps.length - 1) {
-          setTourStep(tourStep + 1);
-        } else {
-          setTourDismissed(true);
-        }
+        if (tourStep < tourSteps.length - 1) setTourStep(tourStep + 1);
+        else setTourDismissed(true);
       }}
       onTourDismiss={() => setTourDismissed(true)}
       previewStatus={previewStatus}
@@ -253,12 +208,11 @@ function PostQuestionnaireWorkspace({
   );
 }
 
-/* ── Gate screen: recommendation summary + CTA to enter workspace ── */
+/* ── Recommendation Gate — visual, exciting ── */
 
 function RecommendationGate({
   recommendation,
   manifest,
-  bundle,
   directionalPreviewOnly,
   onEnterWorkspace,
   onReset,
@@ -276,74 +230,88 @@ function RecommendationGate({
     onRetry?: () => void;
   } | null;
 }) {
-  const topHoldings = manifest.allocations.slice(0, 4);
+  const spotlight = getWorkspaceSpotlightData(manifest);
+  const values = spotlight.points.map((p) => p.value);
+  const path = buildChartPath(values);
 
   return (
     <div className="pq-gate">
       <div className="pq-gate-inner">
-        <span className="landing-kicker">Your recommended portfolio</span>
+        <span className="landing-kicker">Your portfolio is ready</span>
         <h1 className="pq-gate-title">{recommendation.title}</h1>
-        <p className="pq-gate-sub">{bundle.whatThisPortfolioDoes}</p>
 
+        {/* Mini replay chart */}
+        <div className="pq-gate-chart" aria-hidden="true">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="gateLine" x1="0%" x2="100%" y1="0%" y2="0%">
+                <stop offset="0%" stopColor="#1FD59A" />
+                <stop offset="100%" stopColor="#5FCEF0" />
+              </linearGradient>
+            </defs>
+            <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
+            <path className="workspace-chart-line" d={path} style={{ stroke: "url(#gateLine)" }} />
+          </svg>
+        </div>
+
+        {/* Stat chips */}
+        <div className="pq-gate-stats">
+          <div className="pq-gate-stat">
+            <span>Return</span>
+            <strong>{formatPercent(manifest.replay.netReturnPct)}</strong>
+          </div>
+          <div className="pq-gate-stat">
+            <span>Drawdown</span>
+            <strong>{formatPercent(manifest.replay.maxDrawdownPct)}</strong>
+          </div>
+          <div className="pq-gate-stat">
+            <span>Holdings</span>
+            <strong>{manifest.allocations.length}</strong>
+          </div>
+          <div className="pq-gate-stat">
+            <span>Risk</span>
+            <strong>{manifest.frontend.risk_label}</strong>
+          </div>
+        </div>
+
+        {/* Policy chips */}
+        <div className="pq-gate-chips">
+          {recommendation.behavior_chips.slice(0, 4).map((chip) => (
+            <span className="token-pill" key={chip}>{chip}</span>
+          ))}
+        </div>
+
+        {/* Fit bullets */}
         <ul className="why-recommended">
-          {recommendation.why_recommended.slice(0, 3).map((reason) => (
-            <li key={reason}>{reason}</li>
+          {recommendation.why_recommended.slice(0, 2).map((r) => (
+            <li key={r}>{r}</li>
           ))}
         </ul>
 
-        {topHoldings.length > 0 && (
-          <div className="pq-gate-holdings">
-            {topHoldings.map((alloc) => (
-              <div className="pq-gate-holding" key={alloc.symbol}>
-                <strong>{alloc.symbol}</strong>
-                <span>{alloc.targetWeight}</span>
-              </div>
-            ))}
-            {manifest.allocations.length > 4 && (
-              <span className="pq-gate-more">
-                + {manifest.allocations.length - 4} more
-              </span>
-            )}
-          </div>
-        )}
-
         <div className="pq-gate-cta">
-          <button
-            className="button button-primary button-lg"
-            onClick={onEnterWorkspace}
-            type="button"
-          >
+          <button className="button button-primary button-xl" onClick={onEnterWorkspace} type="button">
             See my portfolio
           </button>
-          <button
-            className="button button-ghost"
-            onClick={onReset}
-            type="button"
-          >
+          <button className="button button-ghost" onClick={onReset} type="button">
             Change answers
           </button>
         </div>
 
         <p className="pq-gate-note">
-          {directionalPreviewOnly
-            ? "Preview only. You keep full custody."
-            : "This opens a simulated portfolio view. No money moves until you deposit."}
+          {directionalPreviewOnly ? "Preview only. Self-custody." : "Simulation — no money moves until you deposit."}
         </p>
 
-        {previewStatus ? (
-          <p className="pq-gate-note">{previewStatus.message}</p>
-        ) : null}
+        {previewStatus ? <p className="pq-gate-note">{previewStatus.message}</p> : null}
       </div>
     </div>
   );
 }
 
-/* ── Full simulated workspace with tour ── */
+/* ── Simulated Workspace — visual, bigger CTAs, component-anchored tour ── */
 
 function SimulatedWorkspace({
   manifest,
   blotter,
-  bundle,
   directionalPreviewOnly,
   recommendation,
   onReset,
@@ -355,7 +323,6 @@ function SimulatedWorkspace({
 }: {
   manifest: PromotedManifest;
   blotter?: BlotterData;
-  bundle: { whatThisPortfolioDoes: string };
   directionalPreviewOnly: boolean;
   recommendation: StrategyRecommendation;
   onReset: () => void;
@@ -369,7 +336,6 @@ function SimulatedWorkspace({
     onRetry?: () => void;
   } | null;
 }) {
-  const explanationBundle = getManifestExplanationBundle(manifest);
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
@@ -377,95 +343,60 @@ function SimulatedWorkspace({
   const positions = blotter?.positions ?? [];
   const activity = blotter?.activity ?? [];
   const currentTour = tourDismissed ? null : tourSteps[tourStep];
+  const highlightId = currentTour?.anchor ?? null;
 
   return (
-    <div className="pq-workspace">
-      {/* ── Preview banner ── */}
+    <div className={`pq-workspace ${currentTour ? "pq-workspace-touring" : ""}`}>
+      {/* ── Preview bar with big deposit CTA ── */}
       <div className="pq-preview-bar">
         <div className="pq-preview-bar-left">
           <span className="preview-chip">Simulation</span>
-          <span>
-            This is a preview of your portfolio. No money has moved.
-          </span>
+          <span>Preview — no money has moved</span>
         </div>
         <div className="pq-preview-bar-actions">
-          <Link
-            className="button button-primary button-sm"
-            href={`/activate/${manifest.slug}`}
-          >
-            {directionalPreviewOnly ? "Review preview" : "Deposit to activate"}
+          <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`} id="pq-deposit-cta">
+            {directionalPreviewOnly ? "Review preview" : "Deposit $10+"}
           </Link>
-          <button
-            className="button button-ghost button-sm"
-            onClick={onReset}
-            type="button"
-          >
+          <button className="button button-ghost button-sm" onClick={onReset} type="button">
             Change answers
           </button>
         </div>
       </div>
 
-      {/* ── Tour overlay ── */}
+      {/* ── Component-anchored tour ── */}
       {currentTour && (
-        <div className="pq-tour-overlay">
-          <div className="pq-tour-card">
+        <div className="pq-tour-bar">
+          <div className="pq-tour-bar-inner">
             <div className="pq-tour-progress">
               {tourSteps.map((_, i) => (
-                <span
-                  className={`pq-tour-dot ${i === tourStep ? "pq-tour-dot-active" : ""} ${i < tourStep ? "pq-tour-dot-done" : ""}`}
-                  key={i}
-                />
+                <span className={`pq-tour-dot ${i === tourStep ? "pq-tour-dot-active" : ""} ${i < tourStep ? "pq-tour-dot-done" : ""}`} key={i} />
               ))}
             </div>
-            <h3>{currentTour.title}</h3>
-            <p>{currentTour.body}</p>
+            <span className="pq-tour-label">{currentTour.label}</span>
             <div className="pq-tour-actions">
-              <button
-                className="button button-primary button-sm"
-                onClick={onTourNext}
-                type="button"
-              >
-                {tourStep < tourSteps.length - 1 ? "Next" : "Got it"}
+              <button className="button button-primary button-sm" onClick={onTourNext} type="button">
+                {tourStep < tourSteps.length - 1 ? "Next" : "Done"}
               </button>
               {tourStep < tourSteps.length - 1 && (
-                <button
-                  className="button button-ghost button-sm"
-                  onClick={onTourDismiss}
-                  type="button"
-                >
-                  Skip tour
-                </button>
+                <button className="button button-ghost button-sm" onClick={onTourDismiss} type="button">Skip</button>
               )}
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Main grid: workspace + right rail ── */}
+      {/* ── Portfolio summary + deposit ── */}
       <div className="pq-grid">
         <div className="pq-main">
-          {/* Portfolio summary */}
-          <section className="pq-summary" data-tour="welcome">
+          <section className={`pq-summary ${highlightId === "pq-summary" ? "pq-highlight" : ""}`} id="pq-summary">
             <div className="pq-summary-head">
               <div>
                 <span className="section-kicker">Your portfolio</span>
                 <h2>{recommendation.title}</h2>
-                <p>{bundle.whatThisPortfolioDoes}</p>
               </div>
-              <div className="pq-summary-metrics">
-                <div>
-                  <span>Replay return</span>
-                  <strong>{formatPercent(manifest.replay.netReturnPct)}</strong>
-                </div>
-                <div>
-                  <span>Max drawdown</span>
-                  <strong>{formatPercent(manifest.replay.maxDrawdownPct)}</strong>
-                </div>
-                <div>
-                  <span>Confidence</span>
-                  <strong>{mi.confidence}</strong>
-                </div>
-              </div>
+              <Link className="button button-primary" href={`/activate/${manifest.slug}`}>
+                {directionalPreviewOnly ? "Preview" : "Deposit $10+"}
+              </Link>
             </div>
 
             {/* Chart */}
@@ -482,206 +413,132 @@ function SimulatedWorkspace({
               </svg>
             </div>
 
-            <div className="pq-chart-legend">
-              <span className="section-kicker">Simulated $1k replay</span>
-              <span>
-                ${formatCurrency(manifest.replay.startingCapital)} &rarr; {formatCurrency(manifest.replay.endingCapital)}
-              </span>
+            <div className="pq-summary-strip">
+              <div><span>Replay</span><strong>{formatCurrency(manifest.replay.startingCapital)} → {formatCurrency(manifest.replay.endingCapital)}</strong></div>
+              <div><span>Return</span><strong>{formatPercent(manifest.replay.netReturnPct)}</strong></div>
+              <div><span>Drawdown</span><strong>{formatPercent(manifest.replay.maxDrawdownPct)}</strong></div>
+              <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
             </div>
           </section>
 
-          {/* Holdings table */}
-          <section className="panel-card" data-tour="holdings">
-            <span className="section-kicker">Holdings</span>
-            <div style={{ overflowX: "auto" }}>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Asset</th>
-                    <th>Weight</th>
-                    <th>Role</th>
-                    <th>Venue</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {manifest.allocations.map((row) => (
-                    <tr key={`${row.symbol}-${row.sleeve}`}>
-                      <td>{row.symbol}</td>
-                      <td>{row.targetWeight}</td>
-                      <td>{row.rationale || row.sleeve}</td>
-                      <td>{row.venue}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          {/* How it works */}
-          <section className="panel-card">
-            <span className="section-kicker">How this portfolio works</span>
-            <div className="info-stack">
-              <div>
-                <span>What changes</span>
-                <strong>{explanationBundle.howItChanges}</strong>
-              </div>
-              <div>
-                <span>What triggers a refresh</span>
-                <strong>{explanationBundle.whatWouldTriggerNextRebalance}</strong>
-              </div>
-              <div>
-                <span>Rebalancing</span>
-                <strong>Requires your approval before any trade executes</strong>
-              </div>
+          {/* How it works — concise */}
+          <section className="panel-card pq-how">
+            <div className="pq-how-row">
+              <div><span className="section-kicker">Rebalance</span><strong>Scheduled with your approval</strong></div>
+              <div><span className="section-kicker">Custody</span><strong>Self-custody via Privy</strong></div>
+              <div><span className="section-kicker">Execution</span><strong>CoW Protocol</strong></div>
             </div>
           </section>
         </div>
 
-        {/* ── Right rail: market intelligence ── */}
-        <aside className="pq-rail" data-tour="intelligence">
+        {/* ── Right rail: market signals ── */}
+        <aside className={`pq-rail ${highlightId === "pq-rail" ? "pq-highlight" : ""}`} id="pq-rail">
           <section className="pq-rail-card">
-            <span className="section-kicker">Market intelligence</span>
+            <span className="section-kicker">Market signals</span>
             <h3>{mi.currentView}</h3>
-
-            <div className="pq-mi-metrics">
-              <div>
-                <span>Confidence</span>
-                <strong>{mi.confidence}</strong>
-              </div>
-              <div>
-                <span>Horizon</span>
-                <strong>{mi.horizon}</strong>
-              </div>
-            </div>
-
-            <p className="panel-note">{mi.implication}</p>
+            <span className="pq-mi-updated">Horizon: {mi.horizon}</span>
           </section>
 
           <section className="pq-rail-card">
-            <span className="section-kicker">What changed</span>
-            <ul className="pq-changes-list">
-              {mi.whatChanged.map((change) => (
-                <li key={change}>{change}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="pq-rail-card">
-            <span className="section-kicker">Market drivers</span>
+            <span className="section-kicker">Drivers</span>
             <div className="pq-drivers">
               {mi.drivers.map((driver) => (
                 <div className="pq-driver" key={driver.label}>
                   <span className={`pq-driver-dot pq-driver-dot-${driver.tone}`} />
-                  <div>
-                    <strong>{driver.label}</strong>
-                    <span>{driver.value}</span>
-                  </div>
+                  <strong>{driver.label}</strong>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="pq-rail-card" data-tour="activate">
-            <span className="section-kicker">Next step</span>
-            <p className="panel-note">
-              {directionalPreviewOnly
-                ? "This directional position stays in preview. You keep full custody."
-                : "When you are ready, connect your wallet and deposit USDC. You approve every rebalance."}
-            </p>
-            <Link
-              className="button button-primary"
-              href={`/activate/${manifest.slug}`}
-              style={{ width: "100%" }}
-            >
-              {directionalPreviewOnly ? "Review preview" : "Deposit to activate"}
-            </Link>
-            <Link
-              className="button button-ghost"
-              href={`/workspace/detail/${manifest.slug}`}
-              style={{ width: "100%" }}
-            >
-              View full detail
-            </Link>
+          <section className="pq-rail-card">
+            <span className="section-kicker">Recent changes</span>
+            <ul className="pq-changes-list">
+              {mi.whatChanged.slice(0, 2).map((c) => (
+                <li key={c}>{c.length > 60 ? c.slice(0, 57) + "..." : c}</li>
+              ))}
+            </ul>
           </section>
         </aside>
       </div>
 
-      {/* ── Bottom: preview activity ── */}
-      <section className="pq-activity" data-tour="activity">
-        <div className="pq-activity-header">
-          <div>
-            <span className="section-kicker">Preview activity</span>
-            <p className="panel-note">
-              Simulated positions and events. These become real after you deposit.
-            </p>
-          </div>
-          <span className="preview-chip">Simulation</span>
-        </div>
-
-        <div className="pq-activity-grid">
-          {/* Positions */}
-          <div className="pq-activity-col">
-            <span className="section-kicker">Positions</span>
-            {positions.length > 0 ? (
-              <div style={{ overflowX: "auto" }}>
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Symbol</th>
-                      <th>Exposure</th>
-                      <th>State</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {positions.slice(0, 6).map((row) => (
-                      <tr key={row.id}>
-                        <td>{row.symbol}</td>
-                        <td>{row.exposureUsd}</td>
-                        <td>
-                          <span className={`status-pill status-pill-${row.state}`}>
-                            {row.state}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="panel-note">Positions appear after deposit.</p>
-            )}
-          </div>
-
-          {/* Recent events */}
-          <div className="pq-activity-col">
-            <span className="section-kicker">Recent events</span>
-            {activity.length > 0 ? (
-              <div className="pq-events">
-                {activity.slice(0, 4).map((event) => (
-                  <div className="pq-event" key={event.id}>
-                    <div className="pq-event-meta">
-                      <span className="pq-event-time">{event.time}</span>
-                      <span className={`status-pill status-pill-${event.state}`}>
-                        {event.state.replaceAll("_", " ")}
-                      </span>
-                    </div>
-                    <strong>{event.title}</strong>
-                    <span>{event.detail}</span>
-                  </div>
+      {/* ── Holdings — full-width ── */}
+      <section className={`pq-fw-section ${highlightId === "pq-holdings" ? "pq-highlight" : ""}`} id="pq-holdings">
+        <div className="pq-fw-inner">
+          <span className="section-kicker">Holdings · {manifest.allocations.length} assets</span>
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Weight</th>
+                  <th>Role</th>
+                  <th>Venue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {manifest.allocations.map((row) => (
+                  <tr key={`${row.symbol}-${row.sleeve}`}>
+                    <td><strong>{row.symbol}</strong></td>
+                    <td>{row.targetWeight}</td>
+                    <td>{row.rationale || row.sleeve}</td>
+                    <td>{row.venue}</td>
+                  </tr>
                 ))}
-              </div>
-            ) : (
-              <p className="panel-note">Activity appears after deposit.</p>
-            )}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      {previewStatus ? (
-        <p className="panel-note" style={{ padding: "0 16px", textAlign: "center" }}>
-          {previewStatus.message}
-        </p>
-      ) : null}
+      {/* ── Activity — full-width tabbed panel ── */}
+      <section className={`pq-fw-section pq-fw-section-alt ${highlightId === "pq-activity-section" ? "pq-highlight" : ""}`} id="pq-activity-section">
+        <div className="pq-fw-inner">
+          <div className="pq-activity-header">
+            <span className="section-kicker">Preview activity</span>
+            <span className="preview-chip">Simulation</span>
+          </div>
+          <div className="pq-activity-grid">
+            <div className="pq-activity-col">
+              <span className="section-kicker">Positions</span>
+              {positions.length > 0 ? (
+                <div style={{ overflowX: "auto" }}>
+                  <table className="data-table">
+                    <thead><tr><th>Symbol</th><th>Exposure</th><th>State</th></tr></thead>
+                    <tbody>
+                      {positions.slice(0, 6).map((row) => (
+                        <tr key={row.id}>
+                          <td>{row.symbol}</td>
+                          <td>{row.exposureUsd}</td>
+                          <td><span className={`status-pill status-pill-${row.state}`}>{row.state}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : <p className="panel-note">Positions appear after deposit.</p>}
+            </div>
+            <div className="pq-activity-col">
+              <span className="section-kicker">Events</span>
+              {activity.length > 0 ? (
+                <div className="pq-events">
+                  {activity.slice(0, 4).map((event) => (
+                    <div className="pq-event" key={event.id}>
+                      <div className="pq-event-meta">
+                        <span className="pq-event-time">{event.time}</span>
+                        <span className={`status-pill status-pill-${event.state}`}>{event.state.replaceAll("_", " ")}</span>
+                      </div>
+                      <strong>{event.title}</strong>
+                    </div>
+                  ))}
+                </div>
+              ) : <p className="panel-note">Activity appears after deposit.</p>}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {previewStatus ? <p className="panel-note" style={{ padding: "16px", textAlign: "center" }}>{previewStatus.message}</p> : null}
     </div>
   );
 }

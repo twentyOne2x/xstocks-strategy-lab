@@ -1,86 +1,45 @@
 import Link from "next/link";
 
-/* ────────────────────────────────────────────────────────
-   Equity Terminal — Landing page
-   Full-width marketing homepage. No app chrome.
-   ──────────────────────────────────────────────────────── */
-
-function ChartIcon() {
+function ChartIcon({ size = 32 }: { size?: number }) {
   return (
-    <svg
-      aria-hidden="true"
-      className="landing-icon"
-      fill="none"
-      viewBox="0 0 128 128"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg aria-hidden="true" className="landing-icon" fill="none" height={size} viewBox="0 0 128 128" width={size} xmlns="http://www.w3.org/2000/svg">
       <rect fill="#0B0F0E" height="128" rx="28" width="128" />
-      <rect
-        fill="none"
-        height="122"
-        rx="25"
-        stroke="#1F2927"
-        strokeWidth="1.5"
-        width="122"
-        x="3"
-        y="3"
-      />
-      <polyline
-        fill="none"
-        points="28,88 48,72 62,78 80,52 100,36"
-        stroke="#1FD59A"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="5"
-      />
+      <rect fill="none" height="122" rx="25" stroke="#1F2927" strokeWidth="1.5" width="122" x="3" y="3" />
+      <polyline fill="none" points="28,88 48,72 62,78 80,52 100,36" stroke="#1FD59A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" />
       <circle cx="100" cy="36" fill="#5FCEF0" r="4" />
     </svg>
   );
 }
 
-const steps = [
-  {
-    number: "01",
-    title: "Answer a few questions",
-    body: "Seven short questions about your goals, risk comfort, and how actively you want the portfolio managed. Takes under a minute.",
-  },
-  {
-    number: "02",
-    title: "See the portfolio that fits you",
-    body: "We show you the exact holdings, weights, and rebalancing logic before you commit anything. Every allocation is transparent.",
-  },
-  {
-    number: "03",
-    title: "Connect and fund when ready",
-    body: "Link your wallet through Privy, deposit USDC, and the portfolio activates. No lock-ups, no hidden fees, no surprises.",
-  },
-  {
-    number: "04",
-    title: "Approve every change",
-    body: "Rebalances are recommended, never forced. You review and approve before any trade executes. Pause or turn off at any time.",
-  },
-];
+/* Visual flow diagram — replaces text-heavy "how it works" */
+function FlowDiagram() {
+  const nodes = [
+    { label: "Profile", sub: "7 questions" },
+    { label: "Match", sub: "AI-optimized" },
+    { label: "Preview", sub: "Full transparency" },
+    { label: "Fund", sub: "$10 min" },
+  ];
+  return (
+    <div className="flow-diagram">
+      {nodes.map((n, i) => (
+        <div className="flow-node" key={n.label}>
+          <div className="flow-node-circle">
+            <span className="flow-node-num">{String(i + 1).padStart(2, "0")}</span>
+          </div>
+          <strong>{n.label}</strong>
+          <span>{n.sub}</span>
+          {i < nodes.length - 1 && <div className="flow-connector" />}
+        </div>
+      ))}
+    </div>
+  );
+}
 
-const trustPoints = [
-  {
-    title: "Self-custody",
-    body: "Your assets stay in your wallet. Equity Terminal never takes custody. You hold the keys.",
-  },
-  {
-    title: "Preview before deposit",
-    body: "See every holding, every weight, and every rebalancing rule before a single dollar moves.",
-  },
-  {
-    title: "User-approved execution",
-    body: "No autonomous trading. Every rebalance requires your explicit approval before it runs.",
-  },
-];
-
-const infra = [
-  { label: "Portfolios", value: "xStocks" },
-  { label: "Wallets", value: "Privy" },
-  { label: "Execution", value: "CoW Protocol" },
-  { label: "Network", value: "Ethereum" },
+const infraPartners = [
+  { name: "xStocks", role: "Tokenized equities" },
+  { name: "Privy", role: "Smart wallets" },
+  { name: "CoW Protocol", role: "Trade execution" },
+  { name: "Chainlink", role: "Automation rails" },
 ];
 
 export function HomeTerminal() {
@@ -92,16 +51,12 @@ export function HomeTerminal() {
           <Link className="landing-brand" href="/">
             <ChartIcon />
             <span className="landing-brand-name">Equity Terminal</span>
+            <span className="landing-brand-powered">Powered by xStocks</span>
           </Link>
           <nav className="landing-header-nav">
-            <a className="landing-header-link" href="#how-it-works">
-              How it works
-            </a>
-            <a className="landing-header-link" href="#trust">
-              Trust
-            </a>
-            <Link className="button button-primary button-sm" href="/onboarding">
-              Get started
+            <a className="landing-header-link" href="#infra">Infrastructure</a>
+            <Link className="button button-primary button-lg" href="/onboarding">
+              Open Terminal
             </Link>
           </nav>
         </div>
@@ -110,117 +65,80 @@ export function HomeTerminal() {
       {/* ── Hero ── */}
       <section className="landing-hero">
         <div className="landing-hero-inner">
-          <span className="landing-kicker">Powered by xStocks</span>
           <h1 className="landing-h1">
-            Tokenized equity portfolios
-            <br />
-            you actually control.
+            Tokenized equities.<br />
+            Your wallet. Your rules.
           </h1>
           <p className="landing-hero-sub">
-            Equity Terminal builds a portfolio of tokenized US equities matched
-            to your profile. You see every holding before you deposit, approve
-            every rebalance before it executes, and keep full custody of your
-            assets the entire time.
+            Get a portfolio of tokenized US equities matched to you.
+            Preview everything. Fund with $10. Self-custody the whole way.
           </p>
           <div className="landing-hero-cta">
-            <Link className="button button-primary button-lg" href="/onboarding">
-              Find my portfolio
+            <Link className="button button-primary button-xl" href="/onboarding">
+              Open Terminal
             </Link>
             <Link className="button button-ghost button-lg" href="/workspace/comparison">
               Browse portfolios
             </Link>
           </div>
-          <div className="landing-proof-row">
-            <span>Self-custody</span>
-            <span className="landing-proof-dot" />
-            <span>Preview before deposit</span>
-            <span className="landing-proof-dot" />
-            <span>You approve every change</span>
-          </div>
         </div>
       </section>
 
-      {/* ── How it works ── */}
-      <section className="landing-section" id="how-it-works">
-        <div className="landing-section-inner">
-          <span className="landing-section-kicker">How it works</span>
-          <h2 className="landing-h2">
-            From profile to portfolio in four steps.
-          </h2>
-          <div className="landing-steps">
-            {steps.map((step) => (
-              <article className="landing-step" key={step.number}>
-                <span className="landing-step-num">{step.number}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Trust ── */}
-      <section className="landing-section landing-section-alt" id="trust">
-        <div className="landing-section-inner">
-          <span className="landing-section-kicker">Why self-custody matters</span>
-          <h2 className="landing-h2">
-            You hold the assets. You approve the trades.
-          </h2>
-          <p className="landing-section-sub">
-            Most managed products take custody of your money, rebalance behind
-            closed doors, and make you trust that the right thing happened.
-            Equity Terminal works differently.
-          </p>
-          <div className="landing-trust-grid">
-            {trustPoints.map((point) => (
-              <article className="landing-trust-card" key={point.title}>
-                <h3>{point.title}</h3>
-                <p>{point.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Infrastructure ── */}
-      <section className="landing-section">
-        <div className="landing-section-inner">
-          <span className="landing-section-kicker">Infrastructure</span>
-          <h2 className="landing-h2">
-            Built on transparent, verifiable rails.
-          </h2>
-          <p className="landing-section-sub">
-            Equity Terminal is the interface. The portfolio logic, wallet
-            infrastructure, and trade execution are handled by proven,
-            independent systems.
-          </p>
-          <div className="landing-infra-row">
-            {infra.map((item) => (
-              <div className="landing-infra-item" key={item.label}>
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
+      {/* ── Built on top of ── */}
+      <section className="landing-infra-band" id="infra">
+        <div className="landing-infra-band-inner">
+          <span className="landing-section-kicker">Built on top of</span>
+          <div className="landing-infra-cards">
+            {infraPartners.map((p) => (
+              <div className="landing-infra-card" key={p.name}>
+                <strong>{p.name}</strong>
+                <span>{p.role}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* ── How it works — visual flow ── */}
+      <section className="landing-section">
+        <div className="landing-section-inner landing-section-center">
+          <span className="landing-section-kicker">How it works</span>
+          <h2 className="landing-h2">Profile to portfolio in 60 seconds.</h2>
+          <FlowDiagram />
+        </div>
+      </section>
+
+      {/* ── Trust — visual chips, not paragraphs ── */}
+      <section className="landing-section landing-section-alt">
+        <div className="landing-section-inner landing-section-center">
+          <h2 className="landing-h2">Always yours.</h2>
+          <div className="landing-trust-chips">
+            <div className="landing-trust-chip">
+              <strong>Self-custody</strong>
+              <span>Assets stay in your wallet</span>
+            </div>
+            <div className="landing-trust-chip">
+              <strong>Full preview</strong>
+              <span>See every holding before funding</span>
+            </div>
+            <div className="landing-trust-chip">
+              <strong>Pause anytime</strong>
+              <span>Turn off or exit whenever you want</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Bottom CTA ── */}
       <section className="landing-section landing-bottom-cta">
-        <div className="landing-section-inner" style={{ textAlign: "center" }}>
-          <h2 className="landing-h2">See which portfolio fits you.</h2>
-          <p className="landing-section-sub" style={{ marginInline: "auto" }}>
-            Seven questions. Under a minute. Preview everything before you
-            deposit.
+        <div className="landing-section-inner landing-section-center">
+          <h2 className="landing-h2">Ready?</h2>
+          <p className="landing-hero-sub" style={{ textAlign: "center", maxWidth: "40ch", marginInline: "auto" }}>
+            Seven questions. Preview the portfolio. Fund when you want.
           </p>
-          <div
-            className="landing-hero-cta"
-            style={{ justifyContent: "center" }}
-          >
-            <Link className="button button-primary button-lg" href="/onboarding">
-              Get started
-            </Link>
-          </div>
+          <Link className="button button-primary button-xl" href="/onboarding">
+            Open Terminal
+          </Link>
         </div>
       </section>
 
@@ -235,16 +153,12 @@ export function HomeTerminal() {
             </div>
           </div>
           <div className="landing-footer-links">
-            <Link href="/onboarding">Get started</Link>
+            <Link href="/onboarding">Open Terminal</Link>
             <Link href="/workspace/comparison">Browse portfolios</Link>
-            <a href="#how-it-works">How it works</a>
-            <a href="#trust">Trust</a>
           </div>
           <div className="landing-footer-infra">
-            {infra.map((item) => (
-              <span key={item.label}>
-                {item.label}: {item.value}
-              </span>
+            {infraPartners.map((p) => (
+              <span key={p.name}>{p.name}</span>
             ))}
           </div>
         </div>
