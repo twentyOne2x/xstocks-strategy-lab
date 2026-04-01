@@ -563,6 +563,55 @@ test("scheduled cron evaluations can queue a truthful scheduled rebalance review
   );
 });
 
+test("provider-triggered evaluations stay fail-closed at the Chainlink-oriented boundary", () => {
+  const executionPlan = deriveExecutionPlan({
+    activation_manifest: basketManifest,
+    live_xstocks_state: basketBoundaryState.liveXStocksState,
+    live_route_state: basketBoundaryState.liveRouteState,
+    user_notional_usd: 1000,
+    wallet_state: {
+      walletConnected: true,
+      walletAddress: "0xabc",
+      fundedNotionalUsd: 1250,
+      smartAccount: {
+        status: "ready",
+        address: "0xsmart",
+      },
+    },
+  });
+  const recommendation = deriveRecommendation({
+    activation_manifest: basketManifest,
+    live_xstocks_state: basketBoundaryState.liveXStocksState,
+    live_route_state: basketBoundaryState.liveRouteState,
+    user_notional_usd: 1000,
+    wallet_state: {
+      walletConnected: true,
+      walletAddress: "0xabc",
+      fundedNotionalUsd: 1250,
+      smartAccount: {
+        status: "ready",
+        address: "0xsmart",
+      },
+    },
+  });
+
+  const rebalance = deriveRebalanceOrchestration({
+    activation_manifest: basketManifest,
+    recommendation,
+    execution_plan: executionPlan,
+    latest_activation: createActivationBaseline(),
+    trigger_source: REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED,
+  });
+
+  assert.equal(rebalance.state, REBALANCE_ORCHESTRATION_STATE.BLOCKED);
+  assert.equal(rebalance.automationTruth.providerTriggeredProven, false);
+  assert.deepEqual(rebalance.automationTruth.supportedTriggerSources, [
+    "operator_manual",
+    "scheduled_cron",
+  ]);
+  assert.match(rebalance.blockers[0], /Chainlink/i);
+});
+
 test("rebalance orchestration fails closed when manifest drift exists but readiness checks are not satisfied", () => {
   const executionPlan = deriveExecutionPlan({
     activation_manifest: basketManifest,

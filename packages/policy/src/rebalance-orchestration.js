@@ -47,6 +47,13 @@ const SUPPORTED_TRIGGER_SOURCES = Object.freeze([
   REBALANCE_TRIGGER_SOURCE.OPERATOR_MANUAL,
   REBALANCE_TRIGGER_SOURCE.SCHEDULED_CRON,
 ]);
+const POLICY_EVENT_BLOCKERS = Object.freeze([
+  "Promoted-manifest drift can recommend a rebalance, but no autonomous policy-event emitter is implemented in this repo.",
+]);
+const CHAINLINK_TRIGGER_BLOCKERS = Object.freeze([
+  "Chainlink-oriented provider triggers are not implemented or proven in this repo; no live Chainlink Automation, CRE, or CCIP path exists here.",
+  "Provider-triggered rebalance review stays fail-closed until a repo-owned adapter, signed-event validation, and proof artifact exist.",
+]);
 const ALLOWED_TRANSITIONS = Object.freeze({
   [REBALANCE_ORCHESTRATION_STATE.PREVIEW_ONLY]: [],
   [REBALANCE_ORCHESTRATION_STATE.REBALANCE_RECOMMENDED]: [
@@ -139,7 +146,8 @@ function buildAutomationTruth() {
     notes: [
       "Operator confirmation remains required before any rebalance execution claim.",
       "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
-      "Provider-triggered automation stays blocked until a concrete adapter and proof path exist.",
+      "Supported trigger sources in current repo truth are operator_manual and scheduled_cron only.",
+      "Chainlink-oriented provider triggers stay classification-only and fail-closed until a concrete adapter, signed-event validation, and proof path exist.",
     ],
   };
 }
@@ -451,13 +459,9 @@ export function deriveRebalanceOrchestration({
 
   const blockers =
     triggerSource === REBALANCE_TRIGGER_SOURCE.PROVIDER_TRIGGERED
-      ? [
-          "Provider-triggered rebalance automation is not implemented or proven in this repo.",
-        ]
+      ? [...CHAINLINK_TRIGGER_BLOCKERS]
       : triggerSource === REBALANCE_TRIGGER_SOURCE.POLICY_EVENT
-        ? [
-            "Policy-event rebalance triggering is not implemented in this repo, so the worker fails closed.",
-          ]
+        ? [...POLICY_EVENT_BLOCKERS]
         : executionPlan.blockers;
   const runtimeOwner = assertKnownRuntimeOwner(
     runtime_owner ??
