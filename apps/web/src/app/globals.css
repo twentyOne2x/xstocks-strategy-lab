@@ -945,10 +945,47 @@ button { font: inherit; }
 
 .onboarding-entry-card h1 {
   margin: 0;
-  font-size: clamp(2.2rem, 3.5vw, 3rem);
+  font-size: clamp(2.6rem, 4.5vw, 3.8rem);
   font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.ob-entry-cta-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ob-entry-infra {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ob-skip-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.ob-skip-btn:hover {
+  border-color: rgba(31, 213, 154, 0.4);
   color: var(--text);
 }
 
@@ -1069,10 +1106,10 @@ button { font: inherit; }
 
 .onboarding-flow-question h2 {
   margin: 0;
-  font-size: clamp(1.4rem, 2.4vw, 1.7rem);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
   font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: var(--text);
 }
 
@@ -1391,6 +1428,7 @@ button { font: inherit; }
 
 .button-sm { min-height: 34px; padding: 0 14px; font-size: 0.82rem; }
 .button-lg { min-height: 48px; padding: 0 28px; font-size: 1rem; font-weight: 600; }
+.button-xl { min-height: 56px; padding: 0 40px; font-size: 1.1rem; font-weight: 700; border-radius: 16px; }
 
 /* ──────────────────────────────────────────────
    Landing Page — Full-width marketing homepage
@@ -1442,6 +1480,14 @@ button { font: inherit; }
   color: var(--text);
 }
 
+.landing-brand-powered {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .landing-header-nav {
   display: flex;
   align-items: center;
@@ -1485,11 +1531,11 @@ button { font: inherit; }
 }
 
 .landing-h1 {
-  margin: 0 0 28px;
-  font-size: clamp(2.8rem, 5.5vw, 4.2rem);
+  margin: 0 0 24px;
+  font-size: clamp(3.2rem, 6.5vw, 5rem);
   font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.025em;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
   color: var(--text);
 }
 
@@ -1525,10 +1571,144 @@ button { font: inherit; }
   flex-shrink: 0;
 }
 
+/* ── Infra Band ── */
+
+.landing-infra-band {
+  padding: 32px 32px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.landing-infra-band-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-infra-cards {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.landing-infra-card {
+  flex: 1;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.landing-infra-card strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.landing-infra-card span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+/* ── Flow Diagram ── */
+
+.flow-diagram {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 32px;
+}
+
+.flow-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  min-width: 120px;
+  padding: 0 24px;
+}
+
+.flow-node-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(31, 213, 154, 0.4);
+  background: rgba(31, 213, 154, 0.08);
+  display: grid;
+  place-items: center;
+}
+
+.flow-node-num {
+  color: var(--accent);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.flow-node strong {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.flow-node span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.flow-connector {
+  position: absolute;
+  top: 28px;
+  left: calc(50% + 40px);
+  width: calc(100% - 80px + 48px);
+  height: 2px;
+  background: linear-gradient(90deg, rgba(31, 213, 154, 0.3), rgba(95, 206, 240, 0.3));
+}
+
+/* ── Trust Chips ── */
+
+.landing-trust-chips {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.landing-trust-chip {
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: rgba(255, 255, 255, 0.015);
+  text-align: center;
+  min-width: 180px;
+}
+
+.landing-trust-chip strong {
+  display: block;
+  color: var(--text);
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.landing-trust-chip span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.landing-section-center {
+  text-align: center;
+}
+
 /* ── Sections ── */
 
 .landing-section {
-  padding: 80px 32px;
+  padding: 64px 32px;
   border-top: 1px solid var(--border);
 }
 
@@ -1761,11 +1941,65 @@ button { font: inherit; }
 
 .pq-gate-title {
   margin: 0;
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
   font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
   color: var(--text);
+}
+
+/* ── Gate chart ── */
+
+.pq-gate-chart {
+  height: 120px;
+  border-radius: var(--radius-row);
+  overflow: hidden;
+}
+
+.pq-gate-chart svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Gate stats ── */
+
+.pq-gate-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pq-gate-stat {
+  flex: 1;
+  min-width: 100px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-row);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pq-gate-stat span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pq-gate-stat strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+/* ── Gate chips ── */
+
+.pq-gate-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .pq-gate-sub {
@@ -1859,42 +2093,51 @@ button { font: inherit; }
   flex-shrink: 0;
 }
 
-/* ── Tour overlay ── */
+/* ── Component-anchored tour bar ── */
 
-.pq-tour-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+.pq-workspace-touring > *:not(.pq-tour-bar):not(.pq-preview-bar) {
+  opacity: 0.25;
+  transition: opacity 300ms ease;
+  pointer-events: none;
 }
 
-.pq-tour-card {
-  display: grid;
-  gap: 14px;
-  max-width: 420px;
-  padding: 28px;
-  border: 1px solid var(--border);
+.pq-workspace-touring .pq-highlight {
+  opacity: 1 !important;
+  pointer-events: auto;
+  box-shadow: 0 0 0 3px rgba(31, 213, 154, 0.3), 0 0 40px rgba(31, 213, 154, 0.08);
   border-radius: var(--radius-panel);
-  background: var(--surface);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  transition: opacity 300ms ease, box-shadow 300ms ease;
 }
 
-.pq-tour-card h3 {
-  margin: 0;
-  font-size: 1.15rem;
+.pq-tour-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid rgba(31, 213, 154, 0.3);
+  background: rgba(11, 15, 14, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.pq-tour-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 24px;
+}
+
+.pq-tour-label {
+  color: var(--accent);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: var(--text);
-}
-
-.pq-tour-card p {
-  margin: 0;
-  color: var(--text-soft);
-  font-size: 0.92rem;
-  line-height: 1.55;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex: 1;
 }
 
 .pq-tour-progress {
@@ -1910,18 +2153,12 @@ button { font: inherit; }
   transition: background 200ms ease;
 }
 
-.pq-tour-dot-active {
-  background: var(--accent);
-}
-
-.pq-tour-dot-done {
-  background: rgba(31, 213, 154, 0.4);
-}
+.pq-tour-dot-active { background: var(--accent); }
+.pq-tour-dot-done { background: rgba(31, 213, 154, 0.4); }
 
 .pq-tour-actions {
   display: flex;
   gap: 8px;
-  margin-top: 4px;
 }
 
 /* ── Main grid ── */
@@ -1961,46 +2198,90 @@ button { font: inherit; }
 }
 
 .pq-summary-head h2 {
-  margin: 6px 0 8px;
-  font-size: 1.4rem;
+  margin: 6px 0 0;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--text);
 }
 
-.pq-summary-head p {
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.5;
-  max-width: 48ch;
-}
+/* ── Summary metric strip ── */
 
-.pq-summary-metrics {
+.pq-summary-strip {
   display: flex;
   gap: 12px;
-  flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
-.pq-summary-metrics > div {
+.pq-summary-strip > div {
+  flex: 1;
+  min-width: 100px;
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-row);
   background: rgba(255, 255, 255, 0.02);
 }
 
-.pq-summary-metrics span {
+.pq-summary-strip span {
   display: block;
   color: var(--text-muted);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.pq-summary-metrics strong {
+.pq-summary-strip strong {
   display: block;
   margin-top: 4px;
   color: var(--text);
-  font-size: 1rem;
+  font-size: 0.95rem;
+}
+
+/* ── How row ── */
+
+.pq-how { padding: 16px 20px; }
+
+.pq-how-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pq-how-row > div {
+  flex: 1;
+  min-width: 140px;
+}
+
+.pq-how-row strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+/* ── MI updated label ── */
+
+.pq-mi-updated {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* ── Full-width sections ── */
+
+.pq-fw-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.pq-fw-section-alt {
+  background: var(--surface);
+}
+
+.pq-fw-inner {
+  display: grid;
+  gap: 14px;
 }
 
 /* ── Chart ── */
@@ -2223,10 +2504,39 @@ button { font: inherit; }
 
   .pq-summary-head {
     flex-direction: column;
+    gap: 12px;
   }
 
-  .pq-summary-metrics {
+  .pq-summary-strip {
     flex-wrap: wrap;
+  }
+
+  .pq-how-row {
+    flex-direction: column;
+  }
+
+  .landing-infra-band-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .landing-infra-cards {
+    flex-wrap: wrap;
+  }
+
+  .flow-diagram {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .flow-connector {
+    display: none;
+  }
+
+  .landing-trust-chips {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
