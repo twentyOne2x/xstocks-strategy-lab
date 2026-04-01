@@ -8,7 +8,7 @@ Status: active
 
 Close the first truthful activation lane from homepage through user-approved CoW execution on Ethereum by:
 1. upgrading `/` into a real homepage,
-2. replacing stubbed Privy connect with real frontend truth,
+2. separating backend Privy verification config from the live user-session proof input,
 3. verifying authenticated Privy sessions on the backend,
 4. requiring a real EIP-712 user signature for CoW submission,
 5. and adding enough operator visibility that the lane can be called deployable only when the proof exists.
@@ -31,7 +31,21 @@ This workstream does not:
 5. the served activation and terminal surfaces are still not fully truth-aligned: production API responses stay preview-only or manual at the current boundary while several served components still imply `Chainlink CRE` or `Status live`.
 6. [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js) already has CoW quote, approval, signed submission, venue-status, and receipt logic.
 7. [privy-auth.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/privy-auth.js) now performs Privy JWT or JWKS verification, linked-account parsing, and authenticated owner binding.
-8. `/ops/xstocks` and `/api/reporting/xstocks` now exist as partial operator visibility surfaces, but hosted token configuration is still missing and no signed execution proof is visible there yet.
+8. `/ops/xstocks` and `/api/reporting/xstocks` now exist as partial operator visibility surfaces, but the backend verification config and the live user-session proof input are still separate pieces that must both be present before proof can continue.
+
+## Proof Inputs
+
+### Backend Privy Verification Config
+
+1. `PRIVY_APP_ID`
+2. `PRIVY_APP_SECRET`
+3. `PRIVY_JWKS_URL`
+
+### Live User-Session Proof Input
+
+1. a fresh access token from a real authenticated Privy session
+2. the matching linked-wallet context used for the proof run
+3. the hosted proof request context that replays the live user session, not the backend config
 
 ## Current Local Implementation Audit
 
@@ -63,7 +77,7 @@ This workstream does not:
 1. completion relative to spec = partial.
 2. completion relative to repeated thread asks = partial.
 3. completion relative to prior implementation claims = no longer missing frontend connect or backend auth, but still overclaimed if interpreted as an end-to-end live execution closure.
-4. verified implementation and proof status = hosted landing deploy is real; frontend connect is real; backend auth verification is real; the repo now carries one hosted linked-wallet activation plus partial CoW quote-boundary proof bundle; no real signed submission proof exists yet.
+4. verified implementation and proof status = hosted landing deploy is real; frontend connect is real; backend auth verification is real; the repo now carries one hosted linked-wallet activation plus partial CoW quote-boundary proof bundle; no real signed submission proof exists yet because the live user-session proof input still needs to be supplied separately from backend config.
 5. canonical frontend functioning status = partial and not yet truthful enough for production closure because the served UI still outruns the current production API on live or automation copy.
 
 ## 2026-04-01 Final Reconciliation Update

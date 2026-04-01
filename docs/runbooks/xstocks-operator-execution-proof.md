@@ -15,11 +15,12 @@ Canonical smoke runbook:
 ## Shortest Truthful Flow
 
 1. Start the repo-owned API surface if needed.
-2. Confirm backend Privy verification is configured with `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, and `PRIVY_JWKS_URL` before attempting authenticated activation.
-3. Confirm `GET /api/activation-preview` is `ready` and `executable`, and that `GET /api/public-agent-handoff` says `ready_for_authenticated_activation`.
-4. Save the activation from a real authenticated user context.
-5. Read back activity or execution state from the canonical API.
-6. Create or inspect the execution request only from that authenticated context.
+2. Confirm backend Privy verification config with `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, and `PRIVY_JWKS_URL`.
+3. Obtain a live user-session proof input from a real authenticated Privy session before attempting authenticated activation.
+4. Confirm `GET /api/activation-preview` is `ready` and `executable`, and that `GET /api/public-agent-handoff` says `ready_for_authenticated_activation`.
+5. Save the activation from the live authenticated user context.
+6. Read back activity or execution state from the canonical API.
+7. Create or inspect the execution request only from that authenticated context.
 7. Stop at the first truthful boundary and report it exactly.
 
 ## Canonical Local Commands
@@ -77,7 +78,7 @@ Stop before activation save if any of these remain true:
 5. `executionEligibility` is not `executable`
 6. the public handoff helper does not say `ready_for_authenticated_activation`
 7. backend Privy verification is not configured with `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, and `PRIVY_JWKS_URL`
-8. no real authenticated user context exists
+8. no live user-session proof input exists
 
 ## Required Truth Boundary
 

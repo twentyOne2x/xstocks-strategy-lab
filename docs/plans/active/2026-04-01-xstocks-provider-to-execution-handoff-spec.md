@@ -6,7 +6,7 @@ Status: active
 
 ## Goal
 
-Extend the current provider-review proof so that a valid provider or operator-triggered rebalance can hand off into the same venue-routed execution control plane, first under explicit operator action and later under a separately proven automation flag.
+Extend the current provider-review proof so that a valid provider or operator-triggered rebalance can hand off into the same completed venue-routed execution control plane, first under explicit operator action and later under a separately proven automation flag.
 
 ## Non-goals
 
@@ -24,7 +24,7 @@ The user wants `CRE` to stop being just review-only and eventually handle the re
 1. `XSL-011B` proves signed provider ingress and opens `awaiting_operator` only.
 2. `apps/api/src/services/api-service.js` intentionally stops the provider path at `awaiting_operator`.
 3. The repo does not yet own a handoff contract from provider review into execution request staging.
-4. The manual execution lane is still CoW-only, so automation cannot truthfully reuse it for the current basket anyway.
+4. The manual execution lane is now venue-routed and completed, so the remaining gap is provider handoff and hosted proof above it.
 
 ## Current Local Implementation Audit
 

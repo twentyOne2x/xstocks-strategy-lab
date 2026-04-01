@@ -32,11 +32,11 @@ The user wants:
 ## Current Live Truth
 
 1. `XSL-011B` is materially proven for review ingress: production accepts a signed provider event and opens `awaiting_operator` only.
-2. `apps/api/src/rebalance-service.js` still owns a manual execution lane that is explicitly `CoW`-only.
+2. `XSL-014A` is completed and frozen: the manual execution lane is venue-routed and no longer CoW-only.
 3. `packages/xstocks/src/adapters/oneinch.ts` and `apps/api/scripts/oneinch-fusion-proof.js` now prove 1inch Fusion quoteability for most core xStocks names on Ethereum, but only at the quote layer.
 4. `CoW` still quotes only a narrow direct xStocks subset on Ethereum, so the current promoted basket is not fully executable through the existing `CoW` lane.
 5. The canonical frontend spec already reserves the right rail for market intelligence, route state, wallet state, venue provenance, and action controls, but the repo does not yet implement a real rebalance control surface there.
-6. The repo has no venue-routed execution contract that can move from `awaiting_operator` to a mainnet execution request using `1inch + CoW` with exact per-leg route truth.
+6. The repo has a completed venue-routed execution contract; the remaining gap is moving provider review from `awaiting_operator` into that substrate and proving the hosted/session-backed signer flow above it.
 
 ## Current Local Implementation Audit
 
@@ -49,15 +49,15 @@ The user wants:
 
 ### Partial
 
-1. route truth now names both `CoW` and `1inch`, but the backend execution lane is not venue-routed yet,
+1. route truth now names both `CoW` and `1inch`, but the remaining open work is the provider handoff and hosted/session-backed proof above the completed substrate,
 2. the canonical frontend can show route state, but not yet a real event-triggered rebalance control panel,
-3. provider-triggered rebalance truth reaches `awaiting_operator`, but no repo-owned handoff into mainnet execution exists.
+3. provider-triggered rebalance truth reaches `awaiting_operator`, but no repo-owned handoff into the completed execution substrate exists.
 
 ### Spec-only Or Unproven
 
-1. one truthful manual mainnet `1inch + CoW` execution path,
-2. one truthful `Execute all` control from the canonical frontend,
-3. one truthful provider-review-to-execution handoff,
+1. one truthful `Execute all` control from the canonical frontend,
+2. one truthful provider-review-to-execution handoff,
+3. one hosted/session-backed signer proof bundle,
 4. one reusable automation posture that can later execute without reintroducing hidden autonomy.
 
 ## Completion Reconciliation
@@ -65,7 +65,7 @@ The user wants:
 1. completion relative to spec = not started as a unified program; the required lanes exist only as fragments.
 2. completion relative to repeated thread asks = partial and over-fragmented; review ingress, venue proof, and frontend action intent have all moved separately, but the user still cannot do `news event -> execute all -> mainnet rebalance`.
 3. completion relative to prior implementation claims = `CRE` review ingress is real, but any interpretation that it already closes execution is false.
-4. verified implementation and proof status = review ingress proven, `CoW` partial only, `1inch` quoteability proven, no repo-owned venue-routed execution proof yet.
+4. verified implementation and proof status = review ingress proven, `XSL-014A` completed, `1inch` quoteability proven, and no hosted/session-backed signer proof yet.
 5. canonical frontend functioning status = no real control surface yet for event-triggered rebalance or top-level execute-all action.
 
 ## Existing-Spec Inventory
@@ -76,8 +76,8 @@ The user wants:
    - Why: it already owns signed provider review ingress and should not be rewritten.
 2. [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md)
    - Current relevance: very high.
-   - Decision: extend with a new sub-lane.
-   - Why: execution proof remains the core lane, but the venue contract has changed materially.
+   - Decision: extend with the hosted/session-backed signer proof sub-lane.
+   - Why: execution proof remains the core lane, but the venue substrate is already frozen and the residual proof now sits above it.
 3. [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md)
    - Current relevance: high.
    - Decision: reuse.
@@ -88,9 +88,9 @@ The user wants:
    - Why: cheaper proof iterations matter, but testnet must stay separate from mainnet closure.
 
 Create new alongside:
-1. [2026-04-01-xstocks-venue-routed-mainnet-execution-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-venue-routed-mainnet-execution-spec.md)
+1. [2026-04-01-xstocks-provider-to-execution-handoff-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-provider-to-execution-handoff-spec.md)
 2. [2026-04-01-xstocks-event-triggered-rebalance-control-surface-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-event-triggered-rebalance-control-surface-spec.md)
-3. [2026-04-01-xstocks-provider-to-execution-handoff-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-provider-to-execution-handoff-spec.md)
+3. hosted/session-backed signer proof
 
 ## Thread-Recurrence Audit
 
@@ -104,10 +104,9 @@ Canonical repeated problems in the current thread:
 
 | Rank | Workstream | Recurrence | Value | Readiness | Current state | Issue / plan mapping | Thread-claimed status | Verified implementation / proof status | Verified canonical frontend status | Recommended next move |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Venue-routed mainnet execution | very high | very high | high | partial | `XSL-014A` | not yet claimed | 1inch quoteability proven; backend execution still CoW-only | not applicable | wire manual venue-routed execution first |
+| 1 | Provider-to-execution handoff | high | high | medium | unstarted | `XSL-018B` | over-assumed by user intent, not by repo truth | review ingress proven only | no | reuse `awaiting_operator`, then hand off into the completed execution substrate |
 | 2 | Event-triggered rebalance control surface | high | very high | medium | unstarted | `XSL-018A` | not yet claimed | no repo-owned UI control surface yet | no | add right-rail event stub + `Execute all` shell |
-| 3 | Provider-to-execution handoff | high | high | medium | unstarted | `XSL-018B` | over-assumed by user intent, not by repo truth | review ingress proven only | no | reuse `awaiting_operator`, then hand off into venue-routed execution |
-| 4 | Testnet proof inventory | medium | medium | high | planning-only | `XSL-017` | newly opened | no supported matrix yet | not applicable | inventory chains and venues in parallel |
+| 3 | Hosted/session-backed signer proof | high | very high | medium | partial | `XSL-014` | not yet claimed | backend venue-routed substrate completed; fresh live session proof still missing | not applicable | collect a real authenticated user session and finish the hosted proof bundle |
 
 ## Product Outcome Contract
 
@@ -148,48 +147,45 @@ When this program is materially closed:
 
 ### Sub-specs
 
-1. `XSL-014A` Venue-Routed Mainnet Execution
+1. `XSL-018B` Provider-To-Execution Handoff
 2. `XSL-018A` Event-Triggered Rebalance Control Surface
-3. `XSL-018B` Provider-To-Execution Handoff
-4. `XSL-017` Testnet Proof Surface And Harness
+3. `XSL-014` Hosted/Session-Backed Signer Proof
 
 ### Ordered sequence
 
-1. land `XSL-014A` first because no control surface can honestly execute without it,
-2. land `XSL-018A` in parallel if it degrades gracefully to review/staging while `XSL-014A` is still landing,
-3. land `XSL-018B` only after `XSL-014A` proves the real manual execution path,
-4. run `XSL-017` in parallel because it is a cheaper supporting proof lane, not the mainnet closure lane.
+1. land `XSL-018B` first because the provider review dead-end is still open,
+2. land `XSL-018A` second because the control surface can only light up above the completed execution substrate,
+3. land the hosted/session-backed signer proof third so the completed substrate has a fresh live session proof bundle,
+4. do not reopen `XSL-014A`; the venue layer is frozen.
 
 ## Proof Artifacts
 
 Required program-level artifacts:
 1. one browser proof pack for the right rail event flow and top-level `Execute all` control,
-2. one staged venue-routed execution artifact showing exact per-leg route selection,
-3. one small real mainnet execution proof bundle or exact signer/submission blocker,
-4. one provider-review-to-execution handoff artifact or exact blocker,
-5. one summary that states manual proof level separately from later automation proof level.
+2. one provider-review-to-execution handoff artifact or exact blocker,
+3. one hosted/session-backed signer proof bundle or exact blocker,
+4. one summary that states manual proof level separately from later automation proof level.
 
 ## Exit Criteria
 
 This control plane is materially closed only when:
 1. the canonical frontend exposes a real event-triggered rebalance control surface,
-2. the backend can stage a venue-routed execution request from that control surface,
-3. one truthful small mainnet venue-routed execution proof exists,
-4. provider review can hand off into the same execution control plane,
-5. any later automation claim remains bounded to the same proven route and signer truth.
+2. provider review can hand off into the same execution control plane,
+3. one truthful hosted/session-backed signer proof exists,
+4. any later automation claim remains bounded to the same proven route and signer truth.
 
 ## Rollback / Recovery
 
 1. Keep `XSL-011B` review ingress intact even if the execution handoff fails.
-2. Allow the frontend control surface to degrade to review-only if execution staging is not yet ready.
-3. Remove any venue-routing logic that hides exact blockers or mislabels fallback truth.
+2. Allow the frontend control surface to degrade to review-only if the hosted/session-backed proof is not yet ready.
+3. Do not reopen `XSL-014A`; the venue-routing logic is frozen.
 
 ## Decision Log
 
-- 2026-04-01: `CRE` review ingress is no longer the main blocker; venue-routed execution is.
-- 2026-04-01: `1inch` becomes a first-class execution lane because its quote proof materially changes the route decision.
+- 2026-04-01: `CRE` review ingress is no longer the main blocker; provider handoff and hosted proof are.
+- 2026-04-01: `XSL-014A` is frozen as completed, so no venue-design work should re-open here.
 - 2026-04-01: `Execute all` must mean explicit operator execution first, then optional automation later.
 
 ## Progress Log
 
-- 2026-04-01T22:55:00+02:00: Created the control-plane umbrella after the user explicitly asked for right-side event stubbing, top-level execute-all, and later CRE reuse through `1inch + Cow Swap`.
+- 2026-04-01T22:55:00+02:00: Created the control-plane umbrella after the user explicitly asked for right-side event stubbing, top-level execute-all, and later CRE reuse through the completed execution substrate.

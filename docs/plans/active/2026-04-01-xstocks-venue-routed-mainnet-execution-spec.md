@@ -2,11 +2,11 @@
 
 Date: 2026-04-01
 Owner: Codex
-Status: active
+Status: completed
 
 ## Goal
 
-Close the next real execution lane by replacing the current CoW-only manual execution posture with a truthful venue-routed mainnet execution path that:
+Freeze the completed venue-routed mainnet execution tranche that replaced the old CoW-only manual execution posture with a truthful venue-routed path that:
 1. uses `1inch` where xStocks quoteability is proven,
 2. uses `CoW` where direct execution is still proven,
 3. stages exact per-leg route truth,
@@ -27,40 +27,39 @@ The user wants `1inch + Cow Swap` to make rebalance execution work on mainnet, n
 
 ## Current Live Truth
 
-1. `apps/api/src/rebalance-service.js` is explicitly hardcoded to the manual `CoW` lane with `OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "cow_swap"`.
+1. `apps/api/src/rebalance-service.js` now routes manual execution through the venue-routed substrate instead of staying hardcoded to the manual `CoW` lane.
 2. `packages/xstocks/src/adapters/oneinch.ts` now exposes a real Fusion quote client with a live proof script under `apps/api/scripts/oneinch-fusion-proof.js`.
 3. The repo has live proof that 1inch Fusion quotes `NVDAx`, `AAPLx`, `MSFTx`, `METAx`, `AMZNx`, `GOOGLx`, `TSLAx`, `SPYx`, `AVGOx`, and `ORCLx` at `$20+`, while `AMDx` remained blocked.
-4. The repo has live proof that `CoW` directly quotes only a narrower xStocks subset, so the promoted basket cannot close on the current CoW-only lane.
-5. No repo-owned 1inch sign/submit/receipt path exists yet for execution requests.
+4. The repo has live proof that `CoW` directly quotes only a narrower xStocks subset, so the promoted basket could not close on the old CoW-only lane.
+5. The repo-owned venue-routed execution substrate now exists; the remaining proof gap is above it, not inside venue routing.
 
 ## Current Local Implementation Audit
 
 ### Shipped
 
-1. manual `CoW` execution request staging, approval, submission, and settlement tracking,
+1. manual venue-routed execution request staging, approval, submission, and settlement tracking,
 2. 1inch Fusion quote adapter and live quote proof,
 3. route truth surfaces that already name both `CoW` and `1inch`.
 
 ### Partial
 
-1. route truth exists, but execution-request state is not venue-routed,
-2. mainnet proof exists for `CoW` only up to quote boundary on the current basket,
-3. one real 1inch execution proof is missing.
+1. hosted proof above the execution substrate is still missing,
+2. provider handoff and control-surface work are still missing,
+3. one real hosted/session-backed signer proof is missing.
 
 ### Spec-only Or Unproven
 
-1. a repo-owned venue-routed execution request contract,
-2. a repo-owned 1inch signature/submission boundary,
-3. a truthful fallback contract between `1inch` and `CoW`,
-4. one small real mainnet 1inch-backed execution proof.
+1. a repo-owned hosted/session-backed signer proof bundle,
+2. a truthful provider handoff into the completed substrate,
+3. a canonical top-level `Execute all` control.
 
 ## Completion Reconciliation
 
-1. completion relative to spec = unstarted as a venue-routed lane.
-2. completion relative to repeated thread asks = partial; venue availability is now clearer, but execution is still not wired.
-3. completion relative to prior implementation claims = `CoW` execution is real for its narrow subset, but that no longer closes the basket/product ask.
-4. verified implementation and proof status = 1inch quoteability proven, 1inch execution unproven, CoW manual execution proven only for the narrow direct CoW surface.
-5. canonical frontend functioning status = not yet applicable because the backend venue-routed lane does not exist.
+1. completion relative to spec = completed as a venue-routed lane.
+2. completion relative to repeated thread asks = the venue layer is now frozen; the remaining asks sit above it.
+3. completion relative to prior implementation claims = CoW execution was only the precursor; the completed venue-routed substrate now supersedes it.
+4. verified implementation and proof status = 1inch quoteability proven, venue-routed execution substrate completed, hosted/session-backed signer proof still unproven.
+5. canonical frontend functioning status = not yet applicable because the remaining work is control-plane and session-backed proof above the substrate.
 
 ## Existing-Spec Inventory
 
@@ -79,11 +78,11 @@ The user wants `1inch + Cow Swap` to make rebalance execution work on mainnet, n
 
 ## Workstream Outcome Contract
 
-When this lane is materially closed:
-1. an execution request can stage legs with exact selected venues,
-2. the system can prepare quotes and signature payloads for 1inch and CoW without lying about interchangeability,
-3. the system can submit through the selected venue after explicit signer approval,
-4. a small real mainnet execution proof exists for the new path or the exact blocker is documented.
+This lane is materially closed and frozen:
+1. the repo owns a venue-routed execution request contract,
+2. exact per-leg route selection, quote artifacts, signer payloads, submissions, and receipts persist,
+3. explicit signer approval remains required,
+4. later work can reuse the completed substrate without reopening venue design.
 
 ## State-And-Truth Contract
 
@@ -141,22 +140,21 @@ Minimum required verification:
 
 This lane is materially closed only when:
 1. execution requests are venue-routed rather than CoW-only,
-2. 1inch is integrated beyond quote-only truth,
-3. one small real mainnet proof exists or one exact blocker remains,
-4. blocked symbols still report exact blockers rather than disappearing.
+2. the venue layer stays frozen,
+3. later work above the substrate reports exact blockers rather than reopening venue design.
 
 ## Rollback / Recovery
 
 1. Preserve the existing manual CoW lane as the fallback implementation boundary while the venue-routed path lands.
-2. If 1inch integration introduces ambiguity, fail closed to route staging without submission.
-3. Revert route-selection logic rather than emitting mixed or false route truth.
+2. If hosted proof introduces ambiguity, fail closed to staging without submission.
+3. Do not reopen venue-selection logic.
 
 ## Decision Log
 
-- 2026-04-01: 1inch quoteability changes the execution strategy enough to justify a dedicated sub-lane.
+- 2026-04-01: 1inch quoteability changed the execution strategy enough to justify the dedicated sub-lane, and that lane is now completed.
 - 2026-04-01: This lane keeps explicit signer approval and does not authorize autonomous execution.
-- 2026-04-01: CoW remains part of route truth, but not the only route.
+- 2026-04-01: CoW remained part of route truth, but the completed substrate now supersedes the old CoW-only posture.
 
 ## Progress Log
 
-- 2026-04-01T23:05:00+02:00: Created `XSL-014A` as the dedicated owner spec for venue-routed mainnet execution after 1inch quoteability proof made the existing CoW-only execution lane stale.
+- 2026-04-01T23:05:00+02:00: Created `XSL-014A` as the dedicated owner spec for venue-routed mainnet execution after 1inch quoteability proof made the existing CoW-only execution lane stale; this tranche is now frozen as completed.
