@@ -214,8 +214,11 @@ export interface ApiManifestView {
     requiresSmartAccount: boolean;
     minFundingUsd: number;
     preferredFundingProvider: string;
-    preferredBridgeProvider: string;
     topUpAsset: string;
+    manualSigningMode: string;
+    automationAccountMode: string;
+    venueSigningMode: string;
+    supportsSeparateExecutionDestination: boolean;
   };
   signalRefs: Array<{ signalId: string; scopeType: string; scopeKey: string }>;
   targetAllocations: Array<{
@@ -366,27 +369,80 @@ export interface ApiExecutionPlan {
   assetChecks: Array<{ assetSymbol: string; truthState: string; status: string; reason: string }>;
   fundingPath: {
     provider: string;
-    bridgeProvider: string;
     minRequiredUsd: number;
     fundedNotionalUsd: number;
     fundingGapUsd: number;
     topUpAsset: string;
+    destinationAddress: string | null;
+    destinationKind: string;
+    readiness: string;
+    recommendedMethodId: string | null;
+    surfaces: Array<{
+      methodId: string;
+      providerId: string;
+      kind: string;
+      status: string;
+      destinationAddress: string | null;
+      assetSymbol: string;
+      notes: string[];
+    }>;
     status: string;
   };
   smartAccount: {
     readiness: string;
+    automationReadiness: string;
     providerId: string;
     status: string;
     address: string | null;
+    manualSigningMode: string;
+    automationAccountMode: string;
+    venueSigningMode: string;
+    bridgeState: {
+      manualSignerAddress: string | null;
+      manualSignerKind: string;
+      policyAccountAddress: string | null;
+      executionDestinationAddress: string | null;
+      executionDestinationKind: string;
+      supportsSeparateExecutionDestination: boolean;
+      manualSigningMode: string;
+      automationAccountMode: string;
+      venueSigningMode: string;
+      notes: string[];
+    };
+    bootstrap: {
+      state: string;
+      chain: string;
+      implementation: string;
+      signerAddress: string | null;
+      embeddedWalletAddress: string | null;
+      smartAccountAddress: string | null;
+      destinationAddress: string | null;
+      approvalMode: string;
+      paymasterReady: boolean;
+      notes: string[];
+    };
     reviewArtifact: {
       providerId: string;
       providerName: string;
       supportedChains: string[];
       permissions: string[];
+      approvalMode: string;
+      bootstrapBoundary: string;
       fundingBoundary: string;
       walletConnectionLate: boolean;
       notes: string[];
     };
+  };
+  automationExecution: {
+    accountMode: string;
+    readiness: string;
+    status: string;
+    manualSigningMode: string;
+    venueSigningMode: string;
+    policyAccountAddress: string | null;
+    executionDestinationAddress: string | null;
+    blockers: string[];
+    notes: string[];
   };
   steps: Array<{ stepId: string; title: string; status: string; detail: string }>;
   allowedActions: string[];

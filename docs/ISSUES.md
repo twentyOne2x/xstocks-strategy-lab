@@ -99,6 +99,29 @@ Last updated: 2026-04-02
 - Plan links:
   - [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md)
   - [2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md)
+- Continuation note:
+  - Date: 2026-04-02
+  - Scope freeze: implement only the first smart-account runtime bridge in `packages/policy/**`, `apps/api/**`, and `apps/web/**`. Do not attempt AA-native CoW or 1inch signing, do not reopen CRE autonomy policy, and do not broaden this tranche into hosted proof closure.
+  - Verified starting truth on current `origin/main`: manual/user-approved execution still becomes `ready` from a linked wallet or embedded wallet, settlement already prefers the smart-account address when available, execution signer ownership still falls back to the wallet-first path, and frontend Privy state stops at auth/connect rather than surfacing smart-account bootstrap closure.
+  - Fix intent for this tranche: make the smart account the canonical account-ownership and execution-destination surface for automation while preserving wallet-first manual execution, fail closing automation when the smart account is not ready, and persisting explicit bridge-state fields instead of inferring them indirectly.
+  - Acceptance addendum:
+    1. Policy emits explicit bridge-state fields: `manualSignerAddress`, `policyAccountAddress`, and `executionDestinationAddress`.
+    2. Manual execution remains wallet-first and truthful for the current venue-routed lane.
+    3. Automation readiness fails closed unless the smart account is ready.
+    4. API persistence and response surfaces expose the bridge-state model without claiming smart-account-native venue signing.
+    5. Frontend Privy state surfaces embedded-wallet and smart-account bootstrap truthfully enough to drive the bridge-state contract.
+- Executor prompt:
+  - Implement the first smart-account runtime bridge under `XSL-005` only.
+  - Keep current manual execution wallet-first, but require smart-account readiness for automation posture.
+  - Persist and surface `manualSignerAddress`, `policyAccountAddress`, and `executionDestinationAddress` across policy, API, and web.
+  - Do not make CoW or 1inch sign from the smart account in this pass.
+  - Verify with `pnpm --filter @xstocks-strategy-lab/policy test`, `node --test apps/api/test/api.test.js`, `pnpm --filter @xstocks-strategy-lab/web build`, and `git diff --check`.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [ ] fix applied
+  - [ ] tests run
+  - [ ] visual/screenshot verification
 
 ### XSL-006 Strategy Lab Operating Model
 

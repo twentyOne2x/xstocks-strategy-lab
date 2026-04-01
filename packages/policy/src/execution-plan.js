@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
 import {
+  ACCOUNT_SURFACE_KIND,
   EXECUTION_ELIGIBILITY,
   EXECUTION_STATE,
   FUNDING_READINESS,
@@ -259,11 +260,10 @@ function deriveFundingPath(
     ),
   );
   const destinationAddress =
-    smartAccountInspection.bootstrap?.destinationAddress ?? null;
+    smartAccountInspection.bridgeState?.executionDestinationAddress ?? null;
   const destinationKind =
-    smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.READY
-      ? "smart_account"
-      : "embedded_wallet";
+    smartAccountInspection.bridgeState?.executionDestinationKind ??
+    ACCOUNT_SURFACE_KIND.NONE;
   const readiness =
     destinationAddress === null
       ? FUNDING_READINESS.DESTINATION_REQUIRED
@@ -363,6 +363,51 @@ function hashExecutionPlanInput({
   );
 
   return hash.digest("hex").slice(0, 12);
+}
+
+function deriveAutomationExecution(smartAccountInspection) {
+  const readiness = smartAccountInspection.automationReadiness;
+  const status =
+    readiness === SMART_ACCOUNT_READINESS.READY
+      ? "ready"
+      : readiness === SMART_ACCOUNT_READINESS.SMART_ACCOUNT_PENDING
+        ? "pending"
+        : "blocked";
+
+  return {
+    accountMode: smartAccountInspection.automationAccountMode,
+    readiness,
+    status,
+    manualSigningMode: smartAccountInspection.manualSigningMode,
+    venueSigningMode: smartAccountInspection.venueSigningMode,
+    policyAccountAddress:
+      smartAccountInspection.bridgeState?.policyAccountAddress ?? null,
+    executionDestinationAddress:
+      smartAccountInspection.bridgeState?.executionDestinationAddress ?? null,
+    blockers:
+      readiness === SMART_ACCOUNT_READINESS.READY
+        ? []
+        : readiness === SMART_ACCOUNT_READINESS.WALLET_REQUIRED
+          ? [
+              "Connect a wallet before automation can bootstrap the Privy smart account.",
+            ]
+          : readiness === SMART_ACCOUNT_READINESS.SMART_ACCOUNT_PENDING
+            ? [
+                "Automation remains fail-closed while Privy smart-account bootstrap is pending.",
+              ]
+            : [
+                "Automation remains fail-closed until the Privy smart account is ready.",
+              ],
+    notes: [
+      "Current manual execution remains wallet-first.",
+      smartAccountInspection.bridgeState?.policyAccountAddress
+        ? "The smart account is recorded as the canonical policy and automation account."
+        : "No verified smart-account policy surface is available yet.",
+      smartAccountInspection.venueSigningMode === "wallet_signer_manual_only"
+        ? "AA-native CoW or 1inch signing remains deferred."
+        : "Venue signing mode has moved beyond the current manual-only baseline.",
+    ],
+  };
 }
 
 function deriveEligibility({
@@ -561,7 +606,7 @@ function buildSteps({
       stepId: "prepare_smart_account",
       title:
         smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.NOT_REQUIRED
-          ? "Smart wallet optional"
+          ? "Smart wallet architecture"
           : "Bootstrap smart wallet",
       status:
         smartAccountStepComplete
@@ -571,9 +616,12 @@ function buildSteps({
             : "blocked",
       detail:
         smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.NOT_REQUIRED
-          ? "Privy smart wallet remains optional for the current user-approved CoW execution lane."
+          ? smartAccountInspection.automationReadiness ===
+            SMART_ACCOUNT_READINESS.READY
+            ? "Manual venue signing stays wallet-first. The Privy smart wallet is also ready as the canonical automation and execution-destination account."
+            : "Manual venue signing stays wallet-first. Automation remains fail-closed until the Privy smart wallet is ready."
           : smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.READY
-          ? "Privy smart wallet destination is ready if the user chooses to use it for execution."
+          ? "Privy smart wallet bootstrap is complete and can act as the canonical policy and destination account."
           : "Create the embedded wallet first, then bootstrap the Privy smart wallet on Ethereum.",
     },
     {
@@ -697,6 +745,15 @@ function collectMessages(
     warnings.push("Privy smart wallet bootstrap is still pending.");
   }
 
+  if (
+    smartAccountInspection.readiness === SMART_ACCOUNT_READINESS.NOT_REQUIRED &&
+    smartAccountInspection.automationReadiness !== SMART_ACCOUNT_READINESS.READY
+  ) {
+    warnings.push(
+      "Automation remains fail-closed until the Privy smart wallet is ready.",
+    );
+  }
+
   return { blockers, warnings };
 }
 
@@ -738,6 +795,7 @@ export function deriveExecutionPlan({
     normalizedWalletState,
     smartAccountInspection,
   );
+  const automationExecution = deriveAutomationExecution(smartAccountInspection);
   const executionPlanId = `exec_${hashExecutionPlanInput({
     manifest,
     requestedNotionalUsd,
@@ -760,6 +818,7 @@ export function deriveExecutionPlan({
       ...smartAccountInspection,
       reviewArtifact: smartAccountProvider.buildReviewArtifact(manifest),
     },
+    automationExecution,
     steps: buildSteps({
       manifest,
       execution_state: eligibility.execution_state,

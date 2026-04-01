@@ -15,6 +15,7 @@ export {
 } from "./manifest.js";
 export { createSmartAccountProviderScaffold } from "./smart-account.js";
 export { deriveExecutionPlan } from "./execution-plan.js";
+export { deriveReadinessWalletRequirements } from "./readiness-policy.js";
 export { deriveRecommendation } from "./recommendation.js";
 export {
   deriveAgentQualification,

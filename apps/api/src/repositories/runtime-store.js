@@ -701,6 +701,41 @@ function normalizeExecutionRequest(request, index, now) {
       request.requestedNotionalUsd ?? request.requested_notional_usd ?? 0,
     fundingAssetSymbol:
       request.fundingAssetSymbol ?? request.funding_asset_symbol ?? "USDC",
+    manualSignerAddress: firstDefined(
+      request.manualSignerAddress,
+      request.manual_signer_address,
+      null,
+    ),
+    policyAccountAddress: firstDefined(
+      request.policyAccountAddress,
+      request.policy_account_address,
+      null,
+    ),
+    executionDestinationAddress: firstDefined(
+      request.executionDestinationAddress,
+      request.execution_destination_address,
+      null,
+    ),
+    manualSigningMode: firstDefined(
+      request.manualSigningMode,
+      request.manual_signing_mode,
+      "wallet_first",
+    ),
+    automationAccountMode: firstDefined(
+      request.automationAccountMode,
+      request.automation_account_mode,
+      "smart_account_required",
+    ),
+    automationReadiness: firstDefined(
+      request.automationReadiness,
+      request.automation_readiness,
+      "smart_account_required",
+    ),
+    venueSigningMode: firstDefined(
+      request.venueSigningMode,
+      request.venue_signing_mode,
+      "wallet_signer_manual_only",
+    ),
     settlementAddress: firstDefined(
       request.settlementAddress,
       request.settlement_address,

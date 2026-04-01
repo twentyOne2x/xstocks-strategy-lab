@@ -98,6 +98,10 @@ const walletRequirementsViewSchema = z.object({
   minFundingUsd: z.number().finite().nonnegative(),
   preferredFundingProvider: nonEmptyStringSchema,
   topUpAsset: nonEmptyStringSchema,
+  manualSigningMode: nonEmptyStringSchema,
+  automationAccountMode: nonEmptyStringSchema,
+  venueSigningMode: nonEmptyStringSchema,
+  supportsSeparateExecutionDestination: z.boolean(),
 });
 const manifestSourceViewSchema = z.object({
   type: nonEmptyStringSchema,
@@ -380,11 +384,34 @@ const smartAccountReviewArtifactSchema = z.object({
   walletConnectionLate: z.boolean(),
   notes: z.array(nonEmptyStringSchema),
 });
+const automationExecutionReadinessSchema = z.enum([
+  "wallet_required",
+  "smart_account_required",
+  "smart_account_pending",
+  "ready",
+]);
+const executionBridgeStateSchema = z.object({
+  manualSignerAddress: nonEmptyStringSchema.nullable(),
+  manualSignerKind: nonEmptyStringSchema,
+  policyAccountAddress: nonEmptyStringSchema.nullable(),
+  executionDestinationAddress: nonEmptyStringSchema.nullable(),
+  executionDestinationKind: nonEmptyStringSchema,
+  supportsSeparateExecutionDestination: z.boolean(),
+  manualSigningMode: nonEmptyStringSchema,
+  automationAccountMode: nonEmptyStringSchema,
+  venueSigningMode: nonEmptyStringSchema,
+  notes: z.array(nonEmptyStringSchema),
+});
 const smartAccountInspectionSchema = z.object({
   readiness: smartAccountReadinessSchema,
+  automationReadiness: automationExecutionReadinessSchema,
   providerId: nonEmptyStringSchema,
   status: nonEmptyStringSchema,
   address: nonEmptyStringSchema.nullable(),
+  manualSigningMode: nonEmptyStringSchema,
+  automationAccountMode: nonEmptyStringSchema,
+  venueSigningMode: nonEmptyStringSchema,
+  bridgeState: executionBridgeStateSchema,
   bootstrap: z.object({
     state: nonEmptyStringSchema,
     chain: chainSchema,
@@ -398,6 +425,17 @@ const smartAccountInspectionSchema = z.object({
     notes: z.array(nonEmptyStringSchema),
   }),
   reviewArtifact: smartAccountReviewArtifactSchema,
+});
+const automationExecutionSchema = z.object({
+  accountMode: nonEmptyStringSchema,
+  readiness: automationExecutionReadinessSchema,
+  status: nonEmptyStringSchema,
+  manualSigningMode: nonEmptyStringSchema,
+  venueSigningMode: nonEmptyStringSchema,
+  policyAccountAddress: nonEmptyStringSchema.nullable(),
+  executionDestinationAddress: nonEmptyStringSchema.nullable(),
+  blockers: z.array(nonEmptyStringSchema),
+  notes: z.array(nonEmptyStringSchema),
 });
 const executionPlanStepSchema = z.object({
   stepId: nonEmptyStringSchema,
@@ -418,6 +456,7 @@ const executionPlanSchema = z.object({
   assetChecks: z.array(executionAssetCheckSchema),
   fundingPath: fundingPathSchema,
   smartAccount: smartAccountInspectionSchema,
+  automationExecution: automationExecutionSchema,
   steps: z.array(executionPlanStepSchema),
   allowedActions: z.array(nonEmptyStringSchema),
   blockers: z.array(nonEmptyStringSchema),

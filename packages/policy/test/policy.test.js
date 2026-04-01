@@ -255,6 +255,10 @@ test("research-provided execution boundary keeps route truth but canonicalizes b
     preferredFundingProvider: "privy",
     preferredBridgeProvider: "lifi",
     topUpAsset: "USDC",
+    manualSigningMode: "wallet_first",
+    automationAccountMode: "smart_account_required",
+    venueSigningMode: "wallet_signer_manual_only",
+    supportsSeparateExecutionDestination: true,
   });
   assert.deepEqual(
     basketManifest.executionBoundary.walletRequirements,
@@ -428,8 +432,22 @@ test("execution plans keep Privy funding surfaces available when smart-wallet bo
   assert.equal(executionPlan.executionEligibility, "executable");
   assert.equal(executionPlan.smartAccount.providerId, "privy");
   assert.equal(executionPlan.smartAccount.readiness, "not_required");
+  assert.equal(
+    executionPlan.smartAccount.automationReadiness,
+    "smart_account_pending",
+  );
   assert.equal(executionPlan.smartAccount.bootstrap.state, "ready");
   assert.equal(executionPlan.smartAccount.bootstrap.destinationAddress, "0xembedded");
+  assert.equal(
+    executionPlan.smartAccount.bridgeState.manualSignerAddress,
+    "0xembedded",
+  );
+  assert.equal(executionPlan.smartAccount.bridgeState.policyAccountAddress, null);
+  assert.equal(
+    executionPlan.smartAccount.bridgeState.executionDestinationAddress,
+    "0xembedded",
+  );
+  assert.equal(executionPlan.automationExecution.readiness, "smart_account_pending");
   assert.equal(executionPlan.fundingPath.destinationAddress, "0xembedded");
   assert.equal(executionPlan.fundingPath.destinationKind, "embedded_wallet");
   assert.equal(executionPlan.fundingPath.readiness, "funded");
@@ -512,8 +530,21 @@ test("synthetic quoteable CoW basket rails become live at the requested notional
   assert.equal(executionPlan.fundingPath.fundingGapUsd, 0);
   assert.equal(executionPlan.smartAccount.readiness, "not_required");
   assert.equal(
+    executionPlan.smartAccount.automationReadiness,
+    "smart_account_required",
+  );
+  assert.equal(executionPlan.automationExecution.status, "blocked");
+  assert.equal(
     executionPlan.steps.find((step) => step.stepId === "prepare_smart_account")?.status,
     "complete",
+  );
+  assert.equal(
+    executionPlan.steps.find((step) => step.stepId === "prepare_smart_account")?.title,
+    "Smart wallet architecture",
+  );
+  assert.match(
+    executionPlan.warnings.join(" "),
+    /Automation remains fail-closed/,
   );
 });
 

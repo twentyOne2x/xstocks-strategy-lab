@@ -29,6 +29,25 @@ export const SMART_ACCOUNT_READINESS = Object.freeze({
   READY: "ready",
 });
 
+export const ACCOUNT_SURFACE_KIND = Object.freeze({
+  NONE: "none",
+  LINKED_WALLET: "linked_wallet",
+  EMBEDDED_WALLET: "embedded_wallet",
+  SMART_ACCOUNT: "smart_account",
+});
+
+export const MANUAL_SIGNING_MODE = Object.freeze({
+  WALLET_FIRST: "wallet_first",
+});
+
+export const AUTOMATION_ACCOUNT_MODE = Object.freeze({
+  SMART_ACCOUNT_REQUIRED: "smart_account_required",
+});
+
+export const VENUE_SIGNING_MODE = Object.freeze({
+  WALLET_SIGNER_MANUAL_ONLY: "wallet_signer_manual_only",
+});
+
 export const SMART_ACCOUNT_BOOTSTRAP_STATE = Object.freeze({
   WALLET_REQUIRED: "wallet_required",
   EMBEDDED_WALLET_PENDING: "embedded_wallet_pending",

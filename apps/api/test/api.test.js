@@ -361,6 +361,119 @@ function createReadyWalletState(auth, { user = "primary" } = {}) {
   };
 }
 
+function createExecutionPlanSnapshotFixture({
+  manifestId,
+  strategyVersion,
+  generatedAt,
+  requestedNotionalUsd = 1000,
+  walletAddress,
+  smartWalletAddress = null,
+}) {
+  const executionDestinationAddress = smartWalletAddress ?? walletAddress;
+
+  return {
+    executionPlanId: `exec_${strategyVersion}`,
+    generatedAt,
+    activationManifestRef: {
+      manifestId,
+      slotId: "onboarding.default_basket",
+      strategyVersion,
+      chain: "ethereum",
+      mode: "basket",
+    },
+    surfaceTruth: "live",
+    executionState: "ready",
+    executionEligibility: "executable",
+    requestedNotionalUsd,
+    walletConnectionLate: true,
+    routeTruthLabels: [],
+    assetChecks: [],
+    fundingPath: {
+      provider: "privy",
+      minRequiredUsd: requestedNotionalUsd,
+      fundedNotionalUsd: 1250,
+      fundingGapUsd: 0,
+      topUpAsset: "USDC",
+      destinationAddress: executionDestinationAddress,
+      destinationKind: smartWalletAddress ? "smart_account" : "linked_wallet",
+      readiness: "funded",
+      recommendedMethodId: null,
+      surfaces: [],
+      status: "funded",
+    },
+    smartAccount: {
+      readiness: "not_required",
+      automationReadiness: smartWalletAddress ? "ready" : "smart_account_required",
+      providerId: "privy",
+      status: "not_required",
+      address: smartWalletAddress,
+      manualSigningMode: "wallet_first",
+      automationAccountMode: "smart_account_required",
+      venueSigningMode: "wallet_signer_manual_only",
+      bridgeState: {
+        manualSignerAddress: walletAddress,
+        manualSignerKind: "linked_wallet",
+        policyAccountAddress: smartWalletAddress,
+        executionDestinationAddress,
+        executionDestinationKind: smartWalletAddress
+          ? "smart_account"
+          : "linked_wallet",
+        supportsSeparateExecutionDestination: true,
+        manualSigningMode: "wallet_first",
+        automationAccountMode: "smart_account_required",
+        venueSigningMode: "wallet_signer_manual_only",
+        notes: [],
+      },
+      bootstrap: {
+        state: "ready",
+        chain: "ethereum",
+        implementation: "privy_smart_wallet",
+        signerAddress: walletAddress,
+        embeddedWalletAddress: walletAddress,
+        smartAccountAddress: smartWalletAddress,
+        destinationAddress: executionDestinationAddress,
+        approvalMode: "user_approved_only",
+        paymasterReady: false,
+        notes: [],
+      },
+      reviewArtifact: {
+        providerId: "privy",
+        providerName: "Privy smart wallet",
+        supportedChains: ["ethereum"],
+        permissions: ["activate_promoted_manifest_only"],
+        approvalMode: "user_approved_only",
+        bootstrapBoundary:
+          "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+        fundingBoundary:
+          "Funding remains provider-agnostic and should target the current manual signer or smart-wallet destination address through Privy-supported methods.",
+        walletConnectionLate: true,
+        notes: [],
+      },
+    },
+    automationExecution: {
+      accountMode: "smart_account_required",
+      readiness: smartWalletAddress ? "ready" : "smart_account_required",
+      status: smartWalletAddress ? "ready" : "blocked",
+      manualSigningMode: "wallet_first",
+      venueSigningMode: "wallet_signer_manual_only",
+      policyAccountAddress: smartWalletAddress,
+      executionDestinationAddress,
+      blockers: smartWalletAddress
+        ? []
+        : ["Automation remains fail-closed until the Privy smart account is ready."],
+      notes: [],
+    },
+    steps: [],
+    allowedActions: [],
+    blockers: [],
+    warnings: [],
+    liveStateSummary: {
+      xstocksStateVersion: "api-test.xstocks.v1",
+      routeStateVersion: "api-test.routes.v1",
+    },
+  };
+}
+
 function createJsonHeaders(auth, options = {}) {
   return {
     "Content-Type": "application/json",
@@ -571,56 +684,13 @@ async function seedBaselineActivation(
       updatedAt,
       walletState,
       routeTruthLabels: [],
-      executionPlanSnapshot: {
-        executionPlanId: `exec_${activationId}`,
+      executionPlanSnapshot: createExecutionPlanSnapshotFixture({
+        manifestId,
+        strategyVersion,
         generatedAt: updatedAt,
-        activationManifestRef: {
-          manifestId,
-          slotId: "onboarding.default_basket",
-          strategyVersion,
-          chain: "ethereum",
-          mode: "basket",
-        },
-        surfaceTruth: "live",
-        executionState: "ready",
-        executionEligibility: "executable",
-        requestedNotionalUsd: 1000,
-        walletConnectionLate: true,
-        routeTruthLabels: [],
-        assetChecks: [],
-        fundingPath: {
-          provider: "privy",
-          bridgeProvider: "lifi",
-          minRequiredUsd: 1000,
-          fundedNotionalUsd: 1250,
-          fundingGapUsd: 0,
-          topUpAsset: "USDC",
-          status: "not_needed",
-        },
-        smartAccount: {
-          readiness: "ready",
-          providerId: "privy_embedded",
-          status: "ready",
-          address: smartWalletAddress,
-          reviewArtifact: {
-            providerId: "privy_embedded",
-            providerName: "Privy embedded smart account",
-            supportedChains: ["ethereum"],
-            permissions: ["activate_promoted_manifest_only"],
-            fundingBoundary: "Funding remains external to the smart account scaffold.",
-            walletConnectionLate: true,
-            notes: [],
-          },
-        },
-        steps: [],
-        allowedActions: [],
-        blockers: [],
-        warnings: [],
-        liveStateSummary: {
-          xstocksStateVersion: "api-test.xstocks.v1",
-          routeStateVersion: "api-test.routes.v1",
-        },
-      },
+        walletAddress: walletState.walletAddress,
+        smartWalletAddress,
+      }),
     },
     activityEvents: [],
   });
@@ -1103,15 +1173,22 @@ test("activation preview exports ready venue-routed truth for the current promot
     assert.equal(payload.data.executionPlan.executionState, "ready");
     assert.equal(payload.data.executionPlan.executionEligibility, "executable");
     assert.equal(payload.data.executionPlan.smartAccount.readiness, "not_required");
+    assert.equal(
+      payload.data.executionPlan.smartAccount.automationReadiness,
+      "smart_account_required",
+    );
     assert.equal(payload.data.executionPlan.fundingPath.minRequiredUsd, 25);
-    assert.equal(smartWalletStep?.title, "Smart wallet optional");
-    assert.match(smartWalletStep?.detail ?? "", /optional/i);
+    assert.equal(smartWalletStep?.title, "Smart wallet architecture");
+    assert.match(smartWalletStep?.detail ?? "", /wallet-first/i);
     assert.equal(
       payload.data.executionPlan.steps.find((step) => step.stepId === "request_cow_quote")
         ?.title,
       "Request 1inch quote",
     );
-    assert.equal(payload.data.executionPlan.warnings.length, 0);
+    assert.match(
+      payload.data.executionPlan.warnings.join(" "),
+      /Automation remains fail-closed/,
+    );
   } finally {
     await harness.close();
   }
@@ -1473,56 +1550,13 @@ test("workspace and activity surfaces expose a recommended rebalance when the sl
         updatedAt: "2026-04-01T07:00:00.000Z",
         walletState: createReadyWalletState(harness.auth),
         routeTruthLabels: [],
-        executionPlanSnapshot: {
-          executionPlanId: "exec_prev",
+        executionPlanSnapshot: createExecutionPlanSnapshotFixture({
+          manifestId: "onboarding.default_basket:basket-baseline-v0:promoted",
+          strategyVersion: "basket-baseline-v0",
           generatedAt: "2026-04-01T07:00:00.000Z",
-          activationManifestRef: {
-            manifestId: "onboarding.default_basket:basket-baseline-v0:promoted",
-            slotId: "onboarding.default_basket",
-            strategyVersion: "basket-baseline-v0",
-            chain: "ethereum",
-            mode: "basket",
-          },
-          surfaceTruth: "live",
-          executionState: "ready",
-          executionEligibility: "executable",
-          requestedNotionalUsd: 1000,
-          walletConnectionLate: true,
-          routeTruthLabels: [],
-          assetChecks: [],
-          fundingPath: {
-            provider: "privy",
-            bridgeProvider: "lifi",
-            minRequiredUsd: 1000,
-            fundedNotionalUsd: 1250,
-            fundingGapUsd: 0,
-            topUpAsset: "USDC",
-            status: "not_needed",
-          },
-          smartAccount: {
-            readiness: "ready",
-            providerId: "privy_embedded",
-            status: "ready",
-            address: harness.auth.primary.smartWalletAddress,
-            reviewArtifact: {
-              providerId: "privy_embedded",
-              providerName: "Privy embedded smart account",
-              supportedChains: ["ethereum"],
-              permissions: ["activate_promoted_manifest_only"],
-              fundingBoundary: "Funding remains external to the smart account scaffold.",
-              walletConnectionLate: true,
-              notes: [],
-            },
-          },
-          steps: [],
-          allowedActions: [],
-          blockers: [],
-          warnings: [],
-          liveStateSummary: {
-            xstocksStateVersion: "api-test.xstocks.v1",
-            routeStateVersion: "api-test.routes.v1",
-          },
-        },
+          walletAddress: harness.auth.primary.walletAddress,
+          smartWalletAddress: harness.auth.primary.smartWalletAddress,
+        }),
       },
       activityEvents: [],
     });
@@ -1592,56 +1626,13 @@ test("workspace and activity surfaces expose scheduled worker-owned review witho
         updatedAt: "2026-04-01T07:00:00.000Z",
         walletState: createReadyWalletState(harness.auth),
         routeTruthLabels: [],
-        executionPlanSnapshot: {
-          executionPlanId: "exec_prev",
+        executionPlanSnapshot: createExecutionPlanSnapshotFixture({
+          manifestId: "onboarding.default_basket:basket-baseline-v0:promoted",
+          strategyVersion: "basket-baseline-v0",
           generatedAt: "2026-04-01T07:00:00.000Z",
-          activationManifestRef: {
-            manifestId: "onboarding.default_basket:basket-baseline-v0:promoted",
-            slotId: "onboarding.default_basket",
-            strategyVersion: "basket-baseline-v0",
-            chain: "ethereum",
-            mode: "basket",
-          },
-          surfaceTruth: "live",
-          executionState: "ready",
-          executionEligibility: "executable",
-          requestedNotionalUsd: 1000,
-          walletConnectionLate: true,
-          routeTruthLabels: [],
-          assetChecks: [],
-          fundingPath: {
-            provider: "privy",
-            bridgeProvider: "lifi",
-            minRequiredUsd: 1000,
-            fundedNotionalUsd: 1250,
-            fundingGapUsd: 0,
-            topUpAsset: "USDC",
-            status: "not_needed",
-          },
-          smartAccount: {
-            readiness: "ready",
-            providerId: "privy_embedded",
-            status: "ready",
-            address: harness.auth.primary.smartWalletAddress,
-            reviewArtifact: {
-              providerId: "privy_embedded",
-              providerName: "Privy embedded smart account",
-              supportedChains: ["ethereum"],
-              permissions: ["activate_promoted_manifest_only"],
-              fundingBoundary: "Funding remains external to the smart account scaffold.",
-              walletConnectionLate: true,
-              notes: [],
-            },
-          },
-          steps: [],
-          allowedActions: [],
-          blockers: [],
-          warnings: [],
-          liveStateSummary: {
-            xstocksStateVersion: "api-test.xstocks.v1",
-            routeStateVersion: "api-test.routes.v1",
-          },
-        },
+          walletAddress: harness.auth.primary.walletAddress,
+          smartWalletAddress: harness.auth.primary.smartWalletAddress,
+        }),
       },
       activityEvents: [],
     });
@@ -2066,6 +2057,10 @@ test("authenticated CoW activation can reach quote readiness at a small requeste
       "not_required",
     );
     assert.equal(
+      activationPayload.data.executionPlan.smartAccount.automationReadiness,
+      "smart_account_required",
+    );
+    assert.equal(
       activationPayload.data.executionPlan.fundingPath.minRequiredUsd,
       25,
     );
@@ -2089,6 +2084,27 @@ test("authenticated CoW activation can reach quote readiness at a small requeste
     );
 
     assert.equal(createResponse.status, 200);
+    assert.equal(
+      createPayload.data.executionRequest.manualSignerAddress,
+      harness.auth.primary.walletAddress.toLowerCase(),
+    );
+    assert.equal(createPayload.data.executionRequest.policyAccountAddress, null);
+    assert.equal(
+      createPayload.data.executionRequest.executionDestinationAddress,
+      harness.auth.primary.walletAddress.toLowerCase(),
+    );
+    assert.equal(
+      createPayload.data.executionRequest.automationReadiness,
+      "smart_account_required",
+    );
+    assert.equal(
+      createPayload.data.executionRequest.venueSigningMode,
+      "wallet_signer_manual_only",
+    );
+    assert.match(
+      createPayload.data.executionRequest.warnings.join(" "),
+      /Automation remains fail-closed/,
+    );
     assert.ok(quoteLeg);
 
     const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {

@@ -17,6 +17,13 @@ export function SmartAccountPanel({ account }: { account: SmartAccountPanelData 
           <span>Deposit</span>
           <strong>{account.buyingPower} · {account.fundingAsset}</strong>
         </div>
+        {account.accountSurfaces.map((surface) => (
+          <div key={surface.label}>
+            <span>{surface.label}</span>
+            <strong>{surface.value}</strong>
+            <p className="panel-note">{surface.note}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

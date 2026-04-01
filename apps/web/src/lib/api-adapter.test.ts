@@ -183,8 +183,11 @@ const manifest: ApiManifestView = {
     requiresSmartAccount: false,
     minFundingUsd: 0,
     preferredFundingProvider: "privy",
-    preferredBridgeProvider: "lifi",
     topUpAsset: "USDC",
+    manualSigningMode: "wallet_first",
+    automationAccountMode: "smart_account_required",
+    venueSigningMode: "wallet_signer_manual_only",
+    supportsSeparateExecutionDestination: true,
   },
   signalRefs: [
     {

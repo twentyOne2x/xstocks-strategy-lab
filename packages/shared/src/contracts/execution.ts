@@ -78,6 +78,49 @@ export type ExecutionReceiptStatus = z.infer<
   typeof executionReceiptStatusSchema
 >;
 
+export const EXECUTION_MANUAL_SIGNING_MODE_VALUES = [
+  "wallet_first",
+] as const;
+export const executionManualSigningModeSchema = z.enum(
+  EXECUTION_MANUAL_SIGNING_MODE_VALUES,
+);
+export type ExecutionManualSigningMode = z.infer<
+  typeof executionManualSigningModeSchema
+>;
+
+export const EXECUTION_AUTOMATION_ACCOUNT_MODE_VALUES = [
+  "smart_account_required",
+] as const;
+export const executionAutomationAccountModeSchema = z.enum(
+  EXECUTION_AUTOMATION_ACCOUNT_MODE_VALUES,
+);
+export type ExecutionAutomationAccountMode = z.infer<
+  typeof executionAutomationAccountModeSchema
+>;
+
+export const EXECUTION_AUTOMATION_READINESS_VALUES = [
+  "wallet_required",
+  "smart_account_required",
+  "smart_account_pending",
+  "ready",
+] as const;
+export const executionAutomationReadinessSchema = z.enum(
+  EXECUTION_AUTOMATION_READINESS_VALUES,
+);
+export type ExecutionAutomationReadiness = z.infer<
+  typeof executionAutomationReadinessSchema
+>;
+
+export const EXECUTION_VENUE_SIGNING_MODE_VALUES = [
+  "wallet_signer_manual_only",
+] as const;
+export const executionVenueSigningModeSchema = z.enum(
+  EXECUTION_VENUE_SIGNING_MODE_VALUES,
+);
+export type ExecutionVenueSigningMode = z.infer<
+  typeof executionVenueSigningModeSchema
+>;
+
 export const xstocksXChangeQuoteSchema = z.object({
   quoteId: nonEmptyStringSchema,
   requestedAt: timestampSchema,
@@ -306,6 +349,13 @@ export const executionRequestSchema = z.object({
   activationManifestRef: activationManifestRefSchema,
   requestedNotionalUsd: z.number().finite().nonnegative(),
   fundingAssetSymbol: nonEmptyStringSchema,
+  manualSignerAddress: nonEmptyStringSchema.nullable(),
+  policyAccountAddress: nonEmptyStringSchema.nullable(),
+  executionDestinationAddress: nonEmptyStringSchema.nullable(),
+  manualSigningMode: executionManualSigningModeSchema,
+  automationAccountMode: executionAutomationAccountModeSchema,
+  automationReadiness: executionAutomationReadinessSchema,
+  venueSigningMode: executionVenueSigningModeSchema,
   settlementAddress: nonEmptyStringSchema.nullable(),
   state: executionRequestStateSchema,
   blockers: z.array(nonEmptyStringSchema),

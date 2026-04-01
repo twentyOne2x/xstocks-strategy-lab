@@ -24,6 +24,8 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
   const funnelState: "disconnected" | "connected" | "funding_required" = !wallet.connected
     ? "disconnected"
     : "funding_required"; // No on-chain balance check available on frontend — stop here honestly
+  const formatAddress = (value: string | null) =>
+    value ? `${value.slice(0, 6)}...${value.slice(-4)}` : "Not ready";
 
   return (
     <div className="screen-stack">
@@ -102,6 +104,54 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
             </div>
           )}
         </div>
+
+        {wallet.connected && (
+          <div className="panel-grid panel-grid-two" style={{ marginTop: 16 }}>
+            <article className="panel-card panel-card-subtle">
+              <span className="section-kicker">Manual Signing Surface</span>
+              <div className="info-stack">
+                <div>
+                  <span>Posture</span>
+                  <strong>Wallet-first</strong>
+                </div>
+                <div>
+                  <span>Manual signer</span>
+                  <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
+                    {formatAddress(wallet.manualSignerAddress)}
+                  </strong>
+                </div>
+                <p className="panel-note">
+                  Linked-wallet or embedded-wallet signing remains the current truthful manual execution path.
+                </p>
+              </div>
+            </article>
+
+            <article className="panel-card panel-card-subtle">
+              <span className="section-kicker">Automation Account Surface</span>
+              <div className="info-stack">
+                <div>
+                  <span>Policy account</span>
+                  <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
+                    {formatAddress(wallet.policyAccountAddress)}
+                  </strong>
+                </div>
+                <div>
+                  <span>Execution destination</span>
+                  <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
+                    {formatAddress(wallet.executionDestinationAddress)}
+                  </strong>
+                </div>
+                <div>
+                  <span>Automation readiness</span>
+                  <strong>{wallet.automationReadiness.replaceAll("_", " ")}</strong>
+                </div>
+                <p className="panel-note">
+                  Automation stays fail-closed without the Privy smart account, and AA-native CoW or 1inch signing is still deferred.
+                </p>
+              </div>
+            </article>
+          </div>
+        )}
 
         <div className="panel-grid panel-grid-two" style={{ marginTop: 16 }}>
           <article className="panel-card panel-card-subtle">

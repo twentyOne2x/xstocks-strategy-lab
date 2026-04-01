@@ -759,8 +759,12 @@ export function adaptExecutionPlanToSmartAccount(
   manifest: PromotedManifest,
 ): SmartAccountPanelData {
   const sa = plan.smartAccount;
+  const bridge = sa.bridgeState;
   const fp = plan.fundingPath;
+  const automation = plan.automationExecution;
   const orchestration = manifest.preview?.rebalanceOrchestration ?? null;
+  const formatAddress = (value: string | null) =>
+    value ? `${value.slice(0, 6)}...${value.slice(-4)}` : "Not ready";
 
   const readinessState = plan.executionState === "ready" ? "activation_ready" as const
     : plan.executionState === "wallet_required" ? "connect_required" as const
@@ -771,23 +775,60 @@ export function adaptExecutionPlanToSmartAccount(
   return {
     readinessLabel: `${plan.executionState.replace(/_/g, " ")} — ${plan.executionEligibility.replace(/_/g, " ")}`,
     readinessState,
-    addressLabel: sa.address ?? "Provision on wallet link",
-    ownerLabel: sa.status === "ready" ? "Smart account ready" : sa.status.replace(/_/g, " "),
+    addressLabel: formatAddress(bridge.policyAccountAddress),
+    ownerLabel:
+      automation.readiness === "ready"
+        ? "Automation account ready"
+        : automation.readiness.replace(/_/g, " "),
     fundingAsset: fp.topUpAsset,
     buyingPower: fp.fundingGapUsd > 0
       ? `$${fp.fundingGapUsd.toLocaleString()} gap`
       : `$${fp.fundedNotionalUsd.toLocaleString()} funded`,
-    policyLabel: `${manifest.mode} preview with ${manifest.activation_template.reversible ? "pause" : "review"} controls`,
+    policyLabel: `${bridge.manualSigningMode.replace(/_/g, " ")} / ${bridge.venueSigningMode.replace(/_/g, " ")}`,
     syncLabel: `Generated ${new Date(plan.generatedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC`,
     automationLabel: orchestration
       ? orchestration.runtimeOwner === "worker_offchain_scheduler"
         ? "A scheduled review record exists, but operator confirmation is still required before any rebalance execution claim."
         : orchestration.summary
-      : "Rebalance review truth was not loaded for this screen.",
-    nextAction: orchestration?.nextAction?.detail
+      : automation.notes[1] ?? "Rebalance review truth was not loaded for this screen.",
+    nextAction:
+      (
+        automation.readiness !== "ready"
+          ? automation.blockers[0] ?? automation.notes[0]
+          : orchestration?.nextAction?.detail
+      )
       ?? plan.steps.find((s) => s.status === "pending")?.detail
       ?? plan.steps.find((s) => s.status === "blocked")?.detail
       ?? "Review the preview before deposit.",
+    accountSurfaces: [
+      {
+        label: "Manual signer",
+        value: formatAddress(bridge.manualSignerAddress),
+        note: "Current user-approved venue signing remains wallet-first.",
+      },
+      {
+        label: "Policy account",
+        value: formatAddress(bridge.policyAccountAddress),
+        note: "Canonical automation and policy ownership surface.",
+      },
+      {
+        label: "Execution destination",
+        value: formatAddress(bridge.executionDestinationAddress),
+        note: bridge.supportsSeparateExecutionDestination
+          ? "Separate receiver is supported on the current venue path."
+          : "Settlement stays on the manual signer until a separate destination is proven.",
+      },
+      {
+        label: "Venue signing",
+        value: bridge.venueSigningMode.replace(/_/g, " "),
+        note: "AA-native CoW or 1inch signing remains deferred.",
+      },
+      {
+        label: "Automation readiness",
+        value: automation.readiness.replace(/_/g, " "),
+        note: automation.blockers[0] ?? automation.notes[0],
+      },
+    ],
     actionLinks: [
       {
         label: "Open detail",

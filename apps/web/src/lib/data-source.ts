@@ -190,6 +190,33 @@ export function getSmartAccountPanelData(manifest: PromotedManifest): SmartAccou
     syncLabel: `Refreshed ${new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC`,
     automationLabel,
     nextAction: orchestration?.nextAction?.title ?? "Review the preview before deposit.",
+    accountSurfaces: [
+      {
+        label: "Manual signer",
+        value: "Wallet-first",
+        note: "Current manual approval stays on the linked or embedded wallet.",
+      },
+      {
+        label: "Policy account",
+        value: "Provision on wallet link",
+        note: "Automation stays blocked until the smart account exists.",
+      },
+      {
+        label: "Execution destination",
+        value: "Manual signer until smart account",
+        note: "Separate smart-account destination appears only once bootstrap is ready.",
+      },
+      {
+        label: "Venue signing",
+        value: "Wallet signer manual only",
+        note: "AA-native CoW or 1inch signing is deferred.",
+      },
+      {
+        label: "Automation readiness",
+        value: "Smart account required",
+        note: "Automation stays fail-closed without the verified smart account.",
+      },
+    ],
     actionLinks: [
       { label: "Open detail", href: `/workspace/detail/${manifest.slug}`, tone: "ghost" },
       {

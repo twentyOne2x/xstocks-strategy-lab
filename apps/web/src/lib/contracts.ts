@@ -660,6 +660,12 @@ export interface SmartAccountPermissionRow {
   note: string;
 }
 
+export interface SmartAccountSurfaceRow {
+  label: string;
+  value: string;
+  note: string;
+}
+
 export interface SmartAccountPanelData {
   readinessLabel: string;
   readinessState: UserVisibleState;
@@ -671,6 +677,7 @@ export interface SmartAccountPanelData {
   syncLabel: string;
   automationLabel: string;
   nextAction: string;
+  accountSurfaces: SmartAccountSurfaceRow[];
   actionLinks: SmartAccountActionLink[];
   permissions: SmartAccountPermissionRow[];
 }

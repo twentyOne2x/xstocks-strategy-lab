@@ -10,6 +10,7 @@ import {
   createActivationManifestRef,
   compileQuestionnaireQualification,
   deriveAgentQualification,
+  deriveReadinessWalletRequirements,
   createSmartAccountProviderScaffold,
   deriveExecutionPlan,
   derivePortfolioExplanationBundle,
@@ -712,6 +713,8 @@ function buildManifestExplanationView(manifest) {
 }
 
 function buildManifestView(manifest) {
+  const walletRequirements = deriveReadinessWalletRequirements(manifest);
+
   return {
     manifestId: manifest.manifestId,
     slotId: manifest.slotId,
@@ -758,11 +761,16 @@ function buildManifestView(manifest) {
     requiredAssets: manifest.requiredAssets,
     requiredRoutes: manifest.requiredRoutes,
     walletRequirements: {
-      requiresWallet: manifest.walletRequirements.requiresWallet,
-      requiresSmartAccount: manifest.walletRequirements.requiresSmartAccount,
-      minFundingUsd: manifest.walletRequirements.minFundingUsd,
-      preferredFundingProvider: manifest.walletRequirements.preferredFundingProvider,
-      topUpAsset: manifest.walletRequirements.topUpAsset,
+      requiresWallet: walletRequirements.requiresWallet,
+      requiresSmartAccount: walletRequirements.requiresSmartAccount,
+      minFundingUsd: walletRequirements.minFundingUsd,
+      preferredFundingProvider: walletRequirements.preferredFundingProvider,
+      topUpAsset: walletRequirements.topUpAsset,
+      manualSigningMode: walletRequirements.manualSigningMode,
+      automationAccountMode: walletRequirements.automationAccountMode,
+      venueSigningMode: walletRequirements.venueSigningMode,
+      supportsSeparateExecutionDestination:
+        walletRequirements.supportsSeparateExecutionDestination,
     },
     signalRefs: manifest.signalRefs,
     targetAllocations: manifest.targetAllocations ?? [],
@@ -1091,13 +1099,8 @@ function buildActivitySurface({
   };
 }
 
-function resolveSettlementAddress(walletState = {}) {
-  const smartAccountAddress = walletState.smartAccount?.address ?? null;
+function resolveManualSignerAddress(walletState = {}) {
   const embeddedWalletAddress = walletState.embeddedWallet?.address ?? null;
-
-  if (walletState.smartAccount?.status === "ready" && smartAccountAddress) {
-    return smartAccountAddress;
-  }
 
   if (walletState.walletConnected && embeddedWalletAddress) {
     return embeddedWalletAddress;
@@ -1110,18 +1113,65 @@ function resolveSettlementAddress(walletState = {}) {
   return null;
 }
 
-function resolveExecutionSignerAddress(walletState = {}) {
-  const embeddedWalletAddress = walletState.embeddedWallet?.address ?? null;
+function resolvePolicyAccountAddress(walletState = {}) {
+  const smartAccountAddress = walletState.smartAccount?.address ?? null;
 
-  if (walletState.walletConnected && embeddedWalletAddress) {
-    return embeddedWalletAddress;
-  }
-
-  if (walletState.walletConnected && walletState.walletAddress) {
-    return walletState.walletAddress;
+  if (walletState.smartAccount?.status === "ready" && smartAccountAddress) {
+    return smartAccountAddress;
   }
 
   return null;
+}
+
+function resolveExecutionDestinationAddress(
+  walletState = {},
+  { supportsSeparateExecutionDestination = true } = {},
+) {
+  const policyAccountAddress = resolvePolicyAccountAddress(walletState);
+
+  if (supportsSeparateExecutionDestination && policyAccountAddress) {
+    return policyAccountAddress;
+  }
+
+  return resolveManualSignerAddress(walletState);
+}
+
+function resolveExecutionSignerAddress(walletState = {}) {
+  return resolveManualSignerAddress(walletState);
+}
+
+function createExecutionBridgeState({
+  walletState = {},
+  executionPlanSnapshot = null,
+}) {
+  const supportsSeparateExecutionDestination =
+    executionPlanSnapshot?.smartAccount?.bridgeState
+      ?.supportsSeparateExecutionDestination ?? true;
+  const manualSignerAddress = resolveManualSignerAddress(walletState);
+  const policyAccountAddress = resolvePolicyAccountAddress(walletState);
+  const executionDestinationAddress = resolveExecutionDestinationAddress(
+    walletState,
+    { supportsSeparateExecutionDestination },
+  );
+
+  return {
+    manualSignerAddress,
+    policyAccountAddress,
+    executionDestinationAddress,
+    manualSigningMode:
+      executionPlanSnapshot?.smartAccount?.manualSigningMode ?? "wallet_first",
+    automationAccountMode:
+      executionPlanSnapshot?.automationExecution?.accountMode ??
+      executionPlanSnapshot?.smartAccount?.automationAccountMode ??
+      "smart_account_required",
+    automationReadiness:
+      executionPlanSnapshot?.automationExecution?.readiness ??
+      executionPlanSnapshot?.smartAccount?.automationReadiness ??
+      (policyAccountAddress ? "ready" : "smart_account_required"),
+    venueSigningMode:
+      executionPlanSnapshot?.smartAccount?.venueSigningMode ??
+      "wallet_signer_manual_only",
+  };
 }
 
 function findManifestRouteId(manifest, requiredFor) {
@@ -1395,8 +1445,12 @@ function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
   const requestedNotionalUsd = activation.requestedNotionalUsd;
   const fundingAssetSymbol =
     manifest.activationTemplate.fundingAssetSymbol ?? "USDC";
-  const signerAddress = resolveExecutionSignerAddress(activation.walletState);
-  const settlementAddress = resolveSettlementAddress(activation.walletState);
+  const bridgeState = createExecutionBridgeState({
+    walletState: activation.walletState,
+    executionPlanSnapshot: activation.executionPlanSnapshot,
+  });
+  const signerAddress = bridgeState.manualSignerAddress;
+  const settlementAddress = bridgeState.executionDestinationAddress;
   const fetchedAssetIndex = new Map(
     fetchedAssets.map((asset) => [asset.assetSymbol, asset]),
   );
@@ -1415,6 +1469,13 @@ function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
     activationManifestRef: activation.activationManifestRef,
     requestedNotionalUsd,
     fundingAssetSymbol,
+    manualSignerAddress: bridgeState.manualSignerAddress,
+    policyAccountAddress: bridgeState.policyAccountAddress,
+    executionDestinationAddress: bridgeState.executionDestinationAddress,
+    manualSigningMode: bridgeState.manualSigningMode,
+    automationAccountMode: bridgeState.automationAccountMode,
+    automationReadiness: bridgeState.automationReadiness,
+    venueSigningMode: bridgeState.venueSigningMode,
     settlementAddress,
     state: "requested",
     blockers: uniqueStrings(
@@ -1427,7 +1488,12 @@ function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
           : null,
       ].filter(Boolean),
     ),
-    warnings: [],
+    warnings:
+      bridgeState.automationReadiness !== "ready"
+        ? [
+            "Automation remains fail-closed until the Privy smart account is ready.",
+          ]
+        : [],
     legs: (manifest.targetAllocations ?? []).map((allocation, index) =>
       createExecutionLeg({
         allocation,
@@ -2998,11 +3064,16 @@ export function createApiService({
         }
 
         try {
-          const signerAddress = resolveExecutionSignerAddress(activation.walletState);
+          const signerAddress =
+            executionRequest.manualSignerAddress ??
+            resolveExecutionSignerAddress(activation.walletState);
+          const settlementAddress =
+            executionRequest.executionDestinationAddress ??
+            executionRequest.settlementAddress;
           const quoteAttempt = buildCowQuoteAttemptContext({
             leg,
             signerAddress,
-            settlementAddress: executionRequest.settlementAddress,
+            settlementAddress,
           });
           const quote = await cowExecutionClient.requestQuote(quoteAttempt);
           const storedQuote = toStoredExecutionQuote(quote, now());
@@ -3053,10 +3124,12 @@ export function createApiService({
                 leg,
                 quoteAttempt: buildCowQuoteAttemptContext({
                   leg,
-                  signerAddress: resolveExecutionSignerAddress(
-                    activation.walletState,
-                  ),
-                  settlementAddress: executionRequest.settlementAddress,
+                  signerAddress:
+                    executionRequest.manualSignerAddress ??
+                    resolveExecutionSignerAddress(activation.walletState),
+                  settlementAddress:
+                    executionRequest.executionDestinationAddress ??
+                    executionRequest.settlementAddress,
                 }),
                 error,
               }),
@@ -3071,10 +3144,12 @@ export function createApiService({
               rawStatus: {
                 ...buildCowQuoteAttemptContext({
                   leg,
-                  signerAddress: resolveExecutionSignerAddress(
-                    activation.walletState,
-                  ),
-                  settlementAddress: executionRequest.settlementAddress,
+                  signerAddress:
+                    executionRequest.manualSignerAddress ??
+                    resolveExecutionSignerAddress(activation.walletState),
+                  settlementAddress:
+                    executionRequest.executionDestinationAddress ??
+                    executionRequest.settlementAddress,
                 }),
                 error:
                   error instanceof Error ? error.message : String(error),
