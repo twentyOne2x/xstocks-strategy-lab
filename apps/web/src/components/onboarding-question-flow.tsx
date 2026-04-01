@@ -906,9 +906,9 @@ function SimulatedWorkspace({
           </div>
           <div className="landing-footer-col">
             <strong>Product</strong>
-            <a href="/onboarding">Find my portfolio</a>
-            <a href="/#how-it-works">How it works</a>
-            <a href="/#faq">FAQ</a>
+            <Link href="/onboarding">Find my portfolio</Link>
+            <Link href="/#how-it-works">How it works</Link>
+            <Link href="/#faq">FAQ</Link>
           </div>
           <div className="landing-footer-col">
             <strong>Infrastructure</strong>
