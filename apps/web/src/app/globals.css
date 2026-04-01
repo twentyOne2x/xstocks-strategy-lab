@@ -2834,14 +2834,14 @@ button { font: inherit; }
   pointer-events: auto;
   box-shadow: 0 0 0 4px var(--red), 8px 8px 0px var(--black);
   border: var(--border-w) solid var(--red);
-  background: rgba(255, 24, 0, 0.04);
+  background: rgba(255, 255, 255, 0.95);
   transition: opacity 300ms ease, box-shadow 300ms ease, background 300ms ease;
 }
 
 .pq-grid.pq-highlight {
   border: var(--border-w) solid var(--red);
   box-shadow: 0 0 0 4px var(--red), 8px 8px 0px var(--black);
-  background: rgba(255, 24, 0, 0.04);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: var(--radius-panel);
   padding: 12px;
 }
@@ -3070,8 +3070,9 @@ button { font: inherit; }
 .pq-fw-section {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px 24px;
-  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  border-top: var(--border-w) solid var(--black);
+  margin-top: 20px;
 }
 
 .pq-fw-section-alt {
