@@ -309,3 +309,27 @@ Still intentionally non-canonical after this tranche:
 1. `funding_required` still begins at saved activation snapshots because the repo does not yet own a pre-save funding-state ledger,
 2. partner self-serve auth still does not exist in-repo, so the reporting surface remains operator-token gated,
 3. anonymous subject continuity remains browser-scoped and separate from authenticated user identity unless the repo recorded both in the same subject stream.
+
+### 2026-04-01 operator-safe dashboard tranche
+
+Implemented in this tranche:
+1. `apps/web` now exposes `/ops/xstocks` as the first operator-safe xstocks ops dashboard.
+2. the dashboard consumes `/api/reporting/xstocks` server-side and keeps wallet labels masked by default.
+3. funnel efficacy is split into three truthful tracks:
+   - subject-led funnel conversion from `landing_viewed` through `wallet_connected`,
+   - authenticated-user execution conversion from `wallet_connected` through `confirmed`,
+   - wallet-led execution conversion from `wallet_connected` through `confirmed`.
+4. `activation_saved_funding_blocked` is rendered as the truthful `funding_required` slice with explicit copy that it is canonical only after activation save.
+5. blocker cohorts and reconciliation tables are rendered directly from the reporting payload instead of inferred in the browser.
+6. `/ops/xstocks/export` now provides one operator-gated JSON export backed by the same reporting surface.
+
+Proof from this tranche:
+1. local web checks passed in `apps/web`.
+2. local API checks passed in `apps/api`.
+3. local Next production build passed for the new ops routes.
+4. a locked-route proof run confirmed the dashboard heading, summary cards, funding-blocked stage, blocker copy, and masked-wallet export output from the operator-safe surface.
+
+Still blocked for fully truthful partner reporting:
+1. generic `funding_required` before activation save still has no canonical repo-owned event source,
+2. the route is still operator-token gated because the repo lacks a partner-shareable auth boundary,
+3. qualification and recommendation remain truthful only when the ledger was actually emitted; no backfill inference should be claimed beyond recorded events.
