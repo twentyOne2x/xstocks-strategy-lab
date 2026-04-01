@@ -696,8 +696,8 @@ function SimulatedWorkspace({
       )}
 
       {/* ── Portfolio summary with performance surface ── */}
-      <div className={`pq-grid ${highlightId === "pq-summary" ? "pq-highlight" : ""}`} id="pq-summary">
-        <div className="pq-main">
+      <div className={`pq-grid ${highlightId === "pq-summary" || highlightId === "pq-rail" ? "pq-grid-has-highlight" : ""}`}>
+        <div className={`pq-main ${highlightId === "pq-summary" ? "pq-highlight-child" : ""}`} id="pq-summary">
           <section className="pq-summary">
             <div className="pq-summary-head">
               <div>
@@ -789,18 +789,10 @@ function SimulatedWorkspace({
             <p className="panel-note">{bundle.howToReadReplay}</p>
           </section>
 
-          {/* How it works — concise */}
-          <section className="panel-card pq-how">
-            <div className="pq-how-row">
-              <div><span className="section-kicker">Rebalance</span><strong>Chainlink CRE</strong></div>
-              <div><span className="section-kicker">Custody</span><strong>Privy smart wallet</strong></div>
-              <div><span className="section-kicker">Execution</span><strong>CoW Protocol</strong></div>
-            </div>
-          </section>
         </div>
 
         {/* ── Right rail: market signals ── */}
-        <aside className={`pq-rail ${highlightId === "pq-rail" ? "pq-highlight" : ""}`} id="pq-rail">
+        <aside className={`pq-rail ${highlightId === "pq-rail" ? "pq-highlight-child" : ""}`} id="pq-rail">
           <section className="pq-rail-card">
             <span className="section-kicker">Market signals</span>
             <h3>{mi.currentView}</h3>
@@ -912,6 +904,17 @@ function SimulatedWorkspace({
       </section>
 
       {previewStatus && previewStatus.tone === "loading" ? <p className="panel-note" style={{ padding: "16px", textAlign: "center" }}>{previewStatus.message}</p> : null}
+
+      {/* Infrastructure strip — moved from portfolio section */}
+      <section className="pq-fw-section" style={{ marginTop: 0 }}>
+        <div className="pq-fw-inner" style={{ maxWidth: 1400, margin: "0 auto" }}>
+          <div className="pq-how-row">
+            <div><span className="section-kicker">Rebalance</span><strong>Chainlink CRE</strong></div>
+            <div><span className="section-kicker">Custody</span><strong>Privy smart wallet</strong></div>
+            <div><span className="section-kicker">Execution</span><strong>CoW Protocol + 1inch</strong></div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer — matches landing page */}
       <footer className="landing-footer">

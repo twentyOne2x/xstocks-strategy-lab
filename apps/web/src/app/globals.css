@@ -2952,7 +2952,21 @@ button { font: inherit; }
   pointer-events: none;
 }
 
-.pq-workspace-touring .pq-highlight {
+/* Allow pq-grid to be fully visible when any child is highlighted */
+.pq-workspace-touring .pq-grid-has-highlight {
+  opacity: 1 !important;
+  pointer-events: auto;
+}
+
+/* Dim the non-highlighted side of the grid */
+.pq-workspace-touring .pq-grid-has-highlight > *:not(.pq-highlight-child) {
+  opacity: 0.25;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.pq-workspace-touring .pq-highlight,
+.pq-workspace-touring .pq-highlight-child {
   opacity: 1 !important;
   pointer-events: auto;
   box-shadow: 0 0 0 4px var(--red), 8px 8px 0px var(--black);
