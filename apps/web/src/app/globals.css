@@ -993,6 +993,39 @@ button { font: inherit; }
   outline-offset: 3px;
 }
 
+.onboarding-entry-fast {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 140ms ease, color 140ms ease, background-color 140ms ease;
+}
+
+.onboarding-entry-fast:hover {
+  border-color: rgba(31, 213, 154, 0.4);
+  color: var(--text);
+  background: rgba(31, 213, 154, 0.06);
+}
+
+.onboarding-entry-fast:active {
+  transform: scale(0.97);
+  transition-duration: 50ms;
+}
+
+.onboarding-entry-fast:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .onboarding-entry-proof {
   display: flex;
   align-items: center;
@@ -1702,6 +1735,532 @@ button { font: inherit; }
   font-size: 0.75rem;
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.02em;
+}
+
+/* ──────────────────────────────────────────────
+   Post-Questionnaire Workspace
+   ────────────────────────────────────────────── */
+
+/* ── Gate screen ── */
+
+.pq-gate {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 64px 24px;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(31, 213, 154, 0.06), transparent 55%),
+    var(--bg);
+}
+
+.pq-gate-inner {
+  max-width: 580px;
+  display: grid;
+  gap: 20px;
+}
+
+.pq-gate-title {
+  margin: 0;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.pq-gate-sub {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.pq-gate-holdings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.pq-gate-holding {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pq-gate-holding strong {
+  color: var(--text);
+  font-size: 0.88rem;
+}
+
+.pq-gate-holding span {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-family: var(--font-mono), monospace;
+}
+
+.pq-gate-more {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.pq-gate-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.pq-gate-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* ── Workspace shell ── */
+
+.pq-workspace {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ── Preview bar ── */
+
+.pq-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.pq-preview-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+.pq-preview-bar-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Tour overlay ── */
+
+.pq-tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.pq-tour-card {
+  display: grid;
+  gap: 14px;
+  max-width: 420px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+}
+
+.pq-tour-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pq-tour-card p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.pq-tour-progress {
+  display: flex;
+  gap: 6px;
+}
+
+.pq-tour-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 200ms ease;
+}
+
+.pq-tour-dot-active {
+  background: var(--accent);
+}
+
+.pq-tour-dot-done {
+  background: rgba(31, 213, 154, 0.4);
+}
+
+.pq-tour-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ── Main grid ── */
+
+.pq-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  align-items: start;
+}
+
+.pq-main {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ── Portfolio summary ── */
+
+.pq-summary {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.pq-summary-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.pq-summary-head h2 {
+  margin: 6px 0 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pq-summary-head p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+.pq-summary-metrics {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.pq-summary-metrics > div {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-row);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pq-summary-metrics span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pq-summary-metrics strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+/* ── Chart ── */
+
+.pq-chart-shell {
+  border-radius: var(--radius-row);
+  overflow: hidden;
+}
+
+.pq-chart-shell .workspace-chart {
+  height: 160px;
+}
+
+.pq-chart-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+/* ── Right rail ── */
+
+.pq-rail {
+  display: grid;
+  gap: 14px;
+  position: sticky;
+  top: 20px;
+}
+
+.pq-rail-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.pq-rail-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.pq-mi-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pq-mi-metrics > div {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-row);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pq-mi-metrics span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pq-mi-metrics strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.pq-changes-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.pq-changes-list li {
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+
+.pq-changes-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+}
+
+/* ── Drivers ── */
+
+.pq-drivers {
+  display: grid;
+  gap: 10px;
+}
+
+.pq-driver {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.pq-driver-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+  background: var(--text-muted);
+}
+
+.pq-driver-dot-positive { background: var(--positive); }
+.pq-driver-dot-neutral { background: var(--text-muted); }
+.pq-driver-dot-warning { background: var(--warning); }
+
+.pq-driver strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.88rem;
+}
+
+.pq-driver span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* ── Bottom activity ── */
+
+.pq-activity {
+  display: grid;
+  gap: 14px;
+  max-width: 1400px;
+  margin: 24px auto 0;
+  padding: 20px 24px 32px;
+  border-top: 1px solid var(--border);
+}
+
+.pq-activity-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pq-activity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.pq-activity-col {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.pq-events {
+  display: grid;
+  gap: 8px;
+}
+
+.pq-event {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-row);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pq-event-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pq-event-time {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.pq-event strong {
+  color: var(--text);
+  font-size: 0.88rem;
+}
+
+.pq-event span {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* ── Post-Questionnaire Responsive ── */
+
+@media (max-width: 1080px) {
+  .pq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pq-rail {
+    position: static;
+  }
+
+  .pq-activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pq-summary-head {
+    flex-direction: column;
+  }
+
+  .pq-summary-metrics {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 720px) {
+  .pq-preview-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .pq-preview-bar-actions {
+    flex-direction: column;
+  }
+
+  .pq-grid {
+    padding: 16px;
+  }
+
+  .pq-activity {
+    padding: 16px 16px 24px;
+  }
+
+  .pq-gate {
+    padding: 40px 20px;
+  }
+
+  .pq-gate-cta {
+    flex-direction: column;
+  }
+
+  .pq-gate-cta .button {
+    width: 100%;
+  }
 }
 
 /* ── Landing Responsive ── */

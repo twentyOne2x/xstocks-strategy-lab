@@ -130,6 +130,21 @@ export function OnboardingTerminalExperience({
     setStarted(false);
   }
 
+  function handleFastPath() {
+    // Set all primary questions to safe defaults that resolve to the starter portfolio
+    const defaults: Record<string, string> = {
+      q_goal_preference: "broad_exposure",
+      q_expression_preference: "simple",
+      q_risk_level: "medium",
+      q_rebalance_preference: "scheduled",
+      q_directional_appetite: "long_only",
+      q_automation_comfort: "medium",
+      q_certainty: "low",
+    };
+    setAnswers(defaults);
+    setStarted(true);
+  }
+
   // Entry screen
   if (!started) {
     return (
@@ -145,14 +160,21 @@ export function OnboardingTerminalExperience({
             onClick={() => setStarted(true)}
             type="button"
           >
-            See my portfolio
+            Answer 7 questions
+          </button>
+          <button
+            className="onboarding-entry-fast"
+            onClick={handleFastPath}
+            type="button"
+          >
+            Pick a starter portfolio for me
           </button>
           <div className="onboarding-entry-proof">
-            <span>7 questions</span>
-            <span className="onboarding-entry-dot" />
             <span>Under 60 seconds</span>
             <span className="onboarding-entry-dot" />
             <span>Preview before deposit</span>
+            <span className="onboarding-entry-dot" />
+            <span>Refine anytime</span>
           </div>
         </div>
       </div>
@@ -167,6 +189,7 @@ export function OnboardingTerminalExperience({
         onAnswer={handleAnswer}
         onBack={handleBack}
         onReset={handleReset}
+        onFastPath={handleFastPath}
         questions={questions}
         profile={profile}
         recommendation={recommendation}
