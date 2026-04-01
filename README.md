@@ -1,201 +1,209 @@
 # xStocks Strategy Lab
 
-Fresh repo created on 2026-03-31 during the xStocks hackathon window.
+`24-7 MARKETS` is the public product brand.
 
-`xStocks Strategy Lab` is an xStocks-first product with two connected modes:
-1. `Autopilot`: research, compare, and activate guarded xStocks basket strategies.
-2. `Directional Vault`: use Euler as the long/short engine for leveraged long or synthetic short xStocks positions.
+`xStocks Strategy Lab` is the monorepo that powers the `24-7 MARKETS` terminal, API, and supporting research/runtime surfaces.
 
-The product is designed so:
-1. xStocks stay the core asset universe and live truth source,
-2. Euler stays central for long/short strategies,
-3. the frontend stays no-wallet-first,
-4. the live proof path follows the strongest publicly verified rails,
-5. the live proof path can fall back to Autopilot if exact xStocks-on-Euler market availability is still unverified by demo freeze.
+The repo owns:
+1. qualification, promoted-manifest selection, activation, and execution staging for xStocks portfolios,
+2. a repo-owned `Strategy Lab` autoresearch loop that promotes the current winning manifest into each public slot,
+3. authenticated wallet and activation flows,
+4. venue-routed execution across `CoW` and `1inch`,
+5. provider-triggered rebalance review plus execution staging,
+6. and the active control-plane/docs surface that defines what is live, partial, or blocked.
 
-## Product Thesis
+The current public frontend is [24-7.markets](https://24-7.markets).
 
-Most hackathon apps will either:
-1. show tokenized stocks in a generic trading UI, or
-2. wrap finance in vague AI language.
+## Current Repo Truth
 
-This repo is building something sharper:
-1. an xStocks-aware strategy lab for basket research and comparison,
-2. a directional xStocks mode powered by Euler for long/short expression,
-3. one product shell that can explain both in under two minutes.
+As of `2026-04-02`, the strongest repo-owned truth is:
+1. onboarding qualification, workspace/detail, activation preview, and authenticated activation surfaces exist,
+2. Railway-backed autoresearch is repo-owned and promotes manifests into the public slot registry,
+3. the backend owns a shared `ExecutionRequest` / `ExecutionRequestLeg` contract for venue-routed execution across `CoW` and `1inch`,
+4. accepted provider-triggered review can now hand off into canonical execution staging through `execute_all` under landed `XSL-018B`,
+5. execution is still user-approved and signer-owned,
+6. landed `XSL-014B` makes the promoted default `c5` basket truthfully `ready` / `executable` on the promoted path under venue-routed `1inch.ethereum` truth,
+7. full autonomous rebalancing is not live.
 
-## Modes
+What is not true yet:
+1. the strongest exact execution claim for the promoted `c5` basket is still limited to the six core xStocks legs, with the `AUSD` yield-buffer leg intentionally deferred/manual,
+2. provider-triggered `CRE` does not autonomously execute end to end,
+3. hosted/session-backed signer proof is not closed as a durable production claim,
+4. exact remaining execution blocker: signer-owned `1inch Fusion` EIP-712 signatures, submission, and receipt proof for the six quoted core legs,
+5. Privy smart-account-first execution remains an active `XSL-005` posture lane, not the current proven runtime branch.
+
+## Product Surfaces
 
 ### Autopilot
 
-Use xStocks public data and a pinned research dataset to:
-1. compare basket candidates,
-2. show why one strategy won,
-3. activate a guarded strategy through a smart account.
+`Autopilot` is the main xStocks basket product:
+1. qualify the user from onboarding answers,
+2. map the user into a promoted manifest slot,
+3. explain the recommended portfolio,
+4. save authenticated activations,
+5. stage execution through the backend execution substrate.
 
-Internally, `Autopilot` should follow a real `Strategy Lab` contract:
-1. one frozen research harness,
-2. one narrow hot policy surface per mode,
-3. one append-only results ledger,
-4. one incumbent-versus-challenger promotion loop,
-5. one promoted activation manifest boundary for the frontend and activation flow.
+The onboarding gate now exposes the optimisation method explicitly as `AUTORESEARCH`, reflecting the repo-owned qualification -> slot-registry -> promoted-manifest loop.
 
-### Directional Vault
+### Directional
 
-Use Euler primitives to:
-1. preview leveraged long or synthetic short structures around one xStock,
-2. show health factor and liquidation distance clearly,
-3. keep xStocks multiplier and route state visible alongside position risk.
+The repo also carries a directional xStocks lane:
+1. single-asset directional qualification and preview,
+2. route and risk visibility,
+3. activation-readiness visibility,
+4. but still with narrower live proof than the basket-first Autopilot flow.
 
-Euler stays central in the product framing, but the current strongest publicly verified live lending path is `SPYx -> borrow AUSD` on Morpho. The repo should treat that as a truthful live-proof rail while Euler-specific market proof catches up.
+## Execution And Rebalance Truth
 
-## Current Verified Rails
+Current execution hierarchy:
+1. `CoW` and `1inch` are the repo-owned Ethereum execution venues in the backend substrate,
+2. `1inch` is no longer quote-only; it persists quote, approval payload, signed submission attempt, and venue-status or exact blocker,
+3. `CoW` remains supported through the same execution-request contract,
+4. provider-triggered review can now create execution staging through the landed `XSL-018B` handoff,
+5. execution still fails closed when readiness, quoteability, signer, or session blockers remain.
 
-As of 2026-03-31, the repo should treat these as the current verified live rails:
-1. `xChange` is available on `Ethereum` and `Ink`.
-2. On `Ethereum`, xChange is available on aggregators such as `Cow Swap` and `1inch`.
-3. `Morpho` has a live xStocks lending path where users can deposit `SPYx` and borrow `AUSD`.
+Current truthful posture:
+1. provider review + operator-triggered execution staging is real,
+2. full autonomous CRE/provider execution is not,
+3. whole-portfolio execution is the contract shape, and the promoted default `c5` basket is now executable under venue-routed `1inch` truth for its six core xStocks legs,
+4. exact remaining blocker is signer-owned `1inch Fusion` signature, submission, and receipt proof, while the `AUSD` yield-buffer leg remains deferred/manual.
 
-That means:
-1. `Cow Swap` and `1inch` are the verified Ethereum execution surfaces to design around now.
-2. `SPYx/AUSD` on Morpho is the strongest verified live lending proof path right now.
-3. Euler remains central in the product experience and long/short thesis, but the repo should not overclaim exact live xStocks-on-Euler market availability until that is separately verified.
+## Wallet And Auth Truth
 
-## Mentor-Reported Rails To Confirm Onsite
+Current wallet/auth posture:
+1. Privy authentication is real in the frontend and backend,
+2. live proof already reached the authenticated execution boundary with a real user session,
+3. the current execution lane does not strictly require a Privy smart account,
+4. smart-account scaffolding exists, but linked-wallet / embedded-wallet signer flow is still the current proven runtime branch,
+5. smart-account-first execution remains an active `XSL-005` posture lane, but it is not yet the canonical proven runtime branch.
 
-The repo also tracks one promising secondary rail from onsite guidance:
-1. `Spread Finance` on `Ink` as a trading terminal powered by `Cow Swap` and xChange atomic RFQ.
+## Autoresearch Truth
 
-Treat this as:
-1. a strong secondary execution path candidate,
-2. useful for product and demo planning,
-3. not yet promoted to the same public-proof tier as Ethereum `Cow Swap / 1inch` or `SPYx/AUSD` on Morpho unless we capture direct public or onsite confirmation artifacts.
+`Autoresearch` in this repo means:
+1. evaluate candidate portfolios against the pinned research bundle,
+2. keep incumbent-vs-challenger comparisons,
+3. promote the current winner into the slot registry,
+4. expose that promoted manifest to the API and frontend,
+5. rerun the loop on the Railway `autoresearch-worker`.
+
+This does not mean portfolio execution is already fully autonomous.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    subgraph T["Frontend terminal (apps/web)"]
-        A["Portfolio workspace"]
-        M["Market Intelligence side panel"]
-        N["Bottom blotter: positions / history / activity"]
+    subgraph W["Frontend (apps/web)"]
+        O["Onboarding + qualification"]
+        WS["Workspace / detail / activation"]
+        RR["Right rail / market intelligence / controls"]
     end
 
-    A --> B["API (apps/api)"]
-    M --> B
-    N --> B
-
-    subgraph I["Standalone Market Intelligence product"]
-        F["Signal engine (packages/research + apps/worker)"]
-        G["Pinned research dataset"]
+    subgraph A["API (apps/api)"]
+        QA["Qualification + activation"]
+        EX["Execution staging"]
+        RB["Rebalance + provider handoff"]
     end
 
-    B --> C["xStocks adapters (packages/xstocks)"]
-    B --> D["Portfolio + policy engine (packages/policy)"]
-    B --> E["Directional + rail adapters (packages/euler)"]
-    F --> B
-    F --> G
-    C --> H["Official xStocks public APIs"]
-    E --> J["Euler / Morpho / EVC market data"]
-    B --> K["Postgres / signal + portfolio state"]
-    T --> L["Wallet / smart account / funding"]
-    B --> O["Cow Swap / 1inch / Morpho rails"]
+    subgraph R["Research + Runtime"]
+        WK["autoresearch-worker"]
+        RE["packages/research"]
+        PO["packages/policy"]
+    end
+
+    subgraph X["External rails"]
+        XS["xStocks data"]
+        CW["CoW"]
+        OI["1inch Fusion"]
+        PR["Privy"]
+        MF["Morpho / AUSD"]
+    end
+
+    O --> QA
+    WS --> QA
+    RR --> RB
+    QA --> PO
+    EX --> PO
+    RB --> PO
+    QA --> XS
+    EX --> CW
+    EX --> OI
+    QA --> PR
+    WK --> RE
+    RE --> XS
+    PO --> MF
 ```
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant W as Web
-    participant A as API
-    participant I as Intelligence
-    participant P as Portfolio Engine
-    participant X as xStocks APIs
-    participant E as Euler/Morpho
-    participant S as Smart Account
-
-    U->>W: Open terminal and pick theme, asset, or mode
-    W->>A: Request workspace + intelligence + replay
-    A->>I: Load or refresh blackbox signal artifact
-    I->>X: Read live xStocks truth
-    I-->>A: Return signal artifact
-    A->>P: Translate signal into recommendation
-    P->>E: Load directional market / vault inputs when needed
-    P-->>A: Return target portfolio or directional preview
-    A-->>W: Render workspace, side panel, and blotter
-    U->>W: Connect wallet and activate
-    W->>S: Create or attach smart account
-    W->>A: Save activated strategy / position config
-```
-
-More detail:
-1. [ARCHITECTURE.md](/Users/user/PycharmProjects/xstocks-strategy-lab/ARCHITECTURE.md)
-2. [docs/ROADMAP.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ROADMAP.md)
-3. [docs/DIAGRAMS.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/DIAGRAMS.md)
-4. [docs/EXECUTION_PLAN.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/EXECUTION_PLAN.md)
-5. [docs/FRONTEND_STYLE.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/FRONTEND_STYLE.md)
-6. [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md)
-7. [docs/plans/active/README.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/README.md)
-8. [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
 
 ## Monorepo Layout
 
 ```text
 apps/
-  web/       Next.js frontend on Vercel
-  api/       Railway API service
-  worker/    Railway background jobs
+  web/       Next.js terminal frontend on Vercel
+  api/       Railway API service and proof surfaces
+  worker/    Railway autoresearch cron runtime
 
 packages/
-  shared/    shared types and schemas
-  xstocks/   official xStocks API adapters
-  research/  autoresearch-style evaluation loop (workflow pattern only, not the upstream GPU/Python repo)
-  euler/     Euler market, preview, and execution helpers
-  policy/    strategy and activation-policy compilation
+  shared/    shared schemas and contracts
+  policy/    qualification, readiness, rebalance, execution planning
+  research/  Strategy Lab evaluation, promoted manifests, slot registry
+  xstocks/   xStocks venue and asset adapters
+  euler/     directional and rail helpers
 ```
 
-## What We Are Doing Now
+## Getting Started
 
-### Phase 1: foundation
+Install and run the monorepo:
 
-1. lock the repo shape and docs,
-2. scaffold the frontend shell with no-wallet-first onboarding,
-3. wire xStocks live-state adapters,
-4. define the research artifact schemas.
+```bash
+pnpm install
+pnpm build
+pnpm test
+```
 
-Critical-path and parallel split:
-1. [docs/EXECUTION_PLAN.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/EXECUTION_PLAN.md)
+Common local commands:
 
-### Phase 2: product proof
+```bash
+pnpm dev
+pnpm --filter @xstocks-strategy-lab/web build
+pnpm --filter @xstocks-strategy-lab/web test
+node --test apps/api/test/api.test.js
+node --test apps/api/test/provider-rebalance-api.test.js
+node --test apps/api/test/rebalance-service.test.js
+pnpm --filter @xstocks-strategy-lab/xstocks test
+pnpm --filter @xstocks-strategy-lab/policy test
+```
 
-1. build starter baskets and comparison view,
-2. build `$1,000 replay` and explanation surfaces,
-3. build smart-account activation flow,
-4. build Euler directional preview with health-factor and liquidation-distance panels.
+Shared env is expected through `~/.config/attn/shared.env` or `XSTOCKS_SHARED_ENV_PATH`. Do not commit live access tokens or operator secrets.
 
-### Phase 3: live proof
+## Planning Surface
 
-1. confirm exact demo asset and chain,
-2. confirm exact xStocks + Euler market path if available,
-3. otherwise use the currently verified live rails:
-   - Ethereum xChange through Cow Swap or 1inch
-   - SPYx/AUSD lending on Morpho
-4. wire one truthful execution or dry-run path,
-5. cut the two-minute demo.
+The repo uses [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md) plus execution-grade specs under [docs/plans/active/README.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/README.md) as the system of record.
 
-## Current Scope Rules
+Start here:
+1. [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md)
+2. [docs/plans/active/README.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/README.md)
+3. [2026-03-31-xstocks-product-control-plane.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-product-control-plane.md)
+4. [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md)
+5. [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md)
+6. [2026-04-01-xstocks-provider-to-execution-handoff-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-provider-to-execution-handoff-spec.md)
+7. [2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md)
+8. [2026-04-01-xstocks-oneinch-manual-execution-substrate.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-oneinch-manual-execution-substrate.md)
 
-1. one fresh hackathon repo only,
-2. one frontend app only,
-3. xStocks-only asset universe,
-4. Ethereum mainnet default,
-5. Euler stays central for long/short,
-6. current verified Ethereum execution surfaces are Cow Swap and 1inch,
-7. current verified live lending path is SPYx/AUSD on Morpho,
-8. Autopilot stays the shared substrate and fallback live path.
+## Current Status Snapshot
 
-## Status
+What is already strong:
+1. qualification and manifest selection,
+2. repo-owned promoted-manifest and slot-registry model,
+3. Railway-backed recurring autoresearch proof,
+4. authenticated activation and activity surfaces,
+5. venue-routed manual execution substrate across `CoW` and `1inch`,
+6. provider review to execution staging handoff,
+7. promoted default `c5` basket execution readiness through six core `1inch` legs.
 
-Current repo status:
-1. scaffolded,
-2. documented,
-3. ready for implementation.
+What is still active:
+1. signer-owned `1inch Fusion` signature, submission, and receipt proof for the six quoted core legs,
+2. right-rail rebalance control surface and truthful `Execute all` UI,
+3. hosted/session-backed signer proof,
+4. smart-account-first execution posture,
+5. policy-bounded automation and full autonomous CRE execution above the current operator-manual closure.
+
+This README should track current repo truth, not demo framing. If execution, wallet, or automation claims change, update the owning spec and [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md) first, then refresh this file.
