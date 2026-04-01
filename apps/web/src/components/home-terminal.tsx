@@ -14,10 +14,10 @@ function ChartIcon({ size = 32 }: { size?: number }) {
 }
 
 const infraPartners = [
-  { name: "xStocks", role: "Tokenized US equities on Ethereum", href: "https://xstocks.fi" },
-  { name: "Privy", role: "Embedded smart wallets — no seed phrase", href: "https://privy.io" },
-  { name: "CoW Protocol", role: "MEV-protected trade execution", href: "https://cow.fi" },
-  { name: "Chainlink", role: "Automated rebalance triggers", href: "https://chain.link" },
+  { name: "xStocks", role: "Tokenized equities infrastructure", href: "https://xstocks.fi" },
+  { name: "Privy", role: "Wallets and auth by Privy", href: "https://privy.io" },
+  { name: "CoW Protocol", role: "Swaps powered by CoW Protocol", href: "https://cow.fi" },
+  { name: "Chainlink", role: "Chainlink-oriented automation rails", href: "https://chain.link" },
 ];
 
 const faq = [
