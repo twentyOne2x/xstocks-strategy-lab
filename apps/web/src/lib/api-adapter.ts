@@ -362,7 +362,7 @@ export function adaptManifestToFrontend(
       : "1.00x",
     proofOfReserves: "—", // filled from live state when available
     rationale: rationaleMap.get(`${a.assetSymbol ?? a.basketId ?? "Unknown"}::${a.sleeve}`)
-      ?? "Role carried forward from the promoted manifest.",
+      ?? "",
   }));
 
   // Route validation data

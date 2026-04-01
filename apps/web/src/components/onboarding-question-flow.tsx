@@ -17,6 +17,7 @@ import {
   isDirectionalPreviewOnly,
 } from "@/lib/portfolio-ui";
 import { formatCurrency, formatPercent, getWorkspaceSpotlightData } from "@/lib/data-source";
+import { getAssetHref, getCleanRationale, getVenueDisplay } from "@/lib/holdings-display";
 
 export function OnboardingQuestionFlow({
   answers,
@@ -591,14 +592,18 @@ function SimulatedWorkspace({
             <table className="data-table">
               <thead><tr><th>Asset</th><th>Weight</th><th>Role</th><th>Venue</th></tr></thead>
               <tbody>
-                {manifest.allocations.map((row) => (
-                  <tr key={`${row.symbol}-${row.sleeve}`}>
-                    <td><strong>{row.symbol}</strong></td>
-                    <td>{row.targetWeight}</td>
-                    <td>{row.rationale || row.sleeve}</td>
-                    <td>{row.venue}</td>
-                  </tr>
-                ))}
+                {manifest.allocations.map((row) => {
+                  const assetHref = getAssetHref(row.symbol);
+                  const venue = getVenueDisplay(row.venue);
+                  return (
+                    <tr key={`${row.symbol}-${row.sleeve}`}>
+                      <td>{assetHref ? <a className="table-link" href={assetHref} target="_blank" rel="noopener noreferrer">{row.symbol}</a> : <strong>{row.symbol}</strong>}</td>
+                      <td>{row.targetWeight}</td>
+                      <td>{getCleanRationale(row.rationale, row.sleeve)}</td>
+                      <td>{venue.href ? <a className="table-link" href={venue.href} target="_blank" rel="noopener noreferrer">{venue.label}</a> : venue.label}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
