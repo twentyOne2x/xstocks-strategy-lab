@@ -202,6 +202,40 @@ Last updated: 2026-04-01
 - Plan links:
   - [2026-03-31-xstocks-rebalance-automation-and-execution-orchestration-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-rebalance-automation-and-execution-orchestration-spec.md)
 
+### XSL-011A Truthful CoW Manual Rebalance Boundary
+
+- Type: runtime/integration
+- Status: completed
+- Canonical owner lane: `XSL-011`
+- Date opened: 2026-04-01
+- Context: Audit confirmed the repo already owns the truthful backend rebalance runtime in `packages/policy`, `apps/worker`, and `apps/api`: promoted-manifest drift derives one rebalance orchestration snapshot, scheduled worker review only queues manual review, and the CoW lane stages quote, approval, submission, and receipt bookkeeping without claiming autonomous execution. The stale gap was in owner-lane documentation and proof reporting, not in the core runtime path.
+- Suspected cause: the owner-lane issue text lagged behind the shipped backend/runtime implementation and incorrectly described the manual CoW path, scheduled review shell, and provider-trigger boundary as missing.
+- Fix intent: Freeze the truthful boundary by documenting the exact rebalance state machine, proving the existing manual/operator CoW path and scheduled review loop through tracked tests, and stopping the Chainlink/CRE lane at the explicit fail-closed provider boundary because no real Chainlink proof exists in repo truth.
+- Acceptance criteria:
+  1. The repo can derive one truthful rebalance orchestration result from promoted-manifest drift plus live/readiness truth.
+  2. A manual/operator CoW rebalance request can be staged, approved, submitted, and confirmed through repo-owned contracts without implying autonomous execution.
+  3. A regular worker review loop, if present, only queues or recommends review and never bypasses operator approval.
+  4. The Chainlink-oriented trigger surface is explicitly classified and fail-closed when repo proof is absent.
+  5. The final verification states exactly what is local-only, what is live/manual, and what remains unproven.
+- Complexity: medium
+- Plan: [2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md)
+- Executor prompt: Audit the rebalance path from promoted manifest drift to operator action, verify the existing manual/operator CoW path and scheduled review loop through tracked tests, and keep the Chainlink/CRE lane fail closed unless repo-owned provider proof exists.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] visual/screenshot verification not applicable because no human-facing surface is being changed
+- Verification note:
+  - Policy truth is owned in `packages/policy/src/rebalance-orchestration.js`: supported trigger sources remain `operator_manual` and `scheduled_cron`; provider-triggered rebalance stays blocked with explicit Chainlink-oriented fail-closed blockers.
+  - Worker truth is owned in `apps/worker/src/rebalance-orchestrator.js`: scheduled review can evaluate or queue a manual window, but transitions remain explicit and bounded to manual state changes.
+  - Manual/live CoW truth is owned in `apps/api/src/services/api-service.js`: execution requests stay `operator_manual`, the user must approve/sign before submission, and receipt/venue status are persisted as audit truth.
+  - `node --test packages/policy/test/policy.test.js` passed with 21/21 tests.
+  - `node --test apps/worker/src/__tests__/rebalance-orchestrator.test.js` passed with 4/4 tests.
+  - `node --test --test-name-pattern "workspace and activity surfaces expose a recommended rebalance when the slot baseline trails the promoted manifest|authenticated CoW activation can reach quote readiness at a small requested notional without a smart wallet|execution quote, approval, submission, and receipt actions persist live CoW truth|execution quote failures persist exact CoW request diagnostics instead of a generic blocker|execution records a failed CoW venue state when the venue invalidates the order" apps/api/test/api.test.js` passed for 5 targeted API rebalance/CoW tests.
+  - `node --test --test-name-pattern "workspace and activity surfaces expose scheduled worker-owned review without claiming autonomous execution" apps/api/test/api.test.js` passed for the scheduled manual-review API surface.
+  - Real Chainlink Automation / CRE proof does not exist in repo truth. Exact blocker: no repo-owned provider adapter, no signed-event validation path, and no provider proof artifact showing a live Chainlink-triggered rebalance.
+
 ### XSL-012 Social Connect, Incentive, And Agent Wallet
 
 - Type: product/identity/integration
