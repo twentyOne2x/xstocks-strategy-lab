@@ -172,7 +172,7 @@ export function HomeTerminal() {
           <div className="landing-footer-brand-block">
             <BrandLockup size="md" />
             <span className="landing-footer-powered">Powered by xStocks</span>
-            <span className="landing-footer-desc">Tokenized equity portfolios on Ethereum.</span>
+            <span className="landing-footer-desc">Tokenized equity portfolios trading 24/7.</span>
           </div>
           <div className="landing-footer-col">
             <strong>Product</strong>
