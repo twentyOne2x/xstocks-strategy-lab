@@ -74,19 +74,19 @@ export function getCleanRationale(rationale: string | undefined, sleeve: string)
 
 function formatSleeve(sleeve: string): string {
   const mapped: Record<string, string> = {
-    "Core leader": "Core holding — drives portfolio upside",
-    "Throughput kicker": "Growth complement — adds breadth",
-    "Quality ballast": "Stability anchor — reduces drawdown",
-    "Reserve buffer": "Cash reserve — liquidity for rebalances",
-    "core_leader": "Core holding — drives portfolio upside",
-    "throughput_kicker": "Growth complement — adds breadth",
-    "quality_ballast": "Stability anchor — reduces drawdown",
-    "reserve_buffer": "Cash reserve — liquidity for rebalances",
-    "cash_buffer": "Cash reserve — liquidity for rebalances",
-    "Core holding": "Core holding — drives portfolio upside",
+    "Core leader": "Core holding: drives portfolio upside",
+    "Throughput kicker": "Growth complement: adds breadth",
+    "Quality ballast": "Stability anchor: reduces drawdown",
+    "Reserve buffer": "Cash reserve: liquidity for rebalances",
+    "core_leader": "Core holding: drives portfolio upside",
+    "throughput_kicker": "Growth complement: adds breadth",
+    "quality_ballast": "Stability anchor: reduces drawdown",
+    "reserve_buffer": "Cash reserve: liquidity for rebalances",
+    "cash_buffer": "Cash reserve: liquidity for rebalances",
+    "Core holding": "Core holding: drives portfolio upside",
     "Core beta": "Core index exposure",
-    "Quality growth": "Quality growth — balances the basket",
-    "Cash buffer": "Cash reserve — liquidity for rebalances",
+    "Quality growth": "Quality growth: balances the basket",
+    "Cash buffer": "Cash reserve: liquidity for rebalances",
   };
   return mapped[sleeve] ?? sleeve.replace(/_/g, " ");
 }

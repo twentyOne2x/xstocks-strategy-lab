@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
   <rect width="128" height="128" fill="#ff1800"/>
-  <rect x="4" y="4" width="120" height="120" fill="none" stroke="#0a0a0a" stroke-width="6"/>
-  <text x="64" y="62" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="52" font-weight="900" font-style="italic" fill="#ffffff" stroke="#0a0a0a" stroke-width="2">24-7</text>
-  <text x="64" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="6" fill="#0a0a0a">MARKETS</text>
+  <rect x="3" y="3" width="122" height="122" fill="none" stroke="#0a0a0a" stroke-width="5"/>
+  <text x="64" y="70" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="48" font-weight="900" font-style="italic" fill="#ffffff" stroke="#0a0a0a" stroke-width="2">24-7</text>
+  <text x="64" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="5" fill="#ffffff">MARKETS</text>
 </svg>

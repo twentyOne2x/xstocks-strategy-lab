@@ -2,7 +2,10 @@ import Link from "next/link";
 
 import type { BlotterData, PromotedManifest } from "@/lib/contracts";
 import { formatCurrency, formatPercent, getWorkspaceSpotlightData } from "@/lib/data-source";
-import { getManifestExplanationBundle } from "@/lib/portfolio-ui";
+import {
+  getManifestExplanationBundle,
+  getPrimaryPortfolioComponents,
+} from "@/lib/portfolio-ui";
 
 function buildPath(values: number[]) {
   const min = Math.min(...values);
@@ -38,6 +41,7 @@ export function WorkspaceSpotlight({
   const values = spotlight.points.map((p) => p.value);
   const path = buildPath(values);
   const bundle = getManifestExplanationBundle(manifest);
+  const primaryComponents = getPrimaryPortfolioComponents(manifest, 4);
 
   return (
     <section className="workspace-showcase">
@@ -117,22 +121,22 @@ export function WorkspaceSpotlight({
 
       <aside className="workspace-secondary">
         <article className="panel-card panel-card-subtle">
-          <span className="section-kicker">What you are holding</span>
+          <span className="section-kicker">How this is built</span>
           <h3>{manifest.frontend.title}</h3>
-          <p>{bundle.whatThisPortfolioDoes}</p>
+          <p>{bundle.howItIsBuilt}</p>
           <p className="panel-note">{bundle.bestFor}</p>
         </article>
 
         <article className="panel-card panel-card-subtle">
-          <span className="section-kicker">Current holdings</span>
+          <span className="section-kicker">Why these holdings are here</span>
           <div className="allocation-stack">
-            {manifest.allocations.slice(0, 6).map((alloc) => (
-              <div className="allocation-row" key={`${manifest.slug}-${alloc.symbol}`}>
+            {primaryComponents.map((component) => (
+              <div className="allocation-row" key={`${manifest.slug}-${component.componentId}`}>
                 <div>
-                  <strong>{alloc.symbol}</strong>
-                  <p>{alloc.sleeve}</p>
+                  <strong>{component.title}</strong>
+                  <p>{component.rationale}</p>
                 </div>
-                <span>{alloc.targetWeight}</span>
+                <span>{component.exposureLabel}</span>
               </div>
             ))}
           </div>

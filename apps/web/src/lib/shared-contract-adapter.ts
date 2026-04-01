@@ -590,7 +590,7 @@ export function buildOnboardingProfile(answers: Record<string, string>): Onboard
   const certaintyLevel: CertaintyLevel = certaintyRaw === "high" ? "high" : certaintyRaw === "medium" ? "medium" : "low";
   const uncertaintyPath: UncertaintyPath =
     certaintyRaw === "default_requested" ? "default_requested"
-    : certaintyRaw === "low" ? "exploring"
+    : certaintyRaw === "low" || certaintyRaw === "unsure" ? "exploring"
     : [goal, expression, risk, rebalance, appetite, automation].filter((v) => v === "unsure").length > 0 ? "some_answers_unsure"
     : "none";
 

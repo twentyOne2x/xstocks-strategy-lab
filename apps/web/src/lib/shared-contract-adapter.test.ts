@@ -76,6 +76,27 @@ describe("shared contract adapter", () => {
     expect(recommendation.safe_fallback_applied).toBe(true);
   });
 
+  it("treats certainty skip as exploring without breaking deterministic defaults", () => {
+    const answers = {
+      q_goal_preference: "theme_tilt",
+      q_theme_preference: "tech_ai",
+      q_expression_preference: "tilted",
+      q_risk_level: "medium",
+      q_rebalance_preference: "scheduled",
+      q_directional_appetite: "adaptive",
+      q_automation_comfort: "medium",
+      q_certainty: "unsure",
+    };
+
+    const profile = buildOnboardingProfile(answers);
+    const recommendation = buildStrategyRecommendation(profile);
+
+    expect(profile.certainty_level).toBe("low");
+    expect(profile.uncertainty_path).toBe("exploring");
+    expect(profile.resolved.safe_fallback_applied).toBe(false);
+    expect(recommendation.mode_id).toBe("onboarding.default_basket");
+  });
+
   it("builds qualification flow result with deposit CTA", () => {
     const answers = {
       q_goal_preference: "broad_exposure",

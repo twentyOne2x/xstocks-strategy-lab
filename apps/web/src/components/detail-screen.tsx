@@ -1,6 +1,9 @@
 import type { DetailScreenProps } from "@/lib/contracts";
 import {
+  describeManualVsScheduledTruth,
+  describeNextReviewWindow,
   describeRebalanceState,
+  getPrimaryPortfolioComponents,
   getManifestExplanationBundle,
   getPrimaryActionLabel,
   getRebalanceOrchestration,
@@ -14,6 +17,7 @@ export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
   const bundle = getManifestExplanationBundle(manifest);
   const orchestration = getRebalanceOrchestration(manifest);
   const directionalPreviewOnly = isDirectionalPreviewOnly(manifest);
+  const primaryComponents = getPrimaryPortfolioComponents(manifest, 5);
 
   return (
     <div className="screen-stack">
@@ -34,6 +38,85 @@ export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
       />
 
       <section className="panel-grid panel-grid-two">
+        <article className="panel-card">
+          <span className="section-kicker">Why this fits</span>
+          <div className="info-stack">
+            <div>
+              <span>What this portfolio does</span>
+              <strong>{bundle.whatThisPortfolioDoes}</strong>
+            </div>
+            <div>
+              <span>How it is built</span>
+              <strong>{bundle.howItIsBuilt}</strong>
+            </div>
+            <div>
+              <span>Best for</span>
+              <strong>{bundle.bestFor}</strong>
+            </div>
+          </div>
+        </article>
+
+        <article className="panel-card">
+          <span className="section-kicker">Replay and refresh</span>
+          <div className="info-stack">
+            <div>
+              <span>How to read the replay</span>
+              <strong>{bundle.howToReadReplay}</strong>
+            </div>
+            <div>
+              <span>What changes</span>
+              <strong>{bundle.howItChanges}</strong>
+            </div>
+            <div>
+              <span>What triggers a refresh</span>
+              <strong>{bundle.whatWouldTriggerNextRebalance}</strong>
+            </div>
+            <div>
+              <span>Next review window</span>
+              <strong>{describeNextReviewWindow(orchestration)}</strong>
+            </div>
+            <div>
+              <span>Rebalancing</span>
+              <strong>{describeRebalanceState(orchestration)} · user-approved review</strong>
+            </div>
+            <div>
+              <span>Review ownership</span>
+              <strong>{describeManualVsScheduledTruth(orchestration)}</strong>
+            </div>
+            <div>
+              <span>Route</span>
+              <strong>{manifest.live_state.routeSummary}</strong>
+            </div>
+            <div>
+              <span>Pause behavior</span>
+              <strong>{manifest.live_state.pauseRule}</strong>
+            </div>
+            {directionalPreviewOnly && (
+              <div>
+                <span>Directional</span>
+                <strong>Preview only — you keep full custody</strong>
+              </div>
+            )}
+          </div>
+        </article>
+      </section>
+
+      <section className="panel-grid panel-grid-two">
+        <article className="panel-card">
+          <span className="section-kicker">Why these holdings are here</span>
+          <div className="allocation-stack">
+            {primaryComponents.map((component) => (
+              <div className="allocation-row" key={component.componentId}>
+                <div>
+                  <strong>{component.title}</strong>
+                  <p>{component.rationale}</p>
+                </div>
+                <span>{component.exposureLabel}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+
         <article className="panel-card">
           <span className="section-kicker">Holdings</span>
           <table className="data-table">
@@ -60,38 +143,6 @@ export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
               })}
             </tbody>
           </table>
-        </article>
-
-        <article className="panel-card">
-          <span className="section-kicker">How it works</span>
-          <div className="info-stack">
-            <div>
-              <span>What changes</span>
-              <strong>{bundle.howItChanges}</strong>
-            </div>
-            <div>
-              <span>What triggers a refresh</span>
-              <strong>{bundle.whatWouldTriggerNextRebalance}</strong>
-            </div>
-            <div>
-              <span>Rebalancing</span>
-              <strong>{describeRebalanceState(orchestration)} · user-approved review</strong>
-            </div>
-            <div>
-              <span>Route</span>
-              <strong>{manifest.live_state.routeSummary}</strong>
-            </div>
-            <div>
-              <span>Pause behavior</span>
-              <strong>{manifest.live_state.pauseRule}</strong>
-            </div>
-            {directionalPreviewOnly && (
-              <div>
-                <span>Directional</span>
-                <strong>Preview only — you keep full custody</strong>
-              </div>
-            )}
-          </div>
         </article>
       </section>
     </div>

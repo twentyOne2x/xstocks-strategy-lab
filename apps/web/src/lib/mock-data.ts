@@ -217,7 +217,7 @@ export const manifests: PromotedManifest[] = [
         {
           symbol: "NVDAx",
           sleeve: "Core leader",
-          rationale: "Top AI infrastructure stock — drives portfolio growth.",
+          rationale: "Top AI infrastructure stock: drives portfolio growth.",
         },
         {
           symbol: "AVGOx",
@@ -227,12 +227,12 @@ export const manifests: PromotedManifest[] = [
         {
           symbol: "MSFTx",
           sleeve: "Quality ballast",
-          rationale: "Stability anchor — reduces overall portfolio risk.",
+          rationale: "Stability anchor: reduces overall portfolio risk.",
         },
         {
           symbol: "USDC",
           sleeve: "Reserve buffer",
-          rationale: "Cash reserve — available for rebalancing or withdrawal.",
+          rationale: "Cash reserve: available for rebalancing or withdrawal.",
         },
       ],
       bundle: {
@@ -254,7 +254,7 @@ export const manifests: PromotedManifest[] = [
             kind: "asset",
             sleeve: "Core leader",
             title: "NVDAx",
-            rationale: "Top AI infrastructure stock — drives portfolio growth.",
+            rationale: "Top AI infrastructure stock: drives portfolio growth.",
             targetWeightPct: 32,
             grossExposurePct: null,
             assetSymbol: "NVDAx",
@@ -278,7 +278,7 @@ export const manifests: PromotedManifest[] = [
             kind: "asset",
             sleeve: "Quality ballast",
             title: "MSFTx",
-            rationale: "Stability anchor — reduces overall portfolio risk.",
+            rationale: "Stability anchor: reduces overall portfolio risk.",
             targetWeightPct: 21,
             grossExposurePct: null,
             assetSymbol: "MSFTx",
@@ -290,7 +290,7 @@ export const manifests: PromotedManifest[] = [
             kind: "cash_buffer",
             sleeve: "Reserve buffer",
             title: "USDC reserve",
-            rationale: "Cash reserve — available for rebalancing or withdrawal.",
+            rationale: "Cash reserve: available for rebalancing or withdrawal.",
             targetWeightPct: 23,
             grossExposurePct: null,
             assetSymbol: "USDC",
@@ -358,7 +358,7 @@ export const manifests: PromotedManifest[] = [
         venue: "xChange / Cow Swap",
         multiplier: "1.00x",
         proofOfReserves: "98.9%",
-        rationale: "Top AI infrastructure stock — drives portfolio growth.",
+        rationale: "Top AI infrastructure stock: drives portfolio growth.",
       },
       {
         symbol: "AVGOx",
@@ -376,7 +376,7 @@ export const manifests: PromotedManifest[] = [
         venue: "xChange / 1inch",
         multiplier: "1.00x",
         proofOfReserves: "99.3%",
-        rationale: "Stability anchor — reduces overall portfolio risk.",
+        rationale: "Stability anchor: reduces overall portfolio risk.",
       },
       {
         symbol: "USDC",
@@ -385,7 +385,7 @@ export const manifests: PromotedManifest[] = [
         venue: "Smart account balance",
         multiplier: "Cash",
         proofOfReserves: "N/A",
-        rationale: "Cash reserve — available for rebalancing or withdrawal.",
+        rationale: "Cash reserve: available for rebalancing or withdrawal.",
       },
     ],
     route_notes: [
@@ -550,7 +550,7 @@ export const manifests: PromotedManifest[] = [
         {
           symbol: "MSFTx",
           sleeve: "Quality anchor",
-          rationale: "Largest and most stable holding — anchors the portfolio.",
+          rationale: "Largest and most stable holding: anchors the portfolio.",
         },
         {
           symbol: "AAPLx",
@@ -565,7 +565,7 @@ export const manifests: PromotedManifest[] = [
         {
           symbol: "USDC",
           sleeve: "Reserve buffer",
-          rationale: "Cash reserve — keeps trading costs low and provides rebalance flexibility.",
+          rationale: "Cash reserve: keeps trading costs low and provides rebalance flexibility.",
         },
       ],
       bundle: {
@@ -587,7 +587,7 @@ export const manifests: PromotedManifest[] = [
             kind: "asset",
             sleeve: "Quality anchor",
             title: "MSFTx",
-            rationale: "Largest and most stable holding — anchors the portfolio.",
+            rationale: "Largest and most stable holding: anchors the portfolio.",
             targetWeightPct: 24,
             grossExposurePct: null,
             assetSymbol: "MSFTx",
@@ -623,7 +623,7 @@ export const manifests: PromotedManifest[] = [
             kind: "cash_buffer",
             sleeve: "Reserve buffer",
             title: "USDC reserve",
-            rationale: "Cash reserve — keeps trading costs low and provides rebalance flexibility.",
+            rationale: "Cash reserve: keeps trading costs low and provides rebalance flexibility.",
             targetWeightPct: 39,
             grossExposurePct: null,
             assetSymbol: "USDC",
@@ -651,7 +651,7 @@ export const manifests: PromotedManifest[] = [
         venue: "xChange / 1inch",
         multiplier: "1.00x",
         proofOfReserves: "99.3%",
-        rationale: "Largest and most stable holding — anchors the portfolio.",
+        rationale: "Largest and most stable holding: anchors the portfolio.",
       },
       {
         symbol: "AAPLx",
@@ -678,7 +678,7 @@ export const manifests: PromotedManifest[] = [
         venue: "Smart account balance",
         multiplier: "Cash",
         proofOfReserves: "N/A",
-        rationale: "Cash reserve — keeps trading costs low and provides rebalance flexibility.",
+        rationale: "Cash reserve: keeps trading costs low and provides rebalance flexibility.",
       },
     ],
     route_notes: [
@@ -834,7 +834,7 @@ export const manifests: PromotedManifest[] = [
         {
           symbol: "SPYx",
           sleeve: "Core beta",
-          rationale: "Core index exposure — tracks the S&amp;P 500.",
+          rationale: "Core index exposure: tracks the S&amp;P 500.",
         },
         {
           symbol: "MSFTx",
@@ -844,7 +844,7 @@ export const manifests: PromotedManifest[] = [
         {
           symbol: "USDC",
           sleeve: "Reserve buffer",
-          rationale: "Cash reserve — flexibility for your first deposit.",
+          rationale: "Cash reserve: flexibility for your first deposit.",
         },
       ],
       bundle: {
@@ -866,7 +866,7 @@ export const manifests: PromotedManifest[] = [
             kind: "asset",
             sleeve: "Core beta",
             title: "SPYx",
-            rationale: "Core index exposure — tracks the S&amp;P 500.",
+            rationale: "Core index exposure: tracks the S&amp;P 500.",
             targetWeightPct: 48,
             grossExposurePct: null,
             assetSymbol: "SPYx",
@@ -890,7 +890,7 @@ export const manifests: PromotedManifest[] = [
             kind: "cash_buffer",
             sleeve: "Reserve buffer",
             title: "USDC reserve",
-            rationale: "Cash reserve — flexibility for your first deposit.",
+            rationale: "Cash reserve: flexibility for your first deposit.",
             targetWeightPct: 38,
             grossExposurePct: null,
             assetSymbol: "USDC",
@@ -918,7 +918,7 @@ export const manifests: PromotedManifest[] = [
         venue: "xChange / Cow Swap",
         multiplier: "1.00x",
         proofOfReserves: "99.5%",
-        rationale: "Core index exposure — tracks the S&amp;P 500.",
+        rationale: "Core index exposure: tracks the S&amp;P 500.",
       },
       {
         symbol: "MSFTx",
@@ -936,7 +936,7 @@ export const manifests: PromotedManifest[] = [
         venue: "Smart account balance",
         multiplier: "Cash",
         proofOfReserves: "N/A",
-        rationale: "Cash reserve — flexibility for your first deposit.",
+        rationale: "Cash reserve: flexibility for your first deposit.",
       },
     ],
     route_notes: [
@@ -1112,7 +1112,7 @@ export const manifests: PromotedManifest[] = [
         {
           symbol: "USDC",
           sleeve: "Collateral and fees",
-          rationale: "Cash reserve — held for risk management.",
+          rationale: "Cash reserve: held for risk management.",
         },
       ],
       bundle: {
@@ -1146,7 +1146,7 @@ export const manifests: PromotedManifest[] = [
             kind: "cash_buffer",
             sleeve: "Collateral and fees",
             title: "USDC funding sleeve",
-            rationale: "Cash reserve — held for risk management.",
+            rationale: "Cash reserve: held for risk management.",
             targetWeightPct: null,
             grossExposurePct: null,
             assetSymbol: "USDC",
@@ -1210,7 +1210,7 @@ export const manifests: PromotedManifest[] = [
         venue: "Smart account balance",
         multiplier: "Cash",
         proofOfReserves: "N/A",
-        rationale: "Cash reserve — held for risk management.",
+        rationale: "Cash reserve: held for risk management.",
       },
     ],
     route_notes: [
@@ -1470,6 +1470,16 @@ export const onboardingQuestions: OnboardingQuestion[] = [
           fitNote: "Leader-first selection means a tighter, more active basket.",
         },
       },
+      {
+        id: "unsure",
+        label: "Choose a strong default for me",
+        description: "Not sure yet is fine. Start with the broadest, simplest preview.",
+        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Uncertainty routes to the safest default preview.",
+        },
+      },
     ],
   },
   {
@@ -1511,6 +1521,16 @@ export const onboardingQuestions: OnboardingQuestion[] = [
           fitNote: "Quality/cashflow lane selected.",
         },
       },
+      {
+        id: "unsure",
+        label: "Not sure: pick the cleanest setup",
+        description: "Pick the theme with the cleanest setup right now.",
+        manifestSlugs: ["ai-infra-autopilot", "mag7-cash-balance"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Theme left open; system picks the cleanest default.",
+        },
+      },
     ],
   },
   {
@@ -1545,6 +1565,16 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "Active expression required for directional eligibility.",
+        },
+      },
+      {
+        id: "unsure",
+        label: "Not sure",
+        description: "Default toward simpler unless other signals are clear.",
+        manifestSlugs: ["spy-core-shield", "mag7-cash-balance"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Expression uncertainty resolves toward simpler setup.",
         },
       },
     ],
@@ -1583,6 +1613,16 @@ export const onboardingQuestions: OnboardingQuestion[] = [
           fitNote: "High risk allows tighter baskets and larger position sizes.",
         },
       },
+      {
+        id: "unsure",
+        label: "Not sure",
+        description: "Resolve to medium unless the safe-default path applies.",
+        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Risk uncertainty resolves to medium.",
+        },
+      },
     ],
   },
   {
@@ -1592,7 +1632,7 @@ export const onboardingQuestions: OnboardingQuestion[] = [
     triggeredByQuestionId: "q_risk_level",
     triggeredByOptionIds: ["low", "medium", "high"],
     prompt: "How protective in a downturn?",
-    helper: "Optional — skip if unsure.",
+    helper: "Optional: skip if unsure.",
     options: [
       {
         id: "high",
@@ -1620,6 +1660,15 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "Low drawdown sensitivity allows higher volatility tolerance.",
+        },
+      },
+      {
+        id: "unset",
+        label: "Skip / not sure",
+        description: "Leave this unset and let the risk answer do the work.",
+        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
+        qualification: {
+          fitNote: "Drawdown refinement skipped.",
         },
       },
     ],
@@ -1656,6 +1705,16 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "Active rebalancing supports faster leadership tracking.",
+        },
+      },
+      {
+        id: "unsure",
+        label: "Not sure",
+        description: "Resolve to a steady scheduled rhythm.",
+        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Rebalance uncertainty resolves to scheduled cadence.",
         },
       },
     ],
@@ -1699,6 +1758,18 @@ export const onboardingQuestions: OnboardingQuestion[] = [
           fitNote: "Directional opt-in enabled but still hard-gated.",
         },
       },
+      {
+        id: "unsure",
+        label: "Keep it simple for now",
+        description: "Resolve to long-only to keep it straightforward.",
+        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
+        qualification: {
+          modePreference: "basket",
+          directionalOptIn: false,
+          yieldBufferAllowed: true,
+          fitNote: "Stance uncertainty resolves to long-only.",
+        },
+      },
     ],
   },
   {
@@ -1735,6 +1806,16 @@ export const onboardingQuestions: OnboardingQuestion[] = [
           fitNote: "High automation required for directional eligibility.",
         },
       },
+      {
+        id: "unsure",
+        label: "Not sure",
+        description: "Resolve to medium and keep changes rules-based.",
+        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Automation uncertainty resolves to medium.",
+        },
+      },
     ],
   },
   {
@@ -1762,13 +1843,33 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         },
       },
       {
+        id: "unsure",
+        label: "Skip / not sure",
+        description: "Treat this as exploring and keep the preview flexible.",
+        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Certainty left open: treat the user as exploring.",
+        },
+      },
+      {
         id: "low",
         label: "Just exploring",
         description: "Show me the preview.",
         manifestSlugs: ["mag7-cash-balance", "spy-core-shield"],
         qualification: {
           yieldBufferAllowed: true,
-          fitNote: "Exploring — preview stays broad and low-commitment.",
+          fitNote: "Exploring: preview stays broad and low-commitment.",
+        },
+      },
+      {
+        id: "default_requested",
+        label: "Give me the safest default preview",
+        description: "Start broad and simple now. Tighten it later.",
+        manifestSlugs: ["spy-core-shield", "mag7-cash-balance"],
+        qualification: {
+          yieldBufferAllowed: true,
+          fitNote: "Default requested: safe fallback applied.",
         },
       },
     ],

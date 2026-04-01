@@ -8,6 +8,10 @@ import { WorkspaceSpotlight } from "@/components/workspace-spotlight";
 
 export function ComparisonWorkspace({ focusManifest, blotter }: ComparisonWorkspaceProps) {
   const bundle = getManifestExplanationBundle(focusManifest);
+  const selectedComparison =
+    focusManifest.comparison.find((entry) => entry.href.endsWith(`/${focusManifest.slug}`))
+    ?? focusManifest.comparison[0]
+    ?? null;
 
   return (
     <div className="screen-stack">
@@ -26,6 +30,40 @@ export function ComparisonWorkspace({ focusManifest, blotter }: ComparisonWorksp
           label: "Retake onboarding",
         }}
       />
+
+      <section className="panel-grid panel-grid-two">
+        <article className="panel-card">
+          <span className="section-kicker">Why this portfolio leads</span>
+          <div className="info-stack">
+            <div>
+              <span>Promoted view</span>
+              <strong>{selectedComparison?.whyItWon ?? bundle.whatThisPortfolioDoes}</strong>
+            </div>
+            <div>
+              <span>Best for</span>
+              <strong>{bundle.bestFor}</strong>
+            </div>
+            <div>
+              <span>What changes next</span>
+              <strong>{bundle.whatWouldTriggerNextRebalance}</strong>
+            </div>
+          </div>
+        </article>
+
+        <article className="panel-card">
+          <span className="section-kicker">How to read the replay</span>
+          <div className="info-stack">
+            <div>
+              <span>Replay interpretation</span>
+              <strong>{bundle.howToReadReplay}</strong>
+            </div>
+            <div>
+              <span>Construction</span>
+              <strong>{bundle.howItIsBuilt}</strong>
+            </div>
+          </div>
+        </article>
+      </section>
 
       {focusManifest.comparison.length > 0 && (
         <section className="panel-card">
@@ -46,6 +84,7 @@ export function ComparisonWorkspace({ focusManifest, blotter }: ComparisonWorksp
                     <Link className="table-link" href={entry.href}>
                       {entry.label}
                     </Link>
+                    <p className="panel-note">{entry.whyItWon}</p>
                   </td>
                   <td>{formatCurrency(entry.endingValue)}</td>
                   <td>{formatPercent(entry.alphaPct)}</td>

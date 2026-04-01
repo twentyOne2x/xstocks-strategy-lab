@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ActivationScreenProps } from "@/lib/contracts";
 import {
   getManifestExplanationBundle,
+  getPrimaryPortfolioComponents,
   isDirectionalPreviewOnly,
 } from "@/lib/portfolio-ui";
 import { buildManifestContractBundle } from "@/lib/shared-contract-adapter";
@@ -16,6 +17,7 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
   const contracts = buildManifestContractBundle(manifest);
   const bundle = getManifestExplanationBundle(manifest);
   const directionalPreviewOnly = isDirectionalPreviewOnly(manifest);
+  const primaryComponents = getPrimaryPortfolioComponents(manifest, 3);
   const wallet = useWalletState();
 
   // Derive funnel state from real wallet connection
@@ -59,7 +61,7 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
             <ActivationStep
               step={2}
               title={`Fund with ${contracts.activationPayload.fundingAssetSymbol}`}
-              description="Fund via card, exchange, or wallet transfer. The current basket lane follows the notional you choose and does not enforce a fixed platform minimum in policy."
+              description="Self-serve deposit means an external-wallet, same-chain transfer into your revealed destination. Privy card and exchange rails are optional hosted conveniences and may require regulated on-ramp verification. The current basket lane follows the notional you choose and does not enforce a fixed platform minimum in policy."
               status={funnelState === "funding_required" ? "next" : "locked"}
             >
               {funnelState === "funding_required" && (
@@ -99,6 +101,41 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
               </strong>
             </div>
           )}
+        </div>
+
+        <div className="panel-grid panel-grid-two" style={{ marginTop: 16 }}>
+          <article className="panel-card panel-card-subtle">
+            <span className="section-kicker">Before you deposit</span>
+            <div className="info-stack">
+              <div>
+                <span>Best for</span>
+                <strong>{bundle.bestFor}</strong>
+              </div>
+              <div>
+                <span>What changes next</span>
+                <strong>{bundle.whatWouldTriggerNextRebalance}</strong>
+              </div>
+              <div>
+                <span>Replay interpretation</span>
+                <strong>{bundle.howToReadReplay}</strong>
+              </div>
+            </div>
+          </article>
+
+          <article className="panel-card panel-card-subtle">
+            <span className="section-kicker">Holdings rationale</span>
+            <div className="allocation-stack">
+              {primaryComponents.map((component) => (
+                <div className="allocation-row" key={component.componentId}>
+                  <div>
+                    <strong>{component.title}</strong>
+                    <p>{component.rationale}</p>
+                  </div>
+                  <span>{component.exposureLabel}</span>
+                </div>
+              ))}
+            </div>
+          </article>
         </div>
 
         {directionalPreviewOnly && (

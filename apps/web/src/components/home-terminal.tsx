@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 
-function BrandLockup({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+export function BrandLockup({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   const s = size === "lg" ? "brand-lockup-lg" : size === "sm" ? "brand-lockup-sm" : "";
   return (
     <div className={`brand-lockup ${s}`}>
@@ -13,9 +13,9 @@ function BrandLockup({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 }
 
 const infraPartners = [
-  { name: "xStocks", role: "Tokenized equities infrastructure", href: "https://xstocks.fi" },
-  { name: "Privy", role: "Wallet connection and auth", href: "https://privy.io" },
-  { name: "CoW Protocol", role: "Swaps and execution", href: "https://cow.fi" },
+  { name: "xStocks", role: "Tokenized equities", href: "https://xstocks.fi" },
+  { name: "Privy", role: "Wallet and auth", href: "https://privy.io" },
+  { name: "CoW Protocol", role: "Swap execution", href: "https://cow.fi" },
 ];
 
 const faq = [
@@ -31,23 +31,23 @@ export function HomeTerminal() {
     <div className="landing">
       <XStocksFunnelStageTracker stage="landing_viewed" />
 
-      {/* ── Header ── */}
+      {/* Header matching reference: white bar, black brand block, nav links with dividers, yellow CTA */}
       <header className="landing-header">
         <div className="landing-header-inner">
-          <Link className="landing-brand" href="/">
+          <Link className="landing-header-brand" href="/">
             <BrandLockup size="sm" />
           </Link>
           <nav className="landing-header-nav">
             <a className="landing-header-link" href="#how-it-works">How it works</a>
             <a className="landing-header-link" href="#faq">FAQ</a>
-            <Link className="button button-secondary button-lg" href="/onboarding">
+            <Link className="landing-header-cta" href="/onboarding">
               Find my portfolio
             </Link>
           </nav>
         </div>
       </header>
 
-      {/* ── Hero ── */}
+      {/* Hero: tighter padding */}
       <section className="landing-hero">
         <div className="landing-hero-inner">
           <BrandLockup size="lg" />
@@ -65,7 +65,7 @@ export function HomeTerminal() {
         </div>
       </section>
 
-      {/* ── Infrastructure partners ── */}
+      {/* Infrastructure partners */}
       <section className="landing-infra-band" id="infra">
         <div className="landing-infra-band-inner">
           <div className="landing-infra-label">
@@ -82,7 +82,7 @@ export function HomeTerminal() {
         </div>
       </section>
 
-      {/* ── How it works ── */}
+      {/* How it works: bigger steps */}
       <section className="landing-section" id="how-it-works">
         <div className="landing-section-inner landing-section-center">
           <span className="landing-section-kicker">How it works</span>
@@ -91,31 +91,31 @@ export function HomeTerminal() {
             <div className="landing-flow-step">
               <div className="landing-flow-num">1</div>
               <h3>Answer 7 questions</h3>
-              <p>Risk tolerance, theme preference, rebalance style.</p>
+              <p>Risk tolerance, theme preference, rebalance style. Takes about 45 seconds.</p>
             </div>
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
               <div className="landing-flow-num">2</div>
               <h3>Get your match</h3>
-              <p>We compare candidates and show you the best fit.</p>
+              <p>We compare portfolio candidates and show you the one that fits your profile best.</p>
             </div>
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
               <div className="landing-flow-num">3</div>
               <h3>Preview everything</h3>
-              <p>Every holding, weight, and rebalancing rule.</p>
+              <p>Every holding, every weight, every rebalancing rule. Full transparency before you commit.</p>
             </div>
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
               <div className="landing-flow-num">4</div>
               <h3>Fund when ready</h3>
-              <p>Connect wallet and deposit USDC.</p>
+              <p>Connect your wallet through Privy and deposit USDC. Pause or exit whenever you want.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── What you get ── */}
+      {/* What you get */}
       <section className="landing-section landing-section-alt">
         <div className="landing-section-inner">
           <span className="landing-section-kicker">What you get</span>
@@ -127,7 +127,7 @@ export function HomeTerminal() {
             </div>
             <div className="landing-feature">
               <strong>Total transparency</strong>
-              <p>Every holding, every weight, every trade route — visible.</p>
+              <p>Every holding, every weight, every trade route is visible.</p>
             </div>
             <div className="landing-feature">
               <strong>User-approved</strong>
@@ -141,7 +141,7 @@ export function HomeTerminal() {
         </div>
       </section>
 
-      {/* ── FAQ ── */}
+      {/* FAQ */}
       <section className="landing-section" id="faq">
         <div className="landing-section-inner">
           <span className="landing-section-kicker">Common questions</span>
@@ -157,7 +157,7 @@ export function HomeTerminal() {
         </div>
       </section>
 
-      {/* ── Bottom CTA ── */}
+      {/* Bottom CTA: tighter padding */}
       <section className="landing-section landing-bottom-cta">
         <div className="landing-section-inner landing-section-center">
           <h2 className="landing-h2">See which portfolio fits you.</h2>
@@ -167,11 +167,11 @@ export function HomeTerminal() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
+      {/* Footer: 3x bigger brand, GitHub link, infra stack */}
       <footer className="landing-footer">
         <div className="landing-footer-inner">
-          <div className="landing-footer-brand">
-            <BrandLockup size="sm" />
+          <div className="landing-footer-brand-block">
+            <BrandLockup size="md" />
             <span className="landing-footer-powered">Powered by xStocks</span>
           </div>
           <div className="landing-footer-col">
@@ -182,9 +182,14 @@ export function HomeTerminal() {
           </div>
           <div className="landing-footer-col">
             <strong>Infrastructure</strong>
-            {infraPartners.map((p) => (
-              <a href={p.href} key={p.name} rel="noopener noreferrer" target="_blank">{p.name}</a>
-            ))}
+            <a href="https://xstocks.fi" target="_blank" rel="noopener noreferrer">xStocks</a>
+            <a href="https://privy.io" target="_blank" rel="noopener noreferrer">Privy</a>
+            <a href="https://cow.fi" target="_blank" rel="noopener noreferrer">CoW Protocol</a>
+            <a href="https://chain.link" target="_blank" rel="noopener noreferrer">Chainlink CRE</a>
+          </div>
+          <div className="landing-footer-col">
+            <strong>Open Source</strong>
+            <a href="https://github.com/twentyOne2x/xstocks-strategy-lab" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
         </div>
       </footer>

@@ -145,6 +145,34 @@ export function formatExplainabilityBps(value: number): string {
   return `${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(1)} bps`;
 }
 
+export function formatPortfolioComponentExposure(
+  component: PortfolioExplanationBundle["components"][number],
+): string {
+  if (component.grossExposurePct !== null) {
+    return `${Number(component.grossExposurePct.toFixed(0))}% gross`;
+  }
+
+  if (component.targetWeightPct !== null) {
+    return formatExplainabilityPercent(component.targetWeightPct);
+  }
+
+  return "Preview";
+}
+
+export function getPrimaryPortfolioComponents(
+  manifest: PromotedManifest,
+  limit = 4,
+): Array<
+  PortfolioExplanationBundle["components"][number] & {
+    exposureLabel: string;
+  }
+> {
+  return getManifestExplanationBundle(manifest).components.slice(0, limit).map((component) => ({
+    ...component,
+    exposureLabel: formatPortfolioComponentExposure(component),
+  }));
+}
+
 export function buildExplainabilityWeightRows(
   manifest: PromotedManifest,
   limit = 5,

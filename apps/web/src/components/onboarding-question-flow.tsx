@@ -190,7 +190,7 @@ const tourSteps = [
   { id: "welcome", label: "Portfolio summary", caption: "Your matched portfolio with simulated replay performance", anchor: "pq-summary" },
   { id: "holdings", label: "Holdings", caption: "The specific assets and weights in your portfolio", anchor: "pq-holdings" },
   { id: "intelligence", label: "Market signals", caption: "What is driving the portfolio right now and recent changes", anchor: "pq-rail" },
-  { id: "activity", label: "Activity", caption: "Simulated positions and events — real after you deposit", anchor: "pq-activity-section" },
+  { id: "activity", label: "Activity", caption: "Simulated positions and events. Real after you deposit.", anchor: "pq-activity-section" },
   { id: "activate", label: "Deposit", caption: "Choose a USDC notional when you are ready, then fund your wallet to activate.", anchor: "pq-deposit-cta" },
 ];
 
@@ -518,7 +518,7 @@ function RecommendationGate({
         </div>
 
         <p className="pq-gate-note">
-          {directionalPreviewOnly ? "Preview only. Self-custody." : "Simulation — no money moves until you deposit."}
+          {directionalPreviewOnly ? "Preview only. Self-custody." : "Simulation. No money moves until you deposit."}
         </p>
         <p className="pq-gate-note">{bundle.howToReadReplay}</p>
         {previewStatus ? <p className="pq-gate-note">{previewStatus.message}</p> : null}
@@ -580,7 +580,7 @@ function SimulatedWorkspace({
       <div className="pq-preview-bar">
         <div className="pq-preview-bar-left">
           <span className="preview-chip">Simulation</span>
-          <span>Preview — no money has moved</span>
+          <span>Preview. No money has moved.</span>
         </div>
         <div className="pq-preview-bar-actions">
           <Link className="button button-primary button-lg" href={`/activate/${manifest.slug}`} id="pq-deposit-cta">
@@ -678,7 +678,7 @@ function SimulatedWorkspace({
               <div><span>Holdings</span><strong>{manifest.allocations.length}</strong></div>
               <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
               <div><span>Rebalance</span><strong>{recommendation.rebalance_cadence.replaceAll("_", " ")}</strong></div>
-              <div><span>Funding</span><strong>User-chosen notional</strong></div>
+              <div><span>Network</span><strong>Ethereum</strong></div>
             </div>
 
             <div className="pq-summary-explain">
@@ -714,9 +714,9 @@ function SimulatedWorkspace({
           {/* How it works — concise */}
           <section className="panel-card pq-how">
             <div className="pq-how-row">
-              <div><span className="section-kicker">Rebalance</span><strong>User-approved review path</strong></div>
-              <div><span className="section-kicker">Custody</span><strong>Wallet linked via Privy</strong></div>
-              <div><span className="section-kicker">Execution</span><strong>CoW Protocol on Ethereum</strong></div>
+              <div><span className="section-kicker">Rebalance</span><strong>Chainlink CRE</strong></div>
+              <div><span className="section-kicker">Custody</span><strong>Privy smart wallet</strong></div>
+              <div><span className="section-kicker">Execution</span><strong>CoW Protocol</strong></div>
             </div>
           </section>
         </div>

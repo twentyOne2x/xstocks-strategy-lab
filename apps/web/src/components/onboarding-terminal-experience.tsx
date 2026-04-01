@@ -23,21 +23,51 @@ import {
 import { recordXStocksQualification } from "@/lib/funnel-tracking";
 
 import { OnboardingQuestionFlow } from "@/components/onboarding-question-flow";
+import { BrandLockup } from "@/components/home-terminal";
+import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 import Link from "next/link";
 
-function BrandBar() {
+function AppHeader() {
   return (
-    <div className="app-brand-bar">
-      <Link className="landing-brand" href="/">
-        <div className="brand-lockup brand-lockup-sm">
-          <span className="brand-247">24-7</span>
-          <span className="brand-markets">MARKETS</span>
-        </div>
-      </Link>
-    </div>
+    <header className="landing-header" style={{ position: "sticky", top: 0, zIndex: 50 }}>
+      <div className="landing-header-inner">
+        <Link className="landing-header-brand" href="/">
+          <BrandLockup size="sm" />
+        </Link>
+        <nav className="landing-header-nav">
+          <Link className="landing-header-link" href="/">Home</Link>
+          <Link className="landing-header-cta" href="/onboarding">
+            Find my portfolio
+          </Link>
+        </nav>
+      </div>
+    </header>
   );
 }
-import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
+
+function AppFooter() {
+  return (
+    <footer className="landing-footer">
+      <div className="landing-footer-inner">
+        <div className="landing-footer-brand-block">
+          <BrandLockup size="md" />
+          <span className="landing-footer-powered">Powered by xStocks</span>
+        </div>
+        <div className="landing-footer-col">
+          <strong>Infrastructure</strong>
+          <a href="https://xstocks.fi" target="_blank" rel="noopener noreferrer">xStocks</a>
+          <a href="https://privy.io" target="_blank" rel="noopener noreferrer">Privy</a>
+          <a href="https://cow.fi" target="_blank" rel="noopener noreferrer">CoW Protocol</a>
+          <a href="https://chain.link" target="_blank" rel="noopener noreferrer">Chainlink CRE</a>
+        </div>
+        <div className="landing-footer-col">
+          <strong>Open Source</strong>
+          <a href="https://github.com/twentyOne2x/xstocks-strategy-lab" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  );
+}
 
 export function OnboardingTerminalExperience({
   questions,
@@ -186,7 +216,7 @@ export function OnboardingTerminalExperience({
   if (!started) {
     return (
       <div className="onboarding-entry">
-        <BrandBar />
+        <AppHeader />
         <div className="onboarding-entry-card">
           <h1>Build your portfolio.</h1>
           <p>7 questions. Under a minute. Preview everything before you fund.</p>
@@ -205,6 +235,7 @@ export function OnboardingTerminalExperience({
             <span>Chainlink</span>
           </div>
         </div>
+        <AppFooter />
       </div>
     );
   }
@@ -213,7 +244,7 @@ export function OnboardingTerminalExperience({
   if (!allPrimaryAnswered) {
     return (
       <>
-        <BrandBar />
+        <AppHeader />
         <XStocksFunnelStageTracker stage="onboarding_started" />
         <OnboardingQuestionFlow
           answers={answers}
