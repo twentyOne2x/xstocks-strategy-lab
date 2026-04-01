@@ -28,12 +28,36 @@ This page complements the repo-owned operator surface. It does not replace it.
 
 - xStocks-first and Ethereum-first remain the default public posture
 - the public start path is onboarding -> comparison/detail -> activate
+- `GET /api/public-agent-handoff` is the explicit public-safe handoff helper
 - wallet connection happens late and remains user-approved
 - user signatures are still required for execution
 - CoW Protocol and 1inch are the current verified Ethereum execution surfaces described in repo truth
 - Morpho `SPYx/AUSD` is the current truthful lending-proof path described in repo truth
 - exact live xStocks-on-Euler execution is not claimed here
 - Chainlink automation is still target-state only, not a live autonomy claim
+
+## Public-Safe Handoff Helper
+
+Use this helper when you need one explicit bridge between public preview and the authenticated internal lane:
+
+```text
+GET /api/public-agent-handoff?slotId=<slotId>&userNotionalUsd=<usd>
+GET /api/public-agent-handoff?manifestId=<manifestId>&userNotionalUsd=<usd>
+```
+
+Optional public-safe wallet readiness inputs may also be supplied:
+
+```text
+&walletConnected=true&walletAddress=<0x...>&fundedNotionalUsd=<usd>
+```
+
+This helper returns only:
+
+- the public-safe readiness snapshot for the selected promoted lane
+- whether to `stay_public_preview`, `ready_for_authenticated_activation`, or stop `blocked`
+- the exact authenticated surfaces that begin after the public boundary
+
+It does not save activation, read private activity, create executions, expose private hosts, or reveal hidden custody details.
 
 ## Public And Private Boundary
 
@@ -55,6 +79,8 @@ This public surface may not expose or imply:
 ## Stop Conditions
 
 - If the lane is still preview-only, say so plainly and stop there.
+- If the handoff helper says `stay_public_preview`, keep the lane public-only and stop before activation save.
+- If the handoff helper says `ready_for_authenticated_activation`, stop the public surface there and hand off into the authenticated internal activation path.
 - If the only evidence is mock, fallback, or ambiguous UI state, do not claim live readiness.
 - If route truth or funding truth is missing, fail closed.
 - If the user has not approved wallet, funding, or signing steps, do not imply activation.

@@ -70,4 +70,4 @@ Do not skip intermediate states and do not convert a blocked or preview-only lan
 
 ## Exact Blocker For A Fully Smooth Start
 
-The public `skill.md` can start discovery and qualification, but a fully smooth single-surface start still does not exist because activation save, activity reads, and execution proof depend on internal authenticated API access and operator-controlled wallet context. There is no public-safe one-click handoff into that internal boundary yet.
+The public `skill.md` and `GET /api/public-agent-handoff` can now start discovery, readiness, and boundary reporting, but a fully smooth single-surface start still does not exist. Activation save, activity reads, and execution proof still depend on internal authenticated API access and operator-controlled wallet context.

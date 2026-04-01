@@ -70,4 +70,4 @@ Only after the lane is `activation_ready` and a real authenticated user context 
 
 ## Exact Current Blocker For Public-Only Agents
 
-This step is not available from the public `skill.md` alone because the authenticated activation, activity, and execution surfaces are intentionally internal.
+Public-only agents can now read the public-safe boundary through `GET /api/public-agent-handoff`, but authenticated activation, activity, and execution surfaces are still intentionally internal.
