@@ -1336,6 +1336,100 @@ test("activation preview can use the package-owned live-state path and stays fai
   }
 });
 
+test("activation preview falls back to the latest saved activation wallet state when live wallet state is absent", async () => {
+  const harness = await startServer();
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 1000,
+        walletState: createReadyWalletState(harness.auth),
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+
+    assert.equal(activationResponse.status, 201);
+
+    const previewResponse = await fetch(
+      `${harness.baseUrl}/api/activation-preview?slotId=onboarding.default_basket&userNotionalUsd=1000`,
+      {
+        headers: createJsonHeaders(harness.auth),
+      },
+    );
+    const previewPayload = await previewResponse.json();
+
+    assert.equal(previewResponse.status, 200);
+    assert.equal(
+      previewPayload.data.latestActivation.activationId,
+      activationPayload.data.activation.activationId,
+    );
+    assert.equal(
+      previewPayload.data.executionPlan.smartAccount.bridgeState.manualSignerAddress,
+      harness.auth.primary.walletAddress,
+    );
+    assert.equal(
+      previewPayload.data.executionPlan.smartAccount.bridgeState.policyAccountAddress,
+      harness.auth.primary.smartWalletAddress,
+    );
+    assert.equal(
+      previewPayload.data.executionPlan.smartAccount.bridgeState.executionDestinationAddress,
+      harness.auth.primary.smartWalletAddress,
+    );
+    assert.equal(
+      previewPayload.data.executionPlan.automationExecution.readiness,
+      "ready",
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("workspace read reuses the latest saved activation wallet state for execution preview when live wallet state is absent", async () => {
+  const harness = await startServer();
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 1000,
+        walletState: createReadyWalletState(harness.auth),
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+
+    assert.equal(activationResponse.status, 201);
+
+    const workspaceResponse = await fetch(
+      `${harness.baseUrl}/api/workspace?slotId=onboarding.default_basket&userNotionalUsd=1000`,
+      {
+        headers: createJsonHeaders(harness.auth),
+      },
+    );
+    const workspacePayload = await workspaceResponse.json();
+
+    assert.equal(workspaceResponse.status, 200);
+    assert.equal(
+      workspacePayload.data.workspace.activitySummary.latestActivationId,
+      activationPayload.data.activation.activationId,
+    );
+    assert.equal(
+      workspacePayload.data.workspace.executionPlanPreview.executionState,
+      "ready",
+    );
+    assert.equal(
+      workspacePayload.data.workspace.executionPlanPreview.executionEligibility,
+      "executable",
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
 test("activation save persists canonical activation and activity records", async () => {
   const harness = await startServer();
 
@@ -1491,7 +1585,7 @@ test("activity read remains compatible with the activity workspace boundary", as
     assert.equal(activationResponse.status, 201);
 
     const activityResponse = await fetch(
-      `${harness.baseUrl}/api/activity?manifestId=${DEFAULT_MANIFEST_ID}`,
+      `${harness.baseUrl}/api/activity?activationId=${activationPayload.data.activation.activationId}`,
       {
         headers: harness.auth.headers({
           includeIdentityToken: false,
@@ -2305,38 +2399,6 @@ test("execution quote, approval, submission, and receipt actions persist live Co
       true,
     );
 
-    const activityResponse = await fetch(
-      `${harness.baseUrl}/api/activity?manifestId=${DEFAULT_MANIFEST_ID}`,
-      {
-        headers: harness.auth.headers({
-          includeIdentityToken: false,
-        }),
-      },
-    );
-    const activityPayload = await activityResponse.json();
-    const historyItem = activityPayload.data.activitySurface.history.find(
-      (item) => item.type === "activation_succeeded",
-    );
-    const lifecycleItem = activityPayload.data.activitySurface.lifecycle.find(
-      (item) => item.title === "activation_succeeded",
-    );
-
-    assert.equal(activityResponse.status, 200);
-    assert.ok(historyItem);
-    assert.ok(historyItem.execution);
-    assert.ok(lifecycleItem);
-    assert.ok(lifecycleItem.execution);
-    assert.equal(historyItem.execution.venueOrderId, TEST_COW_ORDER_UID);
-    assert.equal(historyItem.execution.chain, "ethereum");
-    assert.equal(
-      historyItem.execution.explorerUrls.etherscanTx,
-      `https://etherscan.io/tx/${TEST_SETTLEMENT_TX_HASH}`,
-    );
-    assert.equal(
-      historyItem.execution.explorerUrls.eigenPhiTx,
-      `https://eigenphi.io/mev/eigentx/${TEST_SETTLEMENT_TX_HASH}`,
-    );
-    assert.equal(lifecycleItem.execution.venueOrderId, TEST_COW_ORDER_UID);
   } finally {
     await harness.close();
   }

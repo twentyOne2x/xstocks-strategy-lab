@@ -3611,21 +3611,21 @@ export function createApiService({
         slot: record.slot,
         manifest: buildManifestView(manifest),
         workspace: {
-          requestedNotionalUsd: boundaryPayload.requestedNotionalUsd,
+          requestedNotionalUsd: rebalanceBoundaryPayload.requestedNotionalUsd,
           fundingAssetSymbol: manifest.activationTemplate.fundingAssetSymbol,
           targetAllocations: buildAllocationTargetPreviewRows({
             manifest,
-            requestedNotionalUsd: boundaryPayload.requestedNotionalUsd,
+            requestedNotionalUsd: rebalanceBoundaryPayload.requestedNotionalUsd,
             liveXStocksState,
           }),
           targetDirectionalExpression: manifest.targetDirectionalExpression ?? null,
           cashOrYieldBufferTarget:
-            boundaryPayload.recommendation.portfolioMode === "basket"
-              ? boundaryPayload.recommendation.cashOrYieldBufferTarget
+            rebalanceBoundaryPayload.recommendation.portfolioMode === "basket"
+              ? rebalanceBoundaryPayload.recommendation.cashOrYieldBufferTarget
               : null,
-          recommendation: boundaryPayload.recommendation,
+          recommendation: rebalanceBoundaryPayload.recommendation,
           executionPlanPreview: buildExecutionPlanPreview(
-            boundaryPayload.executionPlan,
+            rebalanceBoundaryPayload.executionPlan,
           ),
           liveState: buildLiveStateView({
             liveXStocksState,
@@ -3635,7 +3635,7 @@ export function createApiService({
           activitySummary: buildActivitySummary({
             items: runtimeActivity.items,
             activations: summaryActivations,
-            executionPlan: boundaryPayload.executionPlan,
+            executionPlan: rebalanceBoundaryPayload.executionPlan,
             rebalanceOrchestration,
           }),
         },
@@ -3692,9 +3692,9 @@ export function createApiService({
         generatedAt: now(),
         slot: record.slot,
         manifest: buildManifestView(manifest),
-        requestedNotionalUsd: boundaryPayload.requestedNotionalUsd,
-        recommendation: boundaryPayload.recommendation,
-        executionPlan: boundaryPayload.executionPlan,
+        requestedNotionalUsd: rebalanceBoundaryPayload.requestedNotionalUsd,
+        recommendation: rebalanceBoundaryPayload.recommendation,
+        executionPlan: rebalanceBoundaryPayload.executionPlan,
         liveState: buildLiveStateView({
           liveXStocksState,
           liveRouteState,

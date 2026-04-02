@@ -445,7 +445,7 @@ describe("adaptActivityToBlotter", () => {
             type: "activation_submitted",
             summary: "Recorded user-approved venue submission.",
             status: "pending",
-            executionArtifacts: {
+            execution: {
               txHash:
                 "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
               venueOrderId:
@@ -468,7 +468,7 @@ describe("adaptActivityToBlotter", () => {
             detail: "Execution confirmed for NVDAx.",
             state: "settled",
             nextAction: null,
-            executionArtifacts: {
+            execution: {
               txHash:
                 "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
               venueOrderId:
@@ -491,11 +491,11 @@ describe("adaptActivityToBlotter", () => {
 
     expect(blotter.positions[0].route).toBe("cow_swap.ethereum");
     expect(blotter.positions[0].pnlPct).toBe("—");
-    expect(blotter.history[0].executionArtifacts?.venueOrderId).toMatch(/^0xabc/);
-    expect(blotter.history[0].executionArtifacts?.explorerUrls?.etherscanTx).toBe(
+    expect(blotter.history[0].execution?.venueOrderId).toMatch(/^0xabc/);
+    expect(blotter.history[0].execution?.explorerUrls?.etherscanTx).toBe(
       "https://etherscan.io/tx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
     );
-    expect(blotter.activity[0].executionArtifacts?.explorerUrls?.eigenPhiTx).toBe(
+    expect(blotter.activity[0].execution?.explorerUrls?.eigenPhiTx).toBe(
       "https://eigenphi.io/mev/eigentx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
     );
   });
