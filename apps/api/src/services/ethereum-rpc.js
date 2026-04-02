@@ -20,6 +20,17 @@ function parseHexInteger(value) {
   return Number.parseInt(value.slice(2), 16);
 }
 
+function normalizeEthereumAddress(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return /^0x([A-Fa-f0-9]{40})$/u.test(normalized)
+    ? normalized.toLowerCase()
+    : null;
+}
+
 export function createEthereumRpcClient({
   rpcUrl = process.env.ETHEREUM_RPC_URL ?? DEFAULT_ETHEREUM_RPC_URL,
   fetchImpl,
@@ -73,6 +84,51 @@ export function createEthereumRpcClient({
               ? "reverted"
               : "pending",
       };
+    },
+
+    async getErc20Decimals(tokenAddress) {
+      const normalizedTokenAddress = normalizeEthereumAddress(tokenAddress);
+
+      if (!normalizedTokenAddress) {
+        return null;
+      }
+
+      const response = await fetchFn(rpcUrl, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          id: 1,
+          jsonrpc: "2.0",
+          method: "eth_call",
+          params: [
+            {
+              to: normalizedTokenAddress,
+              data: "0x313ce567",
+            },
+            "latest",
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Ethereum RPC decimals request failed with status ${response.status}.`,
+        );
+      }
+
+      const payload = await response.json();
+
+      if (payload.error) {
+        throw new Error(
+          payload.error.message ??
+            "Ethereum RPC returned an unknown decimals error.",
+        );
+      }
+
+      return parseHexInteger(payload.result);
     },
   };
 }

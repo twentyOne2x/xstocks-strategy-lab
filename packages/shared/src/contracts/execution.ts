@@ -226,14 +226,54 @@ export const oneInchFusionQuoteSchema = z.object({
 });
 export type OneInchFusionQuote = z.infer<typeof oneInchFusionQuoteSchema>;
 
+export const lifiQuoteSchema = z.object({
+  kind: z.literal("lifi_quote"),
+  quoteId: nonEmptyStringSchema,
+  quotedAt: timestampSchema,
+  routeId: nonEmptyStringSchema,
+  tool: nonEmptyStringSchema,
+  fromTokenAddress: nonEmptyStringSchema,
+  toTokenAddress: nonEmptyStringSchema,
+  fromAddress: nonEmptyStringSchema,
+  toAddress: nonEmptyStringSchema,
+  fromTokenAmount: nonEmptyStringSchema,
+  toTokenAmount: nonEmptyStringSchema,
+  toAmountMin: nonEmptyStringSchema.nullable(),
+  approvalAddress: nonEmptyStringSchema.nullable(),
+  transactionRequest: jsonRecordSchema,
+  includedSteps: z.array(jsonRecordSchema),
+});
+export type LifiQuote = z.infer<typeof lifiQuoteSchema>;
+
+export const ensoBundleQuoteSchema = z.object({
+  kind: z.literal("enso_bundle"),
+  quoteId: nonEmptyStringSchema,
+  quotedAt: timestampSchema,
+  chainId: z.number().int().positive(),
+  fromAddress: nonEmptyStringSchema,
+  receiver: nonEmptyStringSchema.nullable(),
+  routingStrategy: nonEmptyStringSchema,
+  tx: jsonRecordSchema,
+  gas: nonEmptyStringSchema.nullable(),
+  priceImpact: z.number().finite().nullable(),
+  amountsOut: z.record(z.string(), nonEmptyStringSchema),
+  route: z.array(jsonRecordSchema),
+  bundle: z.array(jsonRecordSchema),
+  selectedOutputTokenAddress: nonEmptyStringSchema.nullable(),
+  selectedOutputAmount: nonEmptyStringSchema.nullable(),
+});
+export type EnsoBundleQuote = z.infer<typeof ensoBundleQuoteSchema>;
+
 export const executionQuoteSchema = z.union([
   cowSwapQuoteSchema,
   oneInchFusionQuoteSchema,
+  lifiQuoteSchema,
+  ensoBundleQuoteSchema,
   xstocksXChangeQuoteSchema,
 ]);
 export type ExecutionQuote = z.infer<typeof executionQuoteSchema>;
 
-export const executionApprovalSchema = z.object({
+export const eip712ExecutionApprovalSchema = z.object({
   approvalType: z.literal("eip712_signature"),
   status: executionApprovalStatusSchema,
   signerAddress: nonEmptyStringSchema,
@@ -245,6 +285,23 @@ export const executionApprovalSchema = z.object({
   venueOrderId: nonEmptyStringSchema.nullable(),
   notes: z.array(nonEmptyStringSchema),
 });
+export const walletTransactionApprovalSchema = z.object({
+  approvalType: z.literal("wallet_transaction"),
+  status: executionApprovalStatusSchema,
+  signerAddress: nonEmptyStringSchema,
+  approvalTarget: nonEmptyStringSchema,
+  orderToSign: jsonRecordSchema,
+  transactionRequest: jsonRecordSchema,
+  signature: nonEmptyStringSchema.nullable(),
+  approvedAt: timestampSchema.nullable(),
+  submittedAt: timestampSchema.nullable(),
+  venueOrderId: nonEmptyStringSchema.nullable(),
+  notes: z.array(nonEmptyStringSchema),
+});
+export const executionApprovalSchema = z.union([
+  eip712ExecutionApprovalSchema,
+  walletTransactionApprovalSchema,
+]);
 export type ExecutionApproval = z.infer<typeof executionApprovalSchema>;
 
 export const executionReceiptSchema = z.object({

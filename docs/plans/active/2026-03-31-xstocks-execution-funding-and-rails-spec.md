@@ -28,6 +28,8 @@ This workstream does not:
 | Artifact | Current role | Decision |
 | --- | --- | --- |
 | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | canonical owner for execution, funding, and deposit rails | update and keep canonical |
+| [2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md) | supporting LI.FI funding and deposit lane for one-USDC-to-portfolio intent | create alongside under `XSL-005`; do not move to `XSL-014` |
+| [2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md) | supporting Enso atomic bundle lane for one-USDC-to-portfolio intent | create alongside under `XSL-005`; do not move to `XSL-014` |
 | [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md) | downstream proof lane for real authenticated hosted execution | reuse; do not absorb |
 | [2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md) | narrow Privy posture sub-lane | reuse; keep adjacent, not separate owner |
 | [2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md) | completed manual CoW baseline | reuse as historical proof |
@@ -52,8 +54,18 @@ This workstream does not:
 | --- | --- | --- | --- |
 | CoW execution | execution requests, quote/approval/submission bookkeeping, manual proof bundle | hosted all-leg quoteability, route-correct leg diagnostics | full user-approved hosted settlement proof |
 | Privy auth and wallet | real frontend provider, real auth verification, linked-wallet proof | canonical public posture, smart-account proof branch | smart-account-required live proof |
-| Funding rails | policy-level funding requirement and wallet-state shaping | deployed UI parity, explicit public deposit boundary | Mesh integration |
+| Funding rails | policy-level funding requirement and wallet-state shaping, `preferredBridgeProvider = "lifi"` in promoted manifests and policy defaults | deployed UI parity, explicit LI.FI deposit-boundary language, exact public deposit copy | LI.FI deposit planner or artifact contract, Mesh integration |
 | Production host ownership | Railway API and Vercel frontend split is observable | route reachability and docs are not yet aligned | same-host public execution helper parity |
+
+## 2026-04-02 LI.FI Deposit Addendum
+
+1. Current repo truth already treats LI.FI as the preferred bridge or funding provider in manifests, policy defaults, and worker snapshots, but not as the current proven promoted-basket execution venue.
+2. Current promoted default-basket truth remains `1inch.ethereum` for the six actionable `core_xstocks` legs and `flowdesk.ausd-rwa-strategy` for the `yield_buffer` sleeve.
+3. `XSL-014A` route design is completed and frozen. A LI.FI basket ask is therefore valid only as a new downstream funding or deposit lane under `XSL-005`, not as a reopened venue-routing owner.
+4. Supporting spec [2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md) now owns the exact LI.FI deposit claim, approval model, leg map, artifact contract, and coexistence boundary with current `1inch.ethereum` and CoW truth.
+5. Supporting spec [2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md) now owns the Enso atomic bundle interpretation of the same one-USDC-to-portfolio ask.
+6. Enso is the first external provider truth in this repo pass that can legitimately target the atomic ask, because the official Enso docs show one-transaction bundle workflows that split one input across several downstream positions.
+7. Until stronger repo proof exists, no surface may claim either LI.FI or Enso is already live for the promoted multi-asset xStocks basket, and no surface may blur their different approval models into one generic `router` statement.
 
 ## Product Outcome Contract
 

@@ -13,7 +13,9 @@ import { createLiveStateRepository } from "./repositories/live-state-repository.
 import { createResearchManifestRepository } from "./repositories/research-manifest-repository.js";
 import { createRuntimeStore } from "./repositories/runtime-store.js";
 import { createApiService } from "./services/api-service.js";
+import { createEnsoExecutionClient } from "./services/enso-execution-client.js";
 import { createEthereumRpcClient } from "./services/ethereum-rpc.js";
+import { createLifiExecutionClient } from "./services/lifi-execution-client.js";
 import { createPrivyAuthService } from "./services/privy-auth.js";
 
 const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -33,6 +35,10 @@ function createDefaultConfig() {
     backedApiBaseUrl:
       process.env.BACKED_API_BASE_URL ?? "https://api.backed.fi/api/v1",
     cowApiBaseUrl: process.env.COW_API_BASE_URL ?? undefined,
+    lifiApiBaseUrl: process.env.LIFI_API_BASE_URL ?? undefined,
+    lifiApiKey: process.env.LIFI_API_KEY ?? null,
+    ensoApiBaseUrl: process.env.ENSO_API_BASE_URL ?? undefined,
+    ensoApiKey: process.env.ENSO_API_KEY ?? null,
     oneInchFusionApiBaseUrl:
       process.env.ONEINCH_FUSION_API_BASE_URL ?? undefined,
     oneInchApiKey: process.env.ONEINCH_API_KEY ?? null,
@@ -82,6 +88,24 @@ export function createApiRuntimeService(overrides = {}) {
         baseUrl: config.cowApiBaseUrl,
         fetch: overrides.fetchImpl,
       }),
+    lifiExecutionClient:
+      overrides.lifiExecutionClient ??
+      (config.lifiApiKey
+        ? createLifiExecutionClient({
+            apiKey: config.lifiApiKey,
+            baseUrl: config.lifiApiBaseUrl,
+            fetchImpl: overrides.fetchImpl,
+          })
+        : null),
+    ensoExecutionClient:
+      overrides.ensoExecutionClient ??
+      (config.ensoApiKey
+        ? createEnsoExecutionClient({
+            apiKey: config.ensoApiKey,
+            baseUrl: config.ensoApiBaseUrl,
+            fetchImpl: overrides.fetchImpl,
+          })
+        : null),
     oneInchExecutionClient:
       overrides.oneInchExecutionClient ??
       (config.oneInchApiKey

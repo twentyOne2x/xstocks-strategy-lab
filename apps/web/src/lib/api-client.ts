@@ -640,6 +640,7 @@ export interface ApiExecutionApproval {
   signerAddress: string;
   approvalTarget: string;
   orderToSign: Record<string, unknown>;
+  transactionRequest?: Record<string, unknown>;
   signature: string | null;
   approvedAt: string | null;
   submittedAt: string | null;
@@ -741,6 +742,40 @@ export type ApiExecutionQuote =
       submissionSupported: boolean;
     }
   | {
+      kind: "lifi_quote";
+      quoteId: string;
+      quotedAt: string;
+      routeId: string;
+      tool: string;
+      fromTokenAddress: string;
+      toTokenAddress: string;
+      fromAddress: string;
+      toAddress: string;
+      fromTokenAmount: string;
+      toTokenAmount: string;
+      toAmountMin: string | null;
+      approvalAddress: string | null;
+      transactionRequest: Record<string, unknown>;
+      includedSteps: Record<string, unknown>[];
+    }
+  | {
+      kind: "enso_bundle";
+      quoteId: string;
+      quotedAt: string;
+      chainId: number;
+      fromAddress: string;
+      receiver: string | null;
+      routingStrategy: string;
+      tx: Record<string, unknown>;
+      gas: string | null;
+      priceImpact: number | null;
+      amountsOut: Record<string, string>;
+      route: Record<string, unknown>[];
+      bundle: Record<string, unknown>[];
+      selectedOutputTokenAddress: string | null;
+      selectedOutputAmount: string | null;
+    }
+  | {
       kind?: string;
       quoteId?: string | null;
       orderHash?: string | null;
@@ -819,7 +854,13 @@ export interface ApiExecutionRequest {
 export interface ApiExecutionWriteResponse {
   version: string;
   generatedAt: string;
-  action: "create" | "execute_all" | "quote_leg" | "record_submission" | "poll_receipt";
+  action:
+    | "create"
+    | "execute_all"
+    | "quote_portfolio"
+    | "quote_leg"
+    | "record_submission"
+    | "poll_receipt";
   executionRequest: {
     executionRequestId: string;
     rebalanceId?: string | null;
