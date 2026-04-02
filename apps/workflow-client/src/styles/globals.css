@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #080808;
+  color: #ffffff;
+}
+
+/* Override React Flow defaults */
+.react-flow__node {
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+.react-flow__controls button {
+  background-color: #151515 !important;
+  border-color: #252525 !important;
+  color: #999 !important;
+}
+
+.react-flow__controls button:hover {
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+}
+
+.react-flow__minimap {
+  border: 1px solid #252525 !important;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out;
+}
