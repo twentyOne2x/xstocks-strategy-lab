@@ -1149,11 +1149,43 @@ function SimulatedWorkspace({
         </div>
       </section>
 
+      {/* ── Rebalance action bar ── */}
+      <section className="pq-fw-section" style={{ marginTop: 0, paddingBottom: 0 }}>
+        <div className="pq-fw-inner" style={{ maxWidth: 1400, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+            <div>
+              <span className="section-kicker">Portfolio controls</span>
+              <p className="panel-note" style={{ marginTop: "4px" }}>Review and trigger rebalancing when drift exceeds thresholds.</p>
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button className="button button-primary" onClick={() => setBuyModalOpen(true)} type="button">
+                Buy with 1inch
+              </button>
+              <button className="button button-ghost" type="button" title="Rebalance reviews portfolio drift and adjusts weights. Currently requires manual operator approval.">
+                Rebalance
+              </button>
+            </div>
+          </div>
+
+          {/* Trade suggestions from manifest */}
+          {manifest.market_intelligence.whatChanged.length > 0 && (
+            <div style={{ marginTop: "16px", display: "grid", gap: "8px" }}>
+              <span className="section-kicker">Trade suggestions</span>
+              {manifest.market_intelligence.whatChanged.map((change, i) => (
+                <div key={i} style={{ padding: "10px 14px", border: "1px solid var(--border)", borderRadius: "var(--radius-row)", background: "rgba(255,255,255,0.02)", fontSize: "0.92rem", color: "var(--text-soft)" }}>
+                  {change}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ── Activity — full-width ── */}
       <section className={`pq-fw-section pq-fw-section-alt ${highlightId === "pq-activity-section" ? "pq-highlight" : ""}`} id="pq-activity-section">
         <div className="pq-fw-inner">
           <div className="pq-activity-header">
-            <span className="section-kicker">Preview activity</span>
+            <span className="section-kicker">Activity</span>
             <span className="preview-chip">Simulation</span>
           </div>
           <div className="pq-activity-grid">
