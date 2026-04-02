@@ -110,6 +110,21 @@ function toStatusErrorMessage(
   return detailBlocker ?? fallback;
 }
 
+function canReuseActivation(
+  activation: ApiActivationView | null,
+  requestedNotionalUsd: number,
+): activation is ApiActivationView {
+  if (!activation) {
+    return false;
+  }
+
+  return (
+    activation.requestedNotionalUsd === requestedNotionalUsd &&
+    activation.status === "ready" &&
+    activation.surfaceTruth === "live"
+  );
+}
+
 function normalizeAddress(value: string | null | undefined) {
   return typeof value === "string" ? value.toLowerCase() : null;
 }
@@ -364,11 +379,7 @@ export function getExecutionSignatureInputs(
 async function ensureActivation(
   args: ManualExecutionFlowArgs,
 ) : Promise<ApiActivationView> {
-  const shouldCreateActivation =
-    !args.latestActivation ||
-    args.latestActivation.requestedNotionalUsd !== args.requestedNotionalUsd;
-
-  if (!shouldCreateActivation && args.latestActivation) {
+  if (canReuseActivation(args.latestActivation, args.requestedNotionalUsd)) {
     return args.latestActivation;
   }
 
