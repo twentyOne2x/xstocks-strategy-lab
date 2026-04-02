@@ -721,6 +721,9 @@ function SimulatedWorkspace({
         <div className="pq-preview-bar-actions">
           {authenticated ? (
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <Link className="button button-primary button-lg" href={`/workspace/detail/${manifest.slug}#buy`}>
+                Buy with 1inch
+              </Link>
               <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
               <button className="button button-ghost button-sm" onClick={logout} type="button">Disconnect</button>
             </div>
@@ -779,7 +782,12 @@ function SimulatedWorkspace({
                 <h2>{recommendation.title}</h2>
               </div>
               {authenticated ? (
-                <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Link className="button button-primary" href={`/workspace/detail/${manifest.slug}#buy`} style={{ fontSize: "0.85rem", minHeight: "36px", padding: "0 14px" }}>
+                    Buy with 1inch
+                  </Link>
+                  <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
+                </div>
               ) : (
                 <button
                   className="button button-primary button-lg"
