@@ -669,7 +669,7 @@ function SimulatedWorkspace({
   onTourDismiss: () => void;
   previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
-  const { enabled: privyEnabled, login, authenticated, user, logout } =
+  const { enabled: privyEnabled, login, authenticated, user, logout, getAccessToken, getIdentityToken } =
     usePrivyRuntime();
   const walletAddress = authenticated ? user?.wallet?.address : null;
   const shortWallet = walletAddress
@@ -705,7 +705,13 @@ function SimulatedWorkspace({
   }
 
   async function handleBuy() {
-    if (!authenticated || buyRunning) return;
+    if (buyRunning) return;
+
+    // Prompt wallet connection if not authenticated
+    if (!authenticated) {
+      login();
+      return;
+    }
 
     const notionalUsd = parseBuyAmount();
     if (notionalUsd <= 0) {
@@ -714,20 +720,27 @@ function SimulatedWorkspace({
     }
 
     if (!walletState.connected || !walletState.walletAddress) {
-      setBuyStatus("Wallet disconnected. Reconnect your wallet to continue.");
+      setBuyStatus("Connecting wallet...");
+      login();
       return;
     }
 
     setBuyRunning(true);
-    setBuyStatus("Starting execution...");
+    setBuyStatus("Getting authorization...");
     try {
+      const [accessToken, identityToken] = await Promise.all([
+        getAccessToken(),
+        getIdentityToken(),
+      ]);
+
+      setBuyStatus("Starting execution...");
       const result = await runManualExecutionFlow({
         manifest,
         requestedNotionalUsd: notionalUsd,
         initiationAction: "create",
         latestActivation: null,
         existingExecutionRequest: null,
-        auth: {},
+        auth: { accessToken, identityToken },
         wallets,
         activeWallet: activeConnectedWallet,
         walletState: {
@@ -884,9 +897,9 @@ function SimulatedWorkspace({
               </div>
               {authenticated ? (
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <Link className="button button-primary" href={`/workspace/detail/${manifest.slug}#buy`} style={{ fontSize: "0.85rem", minHeight: "36px", padding: "0 14px" }}>
+                  <button className="button button-primary" onClick={() => setBuyModalOpen(true)} style={{ fontSize: "0.85rem", minHeight: "36px", padding: "0 14px" }} type="button">
                     Buy with 1inch
-                  </Link>
+                  </button>
                   <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
                 </div>
               ) : (
@@ -1266,7 +1279,7 @@ function SimulatedWorkspace({
               disabled={buyRunning || parseBuyAmount() <= 0}
               onClick={handleBuy}
             >
-              {buyRunning ? "Executing..." : `Buy $${buyAmount} of ${recommendation.title}`}
+              {buyRunning ? "Executing..." : !authenticated ? "Connect wallet to buy" : `Buy $${buyAmount} of ${recommendation.title}`}
             </button>
 
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.78rem", textAlign: "center" }}>
