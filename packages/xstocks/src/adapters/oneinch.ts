@@ -123,6 +123,26 @@ function normalizeOrderHash(value: string): string {
   return normalized.toLowerCase()
 }
 
+function encodeExtensionBytes(value: unknown): string {
+  const encoded =
+    typeof value === "string"
+      ? value
+      : value &&
+          typeof value === "object" &&
+          "encode" in value &&
+          typeof value.encode === "function"
+        ? value.encode()
+        : null
+
+  if (typeof encoded !== "string" || !/^0x[a-fA-F0-9]*$/u.test(encoded)) {
+    throw new Error(
+      "1inch Fusion order extension must encode to a 0x-prefixed hex string.",
+    )
+  }
+
+  return encoded
+}
+
 function buildQuoteUrl(
   baseUrl: string,
   networkId: number,
@@ -352,7 +372,7 @@ export function createOneInchFusionApiClient(
         quoteId: String(quote.quoteId),
         orderHash,
         order: toJsonRecord(order.build()),
-        extension: String(order.extension),
+        extension: encodeExtensionBytes(order.extension),
         typedData: toJsonRecord(order.getTypedData(networkId)),
         signerAddress: input.walletAddress.toLowerCase(),
         receiver: (input.receiver ?? input.walletAddress).toLowerCase(),

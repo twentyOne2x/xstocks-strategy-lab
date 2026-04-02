@@ -653,6 +653,162 @@ test("createOneInchFusionApiClient prepares Fusion orders with a string receiver
   assert.equal(preparedOrder.receiver, "0x2222222222222222222222222222222222222222");
   assert.equal(preparedOrder.signerAddress, "0x1111111111111111111111111111111111111111");
   assert.match(preparedOrder.orderHash, /^0x[a-f0-9]{64}$/u);
+  assert.match(preparedOrder.extension, /^0x[a-f0-9]*$/iu);
+  assert.notEqual(preparedOrder.extension, "[object Object]");
+});
+
+test("createOneInchFusionApiClient submits encoded extension bytes", async () => {
+  const requests = [];
+  const client = createOneInchFusionApiClient({
+    authKey: "test-oneinch-key",
+    baseUrl: "https://api.1inch.dev/fusion",
+    networkId: 1,
+    fetch: async (input, init = {}) => {
+      requests.push({
+        url: String(input),
+        method: init.method,
+        body: init.body ? JSON.parse(String(init.body)) : null,
+      });
+
+      if (requests.length <= 2) {
+        return createJsonResponse({
+          quoteId: "quote_submit_1",
+          fromTokenAmount: "20000000",
+          toTokenAmount: "113576036691965274",
+          marketAmount: "113576036691965274",
+          feeToken: "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+          presets: {
+            fast: {
+              auctionDuration: 180,
+              startAuctionIn: 36,
+              bankFee: "0",
+              initialRateBump: 200461,
+              auctionStartAmount: "114000000000000000",
+              auctionEndAmount: "113576036691965274",
+              tokenFee: "0",
+              points: [
+                {
+                  delay: 24,
+                  coefficient: 50461,
+                },
+              ],
+              allowPartialFills: true,
+              allowMultipleFills: true,
+              exclusiveResolver: null,
+              gasCost: {
+                gasBumpEstimate: 0,
+                gasPriceEstimate: "0",
+              },
+            },
+            medium: {
+              auctionDuration: 180,
+              startAuctionIn: 12,
+              bankFee: "0",
+              initialRateBump: 210661,
+              auctionStartAmount: "114200000000000000",
+              auctionEndAmount: "113576036691965274",
+              tokenFee: "0",
+              points: [
+                {
+                  delay: 24,
+                  coefficient: 50461,
+                },
+              ],
+              allowPartialFills: true,
+              allowMultipleFills: true,
+              exclusiveResolver: null,
+              gasCost: {
+                gasBumpEstimate: 0,
+                gasPriceEstimate: "0",
+              },
+            },
+            slow: {
+              auctionDuration: 600,
+              startAuctionIn: 12,
+              bankFee: "0",
+              initialRateBump: 302466,
+              auctionStartAmount: "114500000000000000",
+              auctionEndAmount: "113576036691965274",
+              tokenFee: "0",
+              points: [
+                {
+                  delay: 24,
+                  coefficient: 50461,
+                },
+              ],
+              allowPartialFills: true,
+              allowMultipleFills: true,
+              exclusiveResolver: null,
+              gasCost: {
+                gasBumpEstimate: 0,
+                gasPriceEstimate: "0",
+              },
+            },
+          },
+          fee: {
+            receiver: "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+            bps: 0,
+            whitelistDiscountPercent: 0,
+          },
+          integratorFee: 0,
+          integratorFeeShare: 0,
+          settlementAddress: "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+          whitelist: [
+            "0x84d99aa569d93a9ca187d83734c8c4a519c4e9b1",
+          ],
+          prices: {
+            usd: {
+              fromToken: "1",
+              toToken: "31.55",
+            },
+          },
+          volume: {
+            usd: {
+              fromToken: "20",
+              toToken: "20.1",
+            },
+          },
+          autoK: 5.5,
+          recommended_preset: "fast",
+          priceImpactPercent: 0.38,
+        });
+      }
+
+      return createJsonResponse({
+        orderHash:
+          "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      });
+    },
+  });
+
+  const preparedOrder = await client.prepareOrder({
+    fromTokenAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    toTokenAddress: "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+    amount: "20000000",
+    walletAddress: "0x1111111111111111111111111111111111111111",
+    receiver: "0x2222222222222222222222222222222222222222",
+    enableEstimate: true,
+  });
+
+  const submission = await client.submitOrder({
+    order: preparedOrder.order,
+    signature:
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1b",
+    quoteId: preparedOrder.quoteId,
+    extension: preparedOrder.extension,
+    orderHash: preparedOrder.orderHash,
+  });
+
+  assert.equal(requests.length, 3);
+  assert.equal(requests[2].method, "POST");
+  assert.equal(requests[2].body.quoteId, preparedOrder.quoteId);
+  assert.equal(requests[2].body.extension, preparedOrder.extension);
+  assert.match(requests[2].body.extension, /^0x[a-f0-9]*$/iu);
+  assert.notEqual(requests[2].body.extension, "[object Object]");
+  assert.equal(
+    submission.orderHash,
+    "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  );
 });
 
 test("fetchXStocksBoundaryAsset preserves halted assets and unverified reserves without overclaiming route truth", async () => {
