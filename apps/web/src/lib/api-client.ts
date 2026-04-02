@@ -870,7 +870,10 @@ async function apiFetch<T>(path: string): Promise<T | null> {
   try {
     const base = resolveApiBase();
     const isServer = typeof window === "undefined";
-    const res = await fetch(`${base}${path}`, isServer ? { next: { revalidate: 30 } } : {});
+    const res = await fetch(`${base}${path}`, {
+      ...(isServer ? { next: { revalidate: 30 } } : {}),
+      signal: AbortSignal.timeout(5000),
+    });
     if (!res.ok) return null;
     const json = await res.json();
     return json.data as T;

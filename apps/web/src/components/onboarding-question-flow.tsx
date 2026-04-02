@@ -749,12 +749,29 @@ function SimulatedWorkspace({
           embeddedWallet: walletState.embeddedWallet ?? { status: "not-created", address: null },
           smartAccount: walletState.smartAccount ?? { status: "not-created", address: null },
         },
-        onStatus: (status) => setBuyStatus(status.message),
+        onStatus: (status) => {
+          // Clean up internal jargon in status messages
+          const cleaned = status.message
+            .replace(/hosted wallet boundary/gi, "wallet")
+            .replace(/hosted execution flow/gi, "execution")
+            .replace(/hosted manual lane/gi, "execution")
+            .replace(/Persisting activation truth with the current/gi, "Saving portfolio with your")
+            .replace(/wallet-first manual execution request/gi, "trade order")
+            .replace(/Creating the/gi, "Creating")
+            .replace(/Staging the authenticated execute_all handoff/gi, "Preparing execution");
+          setBuyStatus(cleaned);
+        },
       });
       if (result.blocker) {
-        setBuyStatus(result.blocker);
+        const cleanBlocker = result.blocker
+          .replace(/hosted browser helper/gi, "buy flow")
+          .replace(/XSL-\d+/g, "")
+          .replace(/hosted execution/gi, "execution")
+          .replace(/saved activation snapshot is not in a ready\/executable state/gi, "Portfolio activation is still being prepared. Try again in a moment.")
+          .trim();
+        setBuyStatus(cleanBlocker);
       } else {
-        setBuyStatus("Execution submitted successfully!");
+        setBuyStatus("Trade submitted! Your wallet will be prompted to sign each swap.");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "An unexpected error occurred.";
@@ -1205,7 +1222,7 @@ function SimulatedWorkspace({
           role="dialog"
           aria-modal="true"
           aria-label="Buy portfolio"
-          onClick={closeBuyModal}
+          onClick={buyRunning ? undefined : closeBuyModal}
         >
           <div className="pq-tour-welcome-card pq-buy-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "540px", textAlign: "left" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

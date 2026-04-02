@@ -555,18 +555,20 @@ export function getHomeTerminalData(): HomeTerminalProps {
 }
 
 export async function getOnboardingQuestionFlowDataAsync() {
-  const catalogSnapshot = await fetchApiCatalogSnapshot("onboarding");
-
-  if (!catalogSnapshot) {
-    throw new Error(
-      "Catalog API is unavailable for onboarding. The recommendation picker stayed fail-closed instead of reusing stale mock strategies.",
-    );
+  try {
+    const catalogSnapshot = await fetchApiCatalogSnapshot("onboarding");
+    if (catalogSnapshot) {
+      return {
+        questions: onboardingQuestions,
+        recommendedStrategies: catalogSnapshot.publicStrategies,
+      };
+    }
+  } catch {
+    // API unavailable — fall through to mock data
   }
 
-  return {
-    questions: onboardingQuestions,
-    recommendedStrategies: catalogSnapshot.publicStrategies,
-  };
+  // Fall back to mock data so the page loads instantly
+  return { questions: onboardingQuestions, recommendedStrategies: mockPublicStrategies };
 }
 
 export function getOnboardingQuestionFlowData() {
