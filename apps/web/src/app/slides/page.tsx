@@ -22,9 +22,9 @@ const slides = [
         <p style={{ color: "#ff1800", fontFamily: "var(--font-display)", fontSize: "1rem", fontStyle: "italic", letterSpacing: "0.1em", textTransform: "uppercase" }}>The Problem</p>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4rem)", fontStyle: "italic", textTransform: "uppercase", margin: "0 0 2rem" }}>Why this matters.</h2>
         <ul style={{ fontSize: "1.5rem", lineHeight: 1.8, listStyle: "none", padding: 0 }}>
-          <li style={{ marginBottom: "1.5rem", paddingLeft: "1.5rem", borderLeft: "4px solid #ff1800" }}>Stock markets close at 4pm. Tokenized equities on <strong>xStocks</strong> trade 24/7: evenings, weekends, holidays.</li>
-          <li style={{ marginBottom: "1.5rem", paddingLeft: "1.5rem", borderLeft: "4px solid #ff1800" }}>Retail investors cannot access professionally constructed portfolios without intermediaries taking custody of their assets.</li>
-          <li style={{ paddingLeft: "1.5rem", borderLeft: "4px solid #ff1800" }}>Existing DeFi portfolio products are opaque and require active management. No transparent way to see what you own and how it rebalances.</li>
+          <li style={{ marginBottom: "1.5rem", paddingLeft: "1.5rem", borderLeft: "4px solid #ff1800" }}>Building a diversified stock portfolio today requires intermediaries who take custody of your assets and charge management fees.</li>
+          <li style={{ marginBottom: "1.5rem", paddingLeft: "1.5rem", borderLeft: "4px solid #ff1800" }}>Existing portfolio products are opaque: you cannot see exactly what you own, why those holdings were chosen, or how rebalancing works.</li>
+          <li style={{ paddingLeft: "1.5rem", borderLeft: "4px solid #ff1800" }}>There is no simple way to get a professionally constructed, automatically rebalanced stock portfolio while keeping full control of your assets.</li>
         </ul>
       </div>
     ),
@@ -35,7 +35,13 @@ const slides = [
     content: (
       <div style={{ textAlign: "center" }}>
         <p style={{ color: "#ff1800", fontFamily: "var(--font-display)", fontSize: "1rem", fontStyle: "italic", letterSpacing: "0.1em", textTransform: "uppercase" }}>One Sentence</p>
-        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.5rem)", fontStyle: "italic", textTransform: "uppercase", maxWidth: "900px", margin: "0 auto", lineHeight: 1.1 }}>24-7 Markets matches your risk profile to an optimized tokenized equity portfolio: fully transparent, self-custody, automatically rebalanced, available around the clock.</h2>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.5rem)", fontStyle: "italic", textTransform: "uppercase", maxWidth: "900px", margin: "0 auto 2rem", lineHeight: 1.1 }}>24-7 Markets matches your risk profile to an optimized stock portfolio.</h2>
+        <ul style={{ listStyle: "none", padding: 0, fontSize: "1.5rem", lineHeight: 2, textAlign: "left", maxWidth: "700px", margin: "0 auto" }}>
+          <li>&#x2713; Fully transparent: see every holding and rule</li>
+          <li>&#x2713; Self-custody: your wallet, your assets</li>
+          <li>&#x2713; Automatically rebalanced by Chainlink</li>
+          <li>&#x2713; Available around the clock via xStocks</li>
+        </ul>
       </div>
     ),
   },
@@ -50,7 +56,7 @@ const slides = [
           <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Autoresearch</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>AI-powered portfolio optimization inspired by Karpathy. Run many experiments, keep the winner. Built on the <strong>xStocks Strategy Lab</strong> evaluation pipeline.</p></div>
           <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Full Transparency</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>Every holding, weight, and rebalance rule visible before deposit. Powered by <strong>Chainlink CRE</strong> automation rails.</p></div>
           <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Self-Custody</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>Assets stay in your wallet via <strong>Privy</strong> smart wallets. We never take custody. Non-custodial key management.</p></div>
-          <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Best Execution</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>MEV-protected trades via <strong>CoW Protocol</strong> and <strong>1inch Fusion</strong>. DEX aggregation for optimal routing.</p></div>
+          <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Best Execution</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>Optimal trade execution via <strong>CoW Protocol</strong> and <strong>1inch Fusion</strong>. Aggregates across decentralized exchanges for best price.</p></div>
         </div>
       </div>
     ),
@@ -68,7 +74,7 @@ const slides = [
             { label: "24-7 Markets", detail: "Profile matching. Autoresearch portfolio construction. Transparent preview.", bg: "#fff" },
             { label: "Privy", detail: "Smart wallets. Embedded authentication. Non-custodial key management.", bg: "#fff" },
             { label: "Chainlink CRE", detail: "Drift monitoring. Automated rebalance triggers. Decentralized rails.", bg: "#fff" },
-            { label: "CoW + 1inch", detail: "MEV-protected swaps. DEX aggregation. Best execution routing.", bg: "#fff" },
+            { label: "CoW + 1inch", detail: "DEX aggregation. Best execution routing across decentralized exchanges.", bg: "#fff" },
             { label: "xStocks", detail: "Tokenized US equities. 1:1 backed. On-chain settlement. 24/7 trading.", bg: "#0a0a0a", color: "#fff" },
           ].map((layer) => (
             <div key={layer.label} style={{ display: "flex", alignItems: "center", gap: "2rem", padding: "1.2rem 2rem", border: "3px solid #0a0a0a", borderBottom: "none", background: layer.bg, color: layer.color ?? "#0a0a0a" }}>
@@ -128,11 +134,27 @@ const slides = [
       <div>
         <p style={{ color: "#ff1800", fontFamily: "var(--font-display)", fontSize: "1rem", fontStyle: "italic", letterSpacing: "0.1em", textTransform: "uppercase" }}>Ecosystem Value</p>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4rem)", fontStyle: "italic", textTransform: "uppercase", margin: "0 0 2rem" }}>Impact for xStocks.</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-          <div style={{ padding: "2rem", border: "2px solid #555" }}><strong style={{ color: "#ff1800", fontSize: "1.3rem" }}>Distribution</strong><p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.15rem", lineHeight: 1.5 }}>First consumer-facing product built on xStocks tokens. Heavy emphasis on user onboarding to maximise conversions.</p></div>
-          <div style={{ padding: "2rem", border: "2px solid #555" }}><strong style={{ color: "#ff1800", fontSize: "1.3rem" }}>Volume</strong><p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.15rem", lineHeight: 1.5 }}>Every portfolio rebalance generates xStocks trading volume. From manual operator review to fully automated rebalancing.</p></div>
-          <div style={{ padding: "2rem", border: "2px solid #555" }}><strong style={{ color: "#ff1800", fontSize: "1.3rem" }}>Security</strong><p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.15rem", lineHeight: 1.5 }}>Non-custodial architecture gives best guarantees to all parties. Users approve every change before execution.</p></div>
-          <div style={{ padding: "2rem", border: "2px solid #555" }}><strong style={{ color: "#ff1800", fontSize: "1.3rem" }}>Composability</strong><p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.15rem", lineHeight: 1.5 }}><strong>xStocks + Privy + CoW Protocol + 1inch + Chainlink CRE</strong> working together in production.</p></div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+          <div style={{ padding: "2.5rem", border: "2px solid #555" }}>
+            <strong style={{ color: "#ff1800", fontSize: "1.8rem", display: "block", marginBottom: "1rem" }}>Distribution</strong>
+            <p style={{ margin: 0, color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; First product on xStocks</p>
+            <p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; Optimised onboarding conversion</p>
+          </div>
+          <div style={{ padding: "2.5rem", border: "2px solid #555" }}>
+            <strong style={{ color: "#ff1800", fontSize: "1.8rem", display: "block", marginBottom: "1rem" }}>Volume</strong>
+            <p style={{ margin: 0, color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; Rebalances drive trading</p>
+            <p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; Manual to fully automated</p>
+          </div>
+          <div style={{ padding: "2.5rem", border: "2px solid #555" }}>
+            <strong style={{ color: "#ff1800", fontSize: "1.8rem", display: "block", marginBottom: "1rem" }}>Security</strong>
+            <p style={{ margin: 0, color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; Fully non-custodial</p>
+            <p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; User approves every trade</p>
+          </div>
+          <div style={{ padding: "2.5rem", border: "2px solid #555" }}>
+            <strong style={{ color: "#ff1800", fontSize: "1.8rem", display: "block", marginBottom: "1rem" }}>Composability</strong>
+            <p style={{ margin: 0, color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; Five protocols in production</p>
+            <p style={{ margin: "0.5rem 0 0", color: "#bbb", fontSize: "1.3rem", lineHeight: 1.6 }}>&#x2022; Proven end-to-end stack</p>
+          </div>
         </div>
       </div>
     ),
@@ -143,8 +165,13 @@ const slides = [
     content: (
       <div style={{ textAlign: "center" }}>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(4rem, 8vw, 8rem)", fontStyle: "italic", textTransform: "uppercase", margin: "0 0 1.5rem", textShadow: "5px 5px 0 #0a0a0a", WebkitTextStroke: "2px #0a0a0a" }}>Try it live.</h2>
-        <p style={{ fontSize: "2.5rem", marginBottom: "2rem", fontWeight: 700, fontFamily: "var(--font-display)", fontStyle: "italic" }}>24-7.markets</p>
-        <p style={{ fontSize: "1.5rem", fontWeight: 600 }}>Answer 7 questions. See your portfolio. Connect your wallet.</p>
+        <p style={{ fontSize: "3rem", marginBottom: "1.5rem", fontWeight: 700, fontFamily: "var(--font-display)", fontStyle: "italic" }}>24-7.markets</p>
+        {/* QR code to 24-7.markets */}
+        <div style={{ margin: "0 auto 1.5rem", width: "160px", height: "160px", background: "#fff", padding: "12px", borderRadius: "8px" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`https://api.qrserver.com/v1/create-qr-code/?size=136x136&data=https://24-7.markets&bgcolor=FFFFFF&color=0a0a0a`} alt="QR code to 24-7.markets" width="136" height="136" style={{ display: "block" }} />
+        </div>
+        <p style={{ fontSize: "1.8rem", fontWeight: 600 }}>Answer 7 questions. See your portfolio. Connect your wallet.</p>
       </div>
     ),
   },

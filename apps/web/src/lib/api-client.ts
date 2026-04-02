@@ -20,7 +20,7 @@ export function resolveApiBase(): string {
     process.env.NODE_ENV === "development" ||
     process.env.NODE_ENV === "test";
 
-  if (isDev) return "http://localhost:3001";
+  if (isDev) return "http://localhost:4000";
 
   throw new Error(
     "NEXT_PUBLIC_API_URL is not set. " +
