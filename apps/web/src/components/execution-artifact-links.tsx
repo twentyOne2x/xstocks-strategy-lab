@@ -1,4 +1,4 @@
-import type { ExecutionArtifacts } from "@/lib/contracts";
+import type { ExecutionArtifactView as ExecutionArtifacts } from "@/lib/contracts";
 
 function formatArtifactValue(value: string): string {
   if (value.length <= 18) {
