@@ -614,7 +614,7 @@ function RecommendationGate({
         <p className="pq-gate-note">
           {directionalPreviewOnly ? "Preview only. Self-custody." : "Simulation. No money moves until you deposit."}
         </p>
-        <p className="pq-gate-note">{bundle.howToReadReplay}</p>
+        <p className="pq-gate-note">{bundle.howToReadReplay.replace(/basket\.\w+/g, "the benchmark").replace(/\b\d+\.\d{2}%/g, (m) => m).replace(/_/g, " ")}</p>
         {previewStatus ? <p className="pq-gate-note">{previewStatus.message}</p> : null}
       </div>
     </div>
@@ -721,7 +721,7 @@ function SimulatedWorkspace({
         <div className="pq-preview-bar-actions">
           {authenticated ? (
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span className="status-pill status-pill-active" style={{ cursor: "default" }}>{shortWallet}</span>
+              <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
               <button className="button button-ghost button-sm" onClick={logout} type="button">Disconnect</button>
             </div>
           ) : (
@@ -779,7 +779,7 @@ function SimulatedWorkspace({
                 <h2>{recommendation.title}</h2>
               </div>
               {authenticated ? (
-                <span className="status-pill status-pill-active" style={{ cursor: "default" }}>{shortWallet}</span>
+                <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
               ) : (
                 <button
                   className="button button-primary button-lg"
@@ -954,7 +954,7 @@ function SimulatedWorkspace({
               </article>
             </div>
 
-            <p className="panel-note">{bundle.howToReadReplay}</p>
+            <p className="panel-note">{bundle.howToReadReplay.replace(/basket\.\w+/g, "the benchmark").replace(/_/g, " ")}</p>
           </section>
 
         </div>

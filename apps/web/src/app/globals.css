@@ -265,15 +265,14 @@ button { font: inherit; }
 
 .hover-card-trigger {
   position: relative;
-  cursor: help;
 }
 
 .hover-card {
-  display: none;
+  visibility: hidden;
+  opacity: 0;
   position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
+  top: calc(100% + 8px);
+  left: 0;
   width: 340px;
   max-width: 90vw;
   padding: 20px;
@@ -286,16 +285,21 @@ button { font: inherit; }
   text-transform: none;
   letter-spacing: 0;
   font-family: var(--font-body), system-ui, sans-serif;
+  display: grid;
+  gap: 10px;
+  transition: opacity 150ms ease, visibility 150ms ease;
+  pointer-events: none;
 }
 
 .hover-card-trigger:hover > .hover-card {
-  display: grid;
-  gap: 10px;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Don't show on touch/mobile — only pointer devices */
+/* Don't show on touch/mobile */
 @media (hover: none) {
-  .hover-card-trigger:hover > .hover-card { display: none; }
+  .hover-card-trigger:hover > .hover-card { visibility: hidden; opacity: 0; }
 }
 
 .hover-card-title {
@@ -316,14 +320,13 @@ button { font: inherit; }
   line-height: 1.55;
 }
 
-.hover-card::after {
+.hover-card::before {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 100%;
+  left: 24px;
   border: 8px solid transparent;
-  border-top-color: var(--black);
+  border-bottom-color: var(--black);
 }
 
 .preview-chip {
