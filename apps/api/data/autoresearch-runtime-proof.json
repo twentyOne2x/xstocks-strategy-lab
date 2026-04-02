@@ -1,0 +1,103 @@
+{
+  "runtime": {
+    "runtimeId": "strategy_lab_regular_autoresearch_v1",
+    "runtimeOwner": "worker_strategy_lab",
+    "cadenceHours": 24,
+    "status": "idle",
+    "truthBoundary": "railway_cron_service",
+    "repoOwnedRuntime": true,
+    "recurringAutonomousProven": true,
+    "supportedTriggerSources": [
+      "manual_cli",
+      "scheduled_cron"
+    ],
+    "notes": [
+      "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
+      "Recurring autoresearch is now hosted by Railway cron_service autoresearch-worker in production.",
+      "Railway scheduler cadence is 5 17 * * *.",
+      "Promoted manifests remain the only public explanation boundary."
+    ],
+    "lastRequestedAt": "2026-04-01T17:05:41.978Z",
+    "lastStartedAt": "2026-04-01T17:05:41.978Z",
+    "lastCompletedAt": "2026-04-01T17:05:42.918Z",
+    "lastRunId": "autoresearch_20260401T170541978z_bd9d4900",
+    "lastTriggerSource": "scheduled_cron",
+    "nextDueAt": "2026-04-02T17:05:42.918Z",
+    "lastPromotionCount": 1,
+    "lastPromotedManifestIds": [
+      "onboarding.default_basket:basket-starter-h7-p140-c5-cap18-a0-r300-v1:promoted"
+    ],
+    "schedulerHost": {
+      "provider": "railway",
+      "hostKind": "cron_service",
+      "projectId": "80528e32-e909-4b21-8dbd-906b9d54db2e",
+      "projectName": "xstocks-strategy-lab-preview",
+      "environmentId": "9a585c20-4402-4b51-916d-cc1cd894151e",
+      "environmentName": "production",
+      "serviceId": "ee77cd63-20f6-44bf-8a24-87c47a5b21ef",
+      "serviceName": "autoresearch-worker",
+      "cronSchedule": "5 17 * * *"
+    },
+    "proofUpdatedAt": "2026-04-01T17:05:42.921Z"
+  },
+  "run": {
+    "runId": "autoresearch_20260401T170541978z_bd9d4900",
+    "runtimeId": "strategy_lab_regular_autoresearch_v1",
+    "runtimeOwner": "worker_strategy_lab",
+    "triggerSource": "scheduled_cron",
+    "cadenceHours": 24,
+    "status": "succeeded",
+    "truthBoundary": "railway_cron_service",
+    "recurringAutonomousProven": true,
+    "startedAt": "2026-04-01T17:05:41.978Z",
+    "completedAt": "2026-04-01T17:05:42.918Z",
+    "slotIds": [
+      "onboarding.alt_basket_1",
+      "onboarding.alt_basket_2",
+      "onboarding.default_basket"
+    ],
+    "baselineSeeded": true,
+    "waveExecuted": true,
+    "previousManifestIds": [
+      "advanced.default_directional:directional-preview-v1:promoted",
+      "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1:promoted",
+      "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+      "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted"
+    ],
+    "nextManifestIds": [
+      "advanced.default_directional:directional-preview-v1:promoted",
+      "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1:promoted",
+      "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+      "onboarding.default_basket:basket-starter-h7-p140-c5-cap18-a0-r300-v1:promoted"
+    ],
+    "promotedManifestIds": [
+      "onboarding.default_basket:basket-starter-h7-p140-c5-cap18-a0-r300-v1:promoted"
+    ],
+    "promotionCount": 1,
+    "checks": {
+      "researchContractsOk": true,
+      "researchRunIntegrityOk": true,
+      "promotedBoundaryOk": true
+    },
+    "note": "railway cron service",
+    "errorMessage": null,
+    "schedulerReceipt": {
+      "provider": "railway",
+      "hostKind": "cron_service",
+      "receiptCapturedAt": "2026-04-01T17:05:42.921Z",
+      "deploymentId": "38862730-0d6a-42f7-8246-b639ea48a9c3",
+      "snapshotId": "116ecc2e-ca12-4a9f-b6c8-ec3898419779",
+      "publicDomain": null,
+      "privateDomain": "autoresearch-worker.railway.internal",
+      "projectId": "80528e32-e909-4b21-8dbd-906b9d54db2e",
+      "projectName": "xstocks-strategy-lab-preview",
+      "environmentId": "9a585c20-4402-4b51-916d-cc1cd894151e",
+      "environmentName": "production",
+      "serviceId": "ee77cd63-20f6-44bf-8a24-87c47a5b21ef",
+      "serviceName": "autoresearch-worker",
+      "cronSchedule": "5 17 * * *",
+      "gitCommitSha": null,
+      "gitBranch": null
+    }
+  }
+}
