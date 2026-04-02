@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { useActiveWallet, useWallets } from "@privy-io/react-auth";
 import { BrandLockup } from "@/components/home-terminal";
 import { usePrivyRuntime } from "@/components/privy-provider";
+import { useWalletState } from "@/components/wallet-connect-button";
+import { runManualExecutionFlow } from "@/lib/manual-execution";
 
 import type {
   BlotterData,
@@ -658,6 +661,49 @@ function SimulatedWorkspace({
     : null;
   const [buyModalOpen, setBuyModalOpen] = useState(false);
   const [buyAmount, setBuyAmount] = useState("100");
+  const [buyStatus, setBuyStatus] = useState<string | null>(null);
+  const [buyRunning, setBuyRunning] = useState(false);
+  const walletState = useWalletState();
+  const { wallets } = useWallets();
+  const { wallet: activeWallet } = useActiveWallet();
+  const activeConnectedWallet = activeWallet && "getEthereumProvider" in activeWallet
+    ? (activeWallet as (typeof wallets)[number])
+    : null;
+
+  async function handleBuy() {
+    if (!authenticated || buyRunning) return;
+    setBuyRunning(true);
+    setBuyStatus("Starting execution...");
+    try {
+      const { getAccessToken } = await import("@privy-io/react-auth").then(m => ({ getAccessToken: async () => null }));
+      const result = await runManualExecutionFlow({
+        manifest,
+        requestedNotionalUsd: parseFloat(buyAmount) || 100,
+        initiationAction: "create",
+        latestActivation: null,
+        existingExecutionRequest: null,
+        auth: {},
+        wallets,
+        activeWallet: activeConnectedWallet,
+        walletState: {
+          connected: walletState.connected,
+          walletAddress: walletState.walletAddress,
+          embeddedWallet: walletState.embeddedWallet ?? { status: "not-created", address: null },
+          smartAccount: walletState.smartAccount ?? { status: "not-created", address: null },
+        },
+        onStatus: (status) => setBuyStatus(status.message),
+      });
+      if (result.blocker) {
+        setBuyStatus(`Blocked: ${result.blocker}`);
+      } else {
+        setBuyStatus("Execution submitted successfully!");
+      }
+    } catch (err) {
+      setBuyStatus(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+    } finally {
+      setBuyRunning(false);
+    }
+  }
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
@@ -1135,16 +1181,20 @@ function SimulatedWorkspace({
               <strong style={{ color: "var(--text)" }}>Ethereum</strong>
             </div>
 
+            {buyStatus && (
+              <div style={{ padding: "10px 14px", background: "var(--gray-100)", border: "1px solid var(--border)", fontSize: "0.88rem", color: "var(--text-soft)" }}>
+                {buyStatus}
+              </div>
+            )}
+
             <button
               className="button button-primary button-xl"
-              style={{ width: "100%" }}
+              style={{ width: "100%", opacity: buyRunning ? 0.6 : 1 }}
               type="button"
-              onClick={() => {
-                // TODO: wire to runManualExecutionFlow
-                alert(`Buy $${buyAmount} USDC of ${recommendation.title} via 1inch — execution flow coming soon`);
-              }}
+              disabled={buyRunning}
+              onClick={handleBuy}
             >
-              Buy ${buyAmount} of {recommendation.title}
+              {buyRunning ? "Executing..." : `Buy $${buyAmount} of ${recommendation.title}`}
             </button>
 
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.78rem", textAlign: "center" }}>
