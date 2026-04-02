@@ -441,7 +441,13 @@ function RecommendationGate({
             See my portfolio
           </button>
         </div>
-        <span className="token-pill" title={qualification.optimizationMethod.details.join(" ")} style={{ cursor: "help" }}>
+        <span className="hover-card-trigger token-pill" style={{ cursor: "help" }}>
+          <span className="hover-card">
+            <strong className="hover-card-title">Autoresearch</strong>
+            {qualification.optimizationMethod.details.map((d, i) => (
+              <p key={i}>{d}</p>
+            ))}
+          </span>
           {qualification.optimizationMethod.pillLabel}
         </span>
         <h1 className="pq-gate-title">{recommendation.title}</h1>
@@ -672,10 +678,11 @@ function SimulatedWorkspace({
     }
   }, [highlightId]);
 
-  // Shareable portfolio URL
+  // Shareable portfolio URL — short ID derived from slug
   useEffect(() => {
+    const shortId = manifest.slug.split("-").map(w => w[0]).join("").toUpperCase() + manifest.slug.length;
     const url = new URL(window.location.href);
-    url.searchParams.set("portfolio", manifest.slug);
+    url.searchParams.set("p", shortId);
     window.history.replaceState({}, "", url.toString());
   }, [manifest.slug]);
 
@@ -697,7 +704,7 @@ function SimulatedWorkspace({
       {/* ── Preview bar with big deposit CTA ── */}
       <div className="pq-preview-bar">
         <div className="pq-preview-bar-left">
-          <Link href="/" className="landing-header-brand" style={{ padding: "8px 16px", height: "auto", marginRight: "12px" }}>
+          <Link href="/" className="landing-header-brand" style={{ padding: "6px 14px", height: "100%", marginRight: "10px", alignSelf: "stretch", display: "flex", alignItems: "center" }}>
             <BrandLockup size="sm" />
           </Link>
           <span className="preview-chip">Simulation</span>
@@ -840,7 +847,15 @@ function SimulatedWorkspace({
               <div><span>Holdings</span><strong>{manifest.allocations.length}</strong></div>
               <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
               <div><span>Rebalance</span><strong>{recommendation.rebalance_cadence.replaceAll("_", " ")}</strong></div>
-              <div title="Autoresearch automatically tests different portfolio configurations against historical data and picks the best one for you. Inspired by Andrej Karpathy's approach to neural network training — run many experiments, keep the winner. Your portfolio is the current champion from the latest evaluation cycle."><span>Optimisation</span><strong>Autoresearch</strong></div>
+              <div className="hover-card-trigger">
+                <span>Optimisation</span><strong>Autoresearch</strong>
+                <span className="hover-card">
+                  <strong className="hover-card-title">How Autoresearch works</strong>
+                  <p>Automatically tests different portfolio configurations against historical market data and picks the best performer for you.</p>
+                  <p>Inspired by Andrej Karpathy&apos;s approach to training neural networks — run many experiments, keep the winner.</p>
+                  <p>Your portfolio is the current champion from the latest evaluation cycle. Re-evaluated regularly so it stays competitive.</p>
+                </span>
+              </div>
             </div>
 
             <div className="pq-summary-explain">
