@@ -1023,13 +1023,34 @@ export function adaptExecutionPlanToSmartAccount(
   plan: ApiExecutionPlan,
   manifest: PromotedManifest,
 ): SmartAccountPanelData {
-  const sa = plan.smartAccount;
-  const bridge = sa.bridgeState;
-  const fp = plan.fundingPath;
-  const automation = plan.automationExecution;
+  const sa = plan.smartAccount ?? null;
+  const bridge = sa?.bridgeState ?? null;
+  const fp = plan.fundingPath ?? null;
+  const automation = plan.automationExecution ?? null;
   const orchestration = manifest.preview?.rebalanceOrchestration ?? null;
-  const formatAddress = (value: string | null) =>
+  const formatAddress = (value: string | null | undefined) =>
     value ? `${value.slice(0, 6)}...${value.slice(-4)}` : "Not ready";
+  const readiness = automation?.readiness ?? sa?.automationReadiness ?? "smart_account_required";
+  const blockers = automation?.blockers ?? [];
+  const notes = automation?.notes ?? bridge?.notes ?? [];
+  const manualSigningMode =
+    bridge?.manualSigningMode ?? sa?.manualSigningMode ?? "wallet_first";
+  const venueSigningMode =
+    bridge?.venueSigningMode ?? sa?.venueSigningMode ?? "wallet_signer_manual_only";
+  const policyAccountAddress = bridge?.policyAccountAddress ?? sa?.address ?? null;
+  const executionDestinationAddress =
+    bridge?.executionDestinationAddress ??
+    policyAccountAddress ??
+    bridge?.manualSignerAddress ??
+    fp?.destinationAddress ??
+    null;
+  const generatedLabel = Number.isNaN(Date.parse(plan.generatedAt))
+    ? "Generated recently"
+    : `Generated ${new Date(plan.generatedAt).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+      })} UTC`;
 
   const readinessState = plan.executionState === "ready" ? "activation_ready" as const
     : plan.executionState === "wallet_required" ? "connect_required" as const
@@ -1040,58 +1061,59 @@ export function adaptExecutionPlanToSmartAccount(
   return {
     readinessLabel: `${plan.executionState.replace(/_/g, " ")} — ${plan.executionEligibility.replace(/_/g, " ")}`,
     readinessState,
-    addressLabel: formatAddress(bridge.policyAccountAddress),
+    addressLabel: formatAddress(policyAccountAddress),
     ownerLabel:
-      automation.readiness === "ready"
+      readiness === "ready"
         ? "Automation account ready"
-        : automation.readiness.replace(/_/g, " "),
-    fundingAsset: fp.topUpAsset,
-    buyingPower: fp.fundingGapUsd > 0
-      ? `$${fp.fundingGapUsd.toLocaleString()} gap`
-      : `$${fp.fundedNotionalUsd.toLocaleString()} funded`,
-    policyLabel: `${bridge.manualSigningMode.replace(/_/g, " ")} / ${bridge.venueSigningMode.replace(/_/g, " ")}`,
-    syncLabel: `Generated ${new Date(plan.generatedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC`,
+        : readiness.replace(/_/g, " "),
+    fundingAsset: fp?.topUpAsset ?? "USDC",
+    buyingPower:
+      typeof fp?.fundingGapUsd === "number" && fp.fundingGapUsd > 0
+        ? `$${fp.fundingGapUsd.toLocaleString()} gap`
+        : `$${(fp?.fundedNotionalUsd ?? plan.requestedNotionalUsd ?? 0).toLocaleString()} funded`,
+    policyLabel: `${manualSigningMode.replace(/_/g, " ")} / ${venueSigningMode.replace(/_/g, " ")}`,
+    syncLabel: generatedLabel,
     automationLabel: orchestration
       ? orchestration.runtimeOwner === "worker_offchain_scheduler"
         ? "A scheduled review record exists, but operator confirmation is still required before any rebalance execution claim."
         : orchestration.summary
-      : automation.notes[1] ?? "Rebalance review truth was not loaded for this screen.",
+      : notes[1] ?? "Rebalance review truth was not loaded for this screen.",
     nextAction:
       (
-        automation.readiness !== "ready"
-          ? automation.blockers[0] ?? automation.notes[0]
+        readiness !== "ready"
+          ? blockers[0] ?? notes[0]
           : orchestration?.nextAction?.detail
       )
-      ?? plan.steps.find((s) => s.status === "pending")?.detail
-      ?? plan.steps.find((s) => s.status === "blocked")?.detail
+      ?? plan.steps?.find((s) => s.status === "pending")?.detail
+      ?? plan.steps?.find((s) => s.status === "blocked")?.detail
       ?? "Review the preview before deposit.",
     accountSurfaces: [
       {
         label: "Manual signer",
-        value: formatAddress(bridge.manualSignerAddress),
+        value: formatAddress(bridge?.manualSignerAddress),
         note: "Current user-approved venue signing remains wallet-first.",
       },
       {
         label: "Policy account",
-        value: formatAddress(bridge.policyAccountAddress),
+        value: formatAddress(policyAccountAddress),
         note: "Canonical automation and policy ownership surface.",
       },
       {
         label: "Execution destination",
-        value: formatAddress(bridge.executionDestinationAddress),
-        note: bridge.supportsSeparateExecutionDestination
+        value: formatAddress(executionDestinationAddress),
+        note: bridge?.supportsSeparateExecutionDestination
           ? "Separate receiver is supported on the current venue path."
           : "Settlement stays on the manual signer until a separate destination is proven.",
       },
       {
         label: "Venue signing",
-        value: bridge.venueSigningMode.replace(/_/g, " "),
+        value: venueSigningMode.replace(/_/g, " "),
         note: "AA-native CoW or 1inch signing remains deferred.",
       },
       {
         label: "Automation readiness",
-        value: automation.readiness.replace(/_/g, " "),
-        note: automation.blockers[0] ?? automation.notes[0],
+        value: readiness.replace(/_/g, " "),
+        note: blockers[0] ?? notes[0] ?? "Automation stays fail-closed until the smart account is verified.",
       },
     ],
     actionLinks: [

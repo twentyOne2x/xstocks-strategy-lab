@@ -1,9 +1,7 @@
 "use client";
 
 import {
-  getIdentityToken,
   useActiveWallet,
-  usePrivy,
   useWallets,
 } from "@privy-io/react-auth";
 import Link from "next/link";
@@ -34,6 +32,7 @@ import {
 import { buildManifestContractBundle } from "@/lib/shared-contract-adapter";
 
 import { ExecutionArtifactSummary } from "@/components/execution-artifact-summary";
+import { usePrivyRuntime } from "@/components/privy-provider";
 import { WalletConnectButton, useWalletState } from "@/components/wallet-connect-button";
 import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 
@@ -45,7 +44,8 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
   const directionalPreviewOnly = isDirectionalPreviewOnly(manifest);
   const primaryComponents = getPrimaryPortfolioComponents(manifest, 3);
   const wallet = useWalletState();
-  const { ready, authenticated, getAccessToken } = usePrivy();
+  const { ready, authenticated, getAccessToken, getIdentityToken } =
+    usePrivyRuntime();
   const { wallets } = useWallets();
   const { wallet: activeWallet } = useActiveWallet();
   const activeConnectedWallet =
@@ -84,6 +84,59 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
         ),
       }));
   const signatureInputs = getExecutionSignatureInputs(executionRequest);
+  const previewSmartAccount = executionPlan?.smartAccount ?? null;
+  const previewBridgeState = previewSmartAccount?.bridgeState ?? null;
+  const previewAutomationExecution = executionPlan?.automationExecution ?? null;
+  const previewBootstrap = previewSmartAccount?.bootstrap ?? null;
+  const effectiveEmbeddedWalletAddress =
+    wallet.embeddedWallet.address ??
+    previewBootstrap?.embeddedWalletAddress ??
+    null;
+  const effectiveManualSignerAddress =
+    wallet.manualSignerAddress ??
+    executionRequest?.manualSignerAddress ??
+    previewBridgeState?.manualSignerAddress ??
+    null;
+  const effectivePolicyAccountAddress =
+    wallet.policyAccountAddress ??
+    executionRequest?.policyAccountAddress ??
+    previewBridgeState?.policyAccountAddress ??
+    null;
+  const effectiveExecutionDestinationAddress =
+    wallet.executionDestinationAddress ??
+    executionRequest?.executionDestinationAddress ??
+    previewBridgeState?.executionDestinationAddress ??
+    null;
+  const hasLiveBridgeTruth =
+    wallet.connected &&
+    Boolean(
+      wallet.manualSignerAddress ??
+        wallet.policyAccountAddress ??
+        wallet.executionDestinationAddress ??
+        wallet.embeddedWallet.address ??
+        wallet.smartAccount.address ??
+        wallet.walletAddress,
+    );
+  const effectiveAutomationReadiness =
+    hasLiveBridgeTruth
+      ? wallet.automationReadiness
+      : executionRequest?.automationReadiness ??
+        previewAutomationExecution?.readiness ??
+        wallet.automationReadiness;
+  const effectiveCurrentBlocker =
+    hasLiveBridgeTruth
+      ? wallet.automationBlocker ??
+        previewAutomationExecution?.blockers?.[0] ??
+        null
+      : previewAutomationExecution?.blockers?.[0] ??
+        wallet.automationBlocker ??
+        null;
+  const effectiveVenueSigningMode =
+    executionRequest?.venueSigningMode ??
+    (hasLiveBridgeTruth
+      ? wallet.venueSigningMode
+      : previewSmartAccount?.venueSigningMode ??
+        wallet.venueSigningMode);
   const exactBlocker =
     statusMessage?.tone === "warning"
       ? statusMessage.message
@@ -145,6 +198,22 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
       const preview = await fetchActivationPreview(
         manifest.slot_id,
         requestedNotionalUsd,
+        wallet.connected
+          ? {
+              connected: true,
+              walletAddress: wallet.walletAddress,
+              embeddedWallet: {
+                status: wallet.embeddedWallet.status,
+                address: wallet.embeddedWallet.address,
+                providerId: "privy",
+              },
+              smartAccount: {
+                status: wallet.smartAccount.status,
+                address: wallet.smartAccount.address,
+                providerId: "privy",
+              },
+            }
+          : undefined,
         auth,
       );
 
@@ -202,8 +271,15 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
     authenticated,
     executionRequest?.executionRequestId,
     getAccessToken,
+    getIdentityToken,
     manifest.slot_id,
     requestedNotionalUsd,
+    wallet.connected,
+    wallet.walletAddress,
+    wallet.embeddedWallet.address,
+    wallet.embeddedWallet.status,
+    wallet.smartAccount.address,
+    wallet.smartAccount.status,
   ]);
 
   async function handleRunManualFlow() {
@@ -432,66 +508,38 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
               <div>
                 <span>Embedded wallet</span>
                 <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
-                  {formatAddress(
-                    executionPlan?.smartAccount.bootstrap.embeddedWalletAddress ??
-                      wallet.embeddedWallet.address,
-                  )}
+                  {formatAddress(effectiveEmbeddedWalletAddress)}
                 </strong>
               </div>
               <div>
                 <span>Manual signer</span>
                 <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
-                  {formatAddress(
-                    executionRequest?.manualSignerAddress ??
-                      executionPlan?.smartAccount.bridgeState.manualSignerAddress ??
-                      wallet.manualSignerAddress,
-                  )}
+                  {formatAddress(effectiveManualSignerAddress)}
                 </strong>
               </div>
               <div>
                 <span>Policy account</span>
                 <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
-                  {formatAddress(
-                    executionRequest?.policyAccountAddress ??
-                      executionPlan?.smartAccount.bridgeState.policyAccountAddress ??
-                      wallet.policyAccountAddress,
-                  )}
+                  {formatAddress(effectivePolicyAccountAddress)}
                 </strong>
               </div>
               <div>
                 <span>Execution destination</span>
                 <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
-                  {formatAddress(
-                    executionRequest?.executionDestinationAddress ??
-                      executionPlan?.smartAccount.bridgeState.executionDestinationAddress ??
-                      wallet.executionDestinationAddress,
-                  )}
+                  {formatAddress(effectiveExecutionDestinationAddress)}
                 </strong>
               </div>
               <div>
                 <span>Automation readiness</span>
-                <strong>
-                  {(
-                    executionPlan?.automationExecution.readiness ??
-                    wallet.automationReadiness
-                  ).replaceAll("_", " ")}
-                </strong>
+                <strong>{effectiveAutomationReadiness.replaceAll("_", " ")}</strong>
               </div>
               <div>
                 <span>Venue signing</span>
-                <strong>
-                  {executionRequest?.venueSigningMode ??
-                    executionPlan?.smartAccount.venueSigningMode ??
-                    wallet.venueSigningMode}
-                </strong>
+                <strong>{effectiveVenueSigningMode}</strong>
               </div>
               <div>
                 <span>Current blocker</span>
-                <strong>
-                  {wallet.automationBlocker ??
-                    executionPlan?.automationExecution.blockers[0] ??
-                    "None"}
-                </strong>
+                <strong>{effectiveCurrentBlocker ?? "None"}</strong>
               </div>
               <p className="panel-note">
                 Current bridge rule: manual signing stays wallet-first, `policyAccountAddress`

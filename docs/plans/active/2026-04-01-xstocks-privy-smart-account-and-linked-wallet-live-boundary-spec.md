@@ -60,9 +60,9 @@ When this work closes:
 4. [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js) resolves the settlement address by preferring a ready smart account, but resolves the execution signer by falling back to the embedded wallet or linked wallet only. The current manual venue request therefore uses two different account surfaces when a smart account exists.
 5. The current API execution request builder stores `receiver: settlementAddress` and `owner: signerAddress`, so smart-account settlement and EOA ownership diverge structurally.
 6. `apps/api` already verifies linked smart-wallet addresses from Privy identity claims in [privy-auth.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/privy-auth.js) and [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js), but the runtime does not yet separate manual signing posture from automation account posture.
-7. [privy-provider.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/privy-provider.tsx) mounts only `PrivyProvider`; it does not mount the smart-wallet provider or configure a smart-account-first browser path.
-8. [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx) proves auth and wallet connect only. It does not expose embedded-wallet readiness, smart-account creation, smart-account linking, or typed-data approval on the smart-account branch.
-9. [activation-screen.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/activation-screen.tsx) hard-stops honestly at connect/funding preview. It does not prove embedded-wallet bootstrap, smart-account closure, or smart-account-first execution readiness.
+7. [privy-provider.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/privy-provider.tsx) now mounts `SmartWalletsProvider` and exposes app-config plus linked smart-wallet state, but current hosted proof still over-refreshes Privy identity on load and needs a narrow dedupe/backoff guard.
+8. [wallet-connect-button.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/wallet-connect-button.tsx) already proves the live bridge truth on the current real user: linked wallet, embedded wallet, smart wallet, manual signer, policy account, execution destination, and `automationReadiness=ready`.
+9. [activation-screen.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/activation-screen.tsx) and [rebalance-control-panel.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/rebalance-control-panel.tsx) still need one narrow repair so preview surfaces derive from live wallet truth when present and saved activation truth when live wallet state is absent.
 10. Hosted proof in [2026-04-01-xstocks-first-authenticated-execution-proof-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-first-authenticated-execution-proof-spec.md) currently proves the truthful linked-wallet manual branch only: activation save, execution create, and live venue quote truth without a smart wallet.
 
 ## Current Local Implementation Audit
@@ -71,28 +71,43 @@ When this work closes:
 | --- | --- | --- | --- |
 | `packages/policy` | readiness derivation, funding-path shaping, smart-account inspection, tests | destination prefers smart account if present | canonical execution-account model is still linked-wallet-first for current manual basket venues |
 | `apps/api` | authenticated owner binding, smart-wallet address verification, execution request persistence, venue quote/approval/submission scaffolding | settlement already prefers smart account | signer ownership, approval scheme, and stored execution account still fall back to EOA |
-| `apps/web` | real Privy auth/connect, funnel tracking, honest preview-only activation copy | wallet connect is real | no smart-wallet provider, no bootstrap closure, no smart-account-linked proof, no smart-wallet order approval path |
+| `apps/web` | real Privy auth/connect, `SmartWalletsProvider`, wallet banner bridge truth, local activation/right-rail post-enable proof | live preview surfaces still need authenticated refresh to replace public fallback copy | hosted deploy still serves the pre-fix crash path and repeated Privy refresh loop |
 | hosted proof | authenticated linked-wallet hosted boundary | per-leg quote truth only | no hosted smart-account bootstrap, no hosted manual-versus-automation posture proof, no hosted bridge-state proof |
 
 ## 2026-04-02 Live Repro Addendum
 
-1. Live Privy app config for `cmnfzikzk02ey0ckyx8m14qv2` now proves the external blocker directly: `smart_wallet_config.enabled=false` and `embedded_wallet_config.ethereum.create_on_login="off"` on the server-side app record, even though the web app still asks Privy client-side for `embeddedWallets.ethereum.createOnLogin="all-users"`.
-2. The real Privy user record for `did:privy:cmng4u99003bf0ckye9oqgopk` proves the hosted/local truth after embedded-wallet bootstrap:
+1. After Privy smart wallets were enabled for app `equityterminal` (`cmnfzikzk02ey0ckyx8m14qv2`) on Ethereum mainnet, a full logout/login on `2026-04-02` proved the same real Privy user now resolves all three account layers:
    - linked external wallet = `0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2` (`wallet_client_type="backpack"`, `connector_type="injected"`)
    - embedded wallet = `0xc3a79c8551bd33e3a17539df6db85a5989e22e3a` (`wallet_client_type="privy"`, `connector_type="embedded"`)
-   - linked smart-wallet addresses = none
-   - `smart_wallet` = `null`
-3. This means the remaining linkage gap is not that embedded-wallet bootstrap never happened. The embedded wallet already exists, but Privy smart-wallet linking cannot complete for this app because smart wallets are disabled at the Privy app/project layer.
-4. Strongest truthful claim after this pass: the repo proves real linked-wallet auth plus real embedded-wallet bootstrap and preserves wallet-first manual execution, but it still does not prove a linked Privy smart wallet or a resolved `policyAccountAddress` on this app until Privy smart wallets are enabled for the app's Ethereum mainnet configuration.
-5. Required external unblock step: enable Privy smart wallets for app `equityterminal` (`cmnfzikzk02ey0ckyx8m14qv2`) on `eip155:1`, then rerun the hosted bootstrap path and verify that the same user record gains either `smart_wallet.address` or a `linked_accounts` entry with `type="smart_wallet"`.
+   - linked smart wallet = `0x00c6bf8ba9244eb50089410007f778868cc1ce39` (`type="smart_wallet"`, `smart_wallet_type="safe"`)
+2. The local activation save snapshot for that same refreshed user proves the repo-owned bridge contract now closes truthfully:
+   - `manualSignerAddress = 0xc3a79c8551bd33e3a17539df6db85a5989e22e3a`
+   - `policyAccountAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`
+   - `executionDestinationAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`
+   - `automationExecution.readiness = ready`
+3. The remaining failures after enablement are surface/runtime bugs, not linkage existence:
+   - hosted route repeatedly 429s `https://auth.privy.io/api/v1/users/me`
+   - hosted route crashes with `TypeError: Cannot read properties of undefined (reading 'manualSignerAddress')`
+   - local activation preview still returns null `bridgeState` and `automationReadiness="wallet_required"` even when the live wallet banner and saved activation snapshot both prove the smart-account bridge is ready
+4. Exact current repair scope:
+   - add the minimum refresh dedupe/backoff needed around Privy identity-token refresh so repo-owned surfaces stop over-hitting `/users/me`
+   - make hosted and local preview surfaces derive bridge truth from live wallet state when present
+   - make those same surfaces fall back to the saved activation/execution snapshot when live wallet state is absent
+   - keep manual venue signing wallet-first and explicitly defer AA-native CoW / 1inch signing
+5. Strongest truthful claim after this repair: on the exact `XSL-005` activation slug, both local and hosted now render the same real Privy smart-wallet bridge truth without crashing or downgrading to `wallet required`: manual signer remains the embedded wallet, the Privy Safe is the canonical `policyAccountAddress` and `executionDestinationAddress`, automation reads `ready`, and venue signing remains `wallet_signer_manual_only`.
+6. Verified result after the narrow repair and browser pass:
+   - local activation now shows `manualSignerAddress = 0xc3a79c8551bd33e3a17539df6db85a5989e22e3a`, `policyAccountAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`, `executionDestinationAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`, `automationReadiness = ready`, and `Current blocker = None` on the real Privy session;
+   - the local right-rail account panel now consumes the same live-or-saved preview truth instead of rendering the stale public fallback labels;
+   - the exact hosted route `https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1` now matches that same bridge truth on the real session, no longer reproduces the old `manualSignerAddress` crash, and showed one `https://auth.privy.io/api/v1/users/me` resource hit in the verified browser load;
+   - a separate pre-existing hosted `ai-infra-autopilot` tab in the same session still displayed the generic client-side exception shell with five `users/me` resource hits, but that route is outside this exact repair slice.
 
 ## Completion Reconciliation
 
 1. Completion relative to the earlier posture-only smart-account spec = partial. It documented the ambiguity, but it did not define the implementation contract that would remove it.
 2. Completion relative to repeated thread asks = unresolved. The repo still cannot answer “what exact code path turns smart accounts into the real execution surface?” with one canonical runtime contract.
 3. Completion relative to prior implementation claims = linked-wallet hosted progress is real, but any broader smart-account-first posture interpretation would be overclaimed.
-4. Verified implementation and proof status = linked-wallet authenticated execution-create and per-leg quote truth are proven; smart-account-first execution posture is not.
-5. Canonical frontend functioning status = auth/connect only; smart-account bootstrap and closure are not yet functioning on the canonical route.
+4. Verified implementation and proof status = the exact `XSL-005` activation route now proves coherent smart-wallet bridge truth on both local and hosted real-session loads; AA-native venue signing and broader hosted-route stability remain outside this slice.
+5. Canonical frontend functioning status = the canonical activation route now functions truthfully for auth/connect plus bridge-state closure on the proven real-session slug.
 
 ## Canonical Branch Decision
 

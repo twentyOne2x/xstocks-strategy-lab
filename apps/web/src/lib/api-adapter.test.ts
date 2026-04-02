@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import type { ApiActivityData, ApiManifestView, ApiSlot } from "./api-client";
-import { adaptActivityToBlotter, adaptManifestToFrontend } from "./api-adapter";
+import type {
+  ApiActivityData,
+  ApiExecutionPlan,
+  ApiManifestView,
+  ApiSlot,
+} from "./api-client";
+import {
+  adaptActivityToBlotter,
+  adaptExecutionPlanToSmartAccount,
+  adaptManifestToFrontend,
+} from "./api-adapter";
 import { getWorkspaceSpotlightData } from "./data-source";
 import { buildPromotedManifestSlug } from "./promoted-manifest-identity";
 
@@ -497,6 +506,72 @@ describe("adaptActivityToBlotter", () => {
     );
     expect(blotter.activity[0].execution?.explorerUrls?.eigenPhiTx).toBe(
       "https://eigenphi.io/mev/eigentx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    );
+  });
+});
+
+describe("adaptExecutionPlanToSmartAccount", () => {
+  it("stays null-safe when smart-account bridge fields are absent or partial", () => {
+    const adaptedManifest = adaptManifestToFrontend(manifest, slot);
+
+    const account = adaptExecutionPlanToSmartAccount(
+      {
+        executionPlanId: "exec_partial",
+        generatedAt: "2026-04-02T10:00:00.000Z",
+        surfaceTruth: "preview",
+        executionState: "wallet_required",
+        executionEligibility: "preview_only",
+        requestedNotionalUsd: 100,
+        walletConnectionLate: false,
+        routeTruthLabels: [],
+        assetChecks: [],
+        fundingPath: {
+          provider: "privy",
+          minRequiredUsd: 100,
+          fundedNotionalUsd: 0,
+          fundingGapUsd: 100,
+          topUpAsset: "USDC",
+          destinationAddress: null,
+          destinationKind: "linked_wallet",
+          readiness: "wallet_required",
+          recommendedMethodId: null,
+          surfaces: [],
+          status: "blocked",
+        },
+        smartAccount: {
+          readiness: "smart_account_required",
+          automationReadiness: "smart_account_required",
+          providerId: "privy",
+          status: "not_started",
+          address: null,
+          manualSigningMode: "wallet_first",
+          automationAccountMode: "smart_account_required",
+          venueSigningMode: "wallet_signer_manual_only",
+        } as ApiExecutionPlan["smartAccount"],
+        automationExecution: {
+          accountMode: "smart_account_required",
+          readiness: "smart_account_required",
+          status: "blocked",
+          manualSigningMode: "wallet_first",
+          venueSigningMode: "wallet_signer_manual_only",
+          policyAccountAddress: null,
+          executionDestinationAddress: null,
+          blockers: ["Connect a wallet to start the hosted bootstrap path."],
+          notes: [],
+        },
+        steps: [],
+        allowedActions: [],
+        blockers: [],
+        warnings: [],
+      },
+      adaptedManifest,
+    );
+
+    expect(account.accountSurfaces[0]?.value).toBe("Not ready");
+    expect(account.accountSurfaces[1]?.value).toBe("Not ready");
+    expect(account.accountSurfaces[4]?.value).toBe("smart account required");
+    expect(account.nextAction).toBe(
+      "Connect a wallet to start the hosted bootstrap path.",
     );
   });
 });

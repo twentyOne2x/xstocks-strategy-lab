@@ -884,6 +884,79 @@ interface ApiAuthHeaders {
   identityToken?: string | null;
 }
 
+export interface ActivationPreviewWalletState {
+  connected: boolean;
+  walletAddress?: string | null;
+  fundedNotionalUsd?: number | null;
+  embeddedWallet?: {
+    status?: string | null;
+    address?: string | null;
+    providerId?: string | null;
+  } | null;
+  smartAccount?: {
+    status?: string | null;
+    address?: string | null;
+    providerId?: string | null;
+  } | null;
+}
+
+function isApiAuthHeaders(
+  value?: ActivationPreviewWalletState | ApiAuthHeaders,
+): value is ApiAuthHeaders {
+  return Boolean(
+    value &&
+      typeof value === "object" &&
+      ("accessToken" in value || "identityToken" in value) &&
+      !("connected" in value),
+  );
+}
+
+function appendActivationPreviewWalletState(
+  params: URLSearchParams,
+  walletState?: ActivationPreviewWalletState,
+) {
+  if (!walletState?.connected) {
+    return;
+  }
+
+  params.set("walletConnected", "true");
+
+  if (walletState.walletAddress) {
+    params.set("walletAddress", walletState.walletAddress);
+  }
+
+  if (
+    typeof walletState.fundedNotionalUsd === "number" &&
+    Number.isFinite(walletState.fundedNotionalUsd)
+  ) {
+    params.set("fundedNotionalUsd", String(walletState.fundedNotionalUsd));
+  }
+
+  if (walletState.embeddedWallet?.status) {
+    params.set("embeddedWalletStatus", walletState.embeddedWallet.status);
+  }
+
+  if (walletState.embeddedWallet?.address) {
+    params.set("embeddedWalletAddress", walletState.embeddedWallet.address);
+  }
+
+  if (walletState.embeddedWallet?.providerId) {
+    params.set("embeddedWalletProviderId", walletState.embeddedWallet.providerId);
+  }
+
+  if (walletState.smartAccount?.status) {
+    params.set("smartAccountStatus", walletState.smartAccount.status);
+  }
+
+  if (walletState.smartAccount?.address) {
+    params.set("smartAccountAddress", walletState.smartAccount.address);
+  }
+
+  if (walletState.smartAccount?.providerId) {
+    params.set("smartAccountProviderId", walletState.smartAccount.providerId);
+  }
+}
+
 async function apiFetchWithAuth<T>(
   path: string,
   auth?: ApiAuthHeaders,
@@ -922,11 +995,25 @@ export async function fetchWorkspace(slotId: string, notionalUsd = 10): Promise<
 export async function fetchActivationPreview(
   slotId: string,
   notionalUsd = 10,
+  walletStateOrAuth?: ActivationPreviewWalletState | ApiAuthHeaders,
   auth?: ApiAuthHeaders,
 ): Promise<ApiActivationPreviewData | null> {
+  const walletState = isApiAuthHeaders(walletStateOrAuth)
+    ? undefined
+    : walletStateOrAuth;
+  const resolvedAuth = isApiAuthHeaders(walletStateOrAuth)
+    ? walletStateOrAuth
+    : auth;
+  const params = new URLSearchParams({
+    slotId,
+    userNotionalUsd: String(notionalUsd),
+  });
+
+  appendActivationPreviewWalletState(params, walletState);
+
   return apiFetchWithAuth<ApiActivationPreviewData>(
-    `/api/activation-preview?slotId=${encodeURIComponent(slotId)}&userNotionalUsd=${notionalUsd}`,
-    auth,
+    `/api/activation-preview?${params.toString()}`,
+    resolvedAuth,
   );
 }
 

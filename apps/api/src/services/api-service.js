@@ -1243,15 +1243,29 @@ function createExecutionBridgeState({
   walletState = {},
   executionPlanSnapshot = null,
 }) {
+  const snapshotBridgeState = executionPlanSnapshot?.smartAccount?.bridgeState ?? null;
+  const snapshotAutomationExecution =
+    executionPlanSnapshot?.automationExecution ?? null;
   const supportsSeparateExecutionDestination =
-    executionPlanSnapshot?.smartAccount?.bridgeState
-      ?.supportsSeparateExecutionDestination ?? true;
-  const manualSignerAddress = resolveManualSignerAddress(walletState);
-  const policyAccountAddress = resolvePolicyAccountAddress(walletState);
-  const executionDestinationAddress = resolveExecutionDestinationAddress(
-    walletState,
-    { supportsSeparateExecutionDestination },
-  );
+    snapshotBridgeState?.supportsSeparateExecutionDestination ?? true;
+  const manualSignerAddress =
+    resolveManualSignerAddress(walletState) ??
+    snapshotBridgeState?.manualSignerAddress ??
+    null;
+  const policyAccountAddress =
+    resolvePolicyAccountAddress(walletState) ??
+    snapshotBridgeState?.policyAccountAddress ??
+    snapshotAutomationExecution?.policyAccountAddress ??
+    executionPlanSnapshot?.smartAccount?.address ??
+    null;
+  const executionDestinationAddress =
+    resolveExecutionDestinationAddress(walletState, {
+      supportsSeparateExecutionDestination,
+    }) ??
+    snapshotBridgeState?.executionDestinationAddress ??
+    snapshotAutomationExecution?.executionDestinationAddress ??
+    policyAccountAddress ??
+    manualSignerAddress;
 
   return {
     manualSignerAddress,
@@ -1270,6 +1284,206 @@ function createExecutionBridgeState({
     venueSigningMode:
       executionPlanSnapshot?.smartAccount?.venueSigningMode ??
       "wallet_signer_manual_only",
+  };
+}
+
+function reconcileExecutionPlanWithSavedSnapshot(
+  executionPlan,
+  savedExecutionPlanSnapshot = null,
+) {
+  if (!savedExecutionPlanSnapshot) {
+    return executionPlan;
+  }
+
+  const savedFundingPath = savedExecutionPlanSnapshot.fundingPath ?? null;
+  const savedSmartAccount = savedExecutionPlanSnapshot.smartAccount ?? null;
+  const savedBridgeState = savedSmartAccount?.bridgeState ?? null;
+  const savedBootstrap = savedSmartAccount?.bootstrap ?? null;
+  const savedReviewArtifact = savedSmartAccount?.reviewArtifact ?? null;
+  const savedAutomationExecution =
+    savedExecutionPlanSnapshot.automationExecution ?? null;
+  const currentBridgeState = executionPlan.smartAccount.bridgeState;
+  const manualSignerAddress =
+    currentBridgeState.manualSignerAddress ??
+    savedBridgeState?.manualSignerAddress ??
+    null;
+  const policyAccountAddress =
+    currentBridgeState.policyAccountAddress ??
+    savedBridgeState?.policyAccountAddress ??
+    savedAutomationExecution?.policyAccountAddress ??
+    executionPlan.smartAccount.address ??
+    savedSmartAccount?.address ??
+    null;
+  const executionDestinationAddress =
+    currentBridgeState.executionDestinationAddress ??
+    savedBridgeState?.executionDestinationAddress ??
+    savedAutomationExecution?.executionDestinationAddress ??
+    executionPlan.fundingPath.destinationAddress ??
+    savedFundingPath?.destinationAddress ??
+    policyAccountAddress ??
+    manualSignerAddress;
+  const shouldRestoreSavedWalletTruth =
+    ["wallet_required", "smart_account_required", "smart_account_pending"].includes(
+      executionPlan.executionState,
+    ) &&
+    savedExecutionPlanSnapshot.executionState === "ready" &&
+    savedExecutionPlanSnapshot.executionEligibility === "executable";
+
+  return {
+    ...executionPlan,
+    executionState: shouldRestoreSavedWalletTruth
+      ? savedExecutionPlanSnapshot.executionState
+      : executionPlan.executionState,
+    executionEligibility: shouldRestoreSavedWalletTruth
+      ? savedExecutionPlanSnapshot.executionEligibility
+      : executionPlan.executionEligibility,
+    fundingPath: {
+      ...executionPlan.fundingPath,
+      ...(shouldRestoreSavedWalletTruth && savedFundingPath
+        ? {
+            fundedNotionalUsd: savedFundingPath.fundedNotionalUsd,
+            fundingGapUsd: savedFundingPath.fundingGapUsd,
+            readiness: savedFundingPath.readiness,
+            recommendedMethodId: savedFundingPath.recommendedMethodId,
+            surfaces: savedFundingPath.surfaces,
+            status: savedFundingPath.status,
+          }
+        : {}),
+      destinationAddress:
+        executionPlan.fundingPath.destinationAddress ??
+        savedFundingPath?.destinationAddress ??
+        executionDestinationAddress,
+      destinationKind:
+        executionPlan.fundingPath.destinationAddress ??
+        savedFundingPath?.destinationAddress ??
+        executionDestinationAddress
+          ? executionPlan.fundingPath.destinationAddress
+            ? executionPlan.fundingPath.destinationKind
+            : savedFundingPath?.destinationAddress
+              ? savedFundingPath.destinationKind
+              : policyAccountAddress &&
+                  executionDestinationAddress === policyAccountAddress
+                ? "smart_account"
+                : "linked_wallet"
+          : executionPlan.fundingPath.destinationKind,
+    },
+    smartAccount: {
+      ...executionPlan.smartAccount,
+      ...(shouldRestoreSavedWalletTruth && savedSmartAccount
+        ? {
+            readiness: savedSmartAccount.readiness,
+            automationReadiness: savedSmartAccount.automationReadiness,
+            status: savedSmartAccount.status,
+          }
+        : {
+            automationReadiness:
+              savedSmartAccount?.automationReadiness ??
+              executionPlan.smartAccount.automationReadiness,
+          }),
+      address:
+        executionPlan.smartAccount.address ??
+        savedSmartAccount?.address ??
+        policyAccountAddress,
+      bridgeState: {
+        ...executionPlan.smartAccount.bridgeState,
+        manualSignerAddress,
+        manualSignerKind:
+          currentBridgeState.manualSignerAddress !== null
+            ? currentBridgeState.manualSignerKind
+            : savedBridgeState?.manualSignerKind ??
+              executionPlan.smartAccount.bridgeState.manualSignerKind,
+        policyAccountAddress,
+        executionDestinationAddress,
+        executionDestinationKind:
+          currentBridgeState.executionDestinationAddress !== null
+            ? currentBridgeState.executionDestinationKind
+            : savedBridgeState?.executionDestinationKind ??
+              executionPlan.smartAccount.bridgeState.executionDestinationKind,
+        notes: uniqueStrings([
+          ...(savedBridgeState?.notes ?? []),
+          ...executionPlan.smartAccount.bridgeState.notes,
+        ]),
+      },
+      bootstrap: {
+        ...executionPlan.smartAccount.bootstrap,
+        ...(shouldRestoreSavedWalletTruth && savedBootstrap
+          ? {
+              state: savedBootstrap.state,
+            }
+          : {}),
+        signerAddress:
+          executionPlan.smartAccount.bootstrap.signerAddress ??
+          savedBootstrap?.signerAddress ??
+          manualSignerAddress,
+        embeddedWalletAddress:
+          executionPlan.smartAccount.bootstrap.embeddedWalletAddress ??
+          savedBootstrap?.embeddedWalletAddress ??
+          manualSignerAddress,
+        smartAccountAddress:
+          executionPlan.smartAccount.bootstrap.smartAccountAddress ??
+          savedBootstrap?.smartAccountAddress ??
+          policyAccountAddress,
+        destinationAddress:
+          executionPlan.smartAccount.bootstrap.destinationAddress ??
+          savedBootstrap?.destinationAddress ??
+          executionDestinationAddress,
+        notes: uniqueStrings([
+          ...(savedBootstrap?.notes ?? []),
+          ...executionPlan.smartAccount.bootstrap.notes,
+        ]),
+      },
+      reviewArtifact: {
+        ...executionPlan.smartAccount.reviewArtifact,
+        ...(savedReviewArtifact ?? {}),
+        notes: uniqueStrings([
+          ...(savedReviewArtifact?.notes ?? []),
+          ...executionPlan.smartAccount.reviewArtifact.notes,
+        ]),
+      },
+    },
+    automationExecution: {
+      ...executionPlan.automationExecution,
+      ...(shouldRestoreSavedWalletTruth && savedAutomationExecution
+        ? {
+            readiness: savedAutomationExecution.readiness,
+            status: savedAutomationExecution.status,
+            blockers: savedAutomationExecution.blockers,
+          }
+        : {
+            blockers:
+              executionPlan.automationExecution.readiness === "ready"
+                ? []
+                : uniqueStrings([
+                    ...executionPlan.automationExecution.blockers,
+                    ...(savedAutomationExecution?.blockers ?? []),
+                  ]),
+          }),
+      policyAccountAddress:
+        executionPlan.automationExecution.policyAccountAddress ??
+        savedAutomationExecution?.policyAccountAddress ??
+        policyAccountAddress,
+      executionDestinationAddress:
+        executionPlan.automationExecution.executionDestinationAddress ??
+        savedAutomationExecution?.executionDestinationAddress ??
+        executionDestinationAddress,
+      notes: uniqueStrings([
+        ...(savedAutomationExecution?.notes ?? []),
+        ...executionPlan.automationExecution.notes,
+      ]),
+    },
+    steps: shouldRestoreSavedWalletTruth
+      ? savedExecutionPlanSnapshot.steps
+      : executionPlan.steps,
+    allowedActions: shouldRestoreSavedWalletTruth
+      ? savedExecutionPlanSnapshot.allowedActions
+      : executionPlan.allowedActions,
+    blockers: shouldRestoreSavedWalletTruth
+      ? savedExecutionPlanSnapshot.blockers
+      : executionPlan.blockers,
+    warnings: uniqueStrings([
+      ...(savedExecutionPlanSnapshot.warnings ?? []),
+      ...executionPlan.warnings,
+    ]),
   };
 }
 
@@ -3583,7 +3797,7 @@ export function createApiService({
         loadManifestActivity(manifest.manifestId, 200, ownerUserId),
         loadSlotRuntime(manifest, ownerUserId),
       ]);
-      const rebalanceBoundaryPayload =
+      let rebalanceBoundaryPayload =
         getWalletState(query) === undefined && slotRuntime.latestActivation
           ? deriveBoundaryPayload({
               manifest,
@@ -3595,6 +3809,15 @@ export function createApiService({
               walletState: slotRuntime.latestActivation.walletState,
             })
           : boundaryPayload;
+      if (getWalletState(query) === undefined && slotRuntime.latestActivation) {
+        rebalanceBoundaryPayload = {
+          ...rebalanceBoundaryPayload,
+          executionPlan: reconcileExecutionPlanWithSavedSnapshot(
+            rebalanceBoundaryPayload.executionPlan,
+            slotRuntime.latestActivation.executionPlanSnapshot,
+          ),
+        };
+      }
       const rebalanceOrchestration = buildRebalanceOrchestration({
         manifest,
         boundaryPayload: rebalanceBoundaryPayload,
@@ -3660,7 +3883,7 @@ export function createApiService({
       });
       const ownerUserId = requestContext?.owner?.userId ?? null;
       const slotRuntime = await loadSlotRuntime(manifest, ownerUserId);
-      const rebalanceBoundaryPayload =
+      let rebalanceBoundaryPayload =
         getWalletState(query) === undefined && slotRuntime.latestActivation
           ? deriveBoundaryPayload({
               manifest,
@@ -3672,6 +3895,15 @@ export function createApiService({
               walletState: slotRuntime.latestActivation.walletState,
             })
           : boundaryPayload;
+      if (getWalletState(query) === undefined && slotRuntime.latestActivation) {
+        rebalanceBoundaryPayload = {
+          ...rebalanceBoundaryPayload,
+          executionPlan: reconcileExecutionPlanWithSavedSnapshot(
+            rebalanceBoundaryPayload.executionPlan,
+            slotRuntime.latestActivation.executionPlanSnapshot,
+          ),
+        };
+      }
       const rebalanceOrchestration = buildRebalanceOrchestration({
         manifest,
         boundaryPayload: rebalanceBoundaryPayload,

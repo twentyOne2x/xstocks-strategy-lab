@@ -1430,6 +1430,96 @@ test("workspace read reuses the latest saved activation wallet state for executi
   }
 });
 
+test("activation preview falls back to saved execution snapshot bridge fields when activation wallet state is partial", async () => {
+  const harness = await startServer();
+  const runtimeStore = createRuntimeStore({
+    storePath: harness.storePath,
+    now: () => "2026-04-02T03:00:00.000Z",
+  });
+  const strategyVersion = DEFAULT_MANIFEST_ID.split(":")[1] ?? "unknown";
+
+  try {
+    await runtimeStore.appendActivation({
+      activation: {
+        activationId: "act_partial_bridge",
+        owner: harness.auth.owner(),
+        chain: "ethereum",
+        manifestId: DEFAULT_MANIFEST_ID,
+        slotId: "onboarding.default_basket",
+        recommendationId: "rec_partial_bridge",
+        activationManifestRef: {
+          manifestId: DEFAULT_MANIFEST_ID,
+          slotId: "onboarding.default_basket",
+          strategyVersion,
+          chain: "ethereum",
+          mode: "basket",
+        },
+        requestedNotionalUsd: 1000,
+        surfaceTruth: "live",
+        status: "ready",
+        createdAt: "2026-04-02T03:00:00.000Z",
+        updatedAt: "2026-04-02T03:00:00.000Z",
+        walletState: {
+          walletConnected: false,
+          walletAddress: null,
+          fundedNotionalUsd: 0,
+          fundingSource: null,
+          embeddedWallet: {
+            providerId: "privy_embedded_wallet",
+            status: "not_created",
+            address: null,
+          },
+          smartAccount: {
+            providerId: "privy_embedded",
+            status: "not_created",
+            address: null,
+            implementation: "privy_smart_wallet",
+            chain: "ethereum",
+          },
+        },
+        routeTruthLabels: [],
+        executionPlanSnapshot: createExecutionPlanSnapshotFixture({
+          manifestId: DEFAULT_MANIFEST_ID,
+          strategyVersion,
+          generatedAt: "2026-04-02T03:00:00.000Z",
+          walletAddress: harness.auth.primary.walletAddress,
+          smartWalletAddress: harness.auth.primary.smartWalletAddress,
+        }),
+      },
+      activityEvents: [],
+    });
+
+    const previewResponse = await fetch(
+      `${harness.baseUrl}/api/activation-preview?slotId=onboarding.default_basket&userNotionalUsd=1000`,
+      {
+        headers: createJsonHeaders(harness.auth),
+      },
+    );
+    const previewPayload = await previewResponse.json();
+
+    assert.equal(previewResponse.status, 200);
+    assert.equal(
+      previewPayload.data.executionPlan.smartAccount.bridgeState.manualSignerAddress,
+      harness.auth.primary.walletAddress,
+    );
+    assert.equal(
+      previewPayload.data.executionPlan.smartAccount.bridgeState.policyAccountAddress,
+      harness.auth.primary.smartWalletAddress,
+    );
+    assert.equal(
+      previewPayload.data.executionPlan.smartAccount.bridgeState.executionDestinationAddress,
+      harness.auth.primary.smartWalletAddress,
+    );
+    assert.equal(previewPayload.data.executionPlan.executionState, "ready");
+    assert.equal(
+      previewPayload.data.executionPlan.automationExecution.readiness,
+      "ready",
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
 test("activation save persists canonical activation and activity records", async () => {
   const harness = await startServer();
 
