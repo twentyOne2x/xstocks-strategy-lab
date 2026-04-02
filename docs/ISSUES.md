@@ -480,7 +480,46 @@ Last updated: 2026-04-02
   - Strongest truthful claim: the current promoted `c5` basket is executable now under venue-routed 1inch truth through a multi-leg signer-owned quote and approval boundary for `NVDAx`, `MSFTx`, `AAPLx`, `METAx`, `AMZNx`, and `GOOGLx`.
   - Exact remaining execution boundary: six quoted core legs now stop at `awaiting_approval`, and signer-owned 1inch Fusion EIP-712 signatures are still required before backend submission can be recorded.
   - The `AUSD` yield-buffer leg remains intentionally deferred/manual and is not included in the signer-owned 1inch core execution claim.
-  - Proof artifact: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-01T23-02-30.237Z/summary.json)
+- Proof artifact: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-01T23-02-30.237Z/summary.json)
+
+### XSL-014C Hosted / Session-Backed 1inch Signer Proof
+
+- Type: backend/integration/proof
+- Status: active
+- Canonical owner lane: `XSL-014`
+- Date opened: 2026-04-02
+- Context: `XSL-014B` already proved the promoted `c5` default basket through multi-leg `awaiting_approval` on `1inch.ethereum` for the six actionable core xStocks legs. This residual pass must reuse that exact promoted basket and authenticated proof path to capture real signer-owned EIP-712 approval payloads, submit signed 1inch Fusion orders when signer material is available, and persist venue-status or receipt truth without widening into `apps/web/**` or autonomous execution.
+- Suspected cause: the clean `origin/main` snapshot still carries the 1inch proof docs and runner but the current `apps/api` runtime wiring and execution mutation path regressed back to CoW-only handling, so the hosted/session-backed signer lane cannot truthfully advance on the updated clean tip until the landed 1inch substrate is restored on top of current backend truth.
+- Fix intent: restore the landed 1inch Fusion backend path on the current clean tip, keep the promoted `c5` basket and signer-owned approval boundary intact, capture real approval and signature payloads for every actionable core leg, submit signed orders if fresh authenticated signer material exists, and otherwise stop at the first exact external blocker.
+- Acceptance criteria:
+  1. `apps/api` truthfully supports `1inch.ethereum` quote, prepared-order approval payload capture, signed submission, venue-status refresh, and receipt polling on the current clean tip.
+  2. The proof runner persists per-leg 1inch approval payloads, signature inputs or signatures, submission responses, and venue-status or receipt artifacts for the actionable `c5` core legs.
+  3. Verification passes for:
+     `pnpm --filter @xstocks-strategy-lab/xstocks test`,
+     `node --test apps/api/test/api.test.js`,
+     `XSTOCKS_SHARED_ENV_PATH=/Users/user/.config/attn/shared.env node apps/api/scripts/oneinch-fusion-proof.js`,
+     and `git diff --check`.
+  4. The final proof either records real signed submission attempt plus venue-status or receipt truth, or fails closed at one exact external blocker after the internal backend path is restored.
+- Complexity: medium
+- Plan: [2026-04-02-xstocks-oneinch-hosted-session-backed-signer-proof.md](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/docs/plans/active/2026-04-02-xstocks-oneinch-hosted-session-backed-signer-proof.md)
+- Executor prompt:
+  - Work only in `apps/api/**`, the narrow shared/package files needed to restore the landed 1inch substrate on current tip, and the tracking docs for this sub-lane.
+  - Reuse the current promoted `c5` basket and authenticated proof path; do not downgrade to an easier basket and do not widen into `apps/web/**` or CRE autonomy.
+  - Capture real EIP-712 approval payloads for all actionable 1inch legs, submit signed orders if fresh signer material is available, persist venue-status or receipt truth, and stop at the first exact external blocker.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] proof artifacts captured
+- Verification note:
+  - The clean-tip backend 1inch regression was restored in `apps/api`, including 1inch route wiring, venue-routed quote or submission handling, and proof-artifact persistence for approval payloads and signature inputs.
+  - Verification passed with `pnpm --filter @xstocks-strategy-lab/xstocks test`, `node --test apps/api/test/api.test.js`, and `git diff --check`.
+  - The live proof rerun wrote [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-01T23-43-28.673Z/summary.json) and stopped truthfully before activation with `code=proof_request_failed`, `stage=environment_or_authentication`, `message="Privy access token is expired."`, and `statusCode=401`.
+  - The only available local `XSTOCKS_PRIVY_ACCESS_TOKEN` decodes to `exp=2026-04-01T23:07:10Z`; the proof attempted auth at `2026-04-01T23:43:28.673Z`, and no alternate local identity token, fresh session artifact, or repo-owned refresh helper exists in the standard proof inputs.
+  - A fresh live `24-7.markets` Privy session was then recaptured from the active Brave profile at `2026-04-02T00:00:21Z`, and Privy accepted the session refresh check with `200` for authenticated user `did:privy:cmng4u99003bf0ckye9oqgopk`.
+  - The new hosted proof rerun wrote [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-01-39.349Z/summary.json), [approval-payloads.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-01-39.349Z/approval-payloads.json), and [signature-inputs.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-01-39.349Z/signature-inputs.json), and advanced the promoted `c5` basket through authenticated activation and six real `1inch.ethereum` Fusion quotes to `awaiting_approval`.
+  - The first exact remaining external blocker is now signer-owned approval: the rerun stopped with `code=missing_user_signature`, `stage=awaiting_signature`, and `message="Signer-owned 1inch Fusion EIP-712 signatures are still required for 6 quoted core legs before backend submission can be recorded."` No signed submission, venue order id, venue-status update beyond `quote_ready`, or receipt truth exists yet.
 
 ### XSL-015 Partner Tracking And xStocks Reporting Dashboard
 

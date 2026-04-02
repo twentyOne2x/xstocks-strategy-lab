@@ -298,6 +298,18 @@ function summarizeLeg(leg) {
   };
 }
 
+function buildApprovalPayloadArtifact(leg) {
+  return {
+    legId: leg.legId,
+    assetSymbol: leg.assetSymbol ?? null,
+    sleeve: leg.sleeve,
+    state: leg.state,
+    quote: leg.quote ?? null,
+    approval: leg.approval ?? null,
+    venueStatus: leg.venueStatus ?? null,
+  };
+}
+
 function selectActionableLegs(executionRequest) {
   return executionRequest.legs.filter((leg) => leg.state !== "deferred");
 }
@@ -391,6 +403,7 @@ const summary = {
   activationId: null,
   executionRequestId: null,
   executionRequest: null,
+  approvalPayloadCount: 0,
   submissionResults: [],
 };
 
@@ -550,6 +563,15 @@ try {
   const quotedLegs = summary.executionRequest.legs.filter(
     (leg) => leg.state === "awaiting_approval" || leg.state === "quote_ready",
   );
+  const approvalPayloads = latestExecutionRequest.legs
+    .filter((leg) => leg.state === "awaiting_approval" || leg.state === "quote_ready")
+    .map(buildApprovalPayloadArtifact);
+
+  summary.approvalPayloadCount = approvalPayloads.length;
+
+  if (approvalPayloads.length > 0) {
+    await writeArtifact(proofDir, "approval-payloads.json", approvalPayloads);
+  }
 
   if (blockedLegs.length > 0) {
     summary.blocker = {
@@ -575,6 +597,19 @@ try {
         quotedLegs.length === 1 ? orderSignature : null,
       ),
     }));
+    await writeArtifact(
+      proofDir,
+      "signature-inputs.json",
+      signaturesByLeg.map(({ leg, signature }) => ({
+        legId: leg.legId,
+        assetSymbol: leg.assetSymbol ?? null,
+        orderHash:
+          leg.approval?.orderToSign?.orderHash ??
+          leg.quote?.orderHash ??
+          null,
+        signature: signature ?? null,
+      })),
+    );
     const unsignedLegs = signaturesByLeg
       .filter((entry) => !entry.signature)
       .map((entry) => ({
@@ -609,10 +644,18 @@ try {
         });
 
         latestSubmissionRequest = submissionResult.executionRequest;
+        const submittedLeg =
+          submissionResult.executionRequest.legs.find(
+            (nextLeg) => nextLeg.legId === leg.legId,
+          ) ?? null;
         summary.submissionResults.push({
           legId: leg.legId,
           assetSymbol: leg.assetSymbol,
           executionRequestState: submissionResult.executionRequest.state,
+          signature,
+          leg: submittedLeg ? summarizeLeg(submittedLeg) : null,
+          venueStatus: submittedLeg?.venueStatus ?? null,
+          receipt: submittedLeg?.receipt ?? null,
           activityEvents: submissionResult.activityEvents.map((event) => ({
             eventType: event.eventType,
             summary: event.summary,

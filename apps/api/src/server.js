@@ -2,7 +2,10 @@ import { createServer } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { createCowSwapApiClient } from "../../../packages/xstocks/dist/index.js";
+import {
+  createCowSwapApiClient,
+  createOneInchFusionApiClient,
+} from "../../../packages/xstocks/dist/index.js";
 import { API_ENDPOINT_CONTRACTS, API_ENDPOINTS } from "./contracts.js";
 import { HttpError } from "./errors.js";
 import { readJsonRequestBody, sendJson } from "./json.js";
@@ -27,7 +30,12 @@ function createDefaultConfig() {
     storePath: resolve(APP_ROOT, "data/runtime-store.json"),
     xstocksBaseUrl:
       process.env.XSTOCKS_API_BASE_URL ?? "https://api.xstocks.fi/api/v2",
+    backedApiBaseUrl:
+      process.env.BACKED_API_BASE_URL ?? "https://api.backed.fi/api/v1",
     cowApiBaseUrl: process.env.COW_API_BASE_URL ?? undefined,
+    oneInchFusionApiBaseUrl:
+      process.env.ONEINCH_FUSION_API_BASE_URL ?? undefined,
+    oneInchApiKey: process.env.ONEINCH_API_KEY ?? null,
     ethereumRpcUrl: process.env.ETHEREUM_RPC_URL ?? null,
     privyAppId:
       process.env.PRIVY_APP_ID ?? process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? null,
@@ -60,6 +68,7 @@ export function createApiRuntimeService(overrides = {}) {
       overrides.liveStateRepository ??
       createLiveStateRepository({
         baseUrl: config.xstocksBaseUrl,
+        backedBaseUrl: config.backedApiBaseUrl,
         fetchImpl: overrides.fetchImpl,
       }),
     runtimeStore:
@@ -73,6 +82,15 @@ export function createApiRuntimeService(overrides = {}) {
         baseUrl: config.cowApiBaseUrl,
         fetch: overrides.fetchImpl,
       }),
+    oneInchExecutionClient:
+      overrides.oneInchExecutionClient ??
+      (config.oneInchApiKey
+        ? createOneInchFusionApiClient({
+            authKey: config.oneInchApiKey,
+            baseUrl: config.oneInchFusionApiBaseUrl,
+            fetch: overrides.fetchImpl,
+          })
+        : null),
     ethereumRpcClient:
       overrides.ethereumRpcClient ??
       createEthereumRpcClient({
