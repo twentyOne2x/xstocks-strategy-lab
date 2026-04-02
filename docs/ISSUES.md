@@ -277,6 +277,24 @@ Last updated: 2026-04-02
     - Replace hard-coded showcase identity with live catalog-backed selection only where the cause is proven.
     - Keep API/catalog failures fail-closed on canonical freshness paths instead of silently reusing stale mock defaults.
     - Add regression coverage proving profile or live promoted truth can surface distinct portfolios.
+- Continuation note:
+  - Date: 2026-04-02
+  - Scope freeze: fix only the stale local qualification-slot and replay-curve truth gap across `XSL-010`, `XSL-004`, and `XSL-006`. Do not widen into execution, smart-account, or CRE work.
+  - Proven starting truth on updated `origin/main`: the local questionnaire logic still collapses several materially different answer profiles onto the same onboarding slot, `apps/api` does not serialize `manifest.replay` or `manifest.marketIntelligence` into API-backed manifest views, and the web replay renderer only trusts `replay.points` before falling back to a template. Together those gaps make API-backed manifests appear flat or 0% even when research already has real replay metrics.
+  - Fix intent for this tranche: map the named profile bands onto distinct promoted slots truthfully, carry a populated manifest replay curve from research/policy/API to the web contract, and prefer manifest-backed replay curves over synthetic templates whenever a truthful curve exists.
+  - Acceptance addendum:
+    1. At least three qualification profiles resolve to different promoted manifest slugs without reusing the same slot by accident.
+    2. API-backed basket manifests expose real replay metrics and a manifest-backed replay curve instead of collapsing to default 0% values.
+    3. Web replay surfaces prefer manifest-backed replay curves and only synthesize a line when no curve exists.
+  - Executor prompt:
+    - Keep slot-resolution changes scoped to local questionnaire/profile mapping and mirrored policy fixture coverage.
+    - Use only research-derived replay metrics to backfill replay curves; do not imply live holdings performance.
+    - Add regression coverage for slot-to-manifest differentiation and replay-curve preference.
+  - Closeout note:
+    1. The questionnaire compiler and local web adapter now split the named profile bands across all four promoted slots instead of collapsing broad/simple and high-risk thematic cases back onto stale defaults.
+    2. Research, policy normalization, API serialization, and web rendering now preserve manifest-backed replay curves, so API-backed manifests no longer default to flat 0% replay when truthful replay metrics already exist.
+    3. `pnpm --filter @xstocks-strategy-lab/web test`, policy qualification fixtures, API qualification fixtures, and API route tests passed in the clean worktree.
+    4. `pnpm --filter @xstocks-strategy-lab/web build` now passes on refreshed `origin/main`; only existing warnings remain from the optional Privy Farcaster mini-app dependency resolution path and pre-existing unused-variable lint warnings outside this lane.
 - Checklist:
   - [x] report captured
   - [x] context added

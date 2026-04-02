@@ -1,0 +1,35 @@
+{
+  "scenarioId": "medium-broader",
+  "label": "Medium risk broader basket",
+  "description": "Medium-risk user asking for a broader, more tilted basket should land on the middle onboarding slot.",
+  "answers": {
+    "q_goal_preference": "broad_exposure",
+    "q_expression_preference": "tilted",
+    "q_risk_level": "medium",
+    "q_drawdown_sensitivity": "medium",
+    "q_rebalance_preference": "scheduled",
+    "q_directional_appetite": "adaptive",
+    "q_automation_comfort": "medium",
+    "q_certainty": "high"
+  },
+  "walletState": {
+    "walletConnected": true,
+    "walletAddress": "0x00000000000000000000000000000000000000b6",
+    "fundedNotionalUsd": 0,
+    "smartAccount": {
+      "status": "ready",
+      "address": "0x0000000000000000000000000000000000000b66"
+    }
+  },
+  "expected": {
+    "slotId": "onboarding.alt_basket_1",
+    "mode": "basket",
+    "starterBasketId": "ai-infra",
+    "selectionType": "theme",
+    "selectionKey": "mag-7",
+    "executionState": "blocked",
+    "executionEligibility": "preview_only",
+    "directionalPreviewOnly": false,
+    "activationReady": false
+  }
+}

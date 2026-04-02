@@ -113,15 +113,80 @@ test("promoted manifests validate against canonical/shared projections and match
     assert.deepEqual(adaptedManifest.requiredRoutes, manifest.executionBoundary.requiredRoutes);
     assert.deepEqual(adaptedManifest.signalRefs, manifest.executionBoundary.signalRefs);
     if (manifest.mode === "basket") {
-      assert.deepEqual(adaptedManifest.walletRequirements, {
-        ...manifest.executionBoundary.walletRequirements,
-        requiresSmartAccount: false,
-        minFundingUsd: 0,
-      });
+      assert.equal(
+        adaptedManifest.walletRequirements.requiresWallet,
+        manifest.executionBoundary.walletRequirements.requiresWallet,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.requiresSmartAccount,
+        false,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.minFundingUsd,
+        0,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.preferredFundingProvider,
+        manifest.executionBoundary.walletRequirements.preferredFundingProvider,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.preferredBridgeProvider,
+        manifest.executionBoundary.walletRequirements.preferredBridgeProvider,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.topUpAsset,
+        manifest.executionBoundary.walletRequirements.topUpAsset,
+      );
+      assert.equal(adaptedManifest.walletRequirements.manualSigningMode, "wallet_first");
+      assert.equal(
+        adaptedManifest.walletRequirements.automationAccountMode,
+        "smart_account_required",
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.venueSigningMode,
+        "wallet_signer_manual_only",
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.supportsSeparateExecutionDestination,
+        true,
+      );
     } else {
-      assert.deepEqual(
-        adaptedManifest.walletRequirements,
-        manifest.executionBoundary.walletRequirements,
+      assert.equal(
+        adaptedManifest.walletRequirements.requiresWallet,
+        manifest.executionBoundary.walletRequirements.requiresWallet,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.requiresSmartAccount,
+        manifest.executionBoundary.walletRequirements.requiresSmartAccount,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.minFundingUsd,
+        manifest.executionBoundary.walletRequirements.minFundingUsd,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.preferredFundingProvider,
+        manifest.executionBoundary.walletRequirements.preferredFundingProvider,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.preferredBridgeProvider,
+        manifest.executionBoundary.walletRequirements.preferredBridgeProvider,
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.topUpAsset,
+        manifest.executionBoundary.walletRequirements.topUpAsset,
+      );
+      assert.equal(adaptedManifest.walletRequirements.manualSigningMode, "wallet_first");
+      assert.equal(
+        adaptedManifest.walletRequirements.automationAccountMode,
+        "smart_account_required",
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.venueSigningMode,
+        "wallet_signer_manual_only",
+      );
+      assert.equal(
+        adaptedManifest.walletRequirements.supportsSeparateExecutionDestination,
+        false,
       );
     }
   }
@@ -174,15 +239,26 @@ test("promoted incumbents still parse through shared helpers", () => {
   }
 });
 
-test("current onboarding basket manifests stay execution-boundary complete but preview-only on current CoW truth", () => {
-  const slotIds = [
-    "onboarding.default_basket",
+test("current onboarding basket manifests stay execution-boundary complete and reflect current route truth", () => {
+  const previewOnlySlotIds = [
     "onboarding.alt_basket_1",
     "onboarding.alt_basket_2",
   ];
 
-  assert.equal(validatePromotedBoundary().status, "ok");
-  for (const slotId of slotIds) {
+  const defaultManifest = readCurrentPromotedManifestDocumentBySlot(
+    "onboarding.default_basket",
+  );
+
+  assert.equal(defaultManifest.routeValidation.executionEligibility, "executable");
+  assert.equal(defaultManifest.routeValidation.surfaceTruth, "live");
+  assert.equal(defaultManifest.route_validation.execution_eligibility, "executable");
+  assert.equal(defaultManifest.route_validation.surface_truth, "live");
+  assert.ok(defaultManifest.routeValidation.validationBadges.includes("basket_live_ready"));
+  assert.equal(defaultManifest.routeValidation.validationBadges.includes("preview_only"), false);
+  assert.equal(defaultManifest.walletRequirements.minFundingUsd, 0);
+  assert.equal(defaultManifest.wallet_requirements.min_funding_usd, 0);
+
+  for (const slotId of previewOnlySlotIds) {
     const manifest = readCurrentPromotedManifestDocumentBySlot(slotId);
     const assessment = getCowQuoteabilityAssessmentForManifest(
       adaptResearchPromotedManifest(manifest),
@@ -369,7 +445,10 @@ test("default basket promoted manifest carries replay and market intelligence su
   assert.equal(manifest.replay.turnoverPct, summary.metrics.turnoverAnnPct);
   assert.ok(manifest.replay.winRatePct > 0);
   assert.ok(manifest.replay.points.length >= 2);
+  assert.ok(manifest.replay.replayCurve.length >= 2);
   assert.equal(manifest.replay.points[0].value, 1000);
+  assert.equal(manifest.replay.replayCurve[0].value, 1000);
+  assert.deepEqual(manifest.replay.replayCurve, manifest.replay.points);
   assert.equal(
     manifest.marketIntelligence.whatChanged[0],
     summary.tuningSummary.operatorSummary.changedFromBaseline,

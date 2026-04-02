@@ -534,6 +534,16 @@ export function adaptManifestToFrontend(
   const watchpoints = tuningSummary?.watchpoints ?? [];
   const apiReplay = manifest.replay;
   const apiMarketIntelligence = manifest.marketIntelligence;
+  const apiReplayCurve =
+    apiReplay?.replayCurve && apiReplay.replayCurve.length > 0
+      ? apiReplay.replayCurve
+      : apiReplay?.points && apiReplay.points.length > 0
+        ? apiReplay.points
+        : undefined;
+  const normalizedReplayCurve = apiReplayCurve?.map((point) => ({
+    label: point.label,
+    value: point.value,
+  }));
   const replay = apiReplay
     ? {
         startingCapital: apiReplay.startingCapital,
@@ -549,10 +559,8 @@ export function adaptManifestToFrontend(
               ).toFixed(4),
             )
           : 0,
-        points: apiReplay.points.map((point) => ({
-          label: point.label,
-          value: point.value,
-        })),
+        replayCurve: normalizedReplayCurve,
+        points: normalizedReplayCurve,
       }
     : {
         startingCapital: 1000,

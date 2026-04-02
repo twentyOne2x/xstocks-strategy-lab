@@ -95,7 +95,7 @@ describe("shared contract adapter", () => {
     expect(profile.certainty_level).toBe("low");
     expect(profile.uncertainty_path).toBe("exploring");
     expect(profile.resolved.safe_fallback_applied).toBe(false);
-    expect(recommendation.mode_id).toBe("onboarding.default_basket");
+    expect(recommendation.mode_id).toBe("onboarding.alt_basket_1");
   });
 
   it("can align recommendation copy to a backend-selected slot", () => {
@@ -163,6 +163,83 @@ describe("shared contract adapter", () => {
     ).toThrow(/No public strategy card matches slot onboarding\.alt_basket_1/);
   });
 
+  it("maps distinct qualification profiles to distinct manifest slugs", () => {
+    const scenarios = [
+      {
+        answers: {
+          q_goal_preference: "broad_exposure",
+          q_expression_preference: "simple",
+          q_risk_level: "low",
+          q_drawdown_sensitivity: "high",
+          q_rebalance_preference: "low_touch",
+          q_directional_appetite: "long_only",
+          q_automation_comfort: "low",
+          q_certainty: "medium",
+        },
+        expectedSlotId: "onboarding.alt_basket_2",
+        expectedManifestSlug: "spy-core-shield",
+      },
+      {
+        answers: {
+          q_goal_preference: "broad_exposure",
+          q_expression_preference: "tilted",
+          q_risk_level: "medium",
+          q_drawdown_sensitivity: "medium",
+          q_rebalance_preference: "scheduled",
+          q_directional_appetite: "adaptive",
+          q_automation_comfort: "medium",
+          q_certainty: "high",
+        },
+        expectedSlotId: "onboarding.alt_basket_1",
+        expectedManifestSlug: "mag7-cash-balance",
+      },
+      {
+        answers: {
+          q_goal_preference: "theme_tilt",
+          q_theme_preference: "tech_ai",
+          q_expression_preference: "active",
+          q_risk_level: "high",
+          q_drawdown_sensitivity: "low",
+          q_rebalance_preference: "active",
+          q_directional_appetite: "adaptive",
+          q_automation_comfort: "high",
+          q_certainty: "high",
+        },
+        expectedSlotId: "onboarding.default_basket",
+        expectedManifestSlug: "ai-infra-autopilot",
+      },
+      {
+        answers: {
+          q_goal_preference: "leaders",
+          q_expression_preference: "active",
+          q_risk_level: "high",
+          q_drawdown_sensitivity: "low",
+          q_rebalance_preference: "active",
+          q_directional_appetite: "directional",
+          q_automation_comfort: "high",
+          q_certainty: "high",
+        },
+        expectedSlotId: "advanced.default_directional",
+        expectedManifestSlug: "mstr-conviction-long",
+      },
+    ];
+
+    const slugs = scenarios.map(({ answers, expectedSlotId, expectedManifestSlug }) => {
+      const recommendedStrategy = recommendStrategyFromAnswers({
+        answers,
+        questions: onboardingQuestions,
+        recommendedStrategies: publicStrategies,
+      });
+
+      expect(recommendedStrategy.slotId).toBe(expectedSlotId);
+      expect(recommendedStrategy.manifestSlug).toBe(expectedManifestSlug);
+
+      return recommendedStrategy.manifestSlug;
+    });
+
+    expect(new Set(slugs).size).toBe(4);
+  });
+
   it("builds qualification flow result with deposit CTA", () => {
     const answers = {
       q_goal_preference: "broad_exposure",
@@ -191,7 +268,7 @@ describe("shared contract adapter", () => {
 
     expect(result.depositCtaLabel).toMatch(/Deposit/);
     expect(result.checks.length).toBeGreaterThan(0);
-    expect(result.profileContract.activeSlotId).toBe("onboarding.default_basket");
+    expect(result.profileContract.activeSlotId).toBe("onboarding.alt_basket_2");
     expect(result.optimizationMethod.pillLabel).toBe(
       "OPTIMISATION METHOD: AUTORESEARCH",
     );

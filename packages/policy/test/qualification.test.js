@@ -33,8 +33,10 @@ async function loadManifest(slotId) {
 
 const fixtureNames = [
   "broad-cautious",
+  "medium-broader",
   "theme-tilt",
   "active-leaders",
+  "high-risk-ai-theme",
   "directional-opt-in",
   "skip-not-sure",
 ];

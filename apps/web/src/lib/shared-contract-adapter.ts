@@ -760,53 +760,58 @@ export function buildStrategyRecommendationForMode(
   return buildStrategyRecommendationForResolvedMode(profile, modeId);
 }
 
-export function buildStrategyRecommendation(profile: OnboardingProfile): StrategyRecommendation {
-  // Base lane mapping
-  let modeId: LocalStrategySlotId;
-  if (profile.resolved.goal_preference === "broad_exposure") {
-    modeId = "onboarding.default_basket";
-  } else if (profile.resolved.goal_preference === "theme_tilt") {
-    modeId = "onboarding.alt_basket_1";
-  } else {
-    modeId = "onboarding.alt_basket_2";
-  }
+function resolveLocalStrategySlot(
+  profile: OnboardingProfile,
+): LocalStrategySlotId {
+  const resolvedTheme = profile.resolved.theme_preference;
+  const resolvedRisk = profile.resolved.risk_level;
+  const prefersLongOnlySimpleBasket =
+    (resolvedRisk === "low" || resolvedRisk === "medium") &&
+    profile.resolved.strategy_appetite === "long_only" &&
+    profile.resolved.expression_band === "simple";
+  const prefersBroaderBasket =
+    resolvedRisk === "medium" &&
+    (
+      profile.resolved.goal_preference === "broad_exposure" ||
+      resolvedTheme === "broad_market" ||
+      profile.resolved.expression_band === "tilted" ||
+      profile.resolved.strategy_appetite === "adaptive"
+    );
+  const highRiskAiTechTheme =
+    resolvedRisk === "high" && resolvedTheme === "tech_ai";
 
-  // Directional override
   if (profile.resolved.directional_eligible) {
-    modeId = "advanced.default_directional";
+    return "advanced.default_directional";
   }
 
-  // Downshift alt_basket_2 to alt_basket_1
-  if (modeId === "onboarding.alt_basket_2") {
-    if (
-      profile.resolved.expression_band === "simple" ||
-      profile.rebalance_preference === "low_touch" ||
-      profile.automation_comfort === "low" ||
-      profile.drawdown_sensitivity === "high" ||
-      profile.certainty_level === "low"
-    ) {
-      modeId = "onboarding.alt_basket_1";
-    }
-  }
-
-  // Downshift alt_basket_1 to default_basket
-  if (modeId === "onboarding.alt_basket_1") {
-    if (
-      profile.theme_preference === "unsure" ||
-      profile.certainty_level === "low" ||
-      profile.uncertainty_path === "default_requested" ||
-      profile.not_sure_count >= 3
-    ) {
-      modeId = "onboarding.default_basket";
-    }
-  }
-
-  // Force safe fallback
   if (profile.resolved.safe_fallback_applied) {
-    modeId = "onboarding.default_basket";
+    return "onboarding.default_basket";
   }
 
-  return buildStrategyRecommendationForResolvedMode(profile, modeId);
+  if (prefersLongOnlySimpleBasket) {
+    return "onboarding.alt_basket_2";
+  }
+
+  if (highRiskAiTechTheme) {
+    return "onboarding.default_basket";
+  }
+
+  if (prefersBroaderBasket || profile.resolved.goal_preference === "theme_tilt") {
+    return "onboarding.alt_basket_1";
+  }
+
+  if (profile.resolved.goal_preference === "leaders") {
+    return "onboarding.alt_basket_2";
+  }
+
+  return "onboarding.default_basket";
+}
+
+export function buildStrategyRecommendation(profile: OnboardingProfile): StrategyRecommendation {
+  return buildStrategyRecommendationForResolvedMode(
+    profile,
+    resolveLocalStrategySlot(profile),
+  );
 }
 
 export function recommendStrategyFromAnswers({

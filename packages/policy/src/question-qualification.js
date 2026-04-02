@@ -317,45 +317,39 @@ export function buildOnboardingProfile(question_answers = {}) {
 
 export function buildStrategyRecommendation(profile) {
   const parsedProfile = onboardingProfileSchema.parse(profile);
-  let modeId;
-
-  if (parsedProfile.resolved.goal_preference === "broad_exposure") {
-    modeId = STARTER_SLOT_IDS.ONBOARDING_DEFAULT_BASKET;
-  } else if (parsedProfile.resolved.goal_preference === "theme_tilt") {
-    modeId = STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_1;
-  } else {
-    modeId = STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_2;
-  }
+  const prefersLongOnlySimpleBasket =
+    (parsedProfile.resolved.risk_level === "low" ||
+      parsedProfile.resolved.risk_level === "medium") &&
+    parsedProfile.resolved.strategy_appetite === "long_only" &&
+    parsedProfile.resolved.expression_band === "simple";
+  const prefersBroaderBasket =
+    parsedProfile.resolved.risk_level === "medium" &&
+    (
+      parsedProfile.resolved.goal_preference === "broad_exposure" ||
+      parsedProfile.resolved.theme_preference === "broad_market" ||
+      parsedProfile.resolved.expression_band === "tilted" ||
+      parsedProfile.resolved.strategy_appetite === "adaptive"
+    );
+  const highRiskAiTechTheme =
+    parsedProfile.resolved.risk_level === "high" &&
+    parsedProfile.resolved.theme_preference === "tech_ai";
+  let modeId = STARTER_SLOT_IDS.ONBOARDING_DEFAULT_BASKET;
 
   if (parsedProfile.resolved.directional_eligible) {
     modeId = STARTER_SLOT_IDS.ADVANCED_DEFAULT_DIRECTIONAL;
-  }
-
-  if (modeId === STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_2) {
-    if (
-      parsedProfile.resolved.expression_band === "simple" ||
-      parsedProfile.rebalance_preference === "low_touch" ||
-      parsedProfile.automation_comfort === "low" ||
-      parsedProfile.drawdown_sensitivity === "high" ||
-      parsedProfile.certainty_level === "low"
-    ) {
-      modeId = STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_1;
-    }
-  }
-
-  if (modeId === STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_1) {
-    if (
-      parsedProfile.theme_preference === "unsure" ||
-      parsedProfile.certainty_level === "low" ||
-      parsedProfile.uncertainty_path === "default_requested" ||
-      parsedProfile.not_sure_count >= 3
-    ) {
-      modeId = STARTER_SLOT_IDS.ONBOARDING_DEFAULT_BASKET;
-    }
-  }
-
-  if (parsedProfile.resolved.safe_fallback_applied) {
+  } else if (parsedProfile.resolved.safe_fallback_applied) {
     modeId = STARTER_SLOT_IDS.ONBOARDING_DEFAULT_BASKET;
+  } else if (prefersLongOnlySimpleBasket) {
+    modeId = STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_2;
+  } else if (highRiskAiTechTheme) {
+    modeId = STARTER_SLOT_IDS.ONBOARDING_DEFAULT_BASKET;
+  } else if (
+    prefersBroaderBasket ||
+    parsedProfile.resolved.goal_preference === "theme_tilt"
+  ) {
+    modeId = STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_1;
+  } else if (parsedProfile.resolved.goal_preference === "leaders") {
+    modeId = STARTER_SLOT_IDS.ONBOARDING_ALT_BASKET_2;
   }
 
   const whyRecommended = [];

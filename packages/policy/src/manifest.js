@@ -824,15 +824,33 @@ function normalizeResearchTuningSummary(manifest, rawManifest) {
 }
 
 function normalizeReplaySurface(manifest, rawManifest) {
-  if (manifest?.replay) {
-    return replaySurfaceSchema.parse(manifest.replay);
+  const replayValue = manifest?.replay ?? rawManifest?.replay ?? null;
+
+  if (!replayValue || typeof replayValue !== "object") {
+    return null;
   }
 
-  if (rawManifest?.replay) {
-    return replaySurfaceSchema.parse(rawManifest.replay);
+  const points =
+    Array.isArray(replayValue.points) && replayValue.points.length >= 2
+      ? replayValue.points
+      : Array.isArray(replayValue.replayCurve) && replayValue.replayCurve.length >= 2
+        ? replayValue.replayCurve
+        : null;
+
+  if (!points) {
+    return null;
   }
 
-  return null;
+  const replayCurve =
+    Array.isArray(replayValue.replayCurve) && replayValue.replayCurve.length >= 2
+      ? replayValue.replayCurve
+      : points;
+
+  return replaySurfaceSchema.parse({
+    ...replayValue,
+    points,
+    replayCurve,
+  });
 }
 
 function normalizeMarketIntelligenceSurfaceValue(value) {

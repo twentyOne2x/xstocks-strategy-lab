@@ -169,7 +169,8 @@ export interface ApiManifestReplay {
   maxDrawdownPct: number;
   turnoverPct: number;
   winRatePct: number;
-  points: ApiManifestReplayPoint[];
+  replayCurve?: ApiManifestReplayPoint[];
+  points?: ApiManifestReplayPoint[];
 }
 
 export interface ApiManifestMarketDriver {

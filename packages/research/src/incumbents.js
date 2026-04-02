@@ -555,7 +555,11 @@ function buildBasketExplanationSurface(incumbent) {
   const bundle = loadResearchBundle();
   assertPromotedBasketSummaryMatchesIncumbent(incumbent, summary);
   const { explanationBundle, tuningSummary } = deriveBasketSummaryArtifacts(summary);
-  const replay = deriveBasketReplaySurface(summary, { bundle });
+  const replaySurface = deriveBasketReplaySurface(summary, { bundle });
+  const replay = {
+    ...replaySurface,
+    replayCurve: replaySurface.points,
+  };
   const marketIntelligence = buildBasketMarketIntelligenceSurface(summary, bundle);
 
   return {

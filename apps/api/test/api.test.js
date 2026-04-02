@@ -1031,6 +1031,13 @@ test("catalog read returns promoted-manifest-backed results from research", asyn
       defaultItem.manifest.tuningSummary?.currentKnobs.length > 0,
       true,
     );
+    assert.equal(defaultItem.manifest.replay?.startingCapital, 1000);
+    assert.equal(defaultItem.manifest.replay?.replayCurve?.length > 1, true);
+    assert.equal(
+      defaultItem.manifest.replay?.replayCurve?.[0]?.value,
+      defaultItem.manifest.replay?.startingCapital,
+    );
+    assert.ok(defaultItem.manifest.marketIntelligence);
     assert.equal(Object.hasOwn(defaultItem.manifest, "rawExplanationBundle"), false);
     assert.match(defaultItem.manifest.explanation.thesis, /xStocks basket|yield buffer/i);
     assert.ok(defaultItem.manifest.explanation.holdingRationales.length > 0);
@@ -1072,6 +1079,9 @@ test("workspace read returns manifest-driven workspace data", async () => {
       payload.data.manifest.tuningSummary?.headline,
       DEFAULT_MANIFEST.researchTuningSummary.headline,
     );
+    assert.equal(payload.data.manifest.replay?.startingCapital, 1000);
+    assert.equal(payload.data.manifest.replay?.replayCurve?.length > 1, true);
+    assert.ok(payload.data.manifest.marketIntelligence);
     assert.match(payload.data.manifest.explanation.whatThisDoes, /tokenized equities|basket/i);
     assert.equal(
       payload.data.workspace.recommendation.activationManifestRef.manifestId,
@@ -3201,8 +3211,10 @@ test("qualification endpoint returns canonical agent-facing qualification output
   try {
     for (const fixtureName of [
       "broad-cautious",
+      "medium-broader",
       "theme-tilt",
       "active-leaders",
+      "high-risk-ai-theme",
       "directional-opt-in",
     ]) {
       const fixture = await loadQualificationFixture(fixtureName);
