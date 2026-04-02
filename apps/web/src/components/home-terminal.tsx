@@ -91,8 +91,8 @@ export function HomeTerminal() {
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
               <div className="landing-flow-num">2</div>
-              <h3>Get your match</h3>
-              <p>We compare portfolio candidates and show you the one that fits your profile best.</p>
+              <h3>Autoresearch matches you</h3>
+              <p>Our engine tests portfolio candidates against historical data and picks the best performer for your profile.</p>
             </div>
             <div className="landing-flow-arrow" />
             <div className="landing-flow-step">
@@ -105,6 +105,38 @@ export function HomeTerminal() {
               <div className="landing-flow-num">4</div>
               <h3>Fund when ready</h3>
               <p>Connect your wallet through Privy and deposit USDC. Pause or exit whenever you want.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Autoresearch */}
+      <section className="landing-section landing-section-alt" id="autoresearch">
+        <div className="landing-section-inner landing-section-center">
+          <span className="landing-section-kicker">Portfolio intelligence</span>
+          <h2 className="landing-h2">Powered by Autoresearch.</h2>
+          <p className="landing-section-sub" style={{ marginInline: "auto" }}>
+            Inspired by Andrej Karpathy&apos;s approach to training neural networks — run many experiments, keep the winner.
+            Autoresearch continuously tests portfolio configurations against real market data and promotes the best performer.
+            Your portfolio is always the current champion.
+          </p>
+          <div className="landing-flow" style={{ gridTemplateColumns: "1fr auto 1fr auto 1fr", maxWidth: "720px" }}>
+            <div className="landing-flow-step">
+              <div className="landing-flow-num">1</div>
+              <h3>Generate candidates</h3>
+              <p>Different weights, holdings, and risk profiles are tested.</p>
+            </div>
+            <div className="landing-flow-arrow" />
+            <div className="landing-flow-step">
+              <div className="landing-flow-num">2</div>
+              <h3>Replay-test</h3>
+              <p>Each candidate runs against historical market data.</p>
+            </div>
+            <div className="landing-flow-arrow" />
+            <div className="landing-flow-step">
+              <div className="landing-flow-num">3</div>
+              <h3>Promote the winner</h3>
+              <p>The best performer becomes your portfolio. Re-evaluated regularly.</p>
             </div>
           </div>
         </div>

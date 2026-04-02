@@ -3309,6 +3309,43 @@ button { font: inherit; }
   font-size: 0.82rem;
 }
 
+/* ── Allocation bar ── */
+
+.pq-alloc-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.pq-alloc-segment {
+  transition: flex 300ms ease;
+}
+
+.pq-alloc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.pq-alloc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  font-family: var(--font-mono), monospace;
+}
+
+.pq-alloc-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 /* ── Right rail ── */
 
 .pq-rail {
@@ -4280,4 +4317,65 @@ button { font: inherit; }
   .ops-reconciliation-summary {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 768px) {
+  /* Landing hero */
+  .landing-hero { padding: 32px 16px 28px; }
+  .brand-lockup-lg .brand-247 { font-size: 4rem; -webkit-text-stroke: 3px var(--black); }
+  .brand-lockup-lg .brand-markets { font-size: 1.2rem; }
+  .landing-hero-sub { font-size: 1rem; }
+
+  /* Landing header */
+  .landing-header-inner { height: 56px; }
+  .landing-header-link { padding: 0 0.8rem; font-size: 0.82rem; }
+  .landing-header-cta { padding: 0 1rem; font-size: 0.95rem; }
+
+  /* Landing flow */
+  .landing-flow { grid-template-columns: 1fr !important; gap: 16px; }
+  .landing-flow-arrow { display: none; }
+
+  /* Stack */
+  .landing-stack-layer { flex-direction: column; gap: 8px; padding: 14px 20px; }
+  .landing-stack-label { min-width: 0; font-size: 1.1rem; }
+
+  /* Footer */
+  .landing-footer-inner { flex-direction: column; gap: 28px; }
+
+  /* Onboarding */
+  .onboarding-flow { width: auto; margin: 0 8px; padding: 20px 16px; }
+  .onboarding-flow-question h2 { font-size: 1.8rem; }
+  .onboarding-entry-card { padding: 24px 16px; }
+  .onboarding-entry-card h1 { font-size: 2.5rem; }
+
+  /* App workspace */
+  .pq-grid { grid-template-columns: 1fr; }
+  .pq-rail { position: static; }
+  .pq-preview-bar { flex-direction: column; gap: 10px; padding: 10px 16px; }
+  .pq-preview-bar-left { flex-wrap: wrap; }
+  .pq-summary-head { flex-direction: column; gap: 12px; }
+  .pq-summary-strip { flex-direction: column; }
+  .pq-summary-explain { grid-template-columns: 1fr; }
+  .pq-gate-explain-grid { grid-template-columns: 1fr; }
+  .pq-gate-stats { flex-direction: column; }
+  .pq-gate-inner { padding: 24px 16px; }
+  .pq-gate-title { font-size: 2.5rem; }
+  .pq-activity-grid { grid-template-columns: 1fr; }
+  .pq-how-row { flex-direction: column; }
+
+  /* Tour */
+  .pq-tour-bar-inner { flex-direction: column; gap: 10px; padding: 10px 16px; }
+  .pq-tour-welcome-card { padding: 32px 20px; }
+  .pq-tour-welcome-card h2 { font-size: 1.5rem; }
+
+  /* Tables */
+  .data-table { min-width: 0; }
+
+  /* FAQ */
+  .landing-faq-item summary { font-size: 1.1rem; padding: 14px 16px; }
+  .landing-faq-item p { padding: 0 16px 14px; font-size: 1rem; }
+
+  /* Powered band */
+  .landing-powered-band { gap: 12px; padding: 14px 16px; flex-wrap: wrap; }
+  .landing-powered-name { font-size: 0.88rem; }
 }

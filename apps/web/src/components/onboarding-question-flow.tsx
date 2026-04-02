@@ -108,6 +108,7 @@ export function OnboardingQuestionFlow({
     onRetry?: () => void;
   } | null;
 }) {
+  const [optionCooldown, setOptionCooldown] = useState(false);
   const primaryQuestions = questions.filter((q) => !q.conditional);
   const answeredPrimaryCount = primaryQuestions.filter((q) => answers[q.id] !== undefined).length;
 
@@ -176,7 +177,12 @@ export function OnboardingQuestionFlow({
             <button
               className="onboarding-option"
               key={option.id}
-              onClick={() => onAnswer(questionToShow.id, option.id)}
+              onClick={() => {
+                if (optionCooldown) return;
+                setOptionCooldown(true);
+                onAnswer(questionToShow.id, option.id);
+                setTimeout(() => setOptionCooldown(false), 600);
+              }}
               type="button"
             >
               <strong>{option.label}</strong>
@@ -187,7 +193,12 @@ export function OnboardingQuestionFlow({
         {skipOption && (
           <button
             className="onboarding-option onboarding-option-skip"
-            onClick={() => onAnswer(questionToShow.id, skipOption.id)}
+            onClick={() => {
+              if (optionCooldown) return;
+              setOptionCooldown(true);
+              onAnswer(questionToShow.id, skipOption.id);
+              setTimeout(() => setOptionCooldown(false), 600);
+            }}
             type="button"
           >
             <strong>Skip / not sure</strong>
@@ -661,6 +672,13 @@ function SimulatedWorkspace({
     }
   }, [highlightId]);
 
+  // Shareable portfolio URL
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("portfolio", manifest.slug);
+    window.history.replaceState({}, "", url.toString());
+  }, [manifest.slug]);
+
   return (
     <>
     {!tourDismissed && !tourWelcomeShown && (
@@ -788,6 +806,33 @@ function SimulatedWorkspace({
               <div className="pq-perf-meta">
                 <span>30-day simulated replay from {formatCurrency(manifest.replay.startingCapital)}</span>
                 <span>Max drawdown: {formatPercent(manifest.replay.maxDrawdownPct)}</span>
+              </div>
+
+              {/* Asset allocation bar */}
+              <div className="pq-alloc-bar">
+                {manifest.allocations.map((alloc, i) => {
+                  const weight = parseFloat(alloc.targetWeight) || 0;
+                  const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
+                  return (
+                    <div
+                      key={alloc.symbol}
+                      className="pq-alloc-segment"
+                      style={{ flex: weight, background: colors[i % colors.length] }}
+                      title={`${alloc.symbol}: ${alloc.targetWeight}`}
+                    />
+                  );
+                })}
+              </div>
+              <div className="pq-alloc-legend">
+                {manifest.allocations.map((alloc, i) => {
+                  const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
+                  return (
+                    <span className="pq-alloc-legend-item" key={alloc.symbol}>
+                      <span className="pq-alloc-legend-dot" style={{ background: colors[i % colors.length] }} />
+                      {alloc.symbol} {alloc.targetWeight}
+                    </span>
+                  );
+                })}
               </div>
             </div>
 
