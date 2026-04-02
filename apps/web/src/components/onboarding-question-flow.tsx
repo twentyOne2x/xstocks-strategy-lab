@@ -656,6 +656,8 @@ function SimulatedWorkspace({
   const shortWallet = walletAddress
     ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
     : null;
+  const [buyModalOpen, setBuyModalOpen] = useState(false);
+  const [buyAmount, setBuyAmount] = useState("100");
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
@@ -721,9 +723,9 @@ function SimulatedWorkspace({
         <div className="pq-preview-bar-actions">
           {authenticated ? (
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <Link className="button button-primary button-lg" href={`/workspace/detail/${manifest.slug}#buy`}>
+              <button className="button button-primary button-lg" onClick={() => setBuyModalOpen(true)} type="button">
                 Buy with 1inch
-              </Link>
+              </button>
               <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
               <button className="button button-ghost button-sm" onClick={logout} type="button">Disconnect</button>
             </div>
@@ -1083,6 +1085,74 @@ function SimulatedWorkspace({
       </section>
 
       {previewStatus && previewStatus.tone === "loading" ? <p className="panel-note" style={{ padding: "16px", textAlign: "center" }}>{previewStatus.message}</p> : null}
+
+      {/* Buy Modal */}
+      {buyModalOpen && (
+        <div className="pq-tour-welcome-overlay" onClick={() => setBuyModalOpen(false)}>
+          <div className="pq-tour-welcome-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "540px", textAlign: "left" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ margin: 0, fontSize: "1.5rem" }}>Buy this portfolio</h2>
+              <button onClick={() => setBuyModalOpen(false)} type="button" style={{ background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer", color: "var(--text-muted)" }}>&times;</button>
+            </div>
+            <p style={{ margin: 0, color: "var(--text-soft)", fontSize: "0.95rem" }}>Enter the USDC amount. It will be split across the portfolio assets by weight.</p>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 0" }}>
+              <span style={{ fontSize: "1.8rem", fontWeight: 700 }}>$</span>
+              <input
+                type="number"
+                value={buyAmount}
+                onChange={(e) => setBuyAmount(e.target.value)}
+                style={{ flex: 1, fontSize: "1.8rem", fontWeight: 700, border: "var(--border-w) solid var(--black)", padding: "10px 14px", fontFamily: "var(--font-mono)", textAlign: "right" }}
+                min="1"
+                step="1"
+              />
+              <span style={{ fontSize: "1rem", color: "var(--text-muted)", fontWeight: 600 }}>USDC</span>
+            </div>
+
+            <div style={{ display: "grid", gap: "6px", padding: "12px 0", borderTop: "1px solid var(--gray-200)" }}>
+              <span className="section-kicker">Allocation preview</span>
+              {manifest.allocations.map((alloc, i) => {
+                const weight = parseFloat(alloc.targetWeight) || 0;
+                const amount = ((weight / 100) * parseFloat(buyAmount || "0")).toFixed(2);
+                const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
+                return (
+                  <div key={alloc.symbol} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 0" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ width: "10px", height: "10px", borderRadius: "2px", background: colors[i % colors.length], flexShrink: 0 }} />
+                      <strong style={{ fontSize: "0.95rem" }}>{alloc.symbol}</strong>
+                      <span style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>{alloc.targetWeight}</span>
+                    </div>
+                    <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.95rem" }}>${amount}</strong>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 0", color: "var(--text-muted)", fontSize: "0.82rem" }}>
+              <span>Execution via</span>
+              <strong style={{ color: "var(--text)" }}>1inch Fusion</strong>
+              <span>on</span>
+              <strong style={{ color: "var(--text)" }}>Ethereum</strong>
+            </div>
+
+            <button
+              className="button button-primary button-xl"
+              style={{ width: "100%" }}
+              type="button"
+              onClick={() => {
+                // TODO: wire to runManualExecutionFlow
+                alert(`Buy $${buyAmount} USDC of ${recommendation.title} via 1inch — execution flow coming soon`);
+              }}
+            >
+              Buy ${buyAmount} of {recommendation.title}
+            </button>
+
+            <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.78rem", textAlign: "center" }}>
+              You will sign each trade with your connected wallet. Nothing executes without your approval.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Infrastructure strip — moved from portfolio section */}
       <section className="pq-fw-section" style={{ marginTop: 0 }}>

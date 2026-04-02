@@ -89,12 +89,14 @@ function isKnownStrategySlotId(
 export function OnboardingTerminalExperience({
   questions,
   recommendedStrategies,
+  portfolioId,
 }: {
   questions: OnboardingQuestion[];
   recommendedStrategies: PublicStrategyCardData[];
+  portfolioId?: string;
   }) {
     const searchParams = useSearchParams();
-    const hasPortfolioId = searchParams?.has("p") ?? false;
+    const hasPortfolioId = !!portfolioId || (searchParams?.has("p") ?? false);
     const fastDefaults: Record<string, string> = {
       q_goal_preference: "broad_exposure",
       q_expression_preference: "simple",
