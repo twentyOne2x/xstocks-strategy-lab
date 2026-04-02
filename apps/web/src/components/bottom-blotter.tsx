@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import type { BlotterData } from "@/lib/contracts";
 
+import { ExecutionArtifactLinks } from "@/components/execution-artifact-links";
+
 type BlotterTab = "positions" | "history" | "rebalancing" | "activity";
 
 const stateTooltips: Record<string, string> = {
@@ -98,7 +100,12 @@ export function BottomBlotter({
                 <td>{row.timestamp}</td>
                 <td><span className={`status-pill status-pill-${row.status}`}>{row.status}</span></td>
                 <td>{row.type}</td>
-                <td>{row.description}</td>
+                <td>
+                  <div className="timeline-copy">
+                    <span>{row.description}</span>
+                    <ExecutionArtifactLinks artifacts={row.executionArtifacts} />
+                  </div>
+                </td>
                 <td>{row.amount}</td>
               </tr>
             ))}
@@ -138,6 +145,7 @@ export function BottomBlotter({
               <div className="timeline-copy">
                 <h3>{event.title}</h3>
                 <p>{event.detail}</p>
+                <ExecutionArtifactLinks artifacts={event.executionArtifacts} />
                 {event.nextAction && event.nextAction !== "No action" && (
                   <p className="panel-note">{event.nextAction}</p>
                 )}

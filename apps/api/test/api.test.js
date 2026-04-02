@@ -2309,6 +2309,110 @@ test("execution quote, approval, submission, and receipt actions persist live Co
   }
 });
 
+test("activity surface preserves structured execution artifacts and Ethereum explorer links", async () => {
+  const harness = await startServer({
+    cowExecutionClient: createCowExecutionClientStub(),
+    ethereumRpcClient: createEthereumRpcClientStub(),
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 1000,
+        walletState: createReadyWalletState(harness.auth),
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+      }),
+    });
+    const createPayload = await createResponse.json();
+    const quoteLeg = createPayload.data.executionRequest.legs.find(
+      (leg) => leg.state === "pending",
+    );
+
+    await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+      }),
+    });
+
+    const submissionResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        action: "record_submission",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quoteLeg.legId,
+        signature: TEST_COW_SIGNATURE,
+      }),
+    });
+    assert.equal(submissionResponse.status, 200);
+
+    const activityResponse = await fetch(
+      `${harness.baseUrl}/api/activity?activationId=${activationPayload.data.activation.activationId}`,
+      {
+        headers: harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+    );
+    const activityPayload = await activityResponse.json();
+    const succeededHistory = activityPayload.data.activitySurface.history.find(
+      (item) => item.type === "activation_succeeded",
+    );
+    const succeededLifecycle = activityPayload.data.activitySurface.lifecycle.find(
+      (item) => item.title === "activation_succeeded",
+    );
+
+    assert.equal(activityResponse.status, 200);
+    assert.equal(
+      succeededHistory.executionArtifacts.venueOrderId,
+      TEST_COW_ORDER_UID,
+    );
+    assert.equal(
+      succeededHistory.executionArtifacts.txHash,
+      TEST_SETTLEMENT_TX_HASH,
+    );
+    assert.equal(succeededHistory.executionArtifacts.chain, "ethereum");
+    assert.equal(
+      succeededHistory.executionArtifacts.explorerUrls.etherscanTx,
+      `https://etherscan.io/tx/${TEST_SETTLEMENT_TX_HASH}`,
+    );
+    assert.equal(
+      succeededHistory.executionArtifacts.explorerUrls.eigenPhiTx,
+      `https://eigenphi.io/mev/eigentx/${TEST_SETTLEMENT_TX_HASH}`,
+    );
+    assert.equal(
+      succeededLifecycle.executionArtifacts.venueOrderId,
+      TEST_COW_ORDER_UID,
+    );
+    assert.equal(
+      succeededLifecycle.executionArtifacts.txHash,
+      TEST_SETTLEMENT_TX_HASH,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
 test("execution quote failures persist exact CoW request diagnostics instead of a generic blocker", async () => {
   const harness = await startServer({
     cowExecutionClient: {

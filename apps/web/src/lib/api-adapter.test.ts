@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { ApiManifestView, ApiSlot } from "./api-client";
-import { adaptManifestToFrontend } from "./api-adapter";
+import type { ApiActivityData, ApiManifestView, ApiSlot } from "./api-client";
+import { adaptActivityToBlotter, adaptManifestToFrontend } from "./api-adapter";
 import { getWorkspaceSpotlightData } from "./data-source";
 import { buildPromotedManifestSlug } from "./promoted-manifest-identity";
 
@@ -298,5 +298,102 @@ describe("adaptManifestToFrontend", () => {
       { label: "Now", value: 1450 },
     ]);
     expect(spotlight.points.at(-1)?.value).toBe(1450);
+  });
+});
+
+describe("adaptActivityToBlotter", () => {
+  it("keeps structured execution artifacts on history and activity rows", () => {
+    const adaptedManifest = adaptManifestToFrontend(manifest, slot);
+    const activityData: ApiActivityData = {
+      version: "1",
+      generatedAt: "2026-04-02T00:00:00.000Z",
+      limit: 10,
+      manifest,
+      slot,
+      items: [],
+      activations: [],
+      rebalanceOrchestration: null,
+      rebalanceHistory: [],
+      activitySurface: {
+        source: "activation_snapshot",
+        currentState: {
+          surfaceTruth: "live",
+          executionState: "pending",
+          pauseAvailable: true,
+          turnOffAvailable: true,
+        },
+        positions: [
+          {
+            positionId: "pos_1",
+            assetSymbol: "NVDAx",
+            sleeve: "core_xstocks",
+            targetWeightPct: 55,
+            targetNotionalUsd: 550,
+            venueId: "cow_swap.ethereum",
+            priceUsd: 101,
+            status: "active",
+            updatedAt: "2026-04-02T00:00:00.000Z",
+          },
+        ],
+        history: [
+          {
+            id: "evt_history",
+            occurredAt: "2026-04-02T00:00:00.000Z",
+            type: "activation_submitted",
+            summary: "Recorded user-approved venue submission.",
+            status: "pending",
+            executionArtifacts: {
+              txHash:
+                "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+              venueOrderId:
+                "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+              chain: "ethereum",
+              explorerUrls: {
+                etherscanTx:
+                  "https://etherscan.io/tx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+                eigenPhiTx:
+                  "https://eigenphi.io/mev/eigentx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+              },
+            },
+          },
+        ],
+        lifecycle: [
+          {
+            id: "evt_lifecycle",
+            occurredAt: "2026-04-02T00:01:00.000Z",
+            title: "activation_succeeded",
+            detail: "Execution confirmed for NVDAx.",
+            state: "settled",
+            nextAction: null,
+            executionArtifacts: {
+              txHash:
+                "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+              venueOrderId:
+                "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+              chain: "ethereum",
+              explorerUrls: {
+                etherscanTx:
+                  "https://etherscan.io/tx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+                eigenPhiTx:
+                  "https://eigenphi.io/mev/eigentx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+              },
+            },
+          },
+        ],
+        nextAction: null,
+      },
+    };
+
+    const blotter = adaptActivityToBlotter(activityData, [adaptedManifest]);
+
+    expect(blotter.positions[0].route).toBe("cow_swap.ethereum");
+    expect(blotter.positions[0].pnlPct).toBe("—");
+    expect(blotter.history[0].executionArtifacts?.venueOrderId).toMatch(/^0xabc/);
+    expect(blotter.history[0].executionArtifacts?.explorerUrls?.etherscanTx).toBe(
+      "https://etherscan.io/tx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    );
+    expect(blotter.activity[0].executionArtifacts?.explorerUrls?.eigenPhiTx).toBe(
+      "https://eigenphi.io/mev/eigentx/0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    );
   });
 });

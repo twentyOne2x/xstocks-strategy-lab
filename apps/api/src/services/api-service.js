@@ -175,6 +175,51 @@ function normalizeTxHash(value) {
   return /^0x([A-Fa-f0-9]{64})$/u.test(normalized) ? normalized : null;
 }
 
+function buildExecutionArtifactExplorerUrls({ chain, txHash }) {
+  if (!txHash || String(chain).toLowerCase() !== "ethereum") {
+    return null;
+  }
+
+  return {
+    etherscanTx: `https://etherscan.io/tx/${txHash}`,
+    eigenPhiTx: `https://eigenphi.io/mev/eigentx/${txHash}`,
+  };
+}
+
+function buildActivityExecutionArtifacts(item) {
+  const payload =
+    item?.payload && typeof item.payload === "object" ? item.payload : {};
+  const txHash = normalizeTxHash(payload.txHash ?? payload.tx_hash ?? null);
+  const rawVenueOrderId = firstDefined(
+    payload.venueOrderId,
+    payload.venue_order_id,
+  );
+  const venueOrderId =
+    typeof rawVenueOrderId === "string" && rawVenueOrderId.trim().length > 0
+      ? rawVenueOrderId.trim()
+      : null;
+  const chain =
+    typeof payload.chain === "string" && payload.chain.trim().length > 0
+      ? payload.chain.trim()
+      : typeof item?.chain === "string" && item.chain.trim().length > 0
+        ? item.chain.trim()
+        : null;
+
+  if (!txHash && !venueOrderId) {
+    return null;
+  }
+
+  return {
+    txHash,
+    venueOrderId,
+    chain,
+    explorerUrls: buildExecutionArtifactExplorerUrls({
+      chain,
+      txHash,
+    }),
+  };
+}
+
 function buildPublicAgentSurface() {
   return {
     skillPath: PUBLIC_SKILL_PATH,
@@ -1097,6 +1142,7 @@ function buildActivityHistory(items) {
       type: item.eventType,
       summary: item.summary,
       status,
+      executionArtifacts: buildActivityExecutionArtifacts(item),
     };
   });
 }
@@ -1111,6 +1157,7 @@ function buildActivityLifecycle(items, executionPlan) {
     detail: item.summary,
     state: item.payload?.executionState ?? "preview",
     nextAction,
+    executionArtifacts: buildActivityExecutionArtifacts(item),
   }));
 }
 
@@ -2107,6 +2154,7 @@ function buildExecutionActivityEvents({
             : `${venueLabel} quote prepared for ${leg.assetSymbol ?? leg.sleeve}; submission remains blocked on the current backend boundary.`,
         now,
         payload: {
+          chain: activation.chain,
           executionRequestId: executionRequest.executionRequestId,
           legId: leg.legId,
           quoteId: leg.quote?.quoteId ?? null,
@@ -2124,6 +2172,7 @@ function buildExecutionActivityEvents({
         summary: `Recorded user-approved ${venueLabel} submission for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
+          chain: activation.chain,
           executionRequestId: executionRequest.executionRequestId,
           legId: leg.legId,
           venueOrderId,
@@ -2142,6 +2191,7 @@ function buildExecutionActivityEvents({
         summary: `${venueLabel} execution confirmed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
+          chain: activation.chain,
           executionRequestId: executionRequest.executionRequestId,
           legId: leg.legId,
           venueOrderId,
@@ -2158,6 +2208,7 @@ function buildExecutionActivityEvents({
         summary: `${venueLabel} execution failed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
+          chain: activation.chain,
           executionRequestId: executionRequest.executionRequestId,
           legId: leg.legId,
           venueOrderId,
