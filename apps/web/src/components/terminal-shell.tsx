@@ -4,11 +4,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { RouteId, TerminalChromeProps } from "@/lib/contracts";
-import { getSmartAccountPanelData } from "@/lib/data-source";
 
 import { BottomBlotter } from "@/components/bottom-blotter";
+import { LiveSmartAccountPanel } from "@/components/live-smart-account-panel";
 import { RebalanceControlPanel } from "@/components/rebalance-control-panel";
-import { SmartAccountPanel } from "@/components/smart-account-panel";
 
 const routeLabels: Array<{ id: RouteId; label: string }> = [
   { id: "home", label: "Home" },
@@ -32,12 +31,11 @@ function hrefForRoute(routeId: RouteId, manifestSlug: string) {
 
 function RightRail({ chrome }: { chrome: TerminalChromeProps }) {
   const { selectedManifest } = chrome;
-  const account = getSmartAccountPanelData(selectedManifest);
 
   return (
     <aside className="right-rail">
       <RebalanceControlPanel manifest={selectedManifest} />
-      <SmartAccountPanel account={account} />
+      <LiveSmartAccountPanel manifest={selectedManifest} />
     </aside>
   );
 }

@@ -1,0 +1,203 @@
+24-7
+24-7 MARKETS
+Powered by xStocks
+PREVIEW
+HOME
+ONBOARDING
+COMPARE
+DETAIL
+ACTIVATION
+ACTIVITY
+ACTIVATE YOUR PORTFOLIO
+Autopilot: Mag 7 Core
+
+Long-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.
+
+✓
+Connect wallet
+
+Sign in with email or connect an existing wallet. Current manual execution stays wallet-first.
+
+CONNECTED
+0xA28D...71b2
+Manual signer: 0xC3a7...2e3A · policy account: 0x00c6...ce39
+Automation: ready · destination: 0x00c6...ce39
+DISCONNECT
+2
+Set USDC notional
+
+This flow treats $100 USDC as the first-class manual buy path. The current repo-owned proof uses your requested notional as the funding truth carried into activation and venue routing.
+
+Requested notional
+USDC
+
+Manual routing target: $100.00 into the promoted basket weights below.
+
+3
+Sign and submit the live 1inch route
+
+The connected manual signer receives one real EIP-712 order per actionable core leg. Backend submission only occurs after those signatures return.
+
+ACTIVATE $100.00 BUY
+EXECUTION TRUTH
+Funding asset
+USDC
+Requested notional
+$100.00
+Execution state
+Preview only
+Latest activation
+No saved activation yet
+
+Current live route stays wallet-first: the connected Privy wallet must return each 1inch Fusion EIP-712 signature before backend submission can be recorded.
+
+WALLET BOUNDARY
+Embedded wallet
+0xC3a7...2e3A
+Manual signer
+0xC3a7...2e3A
+Policy account
+0x00c6...ce39
+Execution destination
+0x00c6...ce39
+Automation readiness
+ready
+Venue signing
+wallet_signer_manual_only
+Current blocker
+None
+
+Current bridge rule: manual signing stays wallet-first, `policyAccountAddress` resolves only when the Privy smart wallet is actually linked, and `executionDestinationAddress` stays on the current signer surface until that smart-wallet link exists. AA-native CoW or 1inch signing remains deferred.
+
+EXACT TARGET WEIGHTS
+NVDAx
+
+NVIDIA
+
+18.0% · $18.00
+MSFTx
+
+Microsoft
+
+16.4% · $16.44
+AAPLx
+
+Apple
+
+15.7% · $15.75
+METAx
+
+Meta
+
+15.4% · $15.40
+AMZNx
+
+Amazon
+
+14.9% · $14.88
+GOOGLx
+
+Alphabet
+
+14.5% · $14.53
+HOLDINGS RATIONALE
+NVDAx lead holding
+
+Largest target weight in the promoted basket, so it anchors the portfolio's main theme exposure.
+
+18%
+MSFTx core holding
+
+Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.
+
+16.4%
+AAPLx core holding
+
+Core xStocks holding used to widen the basket beyond the lead name while staying inside the promoted weights.
+
+15.7%
+Route
+Cow Swap on Ethereum / Flowdesk AUSD RWA Strategy
+Deposit asset
+USDC · $100.00
+Reversible
+Yes — pause or exit anytime
+What changes next
+A rebalance only becomes actionable when drift clears 3% and the lane is still allowed to activate under current route truth. The repo does not prove an autonomous scheduler today.
+EVENT AND REBALANCE
+
+95% stays in xStocks across 6 names. 5% remains in AUSD. Largest sleeves: NVDAx 18%, MSFTx 16.44%, AAPLx 15.75%.
+
+Confidence
++10.26% edge
+Portfolio implication
+95% invested across 6 names selected from the starter basket only with 5% in AUSD and a 300 bps rebalance trigger.
+Readiness
+preview only · preview
+Execution review
+preview only
+EXACT TARGET WEIGHTS
+NVDAx 18.0%
+MSFTx 16.4%
+AAPLx 15.7%
+METAx 15.4%
+SIGNATURE BOUNDARY
+USDC funding asset at $100.00 requested notional.
+Manual signer 0xC3a79c8551bD33e3A17539df6dB85A5989E22e3A remains the required EIP-712 signer.
+Backend submission only follows returned wallet-first 1inch signatures.
+READINESS AND BLOCKERS
+Execute all currently supports provider-triggered awaiting operator review only.
+Connect a wallet first so the correct deposit destination can be derived.
+
+Execute all currently supports provider-triggered awaiting operator review only.
+
+EXECUTE ALL UNAVAILABLE
+OPEN DETAIL
+OPEN ACTIVATION
+Latest activation
+No saved activation loaded
+Latest execution request
+No execution request loaded
+Primary venue
+Cow Swap on Ethereum
+YOUR ACCOUNT
+CONNECT REQUIRED
+
+Create activation baseline
+
+Deposit
+No fixed minimum · USDC
+Manual signer
+Wallet-first
+
+Current manual approval stays on the linked or embedded wallet.
+
+Policy account
+Provision on wallet link
+
+Automation stays blocked until the smart account exists.
+
+Execution destination
+Manual signer until smart account
+
+Separate smart-account destination appears only once bootstrap is ready.
+
+Venue signing
+Wallet signer manual only
+
+AA-native CoW or 1inch signing is deferred.
+
+Automation readiness
+Smart account required
+
+Automation stays fail-closed without the verified smart account.
+
+PORTFOLIO LEDGER
+
+Preview data until deposit.
+
+POSITIONS
+HISTORY
+REBALANCING
+ACTIVITY
+STATE	SYMBOL	ROLE	EXPOSURE	ROUTE	UPDATED

@@ -819,7 +819,7 @@ function SimulatedWorkspace({
                 }}
                 onMouseLeave={() => setChartHover(null)}
               >
-                <svg className="workspace-chart" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <svg className="workspace-chart" viewBox="0 -5 100 110" preserveAspectRatio="none">
                   <defs>
                     {manifest.allocations.map((alloc, i) => {
                       const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];

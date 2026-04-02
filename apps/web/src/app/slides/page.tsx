@@ -200,6 +200,11 @@ export default function SlidesPage() {
 
   const slide = slides[current];
 
+  const isDark = slide.bg === "#0a0a0a";
+  const isRed = slide.bg === "#ff1800";
+  const wmFill = isDark ? "rgba(255,255,255,0.04)" : isRed ? "rgba(10,10,10,0.07)" : "rgba(10,10,10,0.04)";
+  const wmSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='140'%3E%3Ctext x='100' y='85' transform='rotate(-12, 360, 70)' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' font-style='italic' fill='${encodeURIComponent(wmFill)}' letter-spacing='0.02em'%3E24-7 MARKETS%3C/text%3E%3C/svg%3E")`;
+
   return (
     <div
       onClick={() => setCurrent((c) => Math.min(c + 1, slides.length - 1))}
@@ -216,7 +221,9 @@ export default function SlidesPage() {
         overflow: "hidden",
       }}
     >
-      <div style={{ maxWidth: "1100px", width: "100%" }}>{slide.content}</div>
+      {/* Watermark */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: wmSvg, backgroundRepeat: "repeat", backgroundSize: "290px 56px", pointerEvents: "none", zIndex: 0 }} />
+      <div style={{ maxWidth: "1100px", width: "100%", position: "relative", zIndex: 1 }}>{slide.content}</div>
       <div style={{
         position: "fixed",
         bottom: "1.5rem",

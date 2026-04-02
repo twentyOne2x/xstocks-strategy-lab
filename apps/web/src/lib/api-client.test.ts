@@ -93,33 +93,4 @@ describe("resolveApiBase", () => {
       "X-Privy-Identity-Token": "identity-token",
     });
   });
-
-  it("preserves the legacy auth-only activation preview call shape", async () => {
-    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com");
-    vi.stubEnv("NODE_ENV", "test");
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: { executionPlan: null } }),
-    });
-
-    vi.stubGlobal("fetch", fetchMock);
-
-    await fetchActivationPreview("onboarding.default_basket", 100, {
-      accessToken: "access-token",
-      identityToken: "identity-token",
-    });
-
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [requestUrl, requestInit] = fetchMock.mock.calls[0] as [
-      string,
-      RequestInit | undefined,
-    ];
-    const url = new URL(requestUrl);
-
-    expect(url.searchParams.get("walletConnected")).toBeNull();
-    expect(requestInit?.headers).toEqual({
-      Authorization: "Bearer access-token",
-      "X-Privy-Identity-Token": "identity-token",
-    });
-  });
 });

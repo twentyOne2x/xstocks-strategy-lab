@@ -900,17 +900,6 @@ export interface ActivationPreviewWalletState {
   } | null;
 }
 
-function isApiAuthHeaders(
-  value?: ActivationPreviewWalletState | ApiAuthHeaders,
-): value is ApiAuthHeaders {
-  return Boolean(
-    value &&
-      typeof value === "object" &&
-      ("accessToken" in value || "identityToken" in value) &&
-      !("connected" in value),
-  );
-}
-
 function appendActivationPreviewWalletState(
   params: URLSearchParams,
   walletState?: ActivationPreviewWalletState,
@@ -995,15 +984,9 @@ export async function fetchWorkspace(slotId: string, notionalUsd = 10): Promise<
 export async function fetchActivationPreview(
   slotId: string,
   notionalUsd = 10,
-  walletStateOrAuth?: ActivationPreviewWalletState | ApiAuthHeaders,
+  walletState?: ActivationPreviewWalletState,
   auth?: ApiAuthHeaders,
 ): Promise<ApiActivationPreviewData | null> {
-  const walletState = isApiAuthHeaders(walletStateOrAuth)
-    ? undefined
-    : walletStateOrAuth;
-  const resolvedAuth = isApiAuthHeaders(walletStateOrAuth)
-    ? walletStateOrAuth
-    : auth;
   const params = new URLSearchParams({
     slotId,
     userNotionalUsd: String(notionalUsd),
@@ -1013,7 +996,7 @@ export async function fetchActivationPreview(
 
   return apiFetchWithAuth<ApiActivationPreviewData>(
     `/api/activation-preview?${params.toString()}`,
-    resolvedAuth,
+    auth,
   );
 }
 

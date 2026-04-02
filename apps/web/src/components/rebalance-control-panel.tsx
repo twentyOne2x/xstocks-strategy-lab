@@ -1,9 +1,7 @@
 "use client";
 
 import {
-  getIdentityToken,
   useActiveWallet,
-  usePrivy,
   useWallets,
 } from "@privy-io/react-auth";
 import Link from "next/link";
@@ -34,6 +32,7 @@ import {
   humanizeRebalanceState,
 } from "@/lib/rebalance-control";
 
+import { usePrivyRuntime } from "@/components/privy-provider";
 import { useWalletState } from "@/components/wallet-connect-button";
 
 export function RebalanceControlPanel({
@@ -41,7 +40,8 @@ export function RebalanceControlPanel({
 }: {
   manifest: PromotedManifest;
 }) {
-  const { ready, authenticated, getAccessToken } = usePrivy();
+  const { ready, authenticated, getAccessToken, getIdentityToken } =
+    usePrivyRuntime();
   const { wallets } = useWallets();
   const { wallet: activeWallet } = useActiveWallet();
   const activeConnectedWallet =
@@ -105,6 +105,22 @@ export function RebalanceControlPanel({
       const preview = await fetchActivationPreview(
         manifest.slot_id,
         DEFAULT_MANUAL_NOTIONAL_USD,
+        walletState.connected
+          ? {
+              connected: true,
+              walletAddress: walletState.walletAddress,
+              embeddedWallet: {
+                status: walletState.embeddedWallet.status,
+                address: walletState.embeddedWallet.address,
+                providerId: "privy",
+              },
+              smartAccount: {
+                status: walletState.smartAccount.status,
+                address: walletState.smartAccount.address,
+                providerId: "privy",
+              },
+            }
+          : undefined,
         auth,
       );
 
@@ -153,7 +169,18 @@ export function RebalanceControlPanel({
         handleRefresh as EventListener,
       );
     };
-  }, [authenticated, getAccessToken, manifest.slot_id]);
+  }, [
+    authenticated,
+    getAccessToken,
+    getIdentityToken,
+    manifest.slot_id,
+    walletState.connected,
+    walletState.walletAddress,
+    walletState.embeddedWallet.address,
+    walletState.embeddedWallet.status,
+    walletState.smartAccount.address,
+    walletState.smartAccount.status,
+  ]);
 
   const snapshot = buildRebalanceControlSnapshot({
     manifest,
