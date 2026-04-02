@@ -41,6 +41,7 @@ const CATALOG_SURFACES = new Set(["onboarding", "advanced"]);
 const CATALOG_MODES = new Set(["basket", "directional"]);
 const EXECUTION_ACTIONS = new Set([
   "create",
+  "execute_all",
   "quote_leg",
   "record_submission",
   "poll_receipt",
@@ -1583,7 +1584,38 @@ function stripExecutionQuoteBlockers(messages = []) {
   );
 }
 
+function createExecutionRequestLinkage({
+  rebalance = null,
+  providerReceipt = null,
+} = {}) {
+  const linkage = {
+    rebalanceId: rebalance?.rebalanceId ?? null,
+    providerReceiptId:
+      providerReceipt?.receiptId ?? rebalance?.providerReceiptId ?? null,
+  };
+
+  return Object.values(linkage).some((value) => value !== null)
+    ? linkage
+    : null;
+}
+
+function createExecutionLegArtifactLinkage({
+  executionRequestId,
+  requestLinkage = null,
+}) {
+  if (!executionRequestId || !requestLinkage) {
+    return null;
+  }
+
+  return {
+    executionRequestId,
+    rebalanceId: requestLinkage.rebalanceId ?? null,
+    providerReceiptId: requestLinkage.providerReceiptId ?? null,
+  };
+}
+
 function createExecutionLeg({
+  executionRequestId = null,
   allocation,
   sequence,
   requestedNotionalUsd,
@@ -1594,6 +1626,8 @@ function createExecutionLeg({
   manifest,
   activation,
   routeSelection = MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router,
+  executionPlanSnapshot = activation.executionPlanSnapshot,
+  requestLinkage = null,
 }) {
   const targetNotionalUsd = roundUsd(
     (requestedNotionalUsd * allocation.targetWeightPct) / 100,
@@ -1624,6 +1658,10 @@ function createExecutionLeg({
       venueStatus: null,
       receipt: null,
       trade: null,
+      linkage: createExecutionLegArtifactLinkage({
+        executionRequestId,
+        requestLinkage,
+      }),
     };
   }
 
@@ -1674,8 +1712,8 @@ function createExecutionLeg({
   }
 
   if (
-    activation.executionPlanSnapshot?.executionState !== "ready" ||
-    activation.executionPlanSnapshot?.executionEligibility !== "executable"
+    executionPlanSnapshot?.executionState !== "ready" ||
+    executionPlanSnapshot?.executionEligibility !== "executable"
   ) {
     blockers.push(
       "The saved activation snapshot is not in a ready/executable state.",
@@ -1725,6 +1763,10 @@ function createExecutionLeg({
     venueStatus: null,
     receipt: null,
     trade: null,
+    linkage: createExecutionLegArtifactLinkage({
+      executionRequestId,
+      requestLinkage,
+    }),
   };
 }
 
@@ -1790,30 +1832,41 @@ function createExecutionRequest({
   fetchedAssets,
   now,
   routeSelection = MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router,
+  runtimeOwner = "operator_manual",
+  triggerSource = "operator_manual",
+  rebalance = null,
+  providerReceipt = null,
+  executionPlanSnapshot = activation.executionPlanSnapshot,
 }) {
   const requestedNotionalUsd = activation.requestedNotionalUsd;
   const fundingAssetSymbol =
     manifest.activationTemplate.fundingAssetSymbol ?? "USDC";
   const bridgeState = createExecutionBridgeState({
     walletState: activation.walletState,
-    executionPlanSnapshot: activation.executionPlanSnapshot,
+    executionPlanSnapshot,
   });
   const signerAddress = bridgeState.manualSignerAddress;
   const settlementAddress = bridgeState.executionDestinationAddress;
+  const executionRequestId = `execreq_${randomUUID()}`;
+  const requestLinkage = createExecutionRequestLinkage({
+    rebalance,
+    providerReceipt,
+  });
   const fetchedAssetIndex = new Map(
     fetchedAssets.map((asset) => [asset.assetSymbol, asset]),
   );
   const request = {
     version: EXECUTION_REQUEST_CONTRACT_VERSION,
-    executionRequestId: `execreq_${randomUUID()}`,
+    executionRequestId,
     owner: activation.owner ?? null,
+    rebalanceId: rebalance?.rebalanceId ?? null,
     activationId: activation.activationId,
     manifestId: manifest.manifestId,
     slotId: manifest.slotId,
     chain: manifest.chain,
     mode: manifest.mode,
-    runtimeOwner: "operator_manual",
-    triggerSource: "operator_manual",
+    runtimeOwner,
+    triggerSource,
     adapterId: routeSelection.requestAdapterId,
     activationManifestRef: activation.activationManifestRef,
     requestedNotionalUsd,
@@ -1845,6 +1898,7 @@ function createExecutionRequest({
         : [],
     legs: (manifest.targetAllocations ?? []).map((allocation, index) =>
       createExecutionLeg({
+        executionRequestId,
         allocation,
         sequence: index + 1,
         requestedNotionalUsd,
@@ -1857,8 +1911,11 @@ function createExecutionRequest({
         manifest,
         activation,
         routeSelection,
+        executionPlanSnapshot,
+        requestLinkage,
       }),
     ),
+    linkage: requestLinkage,
     createdAt: now(),
     updatedAt: now(),
   };
@@ -2542,6 +2599,7 @@ export function createApiService({
     reason,
     errorCode = null,
     duplicateOfReceiptId = null,
+    rebalance = null,
   }) {
     const body = validation?.body ?? null;
     const claims = validation?.claims ?? null;
@@ -2557,6 +2615,8 @@ export function createApiService({
         receiptCandidate?.providerId ??
         claims?.providerId ??
         "chainlink_cre",
+      deliveryId: body?.deliveryId ?? receiptCandidate?.deliveryId ?? null,
+      eventId: body?.eventId ?? receiptCandidate?.eventId ?? null,
       providerEventId: body?.providerEventId ?? receiptCandidate?.providerEventId ?? null,
       workflowId: body?.workflowId ?? receiptCandidate?.workflowId ?? claims?.workflowId ?? null,
       workflowExecutionId:
@@ -2586,6 +2646,7 @@ export function createApiService({
           : receiptCandidate?.tokenExpiresAt ?? null,
       decision,
       errorCode,
+      rebalanceId: rebalance?.rebalanceId ?? null,
       reason,
       duplicateOfReceiptId,
     };
@@ -2663,6 +2724,137 @@ export function createApiService({
     return executionRequest;
   }
 
+  async function loadRebalanceForExecuteAll({
+    activation,
+    rebalanceId = null,
+  }) {
+    const rebalances = await runtimeStore.listRebalances({
+      slotId: activation.slotId,
+      limit: 50,
+    });
+    const rebalance =
+      rebalanceId
+        ? rebalances.find((item) => item.rebalanceId === rebalanceId) ?? null
+        : rebalances[0] ?? null;
+
+    if (!rebalance) {
+      throw new HttpError(
+        404,
+        "Provider-backed execute_all requires a persisted rebalance review for this slot.",
+      );
+    }
+
+    if (rebalance.triggerSource !== "provider_triggered") {
+      throw new HttpError(
+        409,
+        "execute_all currently supports provider-triggered awaiting_operator review state only.",
+      );
+    }
+
+    if (rebalance.state !== "awaiting_operator") {
+      throw new HttpError(
+        409,
+        `execute_all requires awaiting_operator review state, received ${rebalance.state}.`,
+      );
+    }
+
+    return rebalance;
+  }
+
+  async function loadAcceptedProviderReceiptForRebalance(rebalance) {
+    const providerReceipts = await runtimeStore.listProviderEventReceipts({
+      slotId: rebalance.slotId,
+      decision: "accepted",
+      limit: 50,
+    });
+    const providerReceipt =
+      providerReceipts.find((item) => item.rebalanceId === rebalance.rebalanceId) ??
+      null;
+
+    if (!providerReceipt) {
+      throw new HttpError(
+        409,
+        "Accepted provider receipt linkage is required before provider-backed execute_all can stage execution.",
+      );
+    }
+
+    return providerReceipt;
+  }
+
+  function ensureExecuteAllStagingProof({
+    activation,
+    requestContext,
+  }) {
+    const authenticatedRequestContext =
+      requireAuthenticatedRequestContext(requestContext);
+
+    if (!activation.owner?.userId || !activation.owner?.authenticatedAt) {
+      throw new HttpError(
+        409,
+        "Saved activation ownership proof is missing; provider-backed execute_all cannot stage execution.",
+      );
+    }
+
+    if (!authenticatedRequestContext.owner?.sessionId) {
+      throw new HttpError(
+        409,
+        "Current authenticated session proof is required before provider-backed execute_all can stage execution.",
+      );
+    }
+
+    const signerAddress = resolveExecutionSignerAddress(activation.walletState);
+    const settlementAddress = resolveSettlementAddress(activation.walletState);
+    const verifiedAddresses = uniqueStrings([
+      ...authenticatedRequestContext.linkedWalletAddresses,
+      ...authenticatedRequestContext.linkedEmbeddedWalletAddresses,
+    ]);
+
+    if (!signerAddress) {
+      throw new HttpError(
+        409,
+        "A verified signer wallet proof is required before provider-backed execute_all can stage execution.",
+      );
+    }
+
+    if (!addressInVerifiedSet(signerAddress, verifiedAddresses)) {
+      throw new HttpError(
+        403,
+        "Provider-backed execute_all signer proof does not match the authenticated Privy user.",
+      );
+    }
+
+    if (!settlementAddress) {
+      throw new HttpError(
+        409,
+        "A settlement wallet or smart-wallet destination is required before provider-backed execute_all can stage execution.",
+      );
+    }
+  }
+
+  function applyExecutionLinkage({
+    executionRequest,
+    rebalance = null,
+    providerReceipt = null,
+  }) {
+    const requestLinkage = createExecutionRequestLinkage({
+      rebalance,
+      providerReceipt,
+    });
+
+    return {
+      ...executionRequest,
+      rebalanceId: rebalance?.rebalanceId ?? executionRequest.rebalanceId ?? null,
+      linkage: requestLinkage,
+      legs: executionRequest.legs.map((leg) => ({
+        ...leg,
+        linkage: createExecutionLegArtifactLinkage({
+          executionRequestId: executionRequest.executionRequestId,
+          requestLinkage,
+        }),
+      })),
+    };
+  }
+
   function replaceExecutionLeg(executionRequest, nextLeg) {
     return {
       ...executionRequest,
@@ -2694,6 +2886,45 @@ export function createApiService({
     return {
       executionRequest: normalizedExecutionRequest,
       activityEvents,
+    };
+  }
+
+  async function persistProviderExecutionHandoff({
+    executionRequest,
+    activation,
+    rebalance,
+    providerReceipt,
+    activityEvents = [],
+  }) {
+    const linkedExecutionRequest = applyExecutionLinkage({
+      executionRequest,
+      rebalance,
+      providerReceipt,
+    });
+    const persistedExecution = await persistExecutionRequest({
+      executionRequest: linkedExecutionRequest,
+      activation,
+      activityEvents,
+    });
+    const nextRebalance = await runtimeStore.upsertRebalance({
+      rebalance: {
+        ...rebalance,
+        providerReceiptId:
+          providerReceipt.receiptId ?? rebalance.providerReceiptId ?? null,
+        executionRequestId:
+          persistedExecution.executionRequest.executionRequestId,
+        executionTriggerSource:
+          persistedExecution.executionRequest.triggerSource,
+        executionRequestState: persistedExecution.executionRequest.state,
+      },
+      eventType: "execution_staged",
+    });
+
+    return {
+      executionRequest: persistedExecution.executionRequest,
+      activityEvents: persistedExecution.activityEvents,
+      providerReceipt,
+      rebalance: nextRebalance,
     };
   }
 
@@ -3590,6 +3821,102 @@ export function createApiService({
           generatedAt: now(),
           action,
           ...persisted,
+        });
+      }
+
+      if (action === "execute_all") {
+        const activationId = firstDefined(body.activationId, body.activation_id);
+        const rebalanceId = firstDefined(body.rebalanceId, body.rebalance_id);
+
+        if (!activationId) {
+          throw new HttpError(
+            400,
+            "activationId is required to stage provider-backed execute_all execution.",
+          );
+        }
+
+        const activation = await loadActivationById(
+          activationId,
+          authenticatedRequestContext,
+        );
+        const rebalance = await loadRebalanceForExecuteAll({
+          activation,
+          rebalanceId,
+        });
+        const providerReceipt = await loadAcceptedProviderReceiptForRebalance(
+          rebalance,
+        );
+
+        ensureExecuteAllStagingProof({
+          activation,
+          requestContext: authenticatedRequestContext,
+        });
+
+        const existingExecutionRequest = rebalance.executionRequestId
+          ? await runtimeStore.getExecutionRequest({
+            executionRequestId: rebalance.executionRequestId,
+            ownerUserId: authenticatedRequestContext.owner.userId,
+          })
+          : null;
+
+        if (existingExecutionRequest) {
+          const persisted = await persistProviderExecutionHandoff({
+            executionRequest: existingExecutionRequest,
+            activation,
+            rebalance,
+            providerReceipt,
+          });
+
+          return parseApiResponse("execution_write", {
+            version: DEFAULT_RESPONSE_VERSION,
+            generatedAt: now(),
+            action,
+            executionRequest: persisted.executionRequest,
+            activityEvents: persisted.activityEvents,
+          });
+        }
+
+        const record = await manifestRepository.getPromotedRecordById(
+          rebalance.targetManifestId,
+        );
+
+        if (!record) {
+          throw new HttpError(
+            404,
+            `Promoted manifest ${rebalance.targetManifestId} was not found.`,
+          );
+        }
+
+        const fetchedAssets = await liveStateRepository.fetchRequiredAssets(
+          record.manifest.requiredAssets,
+        );
+        const executionRequest = createExecutionRequest({
+          activation,
+          manifest: record.manifest,
+          fetchedAssets,
+          now,
+          runtimeOwner: "operator_manual",
+          triggerSource: "provider_staging",
+          rebalance,
+          providerReceipt,
+          executionPlanSnapshot: {
+            executionState: rebalance.executionState,
+            executionEligibility: rebalance.executionEligibility,
+          },
+        });
+        const persisted = await persistProviderExecutionHandoff({
+          executionRequest,
+          activation,
+          rebalance,
+          providerReceipt,
+        });
+
+        return parseApiResponse("execution_write", {
+          version: DEFAULT_RESPONSE_VERSION,
+          generatedAt: now(),
+          action,
+          executionRequest: persisted.executionRequest,
+          activityEvents: persisted.activityEvents,
         });
       }
 
@@ -4534,6 +4861,7 @@ export function createApiService({
         decision: "accepted",
         reason:
           "Validated Chainlink CRE event opened operator review for the current promoted manifest.",
+        rebalance: persistedRebalance,
       });
 
       return parseApiResponse("provider_triggered_rebalance_review_write", {

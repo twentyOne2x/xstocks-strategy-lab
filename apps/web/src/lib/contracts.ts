@@ -282,6 +282,27 @@ export interface RebalanceNextAction {
   status: string;
 }
 
+export interface RouteTruthView {
+  routeId: string;
+  label: string;
+  routeKind: string;
+  chain?: string;
+  verificationTier: string;
+  truthState: string;
+  availability: string;
+  requiredFor: string;
+  reason: string;
+}
+
+export interface ExecutionPreviewView {
+  surfaceTruth: string;
+  executionState: string;
+  executionEligibility: string;
+  routeTruthLabels: RouteTruthView[];
+  blockers: string[];
+  warnings: string[];
+}
+
 export interface RebalanceOrchestrationView {
   rebalanceId: string;
   slotId: string;
@@ -311,6 +332,10 @@ export interface RebalanceOrchestrationView {
   executionState: string;
   executionEligibility: string;
   surfaceTruth: string;
+  providerReceiptId: string | null;
+  executionRequestId: string | null;
+  executionTriggerSource: string | null;
+  executionRequestState: string | null;
   blockers: string[];
   warnings: string[];
   automationTruth: RebalanceAutomationTruth;
@@ -390,6 +415,7 @@ export interface PromotedManifest {
   preview?: {
     recommendationExplanationBundle: PortfolioExplanationBundle | null;
     rebalanceOrchestration: RebalanceOrchestrationView | null;
+    executionPreview: ExecutionPreviewView | null;
   };
 }
 

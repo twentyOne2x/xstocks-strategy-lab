@@ -410,6 +410,7 @@ export const manifests: PromotedManifest[] = [
     preview: {
       recommendationExplanationBundle: null,
       rebalanceOrchestration: null,
+      executionPreview: null,
     },
   },
   {
@@ -701,6 +702,7 @@ export const manifests: PromotedManifest[] = [
     preview: {
       recommendationExplanationBundle: null,
       rebalanceOrchestration: null,
+      executionPreview: null,
     },
   },
   {
@@ -959,6 +961,7 @@ export const manifests: PromotedManifest[] = [
     preview: {
       recommendationExplanationBundle: null,
       rebalanceOrchestration: null,
+      executionPreview: null,
     },
   },
   {
@@ -1234,6 +1237,7 @@ export const manifests: PromotedManifest[] = [
     preview: {
       recommendationExplanationBundle: null,
       rebalanceOrchestration: null,
+      executionPreview: null,
     },
   },
 ];
