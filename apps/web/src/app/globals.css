@@ -288,10 +288,14 @@ button { font: inherit; }
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
-.hover-card-trigger:hover .hover-card,
-.hover-card-trigger:focus-within .hover-card {
+.hover-card-trigger:hover > .hover-card {
   display: grid;
   gap: 10px;
+}
+
+/* Don't show on touch/mobile — only pointer devices */
+@media (hover: none) {
+  .hover-card-trigger:hover > .hover-card { display: none; }
 }
 
 .hover-card-title {
@@ -1764,10 +1768,34 @@ button { font: inherit; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideUpIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gate entrance */
+.pq-gate-inner {
+  animation: slideUpIn 600ms ease both;
+}
+
+/* Workspace entrance */
+.pq-workspace {
+  animation: slideUpIn 500ms ease both;
+}
+
+/* Gate stat chips stagger */
+.pq-gate-stat:nth-child(1) { animation: slideUpIn 400ms ease 100ms both; }
+.pq-gate-stat:nth-child(2) { animation: slideUpIn 400ms ease 200ms both; }
+.pq-gate-stat:nth-child(3) { animation: slideUpIn 400ms ease 300ms both; }
+.pq-gate-stat:nth-child(4) { animation: slideUpIn 400ms ease 400ms both; }
+
 @media (prefers-reduced-motion: reduce) {
   .analysis-title,
   .analysis-detail,
-  .analysis-profile-chips {
+  .analysis-profile-chips,
+  .pq-gate-inner,
+  .pq-workspace,
+  .pq-gate-stat {
     animation: none;
   }
 
@@ -2271,9 +2299,13 @@ button { font: inherit; }
 
 .landing-flow-step p {
   margin: 0;
-  color: var(--gray-600);
+  color: var(--black);
   font-size: 1.05rem;
   line-height: 1.5;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 6px 10px;
+  border-radius: 2px;
 }
 
 .landing-flow-arrow {
@@ -2466,9 +2498,13 @@ button { font: inherit; }
 .landing-section-sub {
   margin: 0 0 40px;
   max-width: 52ch;
-  color: var(--text-soft);
-  font-size: 1.05rem;
+  color: var(--black);
+  font-size: 1.1rem;
   line-height: 1.55;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 12px 16px;
+  border-radius: 2px;
 }
 
 /* ── Steps ── */

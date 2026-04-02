@@ -712,7 +712,7 @@ function SimulatedWorkspace({
       {/* ── Preview bar with big deposit CTA ── */}
       <div className="pq-preview-bar">
         <div className="pq-preview-bar-left">
-          <Link href="/" className="landing-header-brand" style={{ padding: "6px 14px", height: "100%", marginRight: "10px", alignSelf: "stretch", display: "flex", alignItems: "center" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", padding: "0 18px", background: "var(--black)", marginLeft: "-24px", marginTop: "-10px", marginBottom: "-10px", alignSelf: "stretch" }}>
             <BrandLockup size="sm" />
           </Link>
           <span className="preview-chip">Simulation</span>
@@ -721,7 +721,7 @@ function SimulatedWorkspace({
         <div className="pq-preview-bar-actions">
           {authenticated ? (
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span className="status-pill status-pill-active">{shortWallet}</span>
+              <span className="status-pill status-pill-active" style={{ cursor: "default" }}>{shortWallet}</span>
               <button className="button button-ghost button-sm" onClick={logout} type="button">Disconnect</button>
             </div>
           ) : (
@@ -736,7 +736,7 @@ function SimulatedWorkspace({
             </button>
           )}
           <button className="button button-ghost button-sm" onClick={onReset} type="button">
-            Change answers
+            Start over
           </button>
         </div>
       </div>
@@ -779,7 +779,7 @@ function SimulatedWorkspace({
                 <h2>{recommendation.title}</h2>
               </div>
               {authenticated ? (
-                <span className="status-pill status-pill-active">{shortWallet}</span>
+                <span className="status-pill status-pill-active" style={{ cursor: "default" }}>{shortWallet}</span>
               ) : (
                 <button
                   className="button button-primary button-lg"
