@@ -2,69 +2,25 @@
 
 import { useEffect, useRef } from "react";
 
-import type {
-  PrivyConnectedWalletLike,
-  PrivyLinkedAccountLike,
-} from "@/components/privy-provider";
 import { usePrivyRuntime } from "@/components/privy-provider";
+import { deriveWalletState, shortAddress } from "@/components/wallet-state";
 import { trackXStocksFunnelStage } from "@/lib/funnel-tracking";
 
-function getLinkedAccounts(user: unknown): PrivyLinkedAccountLike[] {
-  if (!user || typeof user !== "object") {
-    return [];
-  }
-
-  const linkedAccounts =
-    (user as { linkedAccounts?: unknown[] }).linkedAccounts ??
-    (user as { linked_accounts?: unknown[] }).linked_accounts ??
-    [];
-
-  return Array.isArray(linkedAccounts)
-    ? (linkedAccounts as PrivyLinkedAccountLike[])
-    : [];
-}
-
-function findEmbeddedWalletAddress(
-  wallets: PrivyConnectedWalletLike[],
-  linkedAccounts: PrivyLinkedAccountLike[],
-) {
-  const connectedWallet = wallets.find(
-    (wallet) => wallet.walletClientType === "privy" && wallet.address,
-  );
-
-  if (connectedWallet?.address) {
-    return connectedWallet.address;
-  }
-
-  const linkedWallet = linkedAccounts.find(
-    (account) =>
-      account.type === "wallet" &&
-      (account.walletClientType === "privy" ||
-        account.wallet_client_type === "privy") &&
-      (account.chainType === "ethereum" ||
-        account.chain_type === "ethereum" ||
-        account.chainType === undefined),
-  );
-
-  return linkedWallet?.address ?? null;
-}
-
-function findSmartAccountAddress(linkedAccounts: PrivyLinkedAccountLike[]) {
-  return (
-    linkedAccounts.find(
-      (account) => account.type === "smart_wallet" && account.address,
-    )?.address ?? null
-  );
-}
-
-function shortAddress(value: string | null) {
-  return value ? `${value.slice(0, 6)}...${value.slice(-4)}` : "Not ready";
-}
-
 export function WalletConnectButton() {
-  const { enabled, ready, authenticated, user, login, logout, getAccessToken, getIdentityToken } =
+  const {
+    enabled,
+    ready,
+    authenticated,
+    user,
+    login,
+    logout,
+    getAccessToken,
+    getIdentityToken,
+    createEmbeddedWallet,
+  } =
     usePrivyRuntime();
   const trackedWalletRef = useRef<string | null>(null);
+  const embeddedWalletBootstrapAttemptedRef = useRef(false);
   const walletState = useWalletState();
 
   useEffect(() => {
@@ -98,6 +54,28 @@ export function WalletConnectButton() {
     })();
   }, [authenticated, getAccessToken, getIdentityToken, user]);
 
+  useEffect(() => {
+    if (!authenticated) {
+      embeddedWalletBootstrapAttemptedRef.current = false;
+      return;
+    }
+
+    if (!walletState.needsEmbeddedWalletBootstrap) {
+      return;
+    }
+
+    if (embeddedWalletBootstrapAttemptedRef.current) {
+      return;
+    }
+
+    embeddedWalletBootstrapAttemptedRef.current = true;
+    void createEmbeddedWallet();
+  }, [
+    authenticated,
+    createEmbeddedWallet,
+    walletState.needsEmbeddedWalletBootstrap,
+  ]);
+
   if (!enabled) {
     return (
       <button className="button button-primary" type="button" disabled style={{ width: "100%", opacity: 0.5 }}>
@@ -130,11 +108,14 @@ export function WalletConnectButton() {
             </span>
           </div>
           <div className="panel-note">
-            Manual signer: {shortAddress(walletState.manualSignerAddress)} · smart account: {shortAddress(walletState.policyAccountAddress)}
+            Manual signer: {shortAddress(walletState.manualSignerAddress)} · policy account: {shortAddress(walletState.policyAccountAddress)}
           </div>
           <div className="panel-note">
-            Automation: {walletState.automationReadiness.replaceAll("_", " ")} · venue signing: wallet signer manual only
+            Automation: {walletState.automationReadiness.replaceAll("_", " ")} · destination: {shortAddress(walletState.executionDestinationAddress)}
           </div>
+          {walletState.automationBlocker && (
+            <div className="panel-note">{walletState.automationBlocker}</div>
+          )}
         </div>
         <button
           className="button button-ghost"
@@ -163,40 +144,11 @@ export function WalletConnectButton() {
 /** Hook to read wallet state from other components */
 export function useWalletState() {
   const { enabled, ready, authenticated, user, wallets } = usePrivyRuntime();
-  const linkedAccounts = authenticated ? getLinkedAccounts(user) : [];
-  const walletAddress = authenticated ? user?.wallet?.address ?? null : null;
-  const embeddedWalletAddress = authenticated
-    ? findEmbeddedWalletAddress(wallets, linkedAccounts)
-    : null;
-  const smartAccountAddress = authenticated
-    ? findSmartAccountAddress(linkedAccounts)
-    : null;
-  const manualSignerAddress = embeddedWalletAddress ?? walletAddress ?? null;
-  const automationReadiness = !authenticated
-    ? "wallet_required"
-    : smartAccountAddress
-      ? "ready"
-      : "smart_account_required";
-
-  return {
+  return deriveWalletState({
     enabled,
     ready,
-    connected: authenticated,
-    walletAddress,
-    embeddedWallet: {
-      status: embeddedWalletAddress ? "ready" : "not_created",
-      address: embeddedWalletAddress,
-    },
-    smartAccount: {
-      status: smartAccountAddress ? "ready" : "not_started",
-      address: smartAccountAddress,
-    },
-    manualSignerAddress,
-    policyAccountAddress: smartAccountAddress,
-    executionDestinationAddress: smartAccountAddress ?? manualSignerAddress,
-    automationReadiness,
-    manualSigningMode: "wallet_first",
-    automationAccountMode: "smart_account_required",
-    venueSigningMode: "wallet_signer_manual_only",
-  };
+    authenticated,
+    user,
+    wallets,
+  });
 }

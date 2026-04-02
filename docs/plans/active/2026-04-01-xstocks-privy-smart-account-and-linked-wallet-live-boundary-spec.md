@@ -299,9 +299,11 @@ For the later implementation lane:
 2. 2026-04-02: selected `manual = wallet-first`, `automation = smart-account-first`, `AA-native venue signing = later explicit proof lane` as the canonical target branch.
 3. 2026-04-02: rejected universal smart-account signing now because the user explicitly kept current manual signer truth and AA-native venue-signing closure out of scope.
 4. 2026-04-02: rejected wallet-first automation because it leaves future automation without a canonical smart-account ownership surface.
+5. 2026-04-02: narrowed the hosted proof gap to the frontend bootstrap path: linked-wallet logins still need embedded-wallet auto-creation before Privy can link the smart account, so this continuation should change bootstrap/runtime truth only and keep manual venue signing untouched.
 
 ## Progress Log
 
 1. 2026-04-02: audited current runtime truth across `packages/policy`, `apps/api`, and `apps/web`.
 2. 2026-04-02: confirmed the current state split that must be made explicit rather than flattened: wallet-first manual signing, optional smart-account destination, missing automation account posture, and frontend proof that stops at auth/connect only.
 3. 2026-04-02: upgraded the smart-account boundary from posture-only wording to execution-grade implementation planning with one exact hosted proof contract and one explicit bridge-state model.
+4. 2026-04-02: on the clean worktree from updated `origin/main`, confirmed the hosted bootstrap blocker is narrower than the earlier plan wording implied: `SmartWalletsProvider` is already mounted, but linked-wallet logins still do not close embedded-wallet bootstrap or expose smart-account closure truthfully enough for browser proof.

@@ -4,6 +4,8 @@
  * Falls back gracefully on network/parse errors.
  */
 
+export const DEFAULT_MANUAL_NOTIONAL_USD = 100;
+
 /**
  * Resolves the API base URL.
  * - Uses NEXT_PUBLIC_API_URL if set.
@@ -512,8 +514,8 @@ export interface ApiActivityData {
   limit: number;
   manifest: ApiManifestView | null;
   slot: ApiSlot | null;
-  items: unknown[];
-  activations: unknown[];
+  items: ApiActivityItem[];
+  activations: ApiActivationView[];
   rebalanceOrchestration: ApiRebalanceOrchestration | null;
   rebalanceHistory: ApiRebalanceTransition[];
   activitySurface: ApiActivitySurface | null;
@@ -590,6 +592,215 @@ export interface ApiActivationView {
   updatedAt: string;
 }
 
+export type ApiActivityItem =
+  | {
+      version: string;
+      eventId: string;
+      eventType: string;
+      scope: {
+        type: string;
+        id: string;
+      };
+      summary: string;
+      occurredAt: string;
+      payload?: Record<string, unknown>;
+    }
+  | {
+      event_id: string;
+      activation_id?: string;
+      recommendation_id?: string;
+      directional_preview_id?: string;
+      manifest_id: string;
+      slot_id: string;
+      created_at: string;
+      event_type: string;
+      summary: string;
+      status: string;
+      details?: Record<string, unknown> | null;
+    };
+
+export interface ApiExecutionApproval {
+  approvalType: string;
+  status: string;
+  signerAddress: string;
+  approvalTarget: string;
+  orderToSign: Record<string, unknown>;
+  signature: string | null;
+  approvedAt: string | null;
+  submittedAt: string | null;
+  venueOrderId: string | null;
+  notes: string[];
+}
+
+export interface ApiExecutionReceipt {
+  txHash: string;
+  submittedAt: string;
+  lastCheckedAt: string | null;
+  receiptStatus: string;
+  confirmedAt: string | null;
+  revertedAt: string | null;
+  blockNumber: number | null;
+  transactionIndex: number | null;
+  rpcUrl: string | null;
+  rawReceipt: Record<string, unknown> | null;
+}
+
+export interface ApiExecutionVenueStatus {
+  venueId: string;
+  venueOrderId: string | null;
+  status: string;
+  settlementTxHash: string | null;
+  lastCheckedAt: string | null;
+  updatedAt: string;
+  rawStatus: Record<string, unknown> | null;
+}
+
+export interface ApiExecutionTradeStatus {
+  event: string;
+  timestamp: string;
+}
+
+export interface ApiExecutionTrade {
+  tradeId: string;
+  status: string;
+  settledAt: string | null;
+  outTxHash: string | null;
+  tradeStatuses: ApiExecutionTradeStatus[];
+}
+
+export interface ApiExecutionLinkage {
+  rebalanceId: string | null;
+  providerReceiptId: string | null;
+  providerDeliveryId: string | null;
+  providerEventId: string | null;
+}
+
+export type ApiExecutionQuote =
+  | {
+      kind: "cow_swap";
+      quoteId: string;
+      quotedAt: string;
+      expiration: string;
+      verified: boolean;
+      protocolFeeBps?: string | null;
+      order: {
+        sellToken: string;
+        buyToken: string;
+        receiver: string;
+        sellAmount: string;
+        buyAmount: string;
+        validTo: number;
+        appData: string;
+        feeAmount: string;
+        kind: "sell" | "buy";
+        partiallyFillable: boolean;
+        sellTokenBalance: string;
+        buyTokenBalance: string;
+        signingScheme: string;
+        gasAmount?: string | null;
+        gasPrice?: string | null;
+        sellTokenPrice?: string | null;
+      };
+      owner: string;
+    }
+  | {
+      kind: "oneinch_fusion";
+      quoteId: string | null;
+      quotedAt: string;
+      fromTokenAddress: string;
+      toTokenAddress: string;
+      walletAddress: string;
+      fromTokenAmount: string;
+      toTokenAmount: string;
+      settlementAddress: string;
+      recommendedPreset: string;
+      priceImpactPercent: number | string | null;
+      orderHash?: string | null;
+      signerAddress?: string | null;
+      receiver?: string | null;
+      fee: {
+        receiver: string;
+        bps: number;
+        whitelistDiscountPercent: number;
+      };
+      submissionSupported: boolean;
+    }
+  | {
+      kind?: string;
+      quoteId?: string | null;
+      orderHash?: string | null;
+      [key: string]: unknown;
+    };
+
+export interface ApiExecutionLeg {
+  legId: string;
+  sequence: number;
+  sleeve: string;
+  assetSymbol?: string;
+  venueId?: string;
+  adapterId: string;
+  requiredRouteId: string;
+  targetWeightPct: number;
+  targetNotionalUsd: number;
+  paymentAssetSymbol: string;
+  paymentTokenAddress: string | null;
+  paymentTokenDecimals?: number | null;
+  receivingTokenAddress: string | null;
+  receivingTokenDecimals?: number | null;
+  settlementAddress: string | null;
+  state: string;
+  blockers: string[];
+  warnings: string[];
+  quote: ApiExecutionQuote | null;
+  approval: ApiExecutionApproval | null;
+  venueStatus: ApiExecutionVenueStatus | null;
+  receipt: ApiExecutionReceipt | null;
+  trade: ApiExecutionTrade | null;
+  linkage?: (ApiExecutionLinkage & { executionRequestId: string }) | null;
+}
+
+export interface ApiExecutionRequest {
+  version: string;
+  executionRequestId: string;
+  owner: {
+    providerId: string;
+    userId: string;
+  } | null;
+  rebalanceId?: string | null;
+  activationId: string;
+  manifestId: string;
+  slotId: string;
+  chain: string;
+  mode: string;
+  runtimeOwner: string;
+  triggerSource: string;
+  adapterId: string;
+  activationManifestRef: {
+    manifestId: string;
+    slotId: string;
+    strategyVersion: string;
+    chain: string;
+    mode: string;
+  };
+  requestedNotionalUsd: number;
+  fundingAssetSymbol: string;
+  manualSignerAddress: string | null;
+  policyAccountAddress: string | null;
+  executionDestinationAddress: string | null;
+  manualSigningMode: string;
+  automationAccountMode: string;
+  automationReadiness: string;
+  venueSigningMode: string;
+  settlementAddress: string | null;
+  state: string;
+  blockers: string[];
+  warnings: string[];
+  legs: ApiExecutionLeg[];
+  linkage?: ApiExecutionLinkage | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ApiExecutionWriteResponse {
   version: string;
   generatedAt: string;
@@ -629,6 +840,13 @@ export interface ApiCatalogData {
   generatedAt: string;
   defaultSlotId: string;
   items: ApiCatalogItem[];
+}
+
+export interface ApiExecutionReadResponse {
+  version: string;
+  generatedAt: string;
+  limit: number;
+  items: ApiExecutionRequest[];
 }
 
 /* ── Fetch Functions ── */
@@ -706,6 +924,46 @@ export async function fetchActivity(slotId: string): Promise<ApiActivityData | n
 export async function fetchRecommendation(slotId: string, notionalUsd = 10): Promise<ApiRecommendation | null> {
   return apiFetch<ApiRecommendation>(
     `/api/recommendations?slotId=${encodeURIComponent(slotId)}&userNotionalUsd=${notionalUsd}`,
+  );
+}
+
+export async function fetchExecutions(
+  query: {
+    executionRequestId?: string;
+    activationId?: string;
+    manifestId?: string;
+    slotId?: string;
+    limit?: number;
+  },
+  auth?: ApiAuthHeaders,
+): Promise<ApiExecutionReadResponse | null> {
+  const params = new URLSearchParams();
+
+  if (query.executionRequestId) {
+    params.set("executionRequestId", query.executionRequestId);
+  }
+
+  if (query.activationId) {
+    params.set("activationId", query.activationId);
+  }
+
+  if (query.manifestId) {
+    params.set("manifestId", query.manifestId);
+  }
+
+  if (query.slotId) {
+    params.set("slotId", query.slotId);
+  }
+
+  if (typeof query.limit === "number" && Number.isFinite(query.limit)) {
+    params.set("limit", String(query.limit));
+  }
+
+  const qs = params.toString();
+
+  return apiFetchWithAuth<ApiExecutionReadResponse>(
+    `/api/executions${qs ? `?${qs}` : ""}`,
+    auth,
   );
 }
 

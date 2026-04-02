@@ -3,6 +3,7 @@
 import {
   getIdentityToken as fetchIdentityToken,
   PrivyProvider as BasePrivyProvider,
+  useCreateWallet,
   usePrivy,
   useWallets,
 } from "@privy-io/react-auth";
@@ -26,10 +27,17 @@ export type PrivyConnectedWalletLike = {
   walletClientType?: string;
 };
 
-type PrivyUserLike = {
+type PrivySmartWalletLike = {
+  address?: string | null;
+  smartWalletType?: string | null;
+  smartWalletVersion?: string | null;
+} | null;
+
+export type PrivyUserLike = {
   wallet?: {
     address?: string | null;
   } | null;
+  smartWallet?: PrivySmartWalletLike;
   email?: {
     address?: string | null;
   } | null;
@@ -47,6 +55,7 @@ type PrivyRuntimeContextValue = {
   logout: () => void;
   getAccessToken: () => Promise<string | null>;
   getIdentityToken: () => Promise<string | null>;
+  createEmbeddedWallet: () => Promise<string | null>;
 };
 
 const disabledPrivyRuntimeContextValue: PrivyRuntimeContextValue = {
@@ -59,6 +68,7 @@ const disabledPrivyRuntimeContextValue: PrivyRuntimeContextValue = {
   logout: () => undefined,
   getAccessToken: async () => null,
   getIdentityToken: async () => null,
+  createEmbeddedWallet: async () => null,
 };
 
 const PrivyRuntimeContext = createContext<PrivyRuntimeContextValue>(
@@ -67,6 +77,7 @@ const PrivyRuntimeContext = createContext<PrivyRuntimeContextValue>(
 
 function PrivyRuntimeBridge({ children }: { children: ReactNode }) {
   const { ready, authenticated, user, login, logout, getAccessToken } = usePrivy();
+  const { createWallet } = useCreateWallet();
   const { wallets = [] } = useWallets() as {
     wallets?: PrivyConnectedWalletLike[];
   };
@@ -83,6 +94,14 @@ function PrivyRuntimeBridge({ children }: { children: ReactNode }) {
         logout,
         getAccessToken: async () => (await getAccessToken()) ?? null,
         getIdentityToken: async () => (await fetchIdentityToken()) ?? null,
+        createEmbeddedWallet: async () => {
+          try {
+            const wallet = await createWallet();
+            return wallet?.address ?? null;
+          } catch {
+            return null;
+          }
+        },
       }}
     >
       {children}
@@ -116,7 +135,7 @@ export function PrivyProvider({ children }: { children: ReactNode }) {
         supportedChains: [mainnet],
         embeddedWallets: {
           ethereum: {
-            createOnLogin: "users-without-wallets",
+            createOnLogin: "all-users",
           },
         },
       }}

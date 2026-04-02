@@ -22,7 +22,9 @@ export type UserVisibleState =
   | "funding_required"
   | "activation_ready"
   | "active"
+  | "pending"
   | "paused"
+  | "settled"
   | "blocked";
 
 export type RouteId =
@@ -429,7 +431,7 @@ export interface PositionRow {
   pnlPct: string;
   route: string;
   nextRebalance: string;
-  state: "active" | "paused" | "watch";
+  state: "active" | "paused" | "watch" | "settled" | "pending" | "blocked";
   updatedAt: string;
 }
 

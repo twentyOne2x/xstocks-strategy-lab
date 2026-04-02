@@ -428,15 +428,32 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
             <span className="section-kicker">Wallet boundary</span>
             <div className="info-stack">
               <div>
+                <span>Embedded wallet</span>
+                <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
+                  {formatAddress(
+                    executionPlan?.smartAccount.bootstrap.embeddedWalletAddress ??
+                      wallet.embeddedWallet.address,
+                  )}
+                </strong>
+              </div>
+              <div>
                 <span>Manual signer</span>
                 <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
-                  {formatAddress(executionRequest?.manualSignerAddress ?? wallet.manualSignerAddress)}
+                  {formatAddress(
+                    executionRequest?.manualSignerAddress ??
+                      executionPlan?.smartAccount.bridgeState.manualSignerAddress ??
+                      wallet.manualSignerAddress,
+                  )}
                 </strong>
               </div>
               <div>
                 <span>Policy account</span>
                 <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
-                  {formatAddress(executionRequest?.policyAccountAddress ?? wallet.policyAccountAddress)}
+                  {formatAddress(
+                    executionRequest?.policyAccountAddress ??
+                      executionPlan?.smartAccount.bridgeState.policyAccountAddress ??
+                      wallet.policyAccountAddress,
+                  )}
                 </strong>
               </div>
               <div>
@@ -444,14 +461,43 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
                 <strong style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
                   {formatAddress(
                     executionRequest?.executionDestinationAddress ??
+                      executionPlan?.smartAccount.bridgeState.executionDestinationAddress ??
                       wallet.executionDestinationAddress,
                   )}
                 </strong>
               </div>
               <div>
-                <span>Venue signing</span>
-                <strong>{executionRequest?.venueSigningMode ?? wallet.venueSigningMode}</strong>
+                <span>Automation readiness</span>
+                <strong>
+                  {(
+                    executionPlan?.automationExecution.readiness ??
+                    wallet.automationReadiness
+                  ).replaceAll("_", " ")}
+                </strong>
               </div>
+              <div>
+                <span>Venue signing</span>
+                <strong>
+                  {executionRequest?.venueSigningMode ??
+                    executionPlan?.smartAccount.venueSigningMode ??
+                    wallet.venueSigningMode}
+                </strong>
+              </div>
+              <div>
+                <span>Current blocker</span>
+                <strong>
+                  {wallet.automationBlocker ??
+                    executionPlan?.automationExecution.blockers[0] ??
+                    "None"}
+                </strong>
+              </div>
+              <p className="panel-note">
+                Current bridge rule: manual signing stays wallet-first, `policyAccountAddress`
+                resolves only when the Privy smart wallet is actually linked, and
+                `executionDestinationAddress` stays on the current signer surface until
+                that smart-wallet link exists. AA-native CoW or 1inch signing remains
+                deferred.
+              </p>
             </div>
           </article>
         </div>

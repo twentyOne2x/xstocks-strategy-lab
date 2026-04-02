@@ -87,7 +87,9 @@ function toSharedTruthState(
     case "blocked":
       return "blocked";
     case "active":
+    case "pending":
     case "paused":
+    case "settled":
       return "live";
     case "activation_ready":
       return "mentor_confirmed";
