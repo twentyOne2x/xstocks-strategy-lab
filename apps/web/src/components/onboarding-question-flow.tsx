@@ -1027,30 +1027,21 @@ function SimulatedWorkspace({
               </div>
 
               {/* Asset allocation bar */}
-              <div className="pq-alloc-bar">
-                {manifest.allocations.map((alloc, i) => {
-                  const weight = parseFloat(alloc.targetWeight) || 0;
-                  const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
-                  return (
-                    <div
-                      key={alloc.symbol}
-                      className="pq-alloc-segment"
-                      style={{ flex: weight, background: colors[i % colors.length] }}
-                      title={`${alloc.symbol}: ${alloc.targetWeight}`}
-                    />
-                  );
-                })}
-              </div>
-              <div className="pq-alloc-legend">
-                {manifest.allocations.map((alloc, i) => {
-                  const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
-                  return (
-                    <span className="pq-alloc-legend-item" key={alloc.symbol}>
-                      <span className="pq-alloc-legend-dot" style={{ background: colors[i % colors.length] }} />
-                      {alloc.symbol} {alloc.targetWeight}
-                    </span>
-                  );
-                })}
+              {/* Allocation bar with labels aligned below each segment */}
+              <div className="pq-alloc-combined">
+                {(() => {
+                  const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999", "#ff6b35"];
+                  return manifest.allocations.map((alloc, i) => {
+                    const weight = parseFloat(alloc.targetWeight) || 0;
+                    return (
+                      <div key={alloc.symbol} style={{ flex: weight, display: "flex", flexDirection: "column", alignItems: "center", minWidth: 0 }}>
+                        <div style={{ width: "100%", height: "12px", background: colors[i % colors.length] }} />
+                        <span className="pq-alloc-label">{alloc.symbol}</span>
+                        <span className="pq-alloc-weight">{alloc.targetWeight}</span>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             </div>
 
