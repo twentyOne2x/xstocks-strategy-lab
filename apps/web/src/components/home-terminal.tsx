@@ -56,7 +56,7 @@ export function HomeTerminal() {
           <div className="landing-hero-tagline">Powered by xStocks</div>
           <p className="landing-hero-sub">
             Tokenized equity portfolios you actually control.
-            Matched to your profile. See every holding before you fund.
+            Matched to your profile with 24/7 market intelligence. See every holding before you fund.
             Self-custody the whole way.
           </p>
           <div className="landing-hero-cta">

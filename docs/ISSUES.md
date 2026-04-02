@@ -14,6 +14,9 @@ Last updated: 2026-04-02
 | Post-qualification autoresearch screen: partial | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | controlled on the canonical frontend via `XSL-004` |
 | Autoresearch explainability in app: partial or light on prod | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | coordinated with `XSL-004` and `XSL-006` |
 | Deposits via Mesh: no | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | explicit absence or proof only |
+| LI.FI portfolio deposit from one `USDC` into the promoted default basket: spec only, atomic claim not proven | `XSL-005` with `XSL-005A` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting LI.FI deposit lane stays under funding or deposit ownership; do not move to `XSL-014` |
+| Enso portfolio multi-deposit from one `USDC` into the promoted default basket: spec only, atomic bundle not yet repo-proven | `XSL-005` with `XSL-005B` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting Enso atomic-bundle lane stays under funding or deposit ownership; do not move to `XSL-014` |
+| Portfolio buy surface plus Enso one-transaction bundle execution from one `USDC` input: implementation active | `XSL-005` with `XSL-005C` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | implementation lane for `Buy portfolio`, one-bundle execution, and honest approval truth |
 | All frontend deployed on prod: no | `XSL-004` | [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md) | includes route, copy, and deployment parity |
 | Agent and `skill.md` testability coverage | `XSL-016B` | [2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md) | public/private smoke ownership |
 
@@ -99,6 +102,9 @@ Last updated: 2026-04-02
 - Plan links:
   - [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md)
   - [2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md)
+  - [2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md)
+  - [2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md)
+  - [2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md)
 - Continuation note:
   - Date: 2026-04-02
   - Scope freeze: repair only the post-enable surface/runtime regressions in `apps/api/**` and `apps/web/**`. Do not widen into AA-native CoW or 1inch signing, do not reopen CRE autonomy policy, and do not start CRE runtime from this lane.
@@ -139,6 +145,104 @@ Last updated: 2026-04-02
   - [x] fix applied
   - [x] tests run
   - [x] visual/screenshot verification
+
+### XSL-005A LI.FI Portfolio USDC Deposit Lane
+
+- Type: funding/deposit/spec
+- Status: active
+- Canonical owner lane: `XSL-005`
+- Date opened: 2026-04-02
+- Context: repo truth already prefers LI.FI as the bridge or funding provider in manifests and policy defaults, but the current proven promoted-basket execution lane is still `1inch.ethereum` and `XSL-014A` route design is already frozen. The new ask is therefore only valid as a downstream funding or deposit lane: start from one `USDC` input, split across the promoted default basket weights, route into all portfolio assets, and stay honest about the exact approval model.
+- Suspected cause: current repo truth carries LI.FI only as funding or bridge preference and current basket execution proof only as per-leg signer-owned `1inch.ethereum` truth, so there is no execution-grade deposit spec saying whether LI.FI is a bridge pre-step, same-chain leg planner, partial rail, or truly atomic basket deposit path.
+- Fix intent: create one execution-grade supporting spec under `XSL-005` that freezes the exact LI.FI product claim, role classification, promoted-basket leg map, truthful approval model, per-leg artifact contract, coexistence boundary with 1inch and CoW truth, and the exact copy surfaces must use until stronger proof exists.
+- Acceptance criteria:
+  1. The repo explicitly keeps this lane under `XSL-005` and does not open it as a new `XSL-014` route-design sub-lane.
+  2. The exact truthful LI.FI portfolio-deposit claim is frozen for the promoted default basket.
+  3. The spec answers whether LI.FI is bridge or funding only, same-chain deposit planner, execution-venue replacement, or partial rail.
+  4. The exact portfolio targets and technical legs for the promoted default basket are frozen, including the yield-buffer sleeve.
+  5. The truthful approval model and exact required user-facing caveat are frozen.
+  6. The exact per-leg artifacts to persist are frozen.
+  7. The coexistence boundary with the current 1inch and CoW truth is explicit and non-vague.
+- Complexity: medium
+- Plan: [2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-lifi-portfolio-usdc-deposit-lane-spec.md)
+- Executor prompt:
+  - Work only after this spec is approved.
+  - Keep ownership under `XSL-005`.
+  - Touch only `packages/shared/**`, `packages/policy/**`, `apps/api/**`, the proof harness, and the narrow docs needed for `XSL-005A`.
+  - Do not reopen `XSL-014A`, do not widen into `apps/web/**`, and do not claim an atomic whole-basket LI.FI deposit unless one exact proof run on the promoted basket closes that claim.
+  - Preserve the exact approval caveat unless stronger proof exists:
+    `You will sign each trade with your connected wallet. Nothing executes without your approval.`
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [ ] fix applied
+  - [ ] tests run
+  - [ ] visual/screenshot verification not applicable in this spec-only pass
+
+### XSL-005B Enso Portfolio USDC Multi-Deposit Lane
+
+- Type: funding/deposit/spec
+- Status: active
+- Canonical owner lane: `XSL-005`
+- Date opened: 2026-04-02
+- Context: the same user intent now also names Enso as a candidate substrate for one-transaction multi-deposit from `USDC` into all assets of the promoted default portfolio. Current repo truth still proves only the explicit `1inch.ethereum` core-xStocks lane, but official Enso docs do show one-transaction bundle workflows that split one input across several downstream positions.
+- Suspected cause: current repo truth lacks any Enso integration or artifact contract, so there is no execution-grade spec freezing whether Enso can be the truthful atomic bundle lane for the promoted default basket and what exact approval model that would require.
+- Fix intent: create one execution-grade supporting spec under `XSL-005` that freezes the exact Enso atomic-bundle claim, exact target map, default EOA approval model, bundle artifact contract, and coexistence boundary with the current 1inch and CoW truth.
+- Acceptance criteria:
+  1. The repo explicitly keeps this lane under `XSL-005` and does not open it as a new `XSL-014` route-design sub-lane.
+  2. The exact Enso atomic-bundle claim is frozen separately from the current live-repo claim.
+  3. The exact promoted-basket targets are frozen, including the yield-buffer sleeve.
+  4. The exact default approval model and copy are frozen.
+  5. The request-level bundle artifacts and action-level verification artifacts are frozen.
+  6. The coexistence boundary with the current 1inch and CoW truth is explicit and non-vague.
+- Complexity: medium
+- Plan: [2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md)
+- Executor prompt:
+  - Work only after this spec is approved.
+  - Keep ownership under `XSL-005`.
+  - Touch only `packages/shared/**`, `packages/policy/**`, `apps/api/**`, the Enso proof harness, and the narrow docs needed for `XSL-005B`.
+  - Do not reopen `XSL-014A`, do not widen into `apps/web/**`, and do not claim the Enso lane is live until one exact promoted-basket proof run closes the atomic bundle claim.
+  - Preserve the exact default approval copy unless the `delegate` smart-wallet path is separately proven:
+    `You will approve the starting USDC and sign the bundle transaction with your connected wallet. Nothing executes without your approval.`
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [ ] fix applied
+- [ ] tests run
+- [ ] visual/screenshot verification not applicable in this spec-only pass
+
+### XSL-005C Portfolio Buy Surface And Enso Bundle Execution
+
+- Type: execution/frontend
+- Status: active
+- Canonical owner lane: `XSL-005`
+- Date opened: 2026-04-02
+- Context: the user now wants the visible `Buy with 1inch` surface replaced with `Buy portfolio`, and the actual buy path changed from a 1inch-pinned flow into one `USDC`-to-portfolio Enso bundle that the user can approve and submit once on the frontend.
+- Suspected cause: current repo runtime is still hard-pinned to `1inch.ethereum` in the frontend buy flow and in the authenticated manual execution handoff, while Enso only exists as a supporting spec and partial runtime branch with no active owner-lane implementation.
+- Fix intent: implement one repo-owned portfolio buy lane that stages all promoted portfolio token targets from one `USDC` input, requests one Enso bundle quote, and executes it with truthful provider-specific wallet approvals.
+- Acceptance criteria:
+  1. The active buy CTA says `Buy portfolio` on the real buy surfaces instead of `Buy with 1inch`.
+  2. The default authenticated portfolio buy path no longer hard-pins creation to `1inch.ethereum`; it stages an `enso_bundle` execution request instead.
+  3. The runtime requests one Enso bundle quote for the promoted default basket and fails closed if Enso does not return a usable bundle.
+  4. The shipped approval model stays truthful:
+     the user may need one `USDC` approval transaction first, then signs one Enso portfolio transaction.
+  5. The implementation buys all promoted target portfolio tokens, including `AUSD` acquisition for the yield buffer, and no surface claims downstream Flowdesk sleeve settlement unless the returned Enso bundle actually includes it.
+  6. Stale blocked activations or stale non-Enso execution requests are not silently reused by the buy surface.
+  7. Vendor API keys stay env-only and are not written to tracked files.
+- Complexity: high
+- Plan: [2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md)
+- Executor prompt:
+  - Keep ownership under `XSL-005` and implement only the Enso portfolio buy lane for the promoted default basket.
+  - Touch `packages/shared/**`, `apps/api/**`, `apps/web/**`, and the narrow docs needed for `XSL-005C`.
+  - Do not write the provided Enso API key to tracked files.
+  - Do not reopen `XSL-014A`, do not widen into CRE or right-rail redesign work, and do not imply that LI.FI is the active one-transaction basket lane.
+  - Keep approval copy honest on the final surfaces: one `USDC` approval if needed, then one portfolio transaction.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [ ] visual/screenshot verification
 
 ### XSL-006 Strategy Lab Operating Model
 

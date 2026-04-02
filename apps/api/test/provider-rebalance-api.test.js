@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { generateKeyPairSync, sign as signJwtPayload } from "node:crypto";
+import { privateKeyToAccount } from "../../../node_modules/.pnpm/node_modules/viem/_esm/accounts/index.js";
 import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
@@ -8,8 +8,10 @@ import { fileURLToPath } from "node:url";
 
 import { adaptResearchPromotedManifest } from "../../../packages/policy/src/index.js";
 import {
-  createProviderRebalanceRequestDigest,
-} from "../../../packages/shared/src/rebalance.js";
+  CHAINLINK_CRE_ETH_JWT_ALGORITHM,
+  computeChainlinkCreEventDigest,
+} from "../../../packages/shared/src/rebalance-provider.js";
+import { API_ENDPOINTS } from "../src/contracts.js";
 import { createRuntimeStore } from "../src/repositories/runtime-store.js";
 import { createApiServer } from "../src/server.js";
 
@@ -18,6 +20,12 @@ const REPO_ROOT = resolve(CURRENT_DIR, "..", "..", "..");
 const SLOT_REGISTRY_PATH = resolve(
   REPO_ROOT,
   "packages/research/manifests/slot-registry.json",
+);
+const SYNTHETIC_MANIFEST_ID = "test.synthetic_quoteable_basket:promoted";
+const TEST_CHAINLINK_CRE_PRIVATE_KEY = `0x${"55".repeat(32)}`;
+const TEST_CHAINLINK_CRE_WORKFLOW_ID = "cre_workflow_provider_test";
+const TEST_CHAINLINK_CRE_ACCOUNT = privateKeyToAccount(
+  TEST_CHAINLINK_CRE_PRIVATE_KEY,
 );
 
 async function loadResearchManifest(slotId) {
@@ -163,20 +171,37 @@ function encodeBase64UrlJson(value) {
   return Buffer.from(JSON.stringify(value)).toString("base64url");
 }
 
-function signEs256kJwt({ privateKey, kid, payload }) {
+async function signChainlinkCreJwt({
+  body,
+  account = TEST_CHAINLINK_CRE_ACCOUNT,
+  jti = `jti_${body.workflowExecutionId}`,
+  issuedAt = "2026-04-01T18:00:00.000Z",
+  expiresAt = "2026-04-01T18:04:00.000Z",
+} = {}) {
   const encodedHeader = encodeBase64UrlJson({
-    alg: "ES256K",
-    kid,
+    alg: CHAINLINK_CRE_ETH_JWT_ALGORITHM,
+    kid: account.address,
     typ: "JWT",
   });
-  const encodedPayload = encodeBase64UrlJson(payload);
+  const encodedPayload = encodeBase64UrlJson({
+    digest: computeChainlinkCreEventDigest(body),
+    iss: "chainlink-cre.test",
+    iat: Math.floor(new Date(issuedAt).getTime() / 1000),
+    exp: Math.floor(new Date(expiresAt).getTime() / 1000),
+    jti,
+    providerId: body.providerId,
+    workflowId: body.workflowId,
+    workflowExecutionId: body.workflowExecutionId,
+    slotId: body.slotId,
+    targetManifestId: body.targetManifestId,
+    chain: body.chain,
+  });
   const signingInput = `${encodedHeader}.${encodedPayload}`;
-  const signature = signJwtPayload("sha256", Buffer.from(signingInput), {
-    key: privateKey,
-    dsaEncoding: "ieee-p1363",
+  const signature = await account.signMessage({
+    message: signingInput,
   });
 
-  return `${signingInput}.${signature.toString("base64url")}`;
+  return `${signingInput}.${Buffer.from(signature.slice(2), "hex").toString("base64url")}`;
 }
 
 function createStaticLiveStateRepository() {
@@ -309,12 +334,6 @@ async function startProviderHarness({
   activationOwner = null,
   privyRequestContext = null,
 } = {}) {
-  const { publicKey, privateKey } = generateKeyPairSync("ec", {
-    namedCurve: "secp256k1",
-  });
-  const signerAddress = "0x5555555555555555555555555555555555555555";
-  const audience = "xstocks-provider-rebalance-review";
-  const kid = "provider-signing-key";
   const storeDir = await mkdtemp(resolve(tmpdir(), "xstocks-provider-rebalance-"));
   const storePath = resolve(storeDir, "runtime-store.json");
   const manifestRepository = await createSyntheticManifestRepository();
@@ -322,17 +341,11 @@ async function startProviderHarness({
     repoRoot: REPO_ROOT,
     slotRegistryPath: SLOT_REGISTRY_PATH,
     storePath,
+    now: () => "2026-04-01T18:02:00.000Z",
     manifestRepository,
     liveStateRepository: createStaticLiveStateRepository(),
-    providerRebalanceJwtAudience: audience,
-    providerRebalanceSignerAllowlist: [
-      {
-        address: signerAddress,
-        providerIds: ["chainlink_cre"],
-        kid,
-        jwk: publicKey.export({ format: "jwk" }),
-      },
-    ],
+    chainlinkCreSignerAllowlist: [TEST_CHAINLINK_CRE_ACCOUNT.address],
+    chainlinkCreWorkflowAllowlist: [TEST_CHAINLINK_CRE_WORKFLOW_ID],
     privyAuthService: privyRequestContext
       ? {
         async authenticateRequest() {
@@ -386,39 +399,33 @@ async function startProviderHarness({
     const requestBody = {
       version: "1",
       providerId: "chainlink_cre",
-      deliveryId: "delivery_1",
-      eventId: "event_1",
-      eventType: "rebalance_review_requested",
-      triggerMode: "review_only",
+      providerEventId: "delivery_1",
+      workflowId: TEST_CHAINLINK_CRE_WORKFLOW_ID,
+      workflowExecutionId: "workflow_exec_1",
+      triggerType: "cron",
       chain: "ethereum",
       slotId: "onboarding.default_basket",
-      activationId: "activation_provider_1",
       triggeredAt: "2026-04-01T18:00:00.000Z",
-      summary: "Open operator review for the promoted drift event.",
+      targetManifestId: SYNTHETIC_MANIFEST_ID,
+      baselineManifestId: "onboarding.default_basket:promoted:baseline_v1",
+      reviewReason: {
+        kind: "manifest_drift",
+        observedDriftBps: 425,
+        thresholdBps: 300,
+      },
+      reviewIntent: {
+        requestedState: "awaiting_operator",
+        executionMode: "review_only",
+      },
       ...overrides,
     };
-    const requestDigest = createProviderRebalanceRequestDigest(requestBody);
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    const token = signEs256kJwt({
-      privateKey,
-      kid,
-      payload: {
-        iss: signerAddress,
-        sub: "chainlink-cre-provider",
-        aud: audience,
-        iat: nowSeconds,
-        exp: nowSeconds + 3600,
-        jti: jwtId,
-        digest: requestDigest,
-      },
-    });
 
     return {
-      body: {
-        ...requestBody,
-        requestDigest,
-      },
-      token,
+      body: requestBody,
+      tokenPromise: signChainlinkCreJwt({
+        body: requestBody,
+        jti: jwtId,
+      }),
     };
   }
 
@@ -447,13 +454,14 @@ test("provider rebalance ingress accepts a signed review-only event and opens aw
 
   try {
     const signedRequest = harness.createSignedRequest();
+    const token = await signedRequest.tokenPromise;
     const response = await fetch(
-      `${harness.baseUrl}/api/internal/rebalances/provider-events`,
+      `${harness.baseUrl}${API_ENDPOINTS.CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${signedRequest.token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(signedRequest.body),
       },
@@ -462,21 +470,16 @@ test("provider rebalance ingress accepts a signed review-only event and opens aw
     const latestRebalance = await harness.runtimeStore.getLatestRebalance({
       slotId: "onboarding.default_basket",
     });
-    const providerReceipts = await harness.runtimeStore.listProviderReceipts({
-      deliveryId: "delivery_1",
+    const providerReceipts = await harness.runtimeStore.listProviderEventReceipts({
+      slotId: "onboarding.default_basket",
+      limit: 10,
     });
     const executionRequests = await harness.runtimeStore.listExecutionRequests();
 
-    assert.equal(response.status, 202);
-    assert.equal(payload.data.accepted, true);
+    assert.equal(response.status, 200);
     assert.equal(payload.data.receipt.decision, "accepted");
-    assert.deepEqual(payload.data.receipt.reasonCodes, ["accepted_review_only"]);
     assert.equal(payload.data.rebalanceOrchestration.state, "awaiting_operator");
     assert.equal(payload.data.rebalanceOrchestration.triggerSource, "provider_triggered");
-    assert.match(
-      payload.data.rebalanceOrchestration.providerReceiptId,
-      /^provider_receipt_/u,
-    );
     assert.equal(
       payload.data.rebalanceOrchestration.automationTruth.providerTriggeredProven,
       true,
@@ -503,13 +506,14 @@ test("execute_all stages provider-triggered review through canonical execution l
 
   try {
     const signedRequest = harness.createSignedRequest();
+    const token = await signedRequest.tokenPromise;
     const providerResponse = await fetch(
-      `${harness.baseUrl}/api/internal/rebalances/provider-events`,
+      `${harness.baseUrl}${API_ENDPOINTS.CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${signedRequest.token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(signedRequest.body),
       },
@@ -529,15 +533,16 @@ test("execute_all stages provider-triggered review through canonical execution l
     const latestRebalance = await harness.runtimeStore.getLatestRebalance({
       slotId: "onboarding.default_basket",
     });
-    const providerReceipts = await harness.runtimeStore.listProviderReceipts({
-      rebalanceId: latestRebalance.rebalanceId,
+    const providerReceipts = await harness.runtimeStore.listProviderEventReceipts({
+      slotId: "onboarding.default_basket",
       decision: "accepted",
+      limit: 10,
     });
     const executionRequests = await harness.runtimeStore.listExecutionRequests({
       rebalanceId: latestRebalance.rebalanceId,
     });
 
-    assert.equal(providerResponse.status, 202);
+    assert.equal(providerResponse.status, 200);
     assert.equal(executeAllResponse.status, 200);
     assert.equal(
       executeAllPayload.data.executionRequest.triggerSource,
@@ -561,10 +566,6 @@ test("execute_all stages provider-triggered review through canonical execution l
     );
     assert.equal(executionRequests.length, 1);
     assert.equal(providerReceipts.length, 1);
-    assert.equal(
-      providerReceipts[0].executionRequestId,
-      executionRequests[0].executionRequestId,
-    );
     assert.equal(
       latestRebalance.executionRequestId,
       executionRequests[0].executionRequestId,
@@ -596,13 +597,14 @@ test("execute_all fails closed when current session proof is missing", async () 
 
   try {
     const signedRequest = harness.createSignedRequest();
+    const token = await signedRequest.tokenPromise;
     const providerResponse = await fetch(
-      `${harness.baseUrl}/api/internal/rebalances/provider-events`,
+      `${harness.baseUrl}${API_ENDPOINTS.CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${signedRequest.token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(signedRequest.body),
       },
@@ -621,20 +623,20 @@ test("execute_all fails closed when current session proof is missing", async () 
     const latestRebalance = await harness.runtimeStore.getLatestRebalance({
       slotId: "onboarding.default_basket",
     });
-    const providerReceipts = await harness.runtimeStore.listProviderReceipts({
-      rebalanceId: latestRebalance.rebalanceId,
+    const providerReceipts = await harness.runtimeStore.listProviderEventReceipts({
+      slotId: "onboarding.default_basket",
       decision: "accepted",
+      limit: 10,
     });
     const executionRequests = await harness.runtimeStore.listExecutionRequests({
       rebalanceId: latestRebalance.rebalanceId,
     });
 
-    assert.equal(providerResponse.status, 202);
+    assert.equal(providerResponse.status, 200);
     assert.equal(executeAllResponse.status, 409);
     assert.match(executeAllPayload.error, /session proof is required/i);
     assert.equal(executionRequests.length, 0);
     assert.equal(providerReceipts.length, 1);
-    assert.equal(providerReceipts[0].executionRequestId, null);
     assert.equal(latestRebalance.executionRequestId, null);
   } finally {
     await harness.close();
@@ -648,31 +650,32 @@ test("provider rebalance ingress rejects request-digest tampering and persists t
     const signedRequest = harness.createSignedRequest();
     const tamperedBody = {
       ...signedRequest.body,
-      requestDigest: "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      workflowExecutionId: "workflow_exec_tampered",
     };
+    const token = await signedRequest.tokenPromise;
     const response = await fetch(
-      `${harness.baseUrl}/api/internal/rebalances/provider-events`,
+      `${harness.baseUrl}${API_ENDPOINTS.CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${signedRequest.token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(tamperedBody),
       },
     );
     const payload = await response.json();
-    const providerReceipts = await harness.runtimeStore.listProviderReceipts({
-      deliveryId: "delivery_1",
+    const providerReceipts = await harness.runtimeStore.listProviderEventReceipts({
+      slotId: "onboarding.default_basket",
+      decision: "rejected",
+      limit: 10,
     });
 
-    assert.equal(response.status, 401);
-    assert.equal(payload.data.accepted, false);
-    assert.equal(payload.data.receipt.decision, "rejected");
-    assert.deepEqual(payload.data.receipt.reasonCodes, ["request_digest_mismatch"]);
-    assert.equal(payload.data.rebalanceOrchestration, null);
+    assert.equal(response.status, 403);
+    assert.equal(payload.details.errorCode, "provider_scope_mismatch");
     assert.equal(providerReceipts.length, 1);
     assert.equal(providerReceipts[0].decision, "rejected");
+    assert.equal(providerReceipts[0].errorCode, "provider_scope_mismatch");
   } finally {
     await harness.close();
   }
@@ -683,12 +686,13 @@ test("provider rebalance ingress rejects duplicate deliveries and records the re
 
   try {
     const signedRequest = harness.createSignedRequest();
-    const endpoint = `${harness.baseUrl}/api/internal/rebalances/provider-events`;
+    const token = await signedRequest.tokenPromise;
+    const endpoint = `${harness.baseUrl}${API_ENDPOINTS.CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW}`;
     const requestOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${signedRequest.token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(signedRequest.body),
     };
@@ -696,16 +700,17 @@ test("provider rebalance ingress rejects duplicate deliveries and records the re
     const firstResponse = await fetch(endpoint, requestOptions);
     const secondResponse = await fetch(endpoint, requestOptions);
     const secondPayload = await secondResponse.json();
-    const providerReceipts = await harness.runtimeStore.listProviderReceipts({
-      deliveryId: "delivery_1",
+    const providerReceipts = await harness.runtimeStore.listProviderEventReceipts({
+      slotId: "onboarding.default_basket",
+      limit: 10,
     });
 
-    assert.equal(firstResponse.status, 202);
-    assert.equal(secondResponse.status, 409);
-    assert.equal(secondPayload.data.accepted, false);
-    assert.deepEqual(secondPayload.data.receipt.reasonCodes, ["duplicate_delivery"]);
+    assert.equal(firstResponse.status, 200);
+    assert.equal(secondResponse.status, 200);
     assert.equal(providerReceipts.length, 2);
-    assert.equal(providerReceipts[0].decision, "rejected");
+    assert.equal(secondPayload.data.receipt.decision, "duplicate");
+    assert.equal(secondPayload.data.receipt.errorCode, "duplicate_jti");
+    assert.equal(providerReceipts[0].decision, "duplicate");
     assert.equal(providerReceipts[1].decision, "accepted");
     assert.equal(
       typeof secondPayload.data.receipt.duplicateOfReceiptId,

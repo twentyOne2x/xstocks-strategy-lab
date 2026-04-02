@@ -480,6 +480,16 @@ function normalizeExecutionRequestLinkage(linkage) {
     providerReceiptId: normalizeNonEmptyString(
       firstDefined(linkage.providerReceiptId, linkage.provider_receipt_id, null),
     ),
+    providerDeliveryId: normalizeNonEmptyString(
+      firstDefined(
+        linkage.providerDeliveryId,
+        linkage.provider_delivery_id,
+        null,
+      ),
+    ),
+    providerEventId: normalizeNonEmptyString(
+      firstDefined(linkage.providerEventId, linkage.provider_event_id, null),
+    ),
   };
 
   return Object.values(normalized).some((value) => value !== null)
@@ -1731,14 +1741,25 @@ export function createRuntimeStore({
       return normalizedReceipt;
     },
     async listProviderEventReceipts({
+      receiptId,
+      deliveryId,
       jti,
       dedupeKey,
       slotId,
+      rebalanceId,
       decision,
       limit = 50,
     } = {}) {
       const state = await readState();
       let receipts = [...state.providerEventReceipts];
+
+      if (receiptId) {
+        receipts = receipts.filter((receipt) => receipt.receiptId === receiptId);
+      }
+
+      if (deliveryId) {
+        receipts = receipts.filter((receipt) => receipt.deliveryId === deliveryId);
+      }
 
       if (jti) {
         receipts = receipts.filter((receipt) => receipt.jti === jti);
@@ -1752,11 +1773,18 @@ export function createRuntimeStore({
         receipts = receipts.filter((receipt) => receipt.slotId === slotId);
       }
 
+      if (rebalanceId) {
+        receipts = receipts.filter((receipt) => receipt.rebalanceId === rebalanceId);
+      }
+
       if (decision) {
         receipts = receipts.filter((receipt) => receipt.decision === decision);
       }
 
       return receipts.slice(0, limit);
+    },
+    async listProviderReceipts(filters = {}) {
+      return this.listProviderEventReceipts(filters);
     },
     async getProviderEventReceiptByJti({ jti } = {}) {
       const [receipt] = await this.listProviderEventReceipts({

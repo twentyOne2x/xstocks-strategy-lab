@@ -915,6 +915,66 @@ function createEthereumRpcClientStub() {
   };
 }
 
+function createEnsoExecutionClientStub() {
+  let lastBundleRequest = null;
+  let lastApprovalRequest = null;
+
+  return {
+    get lastBundleRequest() {
+      return lastBundleRequest;
+    },
+    get lastApprovalRequest() {
+      return lastApprovalRequest;
+    },
+    async requestBundle(input) {
+      lastBundleRequest = input;
+
+      const amountsOut = Object.fromEntries(
+        (input.actions ?? [])
+          .filter((action) => action?.action === "route")
+          .map((action, index) => [
+            String(action.args.tokenOut).toLowerCase(),
+            String(1_000_000_000_000_000_000n + BigInt(index)),
+          ]),
+      );
+
+      return {
+        tx: {
+          from: input.fromAddress,
+          to: "0x9999999999999999999999999999999999999999",
+          data: "0xdeadbeef",
+          value: "0x0",
+        },
+        gas: "275000",
+        priceImpact: 0.01,
+        amountsOut,
+        route: (input.actions ?? []).map((action, index) => ({
+          step: index,
+          action: action.action,
+          tokenOut: action.args?.tokenOut ?? null,
+        })),
+        bundle: (input.actions ?? []).map((action, index) => ({
+          step: index,
+          protocol: action.protocol,
+          action: action.action,
+        })),
+      };
+    },
+    async requestApproval(input) {
+      lastApprovalRequest = input;
+
+      return {
+        tx: {
+          from: input.fromAddress,
+          to: "0x8888888888888888888888888888888888888888",
+          data: "0xapprove",
+          value: "0x0",
+        },
+      };
+    },
+  };
+}
+
 test("live-state repository matches the package-owned boundary repository for manifest-scoped reads", async () => {
   const manifest = await loadPromotedManifest("advanced.default_directional");
   const fetchImpl = createFixtureFetch();
@@ -2377,6 +2437,113 @@ test("execution create fails closed for a foreign activation owner", async () =>
     assert.match(
       executionPayload.error,
       /Activation .* was not found for the authenticated user/i,
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("execution quote_portfolio returns one Enso bundle quote for the promoted basket", async () => {
+  const ensoExecutionClient = createEnsoExecutionClientStub();
+  const harness = await startServer({
+    ensoExecutionClient,
+    ethereumRpcClient: createEthereumRpcClientStub(),
+  });
+
+  try {
+    const activationResponse = await fetch(`${harness.baseUrl}/api/activations`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        manifestId: DEFAULT_MANIFEST_ID,
+        userNotionalUsd: 1000,
+        walletState: createReadyWalletState(harness.auth),
+      }),
+    });
+    const activationPayload = await activationResponse.json();
+
+    const createResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        action: "create",
+        activationId: activationPayload.data.activation.activationId,
+        executionAdapterId: "enso_bundle",
+      }),
+    });
+    const createPayload = await createResponse.json();
+
+    assert.equal(createResponse.status, 200);
+    assert.equal(createPayload.data.executionRequest.adapterId, "enso_bundle");
+    assert.equal(
+      createPayload.data.executionRequest.legs.some((leg) => leg.state === "deferred"),
+      false,
+    );
+
+    const quoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        action: "quote_portfolio",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+      }),
+    });
+    const quotePayload = await quoteResponse.json();
+    const quotedLegs = quotePayload.data.executionRequest.legs.filter(
+      (leg) => leg.state !== "deferred",
+    );
+    const approvalLeg = quotedLegs[0];
+
+    assert.equal(quoteResponse.status, 200);
+    assert.equal(quotePayload.data.executionRequest.adapterId, "enso_bundle");
+    assert.match(
+      quotePayload.data.executionRequest.warnings.join(" "),
+      /Prepared the Enso portfolio bundle/i,
+    );
+    assert.equal(quotedLegs.length > 0, true);
+    assert.equal(
+      quotedLegs.every((leg) => leg.state === "awaiting_approval"),
+      true,
+    );
+    assert.equal(
+      quotedLegs.every((leg) => leg.quote.kind === "enso_bundle"),
+      true,
+    );
+    assert.equal(
+      quotedLegs.every((leg) => leg.quote.quoteId === approvalLeg.quote.quoteId),
+      true,
+    );
+    assert.equal(
+      quotedLegs.every((leg) => leg.venueStatus.venueId === "enso.ethereum"),
+      true,
+    );
+    assert.equal(approvalLeg.approval.approvalType, "wallet_transaction");
+    assert.equal(
+      approvalLeg.approval.transactionRequest.to,
+      "0x8888888888888888888888888888888888888888",
+    );
+    assert.equal(
+      approvalLeg.quote.tx.to,
+      "0x9999999999999999999999999999999999999999",
+    );
+    assert.equal(ensoExecutionClient.lastBundleRequest.routingStrategy, "router");
+    assert.equal(ensoExecutionClient.lastApprovalRequest.amount, "1000000000");
+
+    const invalidLegQuoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
+      method: "POST",
+      headers: createJsonHeaders(harness.auth),
+      body: JSON.stringify({
+        action: "quote_leg",
+        executionRequestId: createPayload.data.executionRequest.executionRequestId,
+        legId: quotedLegs[0].legId,
+      }),
+    });
+    const invalidLegQuotePayload = await invalidLegQuoteResponse.json();
+
+    assert.equal(invalidLegQuoteResponse.status, 409);
+    assert.match(
+      invalidLegQuotePayload.error,
+      /Portfolio execution requests must use quote_portfolio/i,
     );
   } finally {
     await harness.close();

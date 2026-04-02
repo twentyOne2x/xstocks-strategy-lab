@@ -42,27 +42,52 @@ const CATALOG_MODES = new Set(["basket", "directional"]);
 const EXECUTION_ACTIONS = new Set([
   "create",
   "execute_all",
+  "quote_portfolio",
   "quote_leg",
   "record_submission",
   "poll_receipt",
 ]);
 const OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "venue_router";
+const PORTFOLIO_MULTIQUOTE_ADAPTER_ID = "portfolio_multiquoter";
+const PORTFOLIO_MULTIQUOTE_ROUTE_ID = "portfolio.multiquote";
 const COW_SWAP_EXECUTION_ADAPTER_ID = "cow_swap";
 const COW_SWAP_EXECUTION_ROUTE_ID = "cow_swap.ethereum";
 const ONEINCH_EXECUTION_ADAPTER_ID = "oneinch_fusion";
 const ONEINCH_EXECUTION_ROUTE_ID = "1inch.ethereum";
+const LIFI_PORTFOLIO_ADAPTER_ID = "lifi_portfolio";
+const LIFI_PORTFOLIO_ROUTE_ID = "lifi.ethereum";
+const ENSO_PORTFOLIO_ADAPTER_ID = "enso_bundle";
+const ENSO_PORTFOLIO_ROUTE_ID = "enso.ethereum";
+const PORTFOLIO_QUOTE_WINDOW_MS = 10_000;
+const ETHEREUM_CHAIN_ID = 1;
 const MANUAL_EXECUTION_ROUTE_SELECTIONS = Object.freeze({
   venue_router: {
     requestAdapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
     routeId: null,
     label: "venue-routed execution",
+    allowPortfolio: false,
+    allowLifi: false,
+    allowEnso: false,
     allowCow: true,
     allowOneInch: true,
+  },
+  portfolio_multiquoter: {
+    requestAdapterId: PORTFOLIO_MULTIQUOTE_ADAPTER_ID,
+    routeId: PORTFOLIO_MULTIQUOTE_ROUTE_ID,
+    label: "portfolio multiquoter",
+    allowPortfolio: true,
+    allowLifi: true,
+    allowEnso: true,
+    allowCow: false,
+    allowOneInch: false,
   },
   cow_swap: {
     requestAdapterId: COW_SWAP_EXECUTION_ADAPTER_ID,
     routeId: COW_SWAP_EXECUTION_ROUTE_ID,
     label: "CoW",
+    allowPortfolio: false,
+    allowLifi: false,
+    allowEnso: false,
     allowCow: true,
     allowOneInch: false,
   },
@@ -70,8 +95,31 @@ const MANUAL_EXECUTION_ROUTE_SELECTIONS = Object.freeze({
     requestAdapterId: ONEINCH_EXECUTION_ADAPTER_ID,
     routeId: ONEINCH_EXECUTION_ROUTE_ID,
     label: "1inch Fusion",
+    allowPortfolio: false,
+    allowLifi: false,
+    allowEnso: false,
     allowCow: false,
     allowOneInch: true,
+  },
+  lifi_portfolio: {
+    requestAdapterId: LIFI_PORTFOLIO_ADAPTER_ID,
+    routeId: LIFI_PORTFOLIO_ROUTE_ID,
+    label: "LI.FI Portfolio",
+    allowPortfolio: true,
+    allowLifi: true,
+    allowEnso: false,
+    allowCow: false,
+    allowOneInch: false,
+  },
+  enso_bundle: {
+    requestAdapterId: ENSO_PORTFOLIO_ADAPTER_ID,
+    routeId: ENSO_PORTFOLIO_ROUTE_ID,
+    label: "Enso Bundle",
+    allowPortfolio: true,
+    allowLifi: false,
+    allowEnso: true,
+    allowCow: false,
+    allowOneInch: false,
   },
 });
 const YIELD_BUFFER_DEFERRED_WARNING =
@@ -386,6 +434,103 @@ function toAtomicAmount(value, decimals) {
   const [whole, fraction = ""] = normalized.toFixed(decimals).split(".");
   return `${whole}${fraction.padEnd(decimals, "0").slice(0, decimals)}`
     .replace(/^0+/u, "") || "0";
+}
+
+function fromAtomicAmount(value, decimals) {
+  const atomic = String(value ?? "0").replace(/^0+/u, "") || "0";
+
+  if (!/^\d+$/u.test(atomic)) {
+    return 0;
+  }
+
+  if (decimals <= 0) {
+    return Number(atomic);
+  }
+
+  const padded = atomic.padStart(decimals + 1, "0");
+  const whole = padded.slice(0, -decimals) || "0";
+  const fraction = padded.slice(-decimals).replace(/0+$/u, "");
+  const normalized = fraction.length > 0 ? `${whole}.${fraction}` : whole;
+
+  return Number(normalized);
+}
+
+function atomicAmountToUsd(value, decimals, priceUsd) {
+  if (!Number.isFinite(priceUsd ?? NaN)) {
+    return null;
+  }
+
+  const normalizedAmount = fromAtomicAmount(value, decimals);
+
+  if (!Number.isFinite(normalizedAmount)) {
+    return null;
+  }
+
+  return Number((normalizedAmount * priceUsd).toFixed(8));
+}
+
+function normalizeLowercaseAddress(value) {
+  return normalizeEthereumAddress(value)?.toLowerCase() ?? null;
+}
+
+function encodeAbiAddress(value) {
+  const normalized = normalizeLowercaseAddress(value);
+
+  if (!normalized) {
+    throw new Error("A valid Ethereum address is required for ABI encoding.");
+  }
+
+  return normalized.slice(2).padStart(64, "0");
+}
+
+function encodeAbiUint256(value) {
+  const normalized = BigInt(String(value ?? "0")).toString(16);
+  return normalized.padStart(64, "0");
+}
+
+function buildErc20ApproveTransaction({
+  tokenAddress,
+  from,
+  spender,
+  amount,
+}) {
+  const normalizedTokenAddress = normalizeLowercaseAddress(tokenAddress);
+  const normalizedFrom = normalizeLowercaseAddress(from);
+  const normalizedSpender = normalizeLowercaseAddress(spender);
+
+  if (!normalizedTokenAddress || !normalizedFrom || !normalizedSpender) {
+    throw new Error(
+      "ERC-20 approval transaction requires tokenAddress, from, and spender.",
+    );
+  }
+
+  return {
+    from: normalizedFrom,
+    to: normalizedTokenAddress,
+    value: "0x0",
+    data: `0x095ea7b3${encodeAbiAddress(normalizedSpender)}${encodeAbiUint256(amount)}`,
+  };
+}
+
+function createWalletTransactionApproval({
+  signerAddress,
+  approvalTarget,
+  transactionRequest,
+  notes = [],
+}) {
+  return {
+    approvalType: "wallet_transaction",
+    status: "awaiting_user",
+    signerAddress,
+    approvalTarget,
+    orderToSign: {},
+    transactionRequest,
+    signature: null,
+    approvedAt: null,
+    submittedAt: null,
+    venueOrderId: null,
+    notes,
+  };
 }
 
 function normalizeSelector(payload = {}) {
@@ -1239,6 +1384,10 @@ function resolveExecutionSignerAddress(walletState = {}) {
   return resolveManualSignerAddress(walletState);
 }
 
+function resolveSettlementAddress(walletState = {}) {
+  return resolveExecutionDestinationAddress(walletState);
+}
+
 function createExecutionBridgeState({
   walletState = {},
   executionPlanSnapshot = null,
@@ -1585,6 +1734,28 @@ function resolveManualExecutionRouteSelection({
     return MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router;
   }
 
+  if (normalizedAdapterId === OPERATOR_MANUAL_EXECUTION_ADAPTER_ID) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router;
+  }
+
+  if (normalizedAdapterId === PORTFOLIO_MULTIQUOTE_ADAPTER_ID) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.portfolio_multiquoter;
+  }
+
+  if (
+    normalizedAdapterId === LIFI_PORTFOLIO_ADAPTER_ID ||
+    normalizedAdapterId === "lifi"
+  ) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.lifi_portfolio;
+  }
+
+  if (
+    normalizedAdapterId === ENSO_PORTFOLIO_ADAPTER_ID ||
+    normalizedAdapterId === "enso"
+  ) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.enso_bundle;
+  }
+
   if (normalizedAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID) {
     return MANUAL_EXECUTION_ROUTE_SELECTIONS.cow_swap;
   }
@@ -1605,14 +1776,43 @@ function resolveManualExecutionRouteSelection({
     return MANUAL_EXECUTION_ROUTE_SELECTIONS.oneinch_fusion;
   }
 
+  if (normalizedRouteId === PORTFOLIO_MULTIQUOTE_ROUTE_ID) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.portfolio_multiquoter;
+  }
+
+  if (normalizedRouteId === LIFI_PORTFOLIO_ROUTE_ID) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.lifi_portfolio;
+  }
+
+  if (normalizedRouteId === ENSO_PORTFOLIO_ROUTE_ID) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.enso_bundle;
+  }
+
   throw new HttpError(
     400,
-    `executionRouteId must be one of ${COW_SWAP_EXECUTION_ROUTE_ID} or ${ONEINCH_EXECUTION_ROUTE_ID}.`,
+    `executionRouteId must be one of ${PORTFOLIO_MULTIQUOTE_ROUTE_ID}, ${LIFI_PORTFOLIO_ROUTE_ID}, ${ENSO_PORTFOLIO_ROUTE_ID}, ${COW_SWAP_EXECUTION_ROUTE_ID}, or ${ONEINCH_EXECUTION_ROUTE_ID}.`,
   );
 }
 
 function resolveManualExecutionRouteSelectionFromLeg(leg, executionRequest) {
   const adapterId = leg.adapterId ?? executionRequest?.adapterId ?? null;
+
+  if (
+    adapterId === OPERATOR_MANUAL_EXECUTION_ADAPTER_ID ||
+    adapterId === PORTFOLIO_MULTIQUOTE_ADAPTER_ID
+  ) {
+    return adapterId === PORTFOLIO_MULTIQUOTE_ADAPTER_ID
+      ? MANUAL_EXECUTION_ROUTE_SELECTIONS.portfolio_multiquoter
+      : MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router;
+  }
+
+  if (adapterId === LIFI_PORTFOLIO_ADAPTER_ID) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.lifi_portfolio;
+  }
+
+  if (adapterId === ENSO_PORTFOLIO_ADAPTER_ID) {
+    return MANUAL_EXECUTION_ROUTE_SELECTIONS.enso_bundle;
+  }
 
   if (adapterId === OPERATOR_MANUAL_EXECUTION_ADAPTER_ID) {
     return MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router;
@@ -1877,6 +2077,13 @@ function createExecutionRequestLinkage({
     rebalanceId: rebalance?.rebalanceId ?? null,
     providerReceiptId:
       providerReceipt?.receiptId ?? rebalance?.providerReceiptId ?? null,
+    providerDeliveryId:
+      providerReceipt?.deliveryId ?? rebalance?.providerDeliveryId ?? null,
+    providerEventId:
+      providerReceipt?.providerEventId ??
+      providerReceipt?.eventId ??
+      rebalance?.providerEventId ??
+      null,
   };
 
   return Object.values(linkage).some((value) => value !== null)
@@ -1896,6 +2103,8 @@ function createExecutionLegArtifactLinkage({
     executionRequestId,
     rebalanceId: requestLinkage.rebalanceId ?? null,
     providerReceiptId: requestLinkage.providerReceiptId ?? null,
+    providerDeliveryId: requestLinkage.providerDeliveryId ?? null,
+    providerEventId: requestLinkage.providerEventId ?? null,
   };
 }
 
@@ -1917,8 +2126,10 @@ function createExecutionLeg({
   const targetNotionalUsd = roundUsd(
     (requestedNotionalUsd * allocation.targetWeightPct) / 100,
   );
+  const allowPortfolioRouting =
+    routeSelection.allowPortfolio === true && Boolean(allocation.assetSymbol);
 
-  if (allocation.sleeve !== "core_xstocks") {
+  if (allocation.sleeve !== "core_xstocks" && !allowPortfolioRouting) {
     return {
       legId: `${activation.activationId}:leg:${sequence}`,
       sequence,
@@ -1959,6 +2170,8 @@ function createExecutionLeg({
       ? oneInchReceivingToken
       : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
         ? cowReceivingToken
+        : routeSelection.allowPortfolio
+          ? oneInchReceivingToken
         : {
             address: cowReceivingToken.address ?? oneInchReceivingToken.address,
             source:
@@ -1970,6 +2183,9 @@ function createExecutionLeg({
 
   if (!selectedReceivingToken.address) {
     blockers.push(
+      routeSelection.allowPortfolio
+        ? `Ethereum execution token metadata is missing for ${allocation.assetSymbol}; portfolio multiquote requires deployment.address metadata on the live asset.`
+        :
       routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
         ? `Ethereum execution token metadata is missing for ${allocation.assetSymbol}; 1inch requires deployment.address metadata on the live xstocks asset.`
         : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
@@ -2029,6 +2245,9 @@ function createExecutionLeg({
     blockers,
     warnings: uniqueStrings([
       "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+      routeSelection.allowPortfolio
+        ? `${allocation.assetSymbol} is staged for the provider-aware portfolio buy lane from one ${fundingAssetSymbol} input.`
+        : null,
       routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
         ? `${allocation.assetSymbol} is pinned to the 1inch Ethereum route for this execution request.`
         : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
@@ -2153,7 +2372,8 @@ function createExecutionRequest({
     runtimeOwner,
     triggerSource,
     adapterId: routeSelection.requestAdapterId,
-    activationManifestRef: activation.activationManifestRef,
+    activationManifestRef:
+      activation.activationManifestRef ?? createActivationManifestRef(manifest),
     requestedNotionalUsd,
     fundingAssetSymbol,
     manualSignerAddress: bridgeState.manualSignerAddress,
@@ -2470,6 +2690,24 @@ function selectVenueQuoteCandidate(candidates) {
   })[0];
 }
 
+function selectPortfolioQuoteCandidate(candidates) {
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  return [...candidates].sort((left, right) => {
+    if (left.expectedOutputUsd !== right.expectedOutputUsd) {
+      return right.expectedOutputUsd - left.expectedOutputUsd;
+    }
+
+    if (left.executionKind !== right.executionKind) {
+      return left.executionKind === "single_bundle_transaction" ? -1 : 1;
+    }
+
+    return left.adapterId.localeCompare(right.adapterId);
+  })[0];
+}
+
 function buildQuoteFailureRawStatus(quoteAttempts) {
   const attempts = Object.values(quoteAttempts ?? {}).filter(Boolean);
   const primaryFailure =
@@ -2529,6 +2767,8 @@ export function createApiService({
   liveStateRepository,
   runtimeStore,
   cowExecutionClient = null,
+  lifiExecutionClient = null,
+  ensoExecutionClient = null,
   oneInchExecutionClient = null,
   ethereumRpcClient = null,
   privyAuthService = null,
@@ -3454,11 +3694,658 @@ export function createApiService({
     }
   }
 
+  async function resolveLegOutputMeta(leg) {
+    const assetSnapshot =
+      leg.assetSymbol && typeof liveStateRepository.fetchAssetSnapshot === "function"
+        ? await liveStateRepository.fetchAssetSnapshot(leg.assetSymbol)
+        : null;
+    const priceUsd = assetSnapshot?.priceUsd ?? null;
+    const decimals =
+      leg.receivingTokenAddress && ethereumRpcClient?.getErc20Decimals
+        ? (await ethereumRpcClient.getErc20Decimals(leg.receivingTokenAddress)) ?? 18
+        : leg.receivingTokenDecimals ?? 18;
+
+    return {
+      priceUsd,
+      decimals,
+    };
+  }
+
+  async function quotePortfolioViaLifi({
+    executionRequest,
+    actionableLegs,
+  }) {
+    if (!lifiExecutionClient) {
+      throw new Error("LI.FI client is not configured for this runtime.");
+    }
+
+    const quotedAt = now();
+    const legResults = await Promise.allSettled(
+      actionableLegs.map(async (leg) => {
+        const outputMeta = await resolveLegOutputMeta(leg);
+        const quote = await lifiExecutionClient.requestQuote({
+          fromChainId: ETHEREUM_CHAIN_ID,
+          toChainId: ETHEREUM_CHAIN_ID,
+          fromTokenAddress: leg.paymentTokenAddress,
+          toTokenAddress: leg.receivingTokenAddress,
+          fromAmount: toAtomicAmount(
+            leg.targetNotionalUsd,
+            leg.paymentTokenDecimals ?? 6,
+          ),
+          fromAddress:
+            executionRequest.manualSignerAddress ??
+            executionRequest.settlementAddress,
+          toAddress:
+            executionRequest.settlementAddress ??
+            executionRequest.manualSignerAddress,
+        });
+        const routeId = String(
+          quote.id ?? `${executionRequest.executionRequestId}:${leg.legId}:lifi`,
+        );
+        const estimatedOutputUsd = atomicAmountToUsd(
+          quote.estimate?.toAmount ??
+            quote.estimate?.data?.toTokenAmount ??
+            "0",
+          outputMeta.decimals ?? 18,
+          outputMeta.priceUsd,
+        );
+        const storedQuote = {
+          kind: "lifi_quote",
+          quoteId: routeId,
+          quotedAt,
+          routeId,
+          tool: String(quote.tool ?? "lifi"),
+          fromTokenAddress: leg.paymentTokenAddress,
+          toTokenAddress: leg.receivingTokenAddress,
+          fromAddress:
+            executionRequest.manualSignerAddress ??
+            executionRequest.settlementAddress,
+          toAddress:
+            executionRequest.settlementAddress ??
+            executionRequest.manualSignerAddress,
+          fromTokenAmount: String(
+            quote.estimate?.fromAmount ??
+              quote.estimate?.data?.fromTokenAmount ??
+              toAtomicAmount(leg.targetNotionalUsd, leg.paymentTokenDecimals ?? 6),
+          ),
+          toTokenAmount: String(
+            quote.estimate?.toAmount ??
+              quote.estimate?.data?.toTokenAmount ??
+              "0",
+          ),
+          toAmountMin: String(quote.estimate?.toAmountMin ?? "") || null,
+          approvalAddress: normalizeLowercaseAddress(
+            quote.estimate?.approvalAddress,
+          ),
+          transactionRequest:
+            quote.transactionRequest && typeof quote.transactionRequest === "object"
+              ? quote.transactionRequest
+              : {},
+          includedSteps: Array.isArray(quote.includedSteps)
+            ? quote.includedSteps.filter(
+                (item) => item && typeof item === "object" && !Array.isArray(item),
+              )
+            : [],
+        };
+        const approval =
+          storedQuote.approvalAddress && leg.paymentTokenAddress
+            ? createWalletTransactionApproval({
+                signerAddress:
+                  executionRequest.manualSignerAddress ??
+                  executionRequest.settlementAddress,
+                approvalTarget: "erc20_allowance",
+                transactionRequest: buildErc20ApproveTransaction({
+                  tokenAddress: leg.paymentTokenAddress,
+                  from:
+                    executionRequest.manualSignerAddress ??
+                    executionRequest.settlementAddress,
+                  spender: storedQuote.approvalAddress,
+                  amount: storedQuote.fromTokenAmount,
+                }),
+                notes: [
+                  "Approve the LI.FI spender for this routed portfolio leg before sending the swap transaction.",
+                ],
+              })
+            : null;
+
+        return {
+          leg,
+          storedQuote,
+          approval,
+          expectedOutputUsd: estimatedOutputUsd ?? 0,
+          receivingTokenDecimals: outputMeta.decimals ?? 18,
+        };
+      }),
+    );
+
+    const failures = legResults
+      .filter((result) => result.status === "rejected")
+      .map((result) => result.reason)
+      .map((error) => (error instanceof Error ? error.message : String(error)));
+
+    if (failures.length > 0) {
+      throw new Error(failures[0]);
+    }
+
+    const successfulLegs = legResults.map((result) => result.value);
+
+    return {
+      adapterId: LIFI_PORTFOLIO_ADAPTER_ID,
+      venueId: LIFI_PORTFOLIO_ROUTE_ID,
+      label: "LI.FI Portfolio",
+      executionKind: "per_leg_transactions",
+      expectedOutputUsd: successfulLegs.reduce(
+        (sum, item) => sum + item.expectedOutputUsd,
+        0,
+      ),
+      legs: successfulLegs.map((item) => ({
+        ...item.leg,
+        state: "awaiting_approval",
+        adapterId: LIFI_PORTFOLIO_ADAPTER_ID,
+        venueId: LIFI_PORTFOLIO_ROUTE_ID,
+        requiredRouteId: LIFI_PORTFOLIO_ROUTE_ID,
+        receivingTokenDecimals: item.receivingTokenDecimals,
+        blockers: [],
+        quote: item.storedQuote,
+        approval: item.approval,
+        warnings: uniqueStrings([
+          ...item.leg.warnings,
+          "LI.FI portfolio execution remains wallet-transaction based per leg.",
+          item.approval
+            ? "This leg requires an ERC-20 approval transaction before the routed swap transaction can be sent."
+            : "This leg can be sent directly as a routed wallet transaction.",
+        ]),
+        venueStatus: {
+          venueId: LIFI_PORTFOLIO_ROUTE_ID,
+          venueOrderId: item.storedQuote.routeId,
+          status: "quote_ready",
+          settlementTxHash: null,
+          lastCheckedAt: null,
+          updatedAt: quotedAt,
+          rawStatus: {
+            provider: "lifi",
+            executionKind: "per_leg_transactions",
+            expectedOutputUsd: item.expectedOutputUsd,
+          },
+        },
+      })),
+      rawStatus: {
+        provider: "lifi",
+        executionKind: "per_leg_transactions",
+        quoteWindowMs: PORTFOLIO_QUOTE_WINDOW_MS,
+      },
+    };
+  }
+
+  async function quotePortfolioViaEnso({
+    executionRequest,
+    actionableLegs,
+  }) {
+    if (!ensoExecutionClient) {
+      throw new Error("Enso client is not configured for this runtime.");
+    }
+
+    const quotedAt = now();
+    const fromAddress =
+      executionRequest.manualSignerAddress ?? executionRequest.settlementAddress;
+    const receiver =
+      executionRequest.settlementAddress ?? executionRequest.manualSignerAddress;
+    const actions = actionableLegs.map((leg) => ({
+      protocol: "enso",
+      action: "route",
+      args: {
+        tokenIn: leg.paymentTokenAddress,
+        tokenOut: leg.receivingTokenAddress,
+        amountIn: toAtomicAmount(
+          leg.targetNotionalUsd,
+          leg.paymentTokenDecimals ?? 6,
+        ),
+        slippage: "100",
+      },
+    }));
+    const [bundle, approvalData, outputMetaList] = await Promise.all([
+      ensoExecutionClient.requestBundle({
+        actions,
+        chainId: ETHEREUM_CHAIN_ID,
+        fromAddress,
+        receiver,
+        routingStrategy: "router",
+      }),
+      ensoExecutionClient.requestApproval({
+        amount: toAtomicAmount(executionRequest.requestedNotionalUsd, 6),
+        chainId: ETHEREUM_CHAIN_ID,
+        fromAddress,
+        tokenAddress: actionableLegs[0]?.paymentTokenAddress,
+      }),
+      Promise.all(actionableLegs.map((leg) => resolveLegOutputMeta(leg))),
+    ]);
+    const quoteId = `enso:${executionRequest.executionRequestId}:${quotedAt}`;
+    const amountsOutIndex = new Map(
+      Object.entries(bundle?.amountsOut ?? {}).map(([key, value]) => [
+        String(key).toLowerCase(),
+        String(value),
+      ]),
+    );
+    const approvalTransactionRequest =
+      approvalData?.tx && typeof approvalData.tx === "object"
+        ? approvalData.tx
+        : null;
+    const expectedOutputUsd = actionableLegs.reduce((sum, leg, index) => {
+      const outputAmount =
+        amountsOutIndex.get(String(leg.receivingTokenAddress).toLowerCase()) ?? "0";
+      return (
+        sum +
+        (atomicAmountToUsd(
+          outputAmount,
+          outputMetaList[index]?.decimals ?? 18,
+          outputMetaList[index]?.priceUsd,
+        ) ?? 0)
+      );
+    }, 0);
+
+    return {
+      adapterId: ENSO_PORTFOLIO_ADAPTER_ID,
+      venueId: ENSO_PORTFOLIO_ROUTE_ID,
+      label: "Enso Bundle",
+      executionKind: "single_bundle_transaction",
+      expectedOutputUsd,
+      legs: actionableLegs.map((leg, index) => {
+        const selectedOutputAmount =
+          amountsOutIndex.get(String(leg.receivingTokenAddress).toLowerCase()) ?? "0";
+        return {
+          ...leg,
+          state: "awaiting_approval",
+          adapterId: ENSO_PORTFOLIO_ADAPTER_ID,
+          venueId: ENSO_PORTFOLIO_ROUTE_ID,
+          requiredRouteId: ENSO_PORTFOLIO_ROUTE_ID,
+          receivingTokenDecimals: outputMetaList[index]?.decimals ?? 18,
+          blockers: [],
+          quote: {
+            kind: "enso_bundle",
+            quoteId,
+            quotedAt,
+            chainId: ETHEREUM_CHAIN_ID,
+            fromAddress,
+            receiver: receiver ?? null,
+            routingStrategy: "router",
+            tx:
+              bundle?.tx && typeof bundle.tx === "object"
+                ? bundle.tx
+                : {},
+            gas:
+              bundle?.gas !== undefined && bundle?.gas !== null
+                ? String(bundle.gas)
+                : null,
+            priceImpact:
+              typeof bundle?.priceImpact === "number" ? bundle.priceImpact : null,
+            amountsOut: Object.fromEntries(amountsOutIndex),
+            route: Array.isArray(bundle?.route)
+              ? bundle.route.filter(
+                  (item) => item && typeof item === "object" && !Array.isArray(item),
+                )
+              : [],
+            bundle: Array.isArray(bundle?.bundle)
+              ? bundle.bundle.filter(
+                  (item) => item && typeof item === "object" && !Array.isArray(item),
+                )
+              : [],
+            selectedOutputTokenAddress: leg.receivingTokenAddress ?? null,
+            selectedOutputAmount,
+          },
+          approval: approvalTransactionRequest
+            ? createWalletTransactionApproval({
+                signerAddress: fromAddress,
+                approvalTarget: "erc20_allowance",
+                transactionRequest: approvalTransactionRequest,
+                notes: [
+                  "Approve the starting USDC for the Enso router before sending the bundle transaction.",
+                ],
+              })
+            : null,
+          warnings: uniqueStrings([
+            ...leg.warnings,
+            "Enso portfolio execution uses one routed bundle transaction after the starting token approval.",
+          ]),
+          venueStatus: {
+            venueId: ENSO_PORTFOLIO_ROUTE_ID,
+            venueOrderId: quoteId,
+            status: "quote_ready",
+            settlementTxHash: null,
+            lastCheckedAt: null,
+            updatedAt: quotedAt,
+            rawStatus: {
+              provider: "enso",
+              executionKind: "single_bundle_transaction",
+              expectedOutputUsd,
+            },
+          },
+        };
+      }),
+      rawStatus: {
+        provider: "enso",
+        executionKind: "single_bundle_transaction",
+        approvalModel: approvalTransactionRequest
+          ? "erc20_approval_then_single_bundle_transaction"
+          : "single_bundle_transaction",
+      },
+    };
+  }
+
+  async function quotePortfolioProviders(executionRequest) {
+    const actionableLegs = executionRequest.legs.filter(
+      (leg) => leg.state !== "deferred",
+    );
+
+    const providerResults = await Promise.allSettled([
+      quotePortfolioViaLifi({
+        executionRequest,
+        actionableLegs,
+      }),
+      quotePortfolioViaEnso({
+        executionRequest,
+        actionableLegs,
+      }),
+    ]);
+
+    const providerAttempts = {
+      lifi:
+        providerResults[0].status === "fulfilled"
+          ? {
+              status: "quoted",
+              adapterId: providerResults[0].value.adapterId,
+              expectedOutputUsd: providerResults[0].value.expectedOutputUsd,
+              executionKind: providerResults[0].value.executionKind,
+            }
+          : {
+              status: "failed",
+              error:
+                providerResults[0].reason instanceof Error
+                  ? providerResults[0].reason.message
+                  : String(providerResults[0].reason),
+            },
+      enso:
+        providerResults[1].status === "fulfilled"
+          ? {
+              status: "quoted",
+              adapterId: providerResults[1].value.adapterId,
+              expectedOutputUsd: providerResults[1].value.expectedOutputUsd,
+              executionKind: providerResults[1].value.executionKind,
+            }
+          : {
+              status: "failed",
+              error:
+                providerResults[1].reason instanceof Error
+                  ? providerResults[1].reason.message
+                  : String(providerResults[1].reason),
+            },
+    };
+
+    const candidates = providerResults
+      .filter((result) => result.status === "fulfilled")
+      .map((result) => result.value);
+    const selectedCandidate = selectPortfolioQuoteCandidate(candidates);
+
+    if (!selectedCandidate) {
+      const blockedLegs = executionRequest.legs.map((leg) =>
+        leg.state === "deferred"
+          ? leg
+          : {
+              ...leg,
+              state: "blocked",
+              blockers: uniqueStrings([
+                ...leg.blockers,
+                providerAttempts.lifi.error ??
+                  "LI.FI did not return a usable portfolio quote.",
+                providerAttempts.enso.error ??
+                  "Enso did not return a usable portfolio quote.",
+              ]),
+              venueStatus: {
+                venueId: PORTFOLIO_MULTIQUOTE_ROUTE_ID,
+                venueOrderId: null,
+                status: "quote_failed",
+                settlementTxHash: null,
+                lastCheckedAt: null,
+                updatedAt: now(),
+                rawStatus: {
+                  provider: "portfolio_multiquoter",
+                  providerAttempts,
+                  quoteWindowMs: PORTFOLIO_QUOTE_WINDOW_MS,
+                },
+              },
+            },
+      );
+
+      return {
+        ...executionRequest,
+        blockers: uniqueStrings([
+          ...executionRequest.blockers,
+          providerAttempts.lifi.error ??
+            "LI.FI did not return a usable portfolio quote.",
+          providerAttempts.enso.error ??
+            "Enso did not return a usable portfolio quote.",
+        ]),
+        warnings: uniqueStrings(executionRequest.warnings),
+        legs: blockedLegs,
+      };
+    }
+
+    const selectedLegIndex = new Map(
+      selectedCandidate.legs.map((leg) => [leg.legId, leg]),
+    );
+
+    return {
+      ...executionRequest,
+      adapterId: selectedCandidate.adapterId,
+      warnings: uniqueStrings([
+        ...executionRequest.warnings,
+        `Selected ${selectedCandidate.label} after comparing completed portfolio quotes for up to ${PORTFOLIO_QUOTE_WINDOW_MS}ms.`,
+      ]),
+      blockers: [],
+      legs: executionRequest.legs.map((leg) => {
+        if (leg.state === "deferred") {
+          return leg;
+        }
+
+        const selectedLeg = selectedLegIndex.get(leg.legId);
+
+        if (!selectedLeg) {
+          return leg;
+        }
+
+        return {
+          ...selectedLeg,
+          venueStatus: selectedLeg.venueStatus
+            ? {
+                ...selectedLeg.venueStatus,
+                rawStatus: {
+                  ...(selectedLeg.venueStatus.rawStatus ?? {}),
+                  providerAttempts,
+                  quoteWindowMs: PORTFOLIO_QUOTE_WINDOW_MS,
+                },
+              }
+            : selectedLeg.venueStatus,
+        };
+      }),
+    };
+  }
+
+  function applyPortfolioQuoteCandidate(
+    executionRequest,
+    candidate,
+    {
+      warning = null,
+      venueRawStatus = null,
+    } = {},
+  ) {
+    const selectedLegIndex = new Map(
+      candidate.legs.map((leg) => [leg.legId, leg]),
+    );
+
+    return {
+      ...executionRequest,
+      adapterId: candidate.adapterId,
+      warnings: uniqueStrings([
+        ...executionRequest.warnings,
+        ...(warning ? [warning] : []),
+      ]),
+      blockers: [],
+      legs: executionRequest.legs.map((leg) => {
+        if (leg.state === "deferred") {
+          return leg;
+        }
+
+        const selectedLeg = selectedLegIndex.get(leg.legId);
+
+        if (!selectedLeg) {
+          return leg;
+        }
+
+        return {
+          ...selectedLeg,
+          venueStatus: selectedLeg.venueStatus
+            ? {
+                ...selectedLeg.venueStatus,
+                rawStatus: {
+                  ...(selectedLeg.venueStatus.rawStatus ?? {}),
+                  ...(venueRawStatus ?? {}),
+                },
+              }
+            : selectedLeg.venueStatus,
+        };
+      }),
+    };
+  }
+
+  function blockPortfolioExecutionRequest(
+    executionRequest,
+    {
+      venueId,
+      provider,
+      blocker,
+      rawStatus = null,
+    },
+  ) {
+    const blockedLegs = executionRequest.legs.map((leg) =>
+      leg.state === "deferred"
+        ? leg
+        : {
+            ...leg,
+            state: "blocked",
+            blockers: uniqueStrings([
+              ...leg.blockers,
+              blocker,
+            ]),
+            venueStatus: {
+              venueId,
+              venueOrderId: null,
+              status: "quote_failed",
+              settlementTxHash: null,
+              lastCheckedAt: null,
+              updatedAt: now(),
+              rawStatus: {
+                provider,
+                ...(rawStatus ?? {}),
+              },
+            },
+          },
+    );
+
+    return {
+      ...executionRequest,
+      blockers: uniqueStrings([
+        ...executionRequest.blockers,
+        blocker,
+      ]),
+      warnings: uniqueStrings(executionRequest.warnings),
+      legs: blockedLegs,
+    };
+  }
+
+  async function quotePortfolioExecutionRequest(executionRequest) {
+    const nextRequestBase = {
+      ...executionRequest,
+      blockers: stripExecutionQuoteBlockers(executionRequest.blockers),
+    };
+
+    if (executionRequest.adapterId === ENSO_PORTFOLIO_ADAPTER_ID) {
+      try {
+        const candidate = await quotePortfolioViaEnso({
+          executionRequest: nextRequestBase,
+          actionableLegs: nextRequestBase.legs.filter(
+            (leg) => leg.state !== "deferred",
+          ),
+        });
+
+        return applyPortfolioQuoteCandidate(nextRequestBase, candidate, {
+          warning:
+            "Prepared the Enso portfolio bundle for the promoted basket.",
+        });
+      } catch (error) {
+        const blocker =
+          error instanceof Error
+            ? error.message
+            : "Enso did not return a usable portfolio bundle.";
+
+        return blockPortfolioExecutionRequest(nextRequestBase, {
+          venueId: ENSO_PORTFOLIO_ROUTE_ID,
+          provider: "enso",
+          blocker,
+          rawStatus: {
+            executionKind: "single_bundle_transaction",
+          },
+        });
+      }
+    }
+
+    if (executionRequest.adapterId === LIFI_PORTFOLIO_ADAPTER_ID) {
+      try {
+        const candidate = await quotePortfolioViaLifi({
+          executionRequest: nextRequestBase,
+          actionableLegs: nextRequestBase.legs.filter(
+            (leg) => leg.state !== "deferred",
+          ),
+        });
+
+        return applyPortfolioQuoteCandidate(nextRequestBase, candidate, {
+          warning:
+            "Prepared the LI.FI portfolio route set for the promoted basket.",
+        });
+      } catch (error) {
+        const blocker =
+          error instanceof Error
+            ? error.message
+            : "LI.FI did not return a usable portfolio route.";
+
+        return blockPortfolioExecutionRequest(nextRequestBase, {
+          venueId: LIFI_PORTFOLIO_ROUTE_ID,
+          provider: "lifi",
+          blocker,
+          rawStatus: {
+            executionKind: "per_leg_transactions",
+          },
+        });
+      }
+    }
+
+    if (executionRequest.adapterId === PORTFOLIO_MULTIQUOTE_ADAPTER_ID) {
+      return await quotePortfolioProviders(nextRequestBase);
+    }
+
+    throw new HttpError(
+      409,
+      "quote_portfolio is only valid for portfolio execution requests.",
+    );
+  }
+
   async function refreshVenueStatusForLeg(leg, executionRequest = null) {
     const routeSelection = resolveManualExecutionRouteSelectionFromLeg(
       leg,
       executionRequest,
     );
+
+    if (routeSelection.allowPortfolio) {
+      return leg;
+    }
 
     if (routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID) {
       return await refreshOneInchVenueStatus(leg);
@@ -4249,7 +5136,47 @@ export function createApiService({
       );
       const legId = firstDefined(body.legId, body.leg_id);
 
+      if (action === "quote_portfolio") {
+        const routeSelection = resolveManualExecutionRouteSelection({
+          requestedAdapterId: executionRequest.adapterId,
+        });
+
+        if (!routeSelection.allowPortfolio) {
+          throw new HttpError(
+            409,
+            "quote_portfolio is only valid for portfolio execution requests.",
+          );
+        }
+
+        const quotedRequest = await quotePortfolioExecutionRequest(
+          executionRequest,
+        );
+        const persisted = await persistExecutionRequest({
+          executionRequest: quotedRequest,
+          activation,
+          activityEvents: [],
+        });
+
+        return parseApiResponse("execution_write", {
+          version: DEFAULT_RESPONSE_VERSION,
+          generatedAt: now(),
+          action,
+          ...persisted,
+        });
+      }
+
       if (action === "quote_leg") {
+        const requestRouteSelection = resolveManualExecutionRouteSelection({
+          requestedAdapterId: executionRequest.adapterId,
+        });
+
+        if (requestRouteSelection.allowPortfolio) {
+          throw new HttpError(
+            409,
+            "Portfolio execution requests must use quote_portfolio instead of quote_leg.",
+          );
+        }
+
         if (!legId) {
           throw new HttpError(
             400,

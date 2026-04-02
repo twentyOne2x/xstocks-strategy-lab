@@ -144,10 +144,16 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
         executionRequest?.legs.find((leg) => leg.blockers.length > 0)?.blockers[0] ??
         executionPlan?.blockers[0] ??
         null;
+  const isEnsoPortfolioExecution = executionRequest
+    ? executionRequest.adapterId === "enso_bundle" ||
+      executionRequest.legs.some((leg) => leg.quote?.kind === "enso_bundle")
+    : true;
   const manualBoundary =
-    executionRequest?.venueSigningMode === "wallet_signer_manual_only" ||
-    wallet.venueSigningMode === "wallet_signer_manual_only"
-      ? "Current live route stays wallet-first: the connected Privy wallet must return each 1inch Fusion EIP-712 signature before backend submission can be recorded."
+    isEnsoPortfolioExecution
+      ? "Current live route stays wallet-first: approve the starting USDC if needed, then sign one Enso portfolio transaction before backend receipt tracking can continue."
+      : executionRequest?.venueSigningMode === "wallet_signer_manual_only" ||
+          wallet.venueSigningMode === "wallet_signer_manual_only"
+        ? "Current live route stays wallet-first: the connected Privy wallet must return each 1inch Fusion EIP-712 signature before backend submission can be recorded."
       : "Venue signing truth is not loaded on this surface.";
   const executionLabel = executionRequest
     ? `${executionRequest.state.replaceAll("_", " ")} · ${executionRequest.adapterId}`
@@ -464,8 +470,16 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
 
           <ActivationStep
             step={3}
-            title="Sign and submit the live 1inch route"
-            description="The connected manual signer receives one real EIP-712 order per actionable core leg. Backend submission only occurs after those signatures return."
+            title={
+              isEnsoPortfolioExecution
+                ? "Approve USDC and send the portfolio bundle"
+                : "Sign and submit the live 1inch route"
+            }
+            description={
+              isEnsoPortfolioExecution
+                ? "The connected manual signer may approve the starting USDC once, then signs one Enso bundle transaction that routes into the promoted portfolio targets."
+                : "The connected manual signer receives one real EIP-712 order per actionable core leg. Backend submission only occurs after those signatures return."
+            }
             status={
               executionRequest?.state === "submitted" || executionRequest?.state === "confirmed"
                 ? "complete"
@@ -483,7 +497,9 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
               {isRunning
                 ? "Running manual buy..."
                 : executionRequest
-                  ? "Continue wallet-first signing"
+                  ? isEnsoPortfolioExecution
+                    ? "Continue portfolio transaction"
+                    : "Continue wallet-first signing"
                   : `Activate ${formatUsd(requestedNotionalUsd)} buy`}
             </button>
             {exactBlocker && (
@@ -561,7 +577,7 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
                 Current bridge rule: manual signing stays wallet-first, `policyAccountAddress`
                 resolves only when the Privy smart wallet is actually linked, and
                 `executionDestinationAddress` stays on the current signer surface until
-                that smart-wallet link exists. AA-native CoW or 1inch signing remains
+                that smart-wallet link exists. AA-native venue signing remains
                 deferred.
               </p>
             </div>
@@ -634,8 +650,9 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
                 </div>
               ) : (
                 <p className="panel-note">
-                  No live EIP-712 signature payloads have been captured yet on this
-                  activation.
+                  {isEnsoPortfolioExecution
+                    ? "No per-leg EIP-712 payloads are expected on this activation. Enso bundle execution uses wallet transaction requests instead."
+                    : "No live EIP-712 signature payloads have been captured yet on this activation."}
                 </p>
               )}
             </article>

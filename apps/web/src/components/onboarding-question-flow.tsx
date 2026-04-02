@@ -669,7 +669,15 @@ function SimulatedWorkspace({
   onTourDismiss: () => void;
   previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
-  const { enabled: privyEnabled, login, authenticated, user, logout, getAccessToken, getIdentityToken } =
+  const {
+    enabled: privyEnabled,
+    login,
+    authenticated,
+    user,
+    logout,
+    getAccessToken,
+    getIdentityToken,
+  } =
     usePrivyRuntime();
   const walletAddress = authenticated ? user?.wallet?.address : null;
   const shortWallet = walletAddress
@@ -686,7 +694,13 @@ function SimulatedWorkspace({
     ? (activeWallet as (typeof wallets)[number])
     : null;
 
-  const closeBuyModal = useCallback(() => setBuyModalOpen(false), []);
+  const closeBuyModal = useCallback(() => {
+    if (buyRunning) {
+      return;
+    }
+
+    setBuyModalOpen(false);
+  }, [buyRunning]);
 
   // Escape key closes the buy modal
   useEffect(() => {
@@ -726,21 +740,22 @@ function SimulatedWorkspace({
     }
 
     setBuyRunning(true);
-    setBuyStatus("Getting authorization...");
+    setBuyStatus("Preparing the Enso portfolio bundle...");
     try {
       const [accessToken, identityToken] = await Promise.all([
-        getAccessToken(),
-        getIdentityToken(),
+        getAccessToken().catch(() => null),
+        getIdentityToken().catch(() => null),
       ]);
-
-      setBuyStatus("Starting execution...");
       const result = await runManualExecutionFlow({
         manifest,
         requestedNotionalUsd: notionalUsd,
         initiationAction: "create",
         latestActivation: null,
         existingExecutionRequest: null,
-        auth: { accessToken, identityToken },
+        auth: {
+          accessToken,
+          identityToken,
+        },
         wallets,
         activeWallet: activeConnectedWallet,
         walletState: {
@@ -758,7 +773,18 @@ function SimulatedWorkspace({
             .replace(/Persisting activation truth with the current/gi, "Saving portfolio with your")
             .replace(/wallet-first manual execution request/gi, "trade order")
             .replace(/Creating the/gi, "Creating")
-            .replace(/Staging the authenticated execute_all handoff/gi, "Preparing execution");
+            .replace(/Staging the authenticated execute_all handoff/gi, "Preparing execution")
+            .replace(/Creating the Enso portfolio execution request/gi, "Creating your portfolio transaction")
+            .replace(/Preparing the Enso portfolio bundle/gi, "Preparing the portfolio bundle")
+            .replace(
+              /Enso returned the portfolio bundle\. Preparing wallet approval and transaction submission\./gi,
+              "Portfolio bundle ready. Preparing wallet approval and transaction.",
+            )
+            .replace(
+              /Awaiting wallet approval for the starting USDC before the Enso bundle can be sent\./gi,
+              "Approve the starting USDC in your wallet to continue.",
+            )
+            .replace(/Sending the selected Enso bundle transaction\./gi, "Sending the portfolio transaction.");
           setBuyStatus(cleaned);
         },
       });
@@ -771,7 +797,7 @@ function SimulatedWorkspace({
           .trim();
         setBuyStatus(cleanBlocker);
       } else {
-        setBuyStatus("Trade submitted! Your wallet will be prompted to sign each swap.");
+        setBuyStatus("Portfolio transaction submitted. Confirmation tracking is live.");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "An unexpected error occurred.";
@@ -853,7 +879,7 @@ function SimulatedWorkspace({
           {authenticated ? (
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <button className="button button-primary button-lg" onClick={() => setBuyModalOpen(true)} type="button">
-                Buy with 1inch
+                Buy portfolio
               </button>
               <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
               <button className="button button-ghost button-sm" onClick={logout} type="button">Disconnect</button>
@@ -915,7 +941,7 @@ function SimulatedWorkspace({
               {authenticated ? (
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <button className="button button-primary" onClick={() => setBuyModalOpen(true)} style={{ fontSize: "0.85rem", minHeight: "36px", padding: "0 14px" }} type="button">
-                    Buy with 1inch
+                    Buy portfolio
                   </button>
                   <span style={{ padding: "4px 12px", background: "var(--black)", color: "var(--positive)", border: "2px solid var(--positive)", fontFamily: "var(--font-mono)", fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.04em" }}>{shortWallet}</span>
                 </div>
@@ -1149,11 +1175,43 @@ function SimulatedWorkspace({
         </div>
       </section>
 
+      {/* ── Rebalance action bar ── */}
+      <section className="pq-fw-section" style={{ marginTop: 0, paddingBottom: 0 }}>
+        <div className="pq-fw-inner" style={{ maxWidth: 1400, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+            <div>
+              <span className="section-kicker">Portfolio controls</span>
+              <p className="panel-note" style={{ marginTop: "4px" }}>Review and trigger rebalancing when drift exceeds thresholds.</p>
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button className="button button-primary" onClick={() => setBuyModalOpen(true)} type="button">
+                Buy with 1inch
+              </button>
+              <button className="button button-ghost" type="button" title="Rebalance reviews portfolio drift and adjusts weights. Currently requires manual operator approval.">
+                Rebalance
+              </button>
+            </div>
+          </div>
+
+          {/* Trade suggestions from manifest */}
+          {manifest.market_intelligence.whatChanged.length > 0 && (
+            <div style={{ marginTop: "16px", display: "grid", gap: "8px" }}>
+              <span className="section-kicker">Trade suggestions</span>
+              {manifest.market_intelligence.whatChanged.map((change, i) => (
+                <div key={i} style={{ padding: "10px 14px", border: "1px solid var(--border)", borderRadius: "var(--radius-row)", background: "rgba(255,255,255,0.02)", fontSize: "0.92rem", color: "var(--text-soft)" }}>
+                  {change}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ── Activity — full-width ── */}
       <section className={`pq-fw-section pq-fw-section-alt ${highlightId === "pq-activity-section" ? "pq-highlight" : ""}`} id="pq-activity-section">
         <div className="pq-fw-inner">
           <div className="pq-activity-header">
-            <span className="section-kicker">Preview activity</span>
+            <span className="section-kicker">Activity</span>
             <span className="preview-chip">Simulation</span>
           </div>
           <div className="pq-activity-grid">
@@ -1222,7 +1280,8 @@ function SimulatedWorkspace({
                 onClick={closeBuyModal}
                 type="button"
                 aria-label="Close buy modal"
-                style={{ background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer", color: "var(--text-muted)", padding: "4px 8px" }}
+                disabled={buyRunning}
+                style={{ background: "none", border: "none", fontSize: "1.5rem", cursor: buyRunning ? "default" : "pointer", color: "var(--text-muted)", padding: "4px 8px", opacity: buyRunning ? 0.5 : 1 }}
               >&times;</button>
             </div>
             <p style={{ margin: 0, color: "var(--text-soft)", fontSize: "0.95rem" }}>Enter the USDC amount. It will be split across the portfolio assets by weight.</p>
@@ -1269,7 +1328,7 @@ function SimulatedWorkspace({
 
             <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 0", color: "var(--text-muted)", fontSize: "0.82rem" }}>
               <span>Execution via</span>
-              <strong style={{ color: "var(--text)" }}>1inch Fusion</strong>
+              <strong style={{ color: "var(--text)" }}>Enso bundle</strong>
               <span>on</span>
               <strong style={{ color: "var(--text)" }}>Ethereum</strong>
             </div>
@@ -1287,11 +1346,11 @@ function SimulatedWorkspace({
               disabled={buyRunning || parseBuyAmount() <= 0}
               onClick={handleBuy}
             >
-              {buyRunning ? "Executing..." : !authenticated ? "Connect wallet to buy" : `Buy $${buyAmount} of ${recommendation.title}`}
+              {buyRunning ? "Processing portfolio transaction..." : !authenticated ? "Connect wallet to buy" : `Buy $${buyAmount} of ${recommendation.title}`}
             </button>
 
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.78rem", textAlign: "center" }}>
-              You will sign each trade with your connected wallet. Nothing executes without your approval.
+              You will approve the starting USDC and sign the portfolio transaction with your connected wallet. Nothing executes without your approval.
             </p>
           </div>
         </div>

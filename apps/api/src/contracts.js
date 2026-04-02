@@ -890,6 +890,7 @@ export const API_RESPONSE_SCHEMAS = Object.freeze({
     action: z.enum([
       "create",
       "execute_all",
+      "quote_portfolio",
       "quote_leg",
       "record_submission",
       "poll_receipt",

@@ -3,6 +3,8 @@ import {
   postExecutionAction,
   resolveApiBase,
   type ApiActivationView,
+  type ApiExecutionApproval,
+  type ApiExecutionLeg,
   type ApiExecutionReadResponse,
   type ApiExecutionRequest,
 } from "@/lib/api-client";
@@ -35,6 +37,13 @@ type WalletWithProvider = {
       params?: unknown[];
     }) => Promise<unknown>;
   }>;
+};
+
+type WalletRpcProvider = {
+  request: (payload: {
+    method: string;
+    params?: unknown[];
+  }) => Promise<unknown>;
 };
 
 type ManualExecutionFlowArgs = {
@@ -75,7 +84,25 @@ type SignatureInput = {
   domainName: string | null;
 };
 
+type ApiLifiQuote = Extract<
+  NonNullable<ApiExecutionLeg["quote"]>,
+  { kind: "lifi_quote" }
+>;
+type ApiEnsoBundleQuote = Extract<
+  NonNullable<ApiExecutionLeg["quote"]>,
+  { kind: "enso_bundle" }
+>;
+
 export const EXECUTION_REFRESH_EVENT = "xstocks:execution-refresh";
+const ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID = "enso_bundle";
+
+function isPortfolioQuoteAdapter(adapterId: string | null | undefined) {
+  return (
+    adapterId === "enso_bundle" ||
+    adapterId === "lifi_portfolio" ||
+    adapterId === "portfolio_multiquoter"
+  );
+}
 
 function emitRefresh(slotId: string) {
   if (typeof window === "undefined") {
@@ -329,6 +356,142 @@ async function signTypedData(
   return fallbackSignature;
 }
 
+function normalizeTxHash(value: unknown) {
+  return typeof value === "string" && /^0x([A-Fa-f0-9]{64})$/u.test(value)
+    ? value
+    : null;
+}
+
+function normalizeTransactionNumericField(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return `0x${BigInt(Math.trunc(value)).toString(16)}`;
+  }
+
+  if (typeof value === "string" && value.trim().length > 0) {
+    const normalized = value.trim();
+    if (normalized.startsWith("0x")) {
+      return normalized;
+    }
+
+    if (/^\d+$/u.test(normalized)) {
+      return `0x${BigInt(normalized).toString(16)}`;
+    }
+  }
+
+  return undefined;
+}
+
+function normalizeWalletTransactionRequest(
+  value: Record<string, unknown>,
+  options: { fallbackFrom?: string | null; fallbackGas?: string | null } = {},
+) {
+  const normalized: Record<string, unknown> = {
+    ...(options.fallbackFrom ? { from: options.fallbackFrom } : {}),
+  };
+
+  for (const [key, nestedValue] of Object.entries(value ?? {})) {
+    if (nestedValue === undefined || nestedValue === null) {
+      continue;
+    }
+
+    if (
+      key === "chainId" ||
+      key === "gas" ||
+      key === "gasLimit" ||
+      key === "gasPrice" ||
+      key === "maxFeePerGas" ||
+      key === "maxPriorityFeePerGas" ||
+      key === "nonce" ||
+      key === "value"
+    ) {
+      normalized[key === "gasLimit" ? "gas" : key] =
+        normalizeTransactionNumericField(nestedValue) ?? nestedValue;
+      continue;
+    }
+
+    normalized[key] = nestedValue;
+  }
+
+  if (!Object.hasOwn(normalized, "gas") && options.fallbackGas) {
+    normalized.gas = normalizeTransactionNumericField(options.fallbackGas);
+  }
+
+  return normalized;
+}
+
+async function sendWalletTransaction(
+  provider: WalletRpcProvider,
+  transactionRequest: Record<string, unknown>,
+) {
+  const txHash = normalizeTxHash(
+    await provider.request({
+      method: "eth_sendTransaction",
+      params: [transactionRequest],
+    }),
+  );
+
+  if (!txHash) {
+    throw new Error("Wallet did not return a transaction hash.");
+  }
+
+  return txHash;
+}
+
+async function waitForWalletReceipt(
+  provider: WalletRpcProvider,
+  txHash: string,
+  {
+    timeoutMs = 45_000,
+    intervalMs = 1_500,
+  }: {
+    timeoutMs?: number;
+    intervalMs?: number;
+  } = {},
+) {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const receipt = await provider.request({
+      method: "eth_getTransactionReceipt",
+      params: [txHash],
+    });
+
+    if (receipt && typeof receipt === "object") {
+      return receipt as Record<string, unknown>;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+
+  return null;
+}
+
+function getWalletTransactionApproval(
+  leg: ApiExecutionLeg,
+): (ApiExecutionApproval & { transactionRequest?: Record<string, unknown> }) | null {
+  if (leg.approval?.approvalType !== "wallet_transaction") {
+    return null;
+  }
+
+  return leg.approval;
+}
+
+function getLifiTransactionRequest(
+  leg: ApiExecutionLeg,
+): Record<string, unknown> | null {
+  return leg.quote?.kind === "lifi_quote" &&
+    leg.quote.transactionRequest &&
+    typeof leg.quote.transactionRequest === "object"
+    ? ((leg.quote as ApiLifiQuote).transactionRequest as Record<string, unknown>)
+    : null;
+}
+
+function getEnsoBundleQuote(leg: ApiExecutionLeg): ApiEnsoBundleQuote | null {
+  return leg.quote?.kind === "enso_bundle"
+    ? (leg.quote as ApiEnsoBundleQuote)
+    : null;
+}
+
 export function getExecutionSignatureInputs(
   executionRequest: ApiExecutionRequest | null,
 ): SignatureInput[] {
@@ -366,7 +529,8 @@ async function ensureActivation(
 ) : Promise<ApiActivationView> {
   const shouldCreateActivation =
     !args.latestActivation ||
-    args.latestActivation.requestedNotionalUsd !== args.requestedNotionalUsd;
+    args.latestActivation.requestedNotionalUsd !== args.requestedNotionalUsd ||
+    args.latestActivation.status !== "ready";
 
   if (!shouldCreateActivation && args.latestActivation) {
     return args.latestActivation;
@@ -399,6 +563,9 @@ async function ensureExecutionRequest(
   const reusableExecutionRequest =
     args.existingExecutionRequest &&
     args.existingExecutionRequest.activationId === activation.activationId &&
+    (args.initiationAction !== "create" ||
+      args.existingExecutionRequest.adapterId ===
+        ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID) &&
     args.existingExecutionRequest.state !== "confirmed" &&
     args.existingExecutionRequest.state !== "failed"
       ? args.existingExecutionRequest
@@ -413,7 +580,7 @@ async function ensureExecutionRequest(
     message:
       args.initiationAction === "execute_all"
         ? "Staging the authenticated execute_all handoff."
-        : "Creating the wallet-first manual execution request.",
+        : "Creating the Enso portfolio execution request.",
   });
 
   const executionWrite = await postExecutionAction(
@@ -421,7 +588,7 @@ async function ensureExecutionRequest(
       action: args.initiationAction,
       activationId: activation.activationId,
       ...(args.initiationAction === "create"
-        ? { executionRouteId: "1inch.ethereum" }
+        ? { executionAdapterId: ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID }
         : {}),
       ...(args.rebalanceId ? { rebalanceId: args.rebalanceId } : {}),
     },
@@ -450,6 +617,303 @@ async function ensureExecutionRequest(
   return executionRequest;
 }
 
+async function quoteExecutionRequest(
+  activation: ApiActivationView,
+  executionRequest: ApiExecutionRequest,
+  args: ManualExecutionFlowArgs,
+) {
+  if (isPortfolioQuoteAdapter(executionRequest.adapterId)) {
+    args.onStatus?.({
+      tone: "neutral",
+      message:
+        executionRequest.adapterId === "enso_bundle"
+          ? "Preparing the Enso portfolio bundle."
+          : "Preparing the portfolio execution request.",
+    });
+
+    const quoteResponse = await postExecutionAction(
+      {
+        action: "quote_portfolio",
+        executionRequestId: executionRequest.executionRequestId,
+      },
+      args.auth,
+    );
+
+    if (!quoteResponse.data?.executionRequest) {
+      const blocker = toStatusErrorMessage(
+        executionRequest.adapterId === "enso_bundle"
+          ? "Enso portfolio bundle quote failed."
+          : "Portfolio quote request failed.",
+        quoteResponse,
+      );
+
+      args.onStatus?.({
+        tone: "warning",
+        message: blocker,
+      });
+
+      return {
+        executionRequest,
+        blocker,
+      };
+    }
+
+    const nextRequest = quoteResponse.data.executionRequest as ApiExecutionRequest;
+    args.onExecutionRequest?.(nextRequest);
+
+    return {
+      executionRequest: nextRequest,
+      blocker: null,
+    };
+  }
+
+  let nextRequest = executionRequest;
+  const quotableLegs = getQuotableLegs(nextRequest);
+
+  for (const leg of quotableLegs) {
+    args.onStatus?.({
+      tone: "neutral",
+      message: `Requesting live ${leg.assetSymbol ?? leg.sleeve} quote.`,
+    });
+
+    const quoteResponse = await postExecutionAction(
+      {
+        action: "quote_leg",
+        executionRequestId: nextRequest.executionRequestId,
+        legId: leg.legId,
+      },
+      args.auth,
+    );
+
+    if (!quoteResponse.data?.executionRequest) {
+      const blocker = toStatusErrorMessage(
+        `Quote request failed for ${leg.assetSymbol ?? leg.sleeve}.`,
+        quoteResponse,
+      );
+
+      args.onStatus?.({
+        tone: "warning",
+        message: blocker,
+      });
+
+      return {
+        executionRequest: nextRequest,
+        blocker,
+      };
+    }
+
+    nextRequest = quoteResponse.data.executionRequest as ApiExecutionRequest;
+    args.onExecutionRequest?.(nextRequest);
+  }
+
+  return {
+    executionRequest: nextRequest,
+    blocker: null,
+  };
+}
+
+async function executeLifiPortfolioFlow(
+  approvalLegs: ApiExecutionLeg[],
+  executionRequest: ApiExecutionRequest,
+  args: ManualExecutionFlowArgs,
+) {
+  let nextRequest = executionRequest;
+
+  for (const leg of approvalLegs) {
+    const approval = getWalletTransactionApproval(leg);
+    const signerAddress =
+      approval?.signerAddress ??
+      nextRequest.manualSignerAddress ??
+      args.walletState.walletAddress;
+    const signerWallet = pickSignerWallet(
+      signerAddress,
+      args.wallets,
+      args.activeWallet,
+    );
+
+    if (!signerWallet || typeof signerWallet.getEthereumProvider !== "function") {
+      return {
+        executionRequest: nextRequest,
+        blocker:
+          "Privy did not expose the required signer wallet for the LI.FI route.",
+      };
+    }
+
+    const provider = await signerWallet.getEthereumProvider();
+
+    if (approval?.transactionRequest) {
+      args.onStatus?.({
+        tone: "neutral",
+        message: `Awaiting wallet approval for ${leg.assetSymbol ?? leg.sleeve}.`,
+      });
+
+      const approvalTxHash = await sendWalletTransaction(
+        provider,
+        normalizeWalletTransactionRequest(approval.transactionRequest, {
+          fallbackFrom: signerAddress,
+        }),
+      );
+      const approvalReceipt = await waitForWalletReceipt(provider, approvalTxHash);
+
+      if (!approvalReceipt) {
+        return {
+          executionRequest: nextRequest,
+          blocker:
+            "The LI.FI approval transaction is still pending confirmation. Retry after it confirms.",
+        };
+      }
+    }
+
+    const mainTransaction = getLifiTransactionRequest(leg);
+
+    if (!mainTransaction) {
+      return {
+        executionRequest: nextRequest,
+        blocker: `LI.FI did not return a wallet transaction for ${leg.assetSymbol ?? leg.sleeve}.`,
+      };
+    }
+
+    args.onStatus?.({
+      tone: "neutral",
+      message: `Sending LI.FI transaction for ${leg.assetSymbol ?? leg.sleeve}.`,
+    });
+
+    const txHash = await sendWalletTransaction(
+      provider,
+      normalizeWalletTransactionRequest(mainTransaction, {
+        fallbackFrom: signerAddress,
+      }),
+    );
+    await waitForWalletReceipt(provider, txHash);
+
+    const receiptResponse = await postExecutionAction(
+      {
+        action: "poll_receipt",
+        executionRequestId: nextRequest.executionRequestId,
+        legId: leg.legId,
+        txHash,
+      },
+      args.auth,
+    );
+
+    if (!receiptResponse.data?.executionRequest) {
+      return {
+        executionRequest: nextRequest,
+        blocker: toStatusErrorMessage(
+          `Failed to persist the LI.FI transaction receipt for ${leg.assetSymbol ?? leg.sleeve}.`,
+          receiptResponse,
+        ),
+      };
+    }
+
+    nextRequest = receiptResponse.data.executionRequest as ApiExecutionRequest;
+    args.onExecutionRequest?.(nextRequest);
+  }
+
+  return {
+    executionRequest: nextRequest,
+    blocker: null,
+  };
+}
+
+async function executeEnsoBundleFlow(
+  approvalLegs: ApiExecutionLeg[],
+  executionRequest: ApiExecutionRequest,
+  args: ManualExecutionFlowArgs,
+) {
+  const primaryLeg = approvalLegs.find((leg) => getEnsoBundleQuote(leg)) ?? approvalLegs[0];
+  const bundleQuote = primaryLeg ? getEnsoBundleQuote(primaryLeg) : null;
+  const approval = primaryLeg ? getWalletTransactionApproval(primaryLeg) : null;
+  const signerAddress =
+    approval?.signerAddress ??
+    executionRequest.manualSignerAddress ??
+    args.walletState.walletAddress;
+  const signerWallet = pickSignerWallet(
+    signerAddress,
+    args.wallets,
+    args.activeWallet,
+  );
+
+  if (!primaryLeg || !bundleQuote || !signerWallet || typeof signerWallet.getEthereumProvider !== "function") {
+    return {
+      executionRequest,
+      blocker:
+        "The Enso bundle payload or signer wallet is not available on this surface.",
+    };
+  }
+
+  const provider = await signerWallet.getEthereumProvider();
+
+  if (approval?.transactionRequest) {
+    args.onStatus?.({
+      tone: "neutral",
+      message: "Awaiting wallet approval for the starting USDC before the Enso bundle can be sent.",
+    });
+
+    const approvalTxHash = await sendWalletTransaction(
+      provider,
+      normalizeWalletTransactionRequest(approval.transactionRequest, {
+        fallbackFrom: signerAddress,
+      }),
+    );
+    const approvalReceipt = await waitForWalletReceipt(provider, approvalTxHash);
+
+    if (!approvalReceipt) {
+      return {
+        executionRequest,
+        blocker:
+          "The Enso approval transaction is still pending confirmation. Retry after it confirms.",
+      };
+    }
+  }
+
+  args.onStatus?.({
+    tone: "neutral",
+    message: "Sending the selected Enso bundle transaction.",
+  });
+
+  const bundleTxHash = await sendWalletTransaction(
+    provider,
+    normalizeWalletTransactionRequest(bundleQuote.tx, {
+      fallbackFrom: signerAddress,
+      fallbackGas: bundleQuote.gas,
+    }),
+  );
+  await waitForWalletReceipt(provider, bundleTxHash);
+
+  let nextRequest = executionRequest;
+
+  for (const leg of approvalLegs) {
+    const receiptResponse = await postExecutionAction(
+      {
+        action: "poll_receipt",
+        executionRequestId: nextRequest.executionRequestId,
+        legId: leg.legId,
+        txHash: bundleTxHash,
+      },
+      args.auth,
+    );
+
+    if (!receiptResponse.data?.executionRequest) {
+      return {
+        executionRequest: nextRequest,
+        blocker: toStatusErrorMessage(
+          "Failed to persist the Enso bundle receipt on all portfolio legs.",
+          receiptResponse,
+        ),
+      };
+    }
+
+    nextRequest = receiptResponse.data.executionRequest as ApiExecutionRequest;
+    args.onExecutionRequest?.(nextRequest);
+  }
+
+  return {
+    executionRequest: nextRequest,
+    blocker: null,
+  };
+}
+
 export async function runManualExecutionFlow(
   args: ManualExecutionFlowArgs,
 ): Promise<ManualExecutionFlowResult> {
@@ -464,44 +928,20 @@ export async function runManualExecutionFlow(
   try {
     const activation = await ensureActivation(args);
     let executionRequest = await ensureExecutionRequest(activation, args);
+    const quoteResult = await quoteExecutionRequest(
+      activation,
+      executionRequest,
+      args,
+    );
 
-    const quotableLegs = getQuotableLegs(executionRequest);
+    executionRequest = quoteResult.executionRequest;
 
-    for (const leg of quotableLegs) {
-      args.onStatus?.({
-        tone: "neutral",
-        message: `Requesting live ${leg.assetSymbol ?? leg.sleeve} quote.`,
-      });
-
-      const quoteResponse = await postExecutionAction(
-        {
-          action: "quote_leg",
-          executionRequestId: executionRequest.executionRequestId,
-          legId: leg.legId,
-        },
-        args.auth,
-      );
-
-      if (!quoteResponse.data?.executionRequest) {
-        const blocker = toStatusErrorMessage(
-          `Quote request failed for ${leg.assetSymbol ?? leg.sleeve}.`,
-          quoteResponse,
-        );
-
-        args.onStatus?.({
-          tone: "warning",
-          message: blocker,
-        });
-
-        return {
-          activation,
-          executionRequest,
-          blocker,
-        };
-      }
-
-      executionRequest = quoteResponse.data.executionRequest as ApiExecutionRequest;
-      args.onExecutionRequest?.(executionRequest);
+    if (quoteResult.blocker) {
+      return {
+        activation,
+        executionRequest,
+        blocker: quoteResult.blocker,
+      };
     }
 
     const approvalLegs = getAwaitingApprovalLegs(executionRequest);
@@ -530,104 +970,154 @@ export async function runManualExecutionFlow(
       };
     }
 
-    for (const leg of approvalLegs) {
-      const approvalTarget = leg.approval?.approvalTarget ?? null;
-      const signerAddress = leg.approval?.signerAddress ?? null;
-      const typedData = typedDataForLeg(leg);
-
-      if (approvalTarget !== "oneinch_fusion_order" || !typedData || !signerAddress) {
-        const blocker =
-          approvalTarget === "cow_order"
-            ? "This hosted browser helper remains pinned to wallet-first 1inch Fusion typed-data signing. CoW manual signing is not advanced in XSL-005."
-            : "The current venue approval payload is not signable on this hosted helper.";
-
-        args.onStatus?.({
-          tone: "warning",
-          message: blocker,
-        });
-
-        return {
-          activation,
-          executionRequest,
-          blocker,
-        };
-      }
-
-      const signerWallet = pickSignerWallet(signerAddress, args.wallets, args.activeWallet);
-
-      if (!signerWallet) {
-        const blocker =
-          "Privy did not expose the required signer wallet for this 1inch Fusion order.";
-
-        args.onStatus?.({
-          tone: "warning",
-          message: blocker,
-        });
-
-        return {
-          activation,
-          executionRequest,
-          blocker,
-        };
-      }
-
-      args.onStatus?.({
-        tone: "neutral",
-        message: `Awaiting wallet-first 1inch signature for ${leg.assetSymbol ?? leg.sleeve}.`,
-      });
-
-      let signature: string;
-
-      try {
-        signature = await signTypedData(signerWallet, signerAddress, typedData);
-      } catch (error) {
-        const blocker =
-          error instanceof Error
-            ? error.message
-            : "Wallet signing failed for the 1inch Fusion order.";
-
-        args.onStatus?.({
-          tone: "warning",
-          message: blocker,
-        });
-
-        return {
-          activation,
-          executionRequest,
-          blocker,
-        };
-      }
-
-      const submissionResponse = await postExecutionAction(
-        {
-          action: "record_submission",
-          executionRequestId: executionRequest.executionRequestId,
-          legId: leg.legId,
-          signature,
-        },
-        args.auth,
+    if (approvalLegs.some((leg) => leg.quote?.kind === "lifi_quote")) {
+      const lifiResult = await executeLifiPortfolioFlow(
+        approvalLegs,
+        executionRequest,
+        args,
       );
 
-      if (!submissionResponse.data?.executionRequest) {
-        const blocker = toStatusErrorMessage(
-          `Submission failed for ${leg.assetSymbol ?? leg.sleeve}.`,
-          submissionResponse,
-        );
+      executionRequest = lifiResult.executionRequest;
 
+      if (lifiResult.blocker) {
         args.onStatus?.({
           tone: "warning",
-          message: blocker,
+          message: lifiResult.blocker,
         });
 
         return {
           activation,
           executionRequest,
-          blocker,
+          blocker: lifiResult.blocker,
         };
       }
+    } else if (approvalLegs.some((leg) => leg.quote?.kind === "enso_bundle")) {
+      args.onStatus?.({
+        tone: "neutral",
+        message: "Enso returned the portfolio bundle. Preparing wallet approval and transaction submission.",
+      });
 
-      executionRequest = submissionResponse.data.executionRequest as ApiExecutionRequest;
-      args.onExecutionRequest?.(executionRequest);
+      const ensoResult = await executeEnsoBundleFlow(
+        approvalLegs,
+        executionRequest,
+        args,
+      );
+
+      executionRequest = ensoResult.executionRequest;
+
+      if (ensoResult.blocker) {
+        args.onStatus?.({
+          tone: "warning",
+          message: ensoResult.blocker,
+        });
+
+        return {
+          activation,
+          executionRequest,
+          blocker: ensoResult.blocker,
+        };
+      }
+    } else {
+
+      for (const leg of approvalLegs) {
+        const approvalTarget = leg.approval?.approvalTarget ?? null;
+        const signerAddress = leg.approval?.signerAddress ?? null;
+        const typedData = typedDataForLeg(leg);
+
+        if (approvalTarget !== "oneinch_fusion_order" || !typedData || !signerAddress) {
+          const blocker =
+            approvalTarget === "cow_order"
+              ? "This hosted browser helper remains pinned to wallet-first 1inch Fusion typed-data signing. CoW manual signing is not advanced in XSL-005."
+              : "The current venue approval payload is not signable on this hosted helper.";
+
+          args.onStatus?.({
+            tone: "warning",
+            message: blocker,
+          });
+
+          return {
+            activation,
+            executionRequest,
+            blocker,
+          };
+        }
+
+        const signerWallet = pickSignerWallet(signerAddress, args.wallets, args.activeWallet);
+
+        if (!signerWallet) {
+          const blocker =
+            "Privy did not expose the required signer wallet for this 1inch Fusion order.";
+
+          args.onStatus?.({
+            tone: "warning",
+            message: blocker,
+          });
+
+          return {
+            activation,
+            executionRequest,
+            blocker,
+          };
+        }
+
+        args.onStatus?.({
+          tone: "neutral",
+          message: `Awaiting wallet-first 1inch signature for ${leg.assetSymbol ?? leg.sleeve}.`,
+        });
+
+        let signature: string;
+
+        try {
+          signature = await signTypedData(signerWallet, signerAddress, typedData);
+        } catch (error) {
+          const blocker =
+            error instanceof Error
+              ? error.message
+              : "Wallet signing failed for the 1inch Fusion order.";
+
+          args.onStatus?.({
+            tone: "warning",
+            message: blocker,
+          });
+
+          return {
+            activation,
+            executionRequest,
+            blocker,
+          };
+        }
+
+        const submissionResponse = await postExecutionAction(
+          {
+            action: "record_submission",
+            executionRequestId: executionRequest.executionRequestId,
+            legId: leg.legId,
+            signature,
+          },
+          args.auth,
+        );
+
+        if (!submissionResponse.data?.executionRequest) {
+          const blocker = toStatusErrorMessage(
+            `Submission failed for ${leg.assetSymbol ?? leg.sleeve}.`,
+            submissionResponse,
+          );
+
+          args.onStatus?.({
+            tone: "warning",
+            message: blocker,
+          });
+
+          return {
+            activation,
+            executionRequest,
+            blocker,
+          };
+        }
+
+        executionRequest = submissionResponse.data.executionRequest as ApiExecutionRequest;
+        args.onExecutionRequest?.(executionRequest);
+      }
     }
 
     const finalBlocker = getCurrentBlocker(executionRequest);
