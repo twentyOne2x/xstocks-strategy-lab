@@ -484,6 +484,7 @@ export interface ApiActivityHistoryItem {
   type: string;
   summary: string;
   status: string;
+  executionArtifacts?: ApiExecutionArtifacts | null;
 }
 
 export interface ApiActivityLifecycleItem {
@@ -493,6 +494,7 @@ export interface ApiActivityLifecycleItem {
   detail: string;
   state: string;
   nextAction: string | null;
+  executionArtifacts?: ApiExecutionArtifacts | null;
 }
 
 export interface ApiActivitySurface {
@@ -631,6 +633,18 @@ export interface ApiExecutionApproval {
   submittedAt: string | null;
   venueOrderId: string | null;
   notes: string[];
+}
+
+export interface ApiExecutionExplorerUrls {
+  etherscanTx: string | null;
+  eigenPhiTx: string | null;
+}
+
+export interface ApiExecutionArtifacts {
+  txHash: string | null;
+  venueOrderId: string | null;
+  chain: string | null;
+  explorerUrls: ApiExecutionExplorerUrls | null;
 }
 
 export interface ApiExecutionReceipt {

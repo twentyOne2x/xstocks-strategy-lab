@@ -287,6 +287,20 @@ const activitySummarySchema = z.object({
   latestEventAt: timestampSchema.nullable(),
   nextAction: activitySummaryNextActionSchema,
 });
+const executionArtifactExplorerUrlsSchema = z
+  .object({
+    etherscanTx: nonEmptyStringSchema.nullable(),
+    eigenPhiTx: nonEmptyStringSchema.nullable(),
+  })
+  .nullable();
+const executionArtifactsSurfaceSchema = z
+  .object({
+    txHash: nonEmptyStringSchema.nullable(),
+    venueOrderId: nonEmptyStringSchema.nullable(),
+    chain: chainSchema.nullable(),
+    explorerUrls: executionArtifactExplorerUrlsSchema,
+  })
+  .nullable();
 const rebalanceTransitionSchema = z.object({
   transitionId: nonEmptyStringSchema,
   eventType: nonEmptyStringSchema,
@@ -542,6 +556,7 @@ const activitySurfaceSchema = z
         type: nonEmptyStringSchema,
         summary: nonEmptyStringSchema,
         status: nonEmptyStringSchema,
+        executionArtifacts: executionArtifactsSurfaceSchema.optional(),
       }),
     ),
     lifecycle: z.array(
@@ -552,6 +567,7 @@ const activitySurfaceSchema = z
         detail: nonEmptyStringSchema,
         state: nonEmptyStringSchema,
         nextAction: nonEmptyStringSchema.nullable(),
+        executionArtifacts: executionArtifactsSurfaceSchema.optional(),
       }),
     ),
     nextAction: activitySummaryNextActionSchema,

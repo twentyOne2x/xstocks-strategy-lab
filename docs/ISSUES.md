@@ -570,6 +570,43 @@ Last updated: 2026-04-02
   - After rebasing onto the current `origin/main`, verification again passed with `pnpm --filter @xstocks-strategy-lab/xstocks test`, `node --test apps/api/test/api.test.js`, and `git diff --check`, and the latest hosted proof rerun wrote [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-07-22.272Z/summary.json), [approval-payloads.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-07-22.272Z/approval-payloads.json), and [signature-inputs.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-07-22.272Z/signature-inputs.json).
   - The first exact remaining external blocker is now signer-owned approval: the rerun stopped with `code=missing_user_signature`, `stage=awaiting_signature`, and `message="Signer-owned 1inch Fusion EIP-712 signatures are still required for 6 quoted core legs before backend submission can be recorded."` No signed submission, venue order id, venue-status update beyond `quote_ready`, or receipt truth exists yet.
 
+### XSL-014D Structured Execution Explorer Links And Blotter Truth
+
+- Type: frontend/backend contract
+- Status: active
+- Canonical owner lane: `XSL-014`
+- Date opened: 2026-04-02
+- Context: `XSL-014C` already restored truthful signer-owned 1inch execution storage on the clean tip, including per-leg order ids, venue status, and receipt hashes when they exist. The remaining product gap is that the activation and bottom-blotter surfaces still collapse those identifiers back into plain text or inferred copy, and the blotter currently leans on the latest execution request more aggressively than the backend can prove as current holdings truth.
+- Suspected cause: execution artifacts are persisted on execution requests and activity-event payloads, but the API activity surface omits structured execution fields, the frontend contracts do not carry explorer metadata, and the UI appends raw hashes into prose instead of rendering explicit fail-closed references.
+- Fix intent: extend the minimum shared/API/frontend contract path so execution-derived history and lifecycle rows can carry `txHash`, `venueOrderId`, `chain`, and derived explorer URLs, render real Ethereum explorer links on activation and blotter surfaces, and tighten positions/history/activity truth without fabricating holdings performance or PnL.
+- Acceptance criteria:
+  1. Activity/history rows exposed to the web app can carry structured execution artifacts: `txHash`, `venueOrderId`, `chain`, and derived explorer URLs where the backend can truthfully derive them.
+  2. Ethereum transaction artifacts derive and expose Etherscan and EigenPhi transaction URLs only when a valid tx hash exists.
+  3. The activation screen and bottom blotter render explicit explorer links for execution truth without falling back to invented links or fake ids when artifacts are missing.
+  4. Positions/history/activity surfaces stop overstating live holdings or performance; unknown PnL or holdings performance remains unclaimed.
+  5. Verification passes for `pnpm --filter @xstocks-strategy-lab/web test`, `pnpm --filter @xstocks-strategy-lab/web build`, `node --test apps/api/test/api.test.js`, and `git diff --check`, plus screenshot proof of the rendered explorer links.
+- Complexity: medium
+- Plan: [2026-04-02-xstocks-execution-explorer-links-and-blotter-truth.md](/Users/user/PycharmProjects/_worktrees/xstocks-xsl-014d-20260402/docs/plans/active/2026-04-02-xstocks-execution-explorer-links-and-blotter-truth.md)
+- Executor prompt:
+  - Work in `apps/api/**`, `apps/web/**`, and the narrow contract files needed to carry structured execution artifacts end to end.
+  - Replace plain-text execution references with structured fields and rendered links on activation and blotter surfaces.
+  - Derive only Ethereum transaction explorer URLs for this slice: Etherscan and EigenPhi.
+  - Keep fail-closed behavior when `txHash` or `venueOrderId` is absent.
+  - Do not fabricate PnL, holdings performance, autonomous execution, smart-account-native venue signing, or CRE runtime claims.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] visual/screenshot verification
+- Verification note:
+  - Structured execution artifacts now survive the API activity-surface contract as additive row fields: `txHash`, `venueOrderId`, `chain`, and derived explorer URLs when an Ethereum tx hash is present.
+  - The web activation execution-truth surface now renders explicit recorded artifacts with fail-closed fallback copy when no venue order id or settlement receipt has been recorded yet.
+  - The bottom blotter history/activity surfaces now render structured artifact chips and explorer links instead of appending raw hashes into prose, and positions continue to leave PnL/performance unclaimed.
+  - Verification passed with `pnpm --filter @xstocks-strategy-lab/web test`, `pnpm --filter @xstocks-strategy-lab/web build`, `node --test apps/api/test/api.test.js`, and `git diff --check`.
+- Resolution note:
+  - Exact truthful claim after this slice: when repo-owned execution truth has recorded a `venueOrderId` and/or `txHash`, the activation and bottom-blotter surfaces now expose those artifacts structurally and render real Etherscan/EigenPhi links for Ethereum transaction hashes only; when the backend has not recorded those artifacts, the UI stays explicit and fail-closed instead of fabricating order, receipt, holdings-performance, or PnL claims.
+
 ### XSL-015 Partner Tracking And xStocks Reporting Dashboard
 
 - Type: product/data

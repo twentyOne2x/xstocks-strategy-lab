@@ -436,6 +436,18 @@ export interface PositionRow {
   updatedAt: string;
 }
 
+export interface ExecutionExplorerUrls {
+  etherscanTx: string | null;
+  eigenPhiTx: string | null;
+}
+
+export interface ExecutionArtifacts {
+  txHash: string | null;
+  venueOrderId: string | null;
+  chain: string | null;
+  explorerUrls: ExecutionExplorerUrls | null;
+}
+
 export interface HistoryRow {
   id: string;
   timestamp: string;
@@ -444,6 +456,7 @@ export interface HistoryRow {
   venue: string;
   amount: string;
   status: "settled" | "pending" | "blocked";
+  executionArtifacts?: ExecutionArtifacts | null;
 }
 
 export interface ActivityEvent {
@@ -453,6 +466,7 @@ export interface ActivityEvent {
   detail: string;
   state: UserVisibleState;
   nextAction: string;
+  executionArtifacts?: ExecutionArtifacts | null;
 }
 
 export type RebalanceState = "act" | "consider" | "monitor" | "none";

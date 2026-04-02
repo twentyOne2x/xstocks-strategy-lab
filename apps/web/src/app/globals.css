@@ -1519,6 +1519,44 @@ button { font: inherit; }
   transition: color 120ms ease;
 }
 
+.execution-artifacts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.execution-artifact-label,
+.execution-artifact-value,
+.execution-artifact-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.execution-artifact-label,
+.execution-artifact-value {
+  color: var(--text-soft);
+  background: rgba(9, 12, 23, 0.7);
+}
+
+.execution-artifact-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.execution-artifact-link:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text);
+}
+
 /* ── Blotter ── */
 
 .blotter {
