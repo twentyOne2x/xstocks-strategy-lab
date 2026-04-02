@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useActiveWallet, useWallets } from "@privy-io/react-auth";
 import { BrandLockup } from "@/components/home-terminal";
@@ -114,6 +114,22 @@ export function OnboardingQuestionFlow({
   const [optionCooldown, setOptionCooldown] = useState(false);
   const primaryQuestions = questions.filter((q) => !q.conditional);
   const answeredPrimaryCount = primaryQuestions.filter((q) => answers[q.id] !== undefined).length;
+
+  // Guard: if no questions are loaded, show a fallback instead of crashing
+  if (primaryQuestions.length === 0) {
+    return (
+      <div className="onboarding-flow-wrapper">
+        <div className="onboarding-flow">
+          <p className="panel-note" style={{ textAlign: "center", padding: "40px 16px" }}>
+            No questions available. Please try refreshing the page.
+          </p>
+          <div className="onboarding-back-row">
+            <button className="button button-ghost" onClick={onReset} type="button">Start over</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (allAnswered) {
     return (
@@ -670,15 +686,44 @@ function SimulatedWorkspace({
     ? (activeWallet as (typeof wallets)[number])
     : null;
 
+  const closeBuyModal = useCallback(() => setBuyModalOpen(false), []);
+
+  // Escape key closes the buy modal
+  useEffect(() => {
+    if (!buyModalOpen) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") closeBuyModal();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [buyModalOpen, closeBuyModal]);
+
+  function parseBuyAmount(): number {
+    const parsed = parseFloat(buyAmount);
+    if (!Number.isFinite(parsed) || parsed <= 0) return 0;
+    return parsed;
+  }
+
   async function handleBuy() {
     if (!authenticated || buyRunning) return;
+
+    const notionalUsd = parseBuyAmount();
+    if (notionalUsd <= 0) {
+      setBuyStatus("Enter a valid USDC amount greater than zero.");
+      return;
+    }
+
+    if (!walletState.connected || !walletState.walletAddress) {
+      setBuyStatus("Wallet disconnected. Reconnect your wallet to continue.");
+      return;
+    }
+
     setBuyRunning(true);
     setBuyStatus("Starting execution...");
     try {
-      const { getAccessToken } = await import("@privy-io/react-auth").then(m => ({ getAccessToken: async () => null }));
       const result = await runManualExecutionFlow({
         manifest,
-        requestedNotionalUsd: parseFloat(buyAmount) || 100,
+        requestedNotionalUsd: notionalUsd,
         initiationAction: "create",
         latestActivation: null,
         existingExecutionRequest: null,
@@ -694,12 +739,20 @@ function SimulatedWorkspace({
         onStatus: (status) => setBuyStatus(status.message),
       });
       if (result.blocker) {
-        setBuyStatus(`Blocked: ${result.blocker}`);
+        setBuyStatus(result.blocker);
       } else {
         setBuyStatus("Execution submitted successfully!");
       }
     } catch (err) {
-      setBuyStatus(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+      const message = err instanceof Error ? err.message : "An unexpected error occurred.";
+      // Classify common failure modes for user-friendly messages
+      if (message.toLowerCase().includes("user rejected") || message.toLowerCase().includes("user denied")) {
+        setBuyStatus("Signature rejected. You can try again when ready.");
+      } else if (message.toLowerCase().includes("network") || message.toLowerCase().includes("fetch")) {
+        setBuyStatus("Unable to reach the server. Check your connection and try again.");
+      } else {
+        setBuyStatus(message);
+      }
     } finally {
       setBuyRunning(false);
     }
@@ -745,12 +798,12 @@ function SimulatedWorkspace({
   return (
     <>
     {!tourDismissed && !tourWelcomeShown && (
-      <div className="pq-tour-welcome-overlay">
+      <div className="pq-tour-welcome-overlay" role="dialog" aria-modal="true" aria-label="Portfolio tour">
         <div className="pq-tour-welcome-card">
           <h2>Take a quick tour?</h2>
           <p>We will walk you through your portfolio, holdings, and market signals.</p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
-            <button className="button button-primary button-lg" onClick={() => setTourWelcomeShown(true)} type="button">Start tour</button>
+            <button className="button button-primary button-lg" onClick={() => setTourWelcomeShown(true)} type="button" autoFocus>Start tour</button>
             <button className="button button-ghost button-lg" onClick={() => { setTourWelcomeShown(true); onTourDismiss(); }} type="button">Skip</button>
           </div>
         </div>
@@ -1114,7 +1167,7 @@ function SimulatedWorkspace({
               <span className="section-kicker">Events</span>
               {activity.length > 0 ? (
                 <div className="pq-events">
-                  {activity.slice(0, 4).map((event) => (
+                  {activity.slice(0, 6).map((event) => (
                     <div className="pq-event" key={event.id}>
                       <div className="pq-event-meta">
                         <span className="pq-event-time">{event.time}</span>
@@ -1134,20 +1187,36 @@ function SimulatedWorkspace({
 
       {/* Buy Modal */}
       {buyModalOpen && (
-        <div className="pq-tour-welcome-overlay" onClick={() => setBuyModalOpen(false)}>
-          <div className="pq-tour-welcome-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "540px", textAlign: "left" }}>
+        <div
+          className="pq-tour-welcome-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Buy portfolio"
+          onClick={closeBuyModal}
+        >
+          <div className="pq-tour-welcome-card pq-buy-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "540px", textAlign: "left" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <h2 style={{ margin: 0, fontSize: "1.5rem" }}>Buy this portfolio</h2>
-              <button onClick={() => setBuyModalOpen(false)} type="button" style={{ background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer", color: "var(--text-muted)" }}>&times;</button>
+              <h2 id="buy-modal-title" style={{ margin: 0, fontSize: "1.5rem" }}>Buy this portfolio</h2>
+              <button
+                onClick={closeBuyModal}
+                type="button"
+                aria-label="Close buy modal"
+                style={{ background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer", color: "var(--text-muted)", padding: "4px 8px" }}
+              >&times;</button>
             </div>
             <p style={{ margin: 0, color: "var(--text-soft)", fontSize: "0.95rem" }}>Enter the USDC amount. It will be split across the portfolio assets by weight.</p>
 
             <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 0" }}>
-              <span style={{ fontSize: "1.8rem", fontWeight: 700 }}>$</span>
+              <label htmlFor="buy-amount-input" style={{ fontSize: "1.8rem", fontWeight: 700 }}>$</label>
               <input
+                id="buy-amount-input"
                 type="number"
+                inputMode="decimal"
                 value={buyAmount}
                 onChange={(e) => setBuyAmount(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !buyRunning) void handleBuy(); }}
+                aria-label="USDC amount"
+                autoFocus
                 style={{ flex: 1, fontSize: "1.8rem", fontWeight: 700, border: "var(--border-w) solid var(--black)", padding: "10px 14px", fontFamily: "var(--font-mono)", textAlign: "right" }}
                 min="1"
                 step="1"
@@ -1159,12 +1228,15 @@ function SimulatedWorkspace({
               <span className="section-kicker">Allocation preview</span>
               {manifest.allocations.map((alloc, i) => {
                 const weight = parseFloat(alloc.targetWeight) || 0;
-                const amount = ((weight / 100) * parseFloat(buyAmount || "0")).toFixed(2);
+                const parsedAmount = parseFloat(buyAmount || "0");
+                const amount = Number.isFinite(parsedAmount) && parsedAmount > 0
+                  ? ((weight / 100) * parsedAmount).toFixed(2)
+                  : "0.00";
                 const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
                 return (
                   <div key={alloc.symbol} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 0" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span style={{ width: "10px", height: "10px", borderRadius: "2px", background: colors[i % colors.length], flexShrink: 0 }} />
+                      <span style={{ width: "10px", height: "10px", borderRadius: "2px", background: colors[i % colors.length], flexShrink: 0 }} aria-hidden="true" />
                       <strong style={{ fontSize: "0.95rem" }}>{alloc.symbol}</strong>
                       <span style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>{alloc.targetWeight}</span>
                     </div>
@@ -1182,7 +1254,7 @@ function SimulatedWorkspace({
             </div>
 
             {buyStatus && (
-              <div style={{ padding: "10px 14px", background: "var(--gray-100)", border: "1px solid var(--border)", fontSize: "0.88rem", color: "var(--text-soft)" }}>
+              <div role="status" aria-live="polite" style={{ padding: "10px 14px", background: "var(--gray-100)", border: "1px solid var(--border)", fontSize: "0.88rem", color: "var(--text-soft)" }}>
                 {buyStatus}
               </div>
             )}
@@ -1191,7 +1263,7 @@ function SimulatedWorkspace({
               className="button button-primary button-xl"
               style={{ width: "100%", opacity: buyRunning ? 0.6 : 1 }}
               type="button"
-              disabled={buyRunning}
+              disabled={buyRunning || parseBuyAmount() <= 0}
               onClick={handleBuy}
             >
               {buyRunning ? "Executing..." : `Buy $${buyAmount} of ${recommendation.title}`}

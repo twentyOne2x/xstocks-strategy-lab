@@ -36,7 +36,7 @@ function AppHeader() {
         <Link className="landing-header-brand" href="/">
           <BrandLockup size="sm" />
         </Link>
-        <nav className="landing-header-nav">
+        <nav className="landing-header-nav" aria-label="Main navigation">
           <Link className="landing-header-link" href="/">Home</Link>
           <Link className="landing-header-cta" href="/onboarding">
             Find my portfolio
@@ -49,7 +49,7 @@ function AppHeader() {
 
 function AppFooter() {
   return (
-    <footer className="landing-footer">
+    <footer className="landing-footer" role="contentinfo">
       <div className="landing-footer-inner">
         <div className="landing-footer-brand-block">
           <BrandLockup size="md" />

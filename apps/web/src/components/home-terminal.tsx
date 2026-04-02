@@ -39,7 +39,7 @@ export function HomeTerminal() {
           <Link className="landing-header-brand" href="/">
             <BrandLockup size="sm" />
           </Link>
-          <nav className="landing-header-nav">
+          <nav className="landing-header-nav" aria-label="Main navigation">
             <a className="landing-header-link" href="#how-it-works">How it works</a>
             <a className="landing-header-link" href="#faq">FAQ</a>
           </nav>
@@ -203,7 +203,7 @@ export function HomeTerminal() {
       </section>
 
       {/* Footer */}
-      <footer className="landing-footer">
+      <footer className="landing-footer" role="contentinfo">
         <div className="landing-footer-inner">
           <div className="landing-footer-brand-block">
             <BrandLockup size="md" />

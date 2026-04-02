@@ -154,8 +154,12 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
     : executionPlan
       ? `${executionPlan.executionState.replaceAll("_", " ")} · ${executionPlan.executionEligibility.replaceAll("_", " ")}`
       : "Preview only";
-  const formatAddress = (value: string | null) =>
-    value ? `${value.slice(0, 6)}...${value.slice(-4)}` : "Not ready";
+  const formatAddress = (value: string | null) => {
+    if (!value || value.length < 10) return "Not ready";
+    // Basic hex address sanity check before display
+    if (!/^0x[0-9a-fA-F]+$/.test(value)) return "Invalid address";
+    return `${value.slice(0, 6)}...${value.slice(-4)}`;
+  };
   const formatUsd = (value: number) =>
     `$${value.toLocaleString("en-US", {
       minimumFractionDigits: 2,
@@ -333,6 +337,16 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
           message: result.blocker,
         });
       }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "An unexpected error occurred.";
+      setStatusMessage({
+        tone: "warning",
+        message: message.toLowerCase().includes("user rejected") || message.toLowerCase().includes("user denied")
+          ? "Signature rejected. You can try again when ready."
+          : message.toLowerCase().includes("network") || message.toLowerCase().includes("fetch")
+            ? "Unable to reach the server. Check your connection and try again."
+            : message,
+      });
     } finally {
       setIsRunning(false);
     }
@@ -416,6 +430,8 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
               <span>Requested notional</span>
               <input
                 type="number"
+                inputMode="decimal"
+                aria-label="Requested notional USDC amount"
                 min="1"
                 step="1"
                 value={requestedNotionalUsd}
@@ -730,7 +746,8 @@ function ActivationStep({
   children?: React.ReactNode;
 }) {
   return (
-    <div
+    <section
+      aria-label={`Step ${step}: ${title}`}
       style={{
         padding: "14px 16px",
         borderRadius: "var(--radius-row)",
@@ -771,6 +788,6 @@ function ActivationStep({
       </div>
       <p className="panel-note">{description}</p>
       {children && <div style={{ marginTop: 10 }}>{children}</div>}
-    </div>
+    </section>
   );
 }

@@ -3159,6 +3159,7 @@ button { font: inherit; }
   border-bottom: var(--border-w) solid var(--black);
   background: var(--white);
   box-shadow: 0 3px 0px var(--black);
+  overflow: hidden;
 }
 
 .pq-preview-bar-left {
@@ -3286,6 +3287,15 @@ button { font: inherit; }
   text-align: center;
   display: grid;
   gap: 20px;
+}
+
+/* Buy modal variant: scrollable on mobile, touch-friendly */
+.pq-buy-modal {
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  width: calc(100% - 32px);
 }
 
 .pq-tour-welcome-card h2 {
@@ -4599,6 +4609,10 @@ button { font: inherit; }
   .pq-tour-bar-inner { flex-direction: column; gap: 10px; padding: 10px 16px; }
   .pq-tour-welcome-card { padding: 32px 20px; }
   .pq-tour-welcome-card h2 { font-size: 1.5rem; }
+
+  /* Buy modal mobile */
+  .pq-buy-modal { max-height: 85vh; max-height: 85dvh; padding: 24px 16px; }
+  .pq-tour-welcome-overlay { padding: 16px; }
 
   /* Tables */
   .data-table { min-width: 0; }

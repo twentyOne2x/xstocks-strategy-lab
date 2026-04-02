@@ -47,6 +47,9 @@ export function BottomBlotter({
             <button
               key={tab.id}
               type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`blotter-panel-${tab.id}`}
               className={`blotter-tab ${activeTab === tab.id ? "blotter-tab-active" : ""}`}
               onClick={() => setActiveTab(tab.id)}
             >
@@ -57,7 +60,7 @@ export function BottomBlotter({
       </div>
 
       {activeTab === "positions" && (
-        <table className="data-table">
+        <table className="data-table" id="blotter-panel-positions" role="tabpanel" aria-label="Positions">
           <thead>
             <tr>
               <th>State</th>
@@ -69,7 +72,7 @@ export function BottomBlotter({
             </tr>
           </thead>
           <tbody>
-            {blotter.positions.map((row) => (
+            {blotter.positions.slice(0, 50).map((row) => (
               <tr key={row.id}>
                 <td><span className={`status-pill status-pill-${row.state}`} title={stateTooltips[row.state] ?? ""}>{row.state}</span></td>
                 <td>{row.symbol}</td>
@@ -84,7 +87,7 @@ export function BottomBlotter({
       )}
 
       {activeTab === "history" && (
-        <table className="data-table">
+        <table className="data-table" id="blotter-panel-history" role="tabpanel" aria-label="History">
           <thead>
             <tr>
               <th>Time</th>
@@ -95,7 +98,7 @@ export function BottomBlotter({
             </tr>
           </thead>
           <tbody>
-            {blotter.history.map((row) => (
+            {blotter.history.slice(0, 50).map((row) => (
               <tr key={row.id}>
                 <td>{row.timestamp}</td>
                 <td><span className={`status-pill status-pill-${row.status}`}>{row.status}</span></td>
@@ -114,7 +117,7 @@ export function BottomBlotter({
       )}
 
       {activeTab === "rebalancing" && (
-        <div className="rebalance-board">
+        <div className="rebalance-board" id="blotter-panel-rebalancing" role="tabpanel" aria-label="Rebalancing">
           {blotter.rebalancing.map((row) => (
             <article
               className={`rebalance-item ${row.manifestSlug === focusManifestSlug ? "rebalance-item-active" : ""}`}
@@ -135,8 +138,8 @@ export function BottomBlotter({
       )}
 
       {activeTab === "activity" && (
-        <div className="timeline-list">
-          {blotter.activity.map((event) => (
+        <div className="timeline-list" id="blotter-panel-activity" role="tabpanel" aria-label="Activity">
+          {blotter.activity.slice(0, 50).map((event) => (
             <article className="timeline-item" key={event.id}>
               <div className="timeline-meta">
                 <span className="timeline-time">{event.time}</span>
