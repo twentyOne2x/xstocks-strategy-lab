@@ -1226,6 +1226,120 @@ function getAutoresearchRuntimeStatus(run) {
       : run.status;
 }
 
+function getAutoresearchProofTimestamp({ runtime, run } = {}) {
+  const rawTimestamp = firstDefined(
+    runtime?.proofUpdatedAt,
+    runtime?.proof_updated_at,
+    run?.schedulerReceipt?.receiptCapturedAt,
+    run?.scheduler_receipt?.receipt_captured_at,
+    null,
+  );
+
+  if (typeof rawTimestamp !== "string") {
+    return null;
+  }
+
+  const parsedTimestamp = Date.parse(rawTimestamp);
+  return Number.isFinite(parsedTimestamp) ? parsedTimestamp : null;
+}
+
+function upsertAutoresearchHostReceiptState(state, { runtime, run }, now) {
+  const normalizedRun = normalizeAutoresearchRun(run, 0, now);
+  const normalizedRuntime = normalizeAutoresearchRuntime(
+    {
+      ...state.autoresearchRuntime,
+      ...runtime,
+      status: getAutoresearchRuntimeStatus(normalizedRun),
+      cadenceHours: normalizedRun.cadenceHours,
+      lastRequestedAt: normalizedRun.startedAt,
+      lastStartedAt: normalizedRun.startedAt,
+      lastCompletedAt: normalizedRun.completedAt,
+      lastRunId: normalizedRun.runId,
+      lastTriggerSource: normalizedRun.triggerSource,
+      nextDueAt: getNextAutoresearchDueAt(normalizedRun),
+      lastPromotionCount: normalizedRun.promotionCount,
+      lastPromotedManifestIds: normalizedRun.promotedManifestIds,
+    },
+    now,
+  );
+  const existingIndex = state.autoresearchRuns.findIndex(
+    (item) => item.runId === normalizedRun.runId,
+  );
+
+  if (existingIndex === -1) {
+    state.autoresearchRuns.unshift(normalizedRun);
+  } else {
+    state.autoresearchRuns.splice(existingIndex, 1, normalizedRun);
+  }
+
+  state.autoresearchRuntime = normalizedRuntime;
+  state.autoresearchRuns.sort((left, right) =>
+    String(right.startedAt).localeCompare(String(left.startedAt)),
+  );
+
+  return {
+    runtime: normalizedRuntime,
+    run: normalizedRun,
+  };
+}
+
+function shouldRehydrateAutoresearchHostReceipt(state, { runtime, run }, now) {
+  const normalizedRuntime = normalizeAutoresearchRuntime(runtime, now);
+  const normalizedRun = normalizeAutoresearchRun(run, 0, now);
+
+  if (
+    normalizedRuntime.recurringAutonomousProven !== true ||
+    normalizedRuntime.schedulerHost === null ||
+    normalizedRun.schedulerReceipt === null
+  ) {
+    return false;
+  }
+
+  const currentRuntime = state.autoresearchRuntime;
+  const currentRun =
+    state.autoresearchRuns.find(
+      (item) => item.runId === currentRuntime.lastRunId,
+    ) ??
+    state.autoresearchRuns[0] ??
+    null;
+  const currentProofTimestamp =
+    getAutoresearchProofTimestamp({
+      runtime: currentRuntime,
+      run: currentRun,
+    }) ?? 0;
+  const seedProofTimestamp =
+    getAutoresearchProofTimestamp({
+      runtime: normalizedRuntime,
+      run: normalizedRun,
+    }) ?? 0;
+  const hasPersistedProofRun = state.autoresearchRuns.some(
+    (item) => item.runId === normalizedRun.runId,
+  );
+
+  if (!currentRuntime.lastRunId) {
+    return true;
+  }
+
+  if (currentRuntime.recurringAutonomousProven !== true) {
+    return true;
+  }
+
+  if (currentRuntime.lastRunId === normalizedRun.runId) {
+    return (
+      !hasPersistedProofRun ||
+      currentRuntime.truthBoundary !== normalizedRuntime.truthBoundary ||
+      currentRuntime.schedulerHost === null ||
+      currentProofTimestamp < seedProofTimestamp
+    );
+  }
+
+  if (currentProofTimestamp === 0) {
+    return true;
+  }
+
+  return currentProofTimestamp < seedProofTimestamp;
+}
+
 function normalizeState(state, now) {
   const defaultState = createDefaultState(now);
 
@@ -1287,6 +1401,7 @@ function shouldAppendRebalanceHistory(existing, next) {
 
 export function createRuntimeStore({
   storePath,
+  autoresearchProofPath = null,
   now = () => new Date().toISOString(),
 }) {
   async function ensureStore() {
@@ -1297,9 +1412,34 @@ export function createRuntimeStore({
     }
   }
 
+  async function readAutoresearchProofSeed() {
+    if (!autoresearchProofPath) {
+      return null;
+    }
+
+    try {
+      return await readJsonFile(autoresearchProofPath);
+    } catch (error) {
+      if (error?.code === "ENOENT") {
+        return null;
+      }
+
+      throw error;
+    }
+  }
+
   async function readState() {
     await ensureStore();
-    return normalizeState(await readJsonFile(storePath), now);
+    const state = normalizeState(await readJsonFile(storePath), now);
+    const proofSeed = await readAutoresearchProofSeed();
+
+    if (!proofSeed || !shouldRehydrateAutoresearchHostReceipt(state, proofSeed, now)) {
+      return state;
+    }
+
+    upsertAutoresearchHostReceiptState(state, proofSeed, now);
+    await writeState(state);
+    return state;
   }
 
   async function writeState(state) {
@@ -1633,44 +1773,16 @@ export function createRuntimeStore({
     },
     async recordAutoresearchHostReceipt({ runtime, run }) {
       const state = await readState();
-      const normalizedRun = normalizeAutoresearchRun(run, 0, now);
-      const normalizedRuntime = normalizeAutoresearchRuntime(
+      const result = upsertAutoresearchHostReceiptState(
+        state,
         {
-          ...state.autoresearchRuntime,
-          ...runtime,
-          status: getAutoresearchRuntimeStatus(normalizedRun),
-          cadenceHours: normalizedRun.cadenceHours,
-          lastRequestedAt: normalizedRun.startedAt,
-          lastStartedAt: normalizedRun.startedAt,
-          lastCompletedAt: normalizedRun.completedAt,
-          lastRunId: normalizedRun.runId,
-          lastTriggerSource: normalizedRun.triggerSource,
-          nextDueAt: getNextAutoresearchDueAt(normalizedRun),
-          lastPromotionCount: normalizedRun.promotionCount,
-          lastPromotedManifestIds: normalizedRun.promotedManifestIds,
+          runtime,
+          run,
         },
         now,
       );
-      const existingIndex = state.autoresearchRuns.findIndex(
-        (item) => item.runId === normalizedRun.runId,
-      );
-
-      if (existingIndex === -1) {
-        state.autoresearchRuns.unshift(normalizedRun);
-      } else {
-        state.autoresearchRuns.splice(existingIndex, 1, normalizedRun);
-      }
-
-      state.autoresearchRuntime = normalizedRuntime;
-      state.autoresearchRuns.sort((left, right) =>
-        String(right.startedAt).localeCompare(String(left.startedAt)),
-      );
       await writeState(state);
-
-      return {
-        runtime: normalizedRuntime,
-        run: normalizedRun,
-      };
+      return result;
     },
     async upsertRebalance({ rebalance, eventType = "evaluation" }) {
       const state = await readState();

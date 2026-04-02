@@ -28,6 +28,10 @@ function createDefaultConfig() {
       "packages/research/manifests/slot-registry.json",
     ),
     storePath: resolve(APP_ROOT, "data/runtime-store.json"),
+    autoresearchProofPath: resolve(
+      APP_ROOT,
+      "data/autoresearch-runtime-proof.json",
+    ),
     xstocksBaseUrl:
       process.env.XSTOCKS_API_BASE_URL ?? "https://api.xstocks.fi/api/v2",
     backedApiBaseUrl:
@@ -75,6 +79,7 @@ export function createApiRuntimeService(overrides = {}) {
       overrides.runtimeStore ??
       createRuntimeStore({
         storePath: config.storePath,
+        autoresearchProofPath: config.autoresearchProofPath,
       }),
     cowExecutionClient:
       overrides.cowExecutionClient ??

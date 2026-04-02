@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { generateKeyPairSync, sign as signJwtPayload } from "node:crypto";
 import { createServer as createHttpServer } from "node:http";
 import { readFileSync } from "node:fs";
-import { mkdtemp, readFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -492,6 +492,120 @@ function createAutoresearchProofHeaders(
 ) {
   return {
     "X-Autoresearch-Proof-Token": token,
+  };
+}
+
+function createAutoresearchRuntimeProofFixture(overrides = {}) {
+  const runtimeDefaults = {
+    runtimeId: "strategy_lab_regular_autoresearch_v1",
+    runtimeOwner: "worker_strategy_lab",
+    cadenceHours: 24,
+    status: "idle",
+    truthBoundary: "railway_cron_service",
+    repoOwnedRuntime: true,
+    recurringAutonomousProven: true,
+    supportedTriggerSources: ["manual_cli", "scheduled_cron"],
+    notes: [
+      "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
+      "Recurring autoresearch is now hosted by Railway cron_service autoresearch-worker in production.",
+      "Railway scheduler cadence is 5 6 * * *.",
+      "Promoted manifests remain the only public explanation boundary.",
+    ],
+    lastRequestedAt: "2026-04-01T06:05:00.000Z",
+    lastStartedAt: "2026-04-01T06:05:00.000Z",
+    lastCompletedAt: "2026-04-01T06:06:00.000Z",
+    lastRunId: "autoresearch_railway_1",
+    lastTriggerSource: "scheduled_cron",
+    nextDueAt: "2026-04-02T06:06:00.000Z",
+    lastPromotionCount: 1,
+    lastPromotedManifestIds: [
+      "onboarding.default_basket:starter-trim-v2:promoted",
+    ],
+    schedulerHost: {
+      provider: "railway",
+      hostKind: "cron_service",
+      projectId: "project_1",
+      projectName: "xstocks-strategy-lab-preview",
+      environmentId: "env_1",
+      environmentName: "production",
+      serviceId: "svc_1",
+      serviceName: "autoresearch-worker",
+      cronSchedule: "5 6 * * *",
+    },
+    proofUpdatedAt: "2026-04-01T06:06:05.000Z",
+  };
+  const runDefaults = {
+    runId: "autoresearch_railway_1",
+    runtimeId: "strategy_lab_regular_autoresearch_v1",
+    runtimeOwner: "worker_strategy_lab",
+    triggerSource: "scheduled_cron",
+    cadenceHours: 24,
+    status: "succeeded",
+    truthBoundary: "railway_cron_service",
+    recurringAutonomousProven: true,
+    startedAt: "2026-04-01T06:05:00.000Z",
+    completedAt: "2026-04-01T06:06:00.000Z",
+    slotIds: ["onboarding.default_basket"],
+    baselineSeeded: true,
+    waveExecuted: true,
+    previousManifestIds: [
+      "onboarding.default_basket:baseline-v1:promoted",
+    ],
+    nextManifestIds: [
+      "onboarding.default_basket:starter-trim-v2:promoted",
+    ],
+    promotedManifestIds: [
+      "onboarding.default_basket:starter-trim-v2:promoted",
+    ],
+    promotionCount: 1,
+    checks: {
+      researchContractsOk: true,
+      researchRunIntegrityOk: true,
+      promotedBoundaryOk: true,
+    },
+    note: "railway cron service",
+    errorMessage: null,
+    schedulerReceipt: {
+      provider: "railway",
+      hostKind: "cron_service",
+      receiptCapturedAt: "2026-04-01T06:06:05.000Z",
+      deploymentId: "deployment_1",
+      snapshotId: "snapshot_1",
+      publicDomain: null,
+      privateDomain: "autoresearch-worker.railway.internal",
+      projectId: "project_1",
+      projectName: "xstocks-strategy-lab-preview",
+      environmentId: "env_1",
+      environmentName: "production",
+      serviceId: "svc_1",
+      serviceName: "autoresearch-worker",
+      cronSchedule: "5 6 * * *",
+      gitCommitSha: "abc123",
+      gitBranch: "main",
+    },
+  };
+
+  return {
+    runtime: {
+      ...runtimeDefaults,
+      ...(overrides.runtime ?? {}),
+      schedulerHost: {
+        ...runtimeDefaults.schedulerHost,
+        ...(overrides.runtime?.schedulerHost ?? {}),
+      },
+    },
+    run: {
+      ...runDefaults,
+      ...(overrides.run ?? {}),
+      checks: {
+        ...runDefaults.checks,
+        ...(overrides.run?.checks ?? {}),
+      },
+      schedulerReceipt: {
+        ...runDefaults.schedulerReceipt,
+        ...(overrides.run?.schedulerReceipt ?? {}),
+      },
+    },
   };
 }
 
@@ -2940,6 +3054,7 @@ test("xstocks reporting route fails closed without the operator token", async ()
 test("autoresearch runtime proof surface stays local-only until a host receipt is recorded", async () => {
   const harness = await startServer({
     autoresearchProofToken: TEST_AUTORESEARCH_PROOF_TOKEN,
+    autoresearchProofPath: null,
   });
 
   try {
@@ -2962,96 +3077,7 @@ test("autoresearch runtime proof surface stays local-only until a host receipt i
           "Content-Type": "application/json",
           ...createAutoresearchProofHeaders(),
         },
-        body: JSON.stringify({
-          runtime: {
-            runtimeId: "strategy_lab_regular_autoresearch_v1",
-            runtimeOwner: "worker_strategy_lab",
-            cadenceHours: 24,
-            status: "idle",
-            truthBoundary: "railway_cron_service",
-            repoOwnedRuntime: true,
-            recurringAutonomousProven: true,
-            supportedTriggerSources: ["manual_cli", "scheduled_cron"],
-            notes: [
-              "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
-              "Recurring autoresearch is now hosted by Railway cron_service autoresearch-worker in production.",
-              "Railway scheduler cadence is 5 6 * * *.",
-              "Promoted manifests remain the only public explanation boundary.",
-            ],
-            lastRequestedAt: "2026-04-01T06:05:00.000Z",
-            lastStartedAt: "2026-04-01T06:05:00.000Z",
-            lastCompletedAt: "2026-04-01T06:06:00.000Z",
-            lastRunId: "autoresearch_railway_1",
-            lastTriggerSource: "scheduled_cron",
-            nextDueAt: "2026-04-02T06:06:00.000Z",
-            lastPromotionCount: 1,
-            lastPromotedManifestIds: [
-              "onboarding.default_basket:starter-trim-v2:promoted",
-            ],
-            schedulerHost: {
-              provider: "railway",
-              hostKind: "cron_service",
-              projectId: "project_1",
-              projectName: "xstocks-strategy-lab-preview",
-              environmentId: "env_1",
-              environmentName: "production",
-              serviceId: "svc_1",
-              serviceName: "autoresearch-worker",
-              cronSchedule: "5 6 * * *",
-            },
-            proofUpdatedAt: "2026-04-01T06:06:05.000Z",
-          },
-          run: {
-            runId: "autoresearch_railway_1",
-            runtimeId: "strategy_lab_regular_autoresearch_v1",
-            runtimeOwner: "worker_strategy_lab",
-            triggerSource: "scheduled_cron",
-            cadenceHours: 24,
-            status: "succeeded",
-            truthBoundary: "railway_cron_service",
-            recurringAutonomousProven: true,
-            startedAt: "2026-04-01T06:05:00.000Z",
-            completedAt: "2026-04-01T06:06:00.000Z",
-            slotIds: ["onboarding.default_basket"],
-            baselineSeeded: true,
-            waveExecuted: true,
-            previousManifestIds: [
-              "onboarding.default_basket:baseline-v1:promoted",
-            ],
-            nextManifestIds: [
-              "onboarding.default_basket:starter-trim-v2:promoted",
-            ],
-            promotedManifestIds: [
-              "onboarding.default_basket:starter-trim-v2:promoted",
-            ],
-            promotionCount: 1,
-            checks: {
-              researchContractsOk: true,
-              researchRunIntegrityOk: true,
-              promotedBoundaryOk: true,
-            },
-            note: "railway cron service",
-            errorMessage: null,
-            schedulerReceipt: {
-              provider: "railway",
-              hostKind: "cron_service",
-              receiptCapturedAt: "2026-04-01T06:06:05.000Z",
-              deploymentId: "deployment_1",
-              snapshotId: "snapshot_1",
-              publicDomain: null,
-              privateDomain: "autoresearch-worker.railway.internal",
-              projectId: "project_1",
-              projectName: "xstocks-strategy-lab-preview",
-              environmentId: "env_1",
-              environmentName: "production",
-              serviceId: "svc_1",
-              serviceName: "autoresearch-worker",
-              cronSchedule: "5 6 * * *",
-              gitCommitSha: "abc123",
-              gitBranch: "main",
-            },
-          },
-        }),
+        body: JSON.stringify(createAutoresearchRuntimeProofFixture()),
       },
     );
     const receiptPayload = await receiptResponse.json();
@@ -3088,6 +3114,132 @@ test("autoresearch runtime proof surface stays local-only until a host receipt i
     assert.equal(
       verifiedPayload.data.runs[0].schedulerReceipt.deploymentId,
       "deployment_1",
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("autoresearch runtime rehydrates and persists the canonical proof seed over a stale store", async () => {
+  const storeDir = await mkdtemp(resolve(tmpdir(), "xstocks-api-proof-"));
+  const storePath = resolve(storeDir, "runtime-store.json");
+  const proofPath = resolve(storeDir, "autoresearch-runtime-proof.json");
+
+  await writeFile(
+    storePath,
+    `${JSON.stringify(
+      {
+        schemaVersion: "2026-04-01.runtime-store.v3",
+        meta: {
+          createdAt: "2026-04-01T17:25:56.125Z",
+          updatedAt: "2026-04-01T17:25:56.125Z",
+        },
+        activations: [],
+        activityEvents: [],
+        rebalances: [],
+      },
+      null,
+      2,
+    )}\n`,
+    "utf8",
+  );
+  await writeFile(
+    proofPath,
+    `${JSON.stringify(createAutoresearchRuntimeProofFixture(), null, 2)}\n`,
+    "utf8",
+  );
+
+  const harness = await startServer({
+    storePath,
+    autoresearchProofPath: proofPath,
+  });
+
+  try {
+    const response = await fetch(`${harness.baseUrl}/api/runtime/autoresearch?limit=3`);
+    const payload = await response.json();
+    const persistedStore = JSON.parse(await readFile(storePath, "utf8"));
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.data.runtime.truthBoundary, "railway_cron_service");
+    assert.equal(payload.data.runtime.recurringAutonomousProven, true);
+    assert.equal(
+      payload.data.runtime.schedulerHost.serviceName,
+      "autoresearch-worker",
+    );
+    assert.equal(payload.data.runs[0].runId, "autoresearch_railway_1");
+    assert.equal(
+      persistedStore.autoresearchRuntime.lastRunId,
+      "autoresearch_railway_1",
+    );
+    assert.equal(
+      persistedStore.autoresearchRuntime.truthBoundary,
+      "railway_cron_service",
+    );
+    assert.equal(
+      persistedStore.autoresearchRuns[0].schedulerReceipt.deploymentId,
+      "deployment_1",
+    );
+  } finally {
+    await harness.close();
+  }
+});
+
+test("autoresearch proof seed does not overwrite a newer persisted host receipt", async () => {
+  const storeDir = await mkdtemp(resolve(tmpdir(), "xstocks-api-proof-"));
+  const storePath = resolve(storeDir, "runtime-store.json");
+  const proofPath = resolve(storeDir, "autoresearch-runtime-proof.json");
+  const olderProof = createAutoresearchRuntimeProofFixture();
+  const newerProof = createAutoresearchRuntimeProofFixture({
+    runtime: {
+      lastRequestedAt: "2026-04-02T06:05:00.000Z",
+      lastStartedAt: "2026-04-02T06:05:00.000Z",
+      lastCompletedAt: "2026-04-02T06:06:00.000Z",
+      lastRunId: "autoresearch_railway_2",
+      nextDueAt: "2026-04-03T06:06:00.000Z",
+      proofUpdatedAt: "2026-04-02T06:06:05.000Z",
+    },
+    run: {
+      runId: "autoresearch_railway_2",
+      startedAt: "2026-04-02T06:05:00.000Z",
+      completedAt: "2026-04-02T06:06:00.000Z",
+      schedulerReceipt: {
+        receiptCapturedAt: "2026-04-02T06:06:05.000Z",
+        deploymentId: "deployment_2",
+        snapshotId: "snapshot_2",
+      },
+    },
+  });
+  const runtimeStore = createRuntimeStore({
+    storePath,
+    now: () => "2026-04-02T06:06:06.000Z",
+  });
+
+  await runtimeStore.recordAutoresearchHostReceipt(newerProof);
+  await writeFile(proofPath, `${JSON.stringify(olderProof, null, 2)}\n`, "utf8");
+
+  const harness = await startServer({
+    storePath,
+    autoresearchProofPath: proofPath,
+  });
+
+  try {
+    const response = await fetch(`${harness.baseUrl}/api/runtime/autoresearch?limit=3`);
+    const payload = await response.json();
+    const persistedStore = JSON.parse(await readFile(storePath, "utf8"));
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.data.runtime.lastRunId, "autoresearch_railway_2");
+    assert.equal(
+      payload.data.runs[0].schedulerReceipt.deploymentId,
+      "deployment_2",
+    );
+    assert.equal(
+      persistedStore.autoresearchRuntime.lastRunId,
+      "autoresearch_railway_2",
+    );
+    assert.equal(
+      persistedStore.autoresearchRuns[0].schedulerReceipt.deploymentId,
+      "deployment_2",
     );
   } finally {
     await harness.close();
