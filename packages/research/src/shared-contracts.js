@@ -209,6 +209,16 @@ function parseReplaySurface(value, label) {
     parseReplayPoint(point, `${label}.points[${index}]`),
   );
 
+  if (replay.replayCurve !== undefined) {
+    if (!Array.isArray(replay.replayCurve) || replay.replayCurve.length < 2) {
+      throw new Error(`${label}.replayCurve must contain at least two replay points.`);
+    }
+
+    replay.replayCurve.forEach((point, index) =>
+      parseReplayPoint(point, `${label}.replayCurve[${index}]`),
+    );
+  }
+
   return replay;
 }
 

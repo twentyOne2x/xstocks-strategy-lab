@@ -97,6 +97,7 @@ export const replaySurfaceSchema = z.object({
   maxDrawdownPct: z.number().finite(),
   turnoverPct: z.number().finite().nonnegative(),
   winRatePct: z.number().finite().min(0).max(100),
+  replayCurve: z.array(replayPointSchema).min(2).optional(),
   points: z.array(replayPointSchema).min(2),
 });
 

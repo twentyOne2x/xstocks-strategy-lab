@@ -58,7 +58,9 @@ test("api qualification endpoint returns canonical onboarding outputs for all lo
   const fixtureNames = [
     "active-leaders",
     "broad-cautious",
+    "medium-broader",
     "directional-opt-in",
+    "high-risk-ai-theme",
     "theme-tilt",
   ];
 

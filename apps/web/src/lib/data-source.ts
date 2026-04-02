@@ -126,8 +126,15 @@ export function formatPercent(value: number): string {
 /* ── Replay points ── */
 
 function buildReplayPointsFromManifest(manifest: PromotedManifest): ReplayPoint[] {
-  if (manifest.replay.points && manifest.replay.points.length > 0) {
-    return manifest.replay.points.map((point) => ({
+  const manifestReplayCurve =
+    manifest.replay.replayCurve && manifest.replay.replayCurve.length > 0
+      ? manifest.replay.replayCurve
+      : manifest.replay.points && manifest.replay.points.length > 0
+        ? manifest.replay.points
+        : null;
+
+  if (manifestReplayCurve) {
+    return manifestReplayCurve.map((point) => ({
       label: point.label,
       value: point.value,
     }));

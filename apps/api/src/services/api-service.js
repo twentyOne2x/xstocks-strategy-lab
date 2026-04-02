@@ -742,6 +742,10 @@ function buildManifestExplanationView(manifest) {
 
 function buildManifestView(manifest) {
   const walletRequirements = deriveReadinessWalletRequirements(manifest);
+  const replayCurve =
+    manifest.replay?.replayCurve?.length > 0
+      ? manifest.replay.replayCurve
+      : manifest.replay?.points ?? [];
 
   return {
     manifestId: manifest.manifestId,
@@ -766,6 +770,26 @@ function buildManifestView(manifest) {
     explanation: buildManifestExplanationView(manifest),
     explanationBundle: manifest.researchExplanationBundle ?? null,
     tuningSummary: manifest.researchTuningSummary ?? null,
+    replay: manifest.replay
+      ? {
+          startingCapital: manifest.replay.startingCapital,
+          endingCapital: manifest.replay.endingCapital,
+          netReturnPct: manifest.replay.netReturnPct,
+          maxDrawdownPct: manifest.replay.maxDrawdownPct,
+          turnoverPct: manifest.replay.turnoverPct,
+          winRatePct: manifest.replay.winRatePct,
+          replayCurve,
+          points: manifest.replay.points ?? replayCurve,
+        }
+      : null,
+    marketIntelligence: manifest.marketIntelligence
+      ? {
+          currentView: manifest.marketIntelligence.currentView,
+          horizon: manifest.marketIntelligence.horizon,
+          whatChanged: manifest.marketIntelligence.whatChanged,
+          drivers: manifest.marketIntelligence.drivers,
+        }
+      : null,
     validation: {
       datasetVersion: manifest.validation.datasetVersion,
       evaluatorVersion: manifest.validation.evaluatorVersion,

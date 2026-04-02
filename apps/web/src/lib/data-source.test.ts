@@ -59,4 +59,43 @@ describe("data source", () => {
 
     expect(spotlight.points).toEqual(manifest.replay.points);
   });
+
+  it("prefers manifest replayCurve over legacy replay points when both exist", () => {
+    const manifest = {
+      ...getFeaturedManifest(),
+      replay: {
+        ...getFeaturedManifest().replay,
+        replayCurve: [
+          { label: "Open", value: 1000 },
+          { label: "Now", value: 1525 },
+        ],
+        points: [
+          { label: "Open", value: 1000 },
+          { label: "Now", value: 1111 },
+        ],
+      },
+    };
+
+    const spotlight = getWorkspaceSpotlightData(manifest);
+
+    expect(spotlight.points).toEqual(manifest.replay.replayCurve);
+  });
+
+  it("falls back to replay metrics instead of a flat 0% line when no curve is carried", () => {
+    const manifest = {
+      ...getFeaturedManifest(),
+      replay: {
+        ...getFeaturedManifest().replay,
+        startingCapital: 1000,
+        endingCapital: 1450,
+        replayCurve: undefined,
+        points: undefined,
+      },
+    };
+
+    const spotlight = getWorkspaceSpotlightData(manifest);
+
+    expect(spotlight.points[0]?.value).toBe(1000);
+    expect(spotlight.points.at(-1)?.value).toBe(1450);
+  });
 });

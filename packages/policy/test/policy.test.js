@@ -982,8 +982,10 @@ test("explicit rebalance transitions stay bounded to manual operator actions", (
 
 for (const fixtureName of [
   "broad-cautious",
+  "medium-broader",
   "theme-tilt",
   "active-leaders",
+  "high-risk-ai-theme",
   "directional-opt-in",
   "skip-not-sure",
 ]) {

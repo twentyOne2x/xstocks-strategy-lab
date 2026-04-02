@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { ApiManifestView, ApiSlot } from "./api-client";
 import { adaptManifestToFrontend } from "./api-adapter";
+import { getWorkspaceSpotlightData } from "./data-source";
 import { buildPromotedManifestSlug } from "./promoted-manifest-identity";
 
 const slot: ApiSlot = {
@@ -271,5 +272,31 @@ describe("adaptManifestToFrontend", () => {
         note: "Derived from research output.",
       },
     ]);
+  });
+
+  it("renders API replay from replayCurve when the API omits legacy points", () => {
+    const adapted = adaptManifestToFrontend(
+      {
+        ...manifest,
+        replay: {
+          ...manifest.replay,
+          replayCurve: [
+            { label: "Open", value: 1000, date: "2025-01-31" },
+            { label: "Now", value: 1450, date: "2025-12-31" },
+          ],
+          points: undefined,
+        },
+      },
+      slot,
+    );
+
+    const spotlight = getWorkspaceSpotlightData(adapted);
+
+    expect(adapted.replay.netReturnPct).toBe(45);
+    expect(adapted.replay.points).toEqual([
+      { label: "Open", value: 1000 },
+      { label: "Now", value: 1450 },
+    ]);
+    expect(spotlight.points.at(-1)?.value).toBe(1450);
   });
 });

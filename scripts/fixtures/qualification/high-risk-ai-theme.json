@@ -1,0 +1,36 @@
+{
+  "scenarioId": "high-risk-ai-theme",
+  "label": "High risk AI theme fallback",
+  "description": "High-risk AI-theme answers should still resolve to the default promoted basket instead of reusing the medium-risk thematic slot.",
+  "answers": {
+    "q_goal_preference": "theme_tilt",
+    "q_theme_preference": "tech_ai",
+    "q_expression_preference": "active",
+    "q_risk_level": "high",
+    "q_drawdown_sensitivity": "low",
+    "q_rebalance_preference": "active",
+    "q_directional_appetite": "adaptive",
+    "q_automation_comfort": "high",
+    "q_certainty": "high"
+  },
+  "walletState": {
+    "walletConnected": true,
+    "walletAddress": "0x00000000000000000000000000000000000000b7",
+    "fundedNotionalUsd": 0,
+    "smartAccount": {
+      "status": "ready",
+      "address": "0x0000000000000000000000000000000000000b77"
+    }
+  },
+  "expected": {
+    "slotId": "onboarding.default_basket",
+    "mode": "basket",
+    "starterBasketId": "mag-7",
+    "selectionType": "theme",
+    "selectionKey": "ai-infra",
+    "executionState": "funding_required",
+    "executionEligibility": "preview_only",
+    "directionalPreviewOnly": false,
+    "activationReady": false
+  }
+}

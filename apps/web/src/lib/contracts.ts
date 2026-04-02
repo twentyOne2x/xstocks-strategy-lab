@@ -141,6 +141,7 @@ export interface ReplaySnapshot {
   turnoverPct: number;
   winRatePct: number;
   monthlyEdgePct: number;
+  replayCurve?: ReplayPoint[];
   points?: ReplayPoint[];
 }
 
