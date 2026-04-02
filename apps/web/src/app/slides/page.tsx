@@ -51,12 +51,13 @@ const slides = [
     content: (
       <div>
         <p style={{ color: "#ff1800", fontFamily: "var(--font-display)", fontSize: "1rem", fontStyle: "italic", letterSpacing: "0.1em", textTransform: "uppercase" }}>What Makes Us Unique</p>
-        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4rem)", fontStyle: "italic", textTransform: "uppercase", margin: "0 0 2rem" }}>Four edges.</h2>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4rem)", fontStyle: "italic", textTransform: "uppercase", margin: "0 0 2rem" }}>Five edges.</h2>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
           <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Autoresearch</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>AI-powered portfolio optimization inspired by Karpathy. Run many experiments, keep the winner. Built on the <strong>xStocks Strategy Lab</strong> evaluation pipeline.</p></div>
           <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Full Transparency</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>Every holding, weight, and rebalance rule visible before deposit. Powered by <strong>Chainlink CRE</strong> automation rails.</p></div>
           <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Self-Custody</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>Assets stay in your wallet via <strong>Privy</strong> smart wallets. We never take custody. Non-custodial key management.</p></div>
           <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a" }}><strong style={{ fontSize: "1.5rem" }}>Best Execution</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>Optimal trade execution via <strong>CoW Protocol</strong> and <strong>1inch Fusion</strong>. Aggregates across decentralized exchanges for best price.</p></div>
+          <div style={{ padding: "2rem", border: "3px solid #0a0a0a", boxShadow: "6px 6px 0 #0a0a0a", gridColumn: "1 / -1" }}><strong style={{ fontSize: "1.5rem" }}>24/7 Market Intelligence</strong><p style={{ margin: "0.5rem 0 0", color: "#333", fontSize: "1.2rem", lineHeight: 1.5 }}>Continuous market data ingestion from <strong>Polymarket</strong> and soon Twitter/X. Real-time signals surface alongside your portfolio.</p></div>
         </div>
       </div>
     ),

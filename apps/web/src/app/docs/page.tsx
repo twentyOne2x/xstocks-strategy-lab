@@ -32,6 +32,7 @@ export default function DocsPage() {
 
           <div className="docs-toc">
             <a href="#autoresearch">Autoresearch</a>
+            <a href="#market-intelligence">Market intelligence</a>
             <a href="#portfolios">Portfolio construction</a>
             <a href="#onboarding">Onboarding flow</a>
             <a href="#infrastructure">Infrastructure</a>
@@ -61,6 +62,33 @@ export default function DocsPage() {
               fits you. The portfolio you see is the current champion from the latest Autoresearch cycle
               for that slot.
             </p>
+          </article>
+
+          <article className="docs-section" id="market-intelligence">
+            <h2>24/7 Market Intelligence</h2>
+            <p>
+              24-7 Markets continuously ingests market data to surface real-time signals
+              alongside your portfolio. Currently powered by Polymarket prediction markets,
+              with Twitter/X sentiment and additional data sources coming soon.
+            </p>
+            <h3>What you see</h3>
+            <ul>
+              <li><strong>Market signals</strong> — Current market outlook and confidence indicators
+              relevant to your portfolio holdings.</li>
+              <li><strong>Drivers</strong> — The key factors moving your portfolio right now,
+              with positive/neutral/warning indicators.</li>
+              <li><strong>Recent changes</strong> — What changed since the last evaluation cycle
+              and how it affects your holdings.</li>
+            </ul>
+            <h3>Data sources</h3>
+            <ul>
+              <li><strong>Polymarket</strong> — Real-time prediction market data for macro and
+              sector sentiment (live now).</li>
+              <li><strong>Twitter/X</strong> — Social sentiment analysis for individual holdings
+              (coming soon).</li>
+              <li><strong>On-chain analytics</strong> — Token flow and liquidity signals from
+              xStocks and DeFi protocols (coming soon).</li>
+            </ul>
           </article>
 
           <article className="docs-section" id="portfolios">
