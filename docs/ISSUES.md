@@ -101,17 +101,32 @@ Last updated: 2026-04-02
   - [2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-privy-smart-account-and-linked-wallet-live-boundary-spec.md)
 - Continuation note:
   - Date: 2026-04-02
-  - Scope freeze: implement only the first smart-account runtime bridge in `packages/policy/**`, `apps/api/**`, and `apps/web/**`. Do not attempt AA-native CoW or 1inch signing, do not reopen CRE autonomy policy, and do not broaden this tranche into hosted proof closure.
-  - Verified starting truth on current `origin/main`: manual/user-approved execution still becomes `ready` from a linked wallet or embedded wallet, settlement already prefers the smart-account address when available, execution signer ownership still falls back to the wallet-first path, and frontend Privy state stops at auth/connect rather than surfacing smart-account bootstrap closure.
-  - Hosted smart-account proof continuation: on the clean worktree from updated `origin/main`, the repo already mounts `SmartWalletsProvider` and already persists bridge-state fields through policy and API. Live repro on `2026-04-02` showed the Privy user can hold both the Backpack-linked external wallet `0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2` and the embedded Privy wallet `0xc3a79c8551bd33e3a17539df6db85a5989e22e3a`, but `smart_wallet` still remains null because the live Privy app config for `cmnfzikzk02ey0ckyx8m14qv2` returns `smart_wallet_config.enabled=false`. This tranche may only surface that blocker truthfully and fail closed; it must not mask the missing Privy-side enablement as a pending local bootstrap.
-  - Fix intent for this tranche: make the smart account the canonical account-ownership and execution-destination surface for automation while preserving wallet-first manual execution, fail closing automation when the smart account is not ready, and persisting explicit bridge-state fields instead of inferring them indirectly.
+  - Scope freeze: repair only the post-enable surface/runtime regressions in `apps/api/**` and `apps/web/**`. Do not widen into AA-native CoW or 1inch signing, do not reopen CRE autonomy policy, and do not start CRE runtime from this lane.
+  - Verified starting truth on current `origin/main`: the same real Privy user now resolves all three account layers after a full logout/login against the updated app config:
+    - linked external wallet = `0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2`
+    - embedded wallet = `0xc3a79c8551bd33e3a17539df6db85a5989e22e3a`
+    - smart wallet = `0x00c6bf8ba9244eb50089410007f778868cc1ce39`
+  - Proven bridge-state truth from the local save snapshot after enablement:
+    - `manualSignerAddress = 0xc3a79c8551bd33e3a17539df6db85a5989e22e3a`
+    - `policyAccountAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`
+    - `executionDestinationAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`
+    - `automationExecution.readiness = ready`
+  - Exact remaining blocker class after enablement: surface/runtime mismatch, not smart-wallet existence.
+    - Hosted route repeatedly 429s `https://auth.privy.io/api/v1/users/me` and crashes with `TypeError: Cannot read properties of undefined (reading 'manualSignerAddress')`.
+    - Local activation preview still derives null bridge state and reports `wallet required` even when the live wallet banner and saved activation snapshot both prove the smart-account bridge is ready.
+  - Current result after the local repair pass on `2026-04-02`:
+    - local activation route now renders the live bridge truth coherently for the real Privy session, including `policyAccountAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`, `automationReadiness = ready`, and no stale smart-account bootstrap blocker;
+    - the local right-rail account card now reuses the same preview truth instead of the old public fallback copy;
+    - the exact hosted `https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1` route now matches the same real-session bridge truth, does not reproduce the old `manualSignerAddress` crash, and showed only one `https://auth.privy.io/api/v1/users/me` resource hit in the verified browser load.
+    - a separate pre-existing hosted `ai-infra-autopilot` tab in the same Brave session still showed the generic client-side exception shell with five `users/me` resource hits, but that is outside this narrow `XSL-005` activation-slice proof.
+  - Fix intent for this tranche: guard hosted nested bridge reads, add the minimum Privy identity refresh dedupe/backoff needed to stop over-hitting `/users/me`, and make preview surfaces derive bridge truth from live wallet state when present or the saved activation/execution snapshot when live wallet state is absent.
   - Acceptance addendum:
-    1. Policy emits explicit bridge-state fields: `manualSignerAddress`, `policyAccountAddress`, and `executionDestinationAddress`.
-    2. Manual execution remains wallet-first and truthful for the current venue-routed lane.
-    3. Automation readiness fails closed unless the smart account is ready.
-    4. API persistence and response surfaces expose the bridge-state model without claiming smart-account-native venue signing.
-    5. Frontend Privy state surfaces embedded-wallet and smart-account bootstrap truthfully enough to drive the bridge-state contract.
-    6. A real Privy login proves or truthfully blocks embedded-wallet bootstrap and smart-account bootstrap on the frontend path without changing current manual venue-signing ownership.
+    1. Hosted activation no longer crashes when preview payloads omit nested smart-account fields.
+    2. Local and hosted preview surfaces agree with the proven bridge state whenever live wallet state is available.
+    3. Saved activation/execution snapshots backfill bridge truth when live wallet state is absent.
+    4. Privy identity-token refresh stops spamming `/users/me` on initial surface load and fails closed under backoff instead of cascading into a crash.
+    5. Manual execution remains wallet-first and truthful for the current venue-routed lane.
+    6. No surface claims AA-native CoW or 1inch signing.
 - Executor prompt:
   - Implement the first smart-account runtime bridge under `XSL-005` only.
   - Keep current manual execution wallet-first, but require smart-account readiness for automation posture.
@@ -123,7 +138,7 @@ Last updated: 2026-04-02
   - [x] context added
   - [x] fix applied
   - [x] tests run
-  - [ ] visual/screenshot verification
+  - [x] visual/screenshot verification
 
 ### XSL-006 Strategy Lab Operating Model
 

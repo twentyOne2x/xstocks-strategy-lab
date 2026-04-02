@@ -11,13 +11,19 @@ import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
 import {
   createContext,
   useContext,
+  useCallback,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import { mainnet } from "viem/chains";
 
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? "";
+const ACCESS_TOKEN_CACHE_TTL_MS = 30_000;
+const ACCESS_TOKEN_BACKOFF_MS = 10_000;
+const IDENTITY_TOKEN_CACHE_TTL_MS = 30_000;
+const IDENTITY_TOKEN_BACKOFF_MS = 10_000;
 
 export type PrivyLinkedAccountLike = {
   type?: string;
@@ -123,14 +129,44 @@ function toRuntimeAppConfig(
 }
 
 function PrivyRuntimeBridge({ children }: { children: ReactNode }) {
-  const { ready, authenticated, user, login, logout, getAccessToken } = usePrivy();
+  const {
+    ready,
+    authenticated,
+    user,
+    login,
+    logout,
+    getAccessToken: fetchAccessToken,
+  } = usePrivy();
   const { createWallet } = useCreateWallet();
   const { wallets = [] } = useWallets() as {
     wallets?: PrivyConnectedWalletLike[];
   };
+  const accessTokenFetcherRef = useRef(fetchAccessToken);
+  const accessTokenCacheRef = useRef<{
+    token: string | null;
+    expiresAt: number;
+  }>({
+    token: null,
+    expiresAt: 0,
+  });
+  const accessTokenInFlightRef = useRef<Promise<string | null> | null>(null);
+  const accessTokenBackoffUntilRef = useRef(0);
+  const identityTokenCacheRef = useRef<{
+    token: string | null;
+    expiresAt: number;
+  }>({
+    token: null,
+    expiresAt: 0,
+  });
+  const identityTokenInFlightRef = useRef<Promise<string | null> | null>(null);
+  const identityTokenBackoffUntilRef = useRef(0);
   const [appConfig, setAppConfig] = useState<PrivyAppConfigLike>(
     disabledPrivyRuntimeContextValue.appConfig,
   );
+
+  useEffect(() => {
+    accessTokenFetcherRef.current = fetchAccessToken;
+  }, [fetchAccessToken]);
 
   useEffect(() => {
     let cancelled = false;
@@ -171,6 +207,123 @@ function PrivyRuntimeBridge({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (authenticated) {
+      return;
+    }
+
+    accessTokenCacheRef.current = {
+      token: null,
+      expiresAt: 0,
+    };
+    accessTokenInFlightRef.current = null;
+    accessTokenBackoffUntilRef.current = 0;
+    identityTokenCacheRef.current = {
+      token: null,
+      expiresAt: 0,
+    };
+    identityTokenInFlightRef.current = null;
+    identityTokenBackoffUntilRef.current = 0;
+  }, [authenticated]);
+
+  const getAccessTokenWithGuard = useCallback(async () => {
+    if (!authenticated) {
+      return null;
+    }
+
+    const nowMs = Date.now();
+    const cachedToken = accessTokenCacheRef.current;
+
+    if (cachedToken.token && cachedToken.expiresAt > nowMs) {
+      return cachedToken.token;
+    }
+
+    if (accessTokenInFlightRef.current) {
+      return accessTokenInFlightRef.current;
+    }
+
+    if (accessTokenBackoffUntilRef.current > nowMs) {
+      return cachedToken.token;
+    }
+
+    const pendingAccessToken = (async () => {
+      try {
+        const nextToken = (await accessTokenFetcherRef.current()) ?? null;
+
+        accessTokenCacheRef.current = {
+          token: nextToken,
+          expiresAt: nextToken ? Date.now() + ACCESS_TOKEN_CACHE_TTL_MS : 0,
+        };
+        accessTokenBackoffUntilRef.current = 0;
+
+        return nextToken;
+      } catch {
+        accessTokenBackoffUntilRef.current = Date.now() + ACCESS_TOKEN_BACKOFF_MS;
+        return accessTokenCacheRef.current.token;
+      } finally {
+        accessTokenInFlightRef.current = null;
+      }
+    })();
+
+    accessTokenInFlightRef.current = pendingAccessToken;
+
+    return pendingAccessToken;
+  }, [authenticated]);
+
+  const getIdentityTokenWithGuard = useCallback(async () => {
+    if (!authenticated) {
+      return null;
+    }
+
+    const nowMs = Date.now();
+    const cachedToken = identityTokenCacheRef.current;
+
+    if (cachedToken.token && cachedToken.expiresAt > nowMs) {
+      return cachedToken.token;
+    }
+
+    if (identityTokenInFlightRef.current) {
+      return identityTokenInFlightRef.current;
+    }
+
+    if (identityTokenBackoffUntilRef.current > nowMs) {
+      return cachedToken.token;
+    }
+
+    const pendingIdentityToken = (async () => {
+      try {
+        const nextToken = (await fetchIdentityToken()) ?? null;
+
+        identityTokenCacheRef.current = {
+          token: nextToken,
+          expiresAt: nextToken ? Date.now() + IDENTITY_TOKEN_CACHE_TTL_MS : 0,
+        };
+        identityTokenBackoffUntilRef.current = 0;
+
+        return nextToken;
+      } catch {
+        identityTokenBackoffUntilRef.current =
+          Date.now() + IDENTITY_TOKEN_BACKOFF_MS;
+        return identityTokenCacheRef.current.token;
+      } finally {
+        identityTokenInFlightRef.current = null;
+      }
+    })();
+
+    identityTokenInFlightRef.current = pendingIdentityToken;
+
+    return pendingIdentityToken;
+  }, [authenticated]);
+
+  const createEmbeddedWallet = useCallback(async () => {
+    try {
+      const wallet = await createWallet();
+      return wallet?.address ?? null;
+    } catch {
+      return null;
+    }
+  }, [createWallet]);
+
   return (
     <PrivyRuntimeContext.Provider
       value={{
@@ -182,16 +335,9 @@ function PrivyRuntimeBridge({ children }: { children: ReactNode }) {
         appConfig,
         login,
         logout,
-        getAccessToken: async () => (await getAccessToken()) ?? null,
-        getIdentityToken: async () => (await fetchIdentityToken()) ?? null,
-        createEmbeddedWallet: async () => {
-          try {
-            const wallet = await createWallet();
-            return wallet?.address ?? null;
-          } catch {
-            return null;
-          }
-        },
+        getAccessToken: getAccessTokenWithGuard,
+        getIdentityToken: getIdentityTokenWithGuard,
+        createEmbeddedWallet,
       }}
     >
       {children}
