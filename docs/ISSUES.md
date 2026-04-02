@@ -103,6 +103,7 @@ Last updated: 2026-04-02
   - Date: 2026-04-02
   - Scope freeze: implement only the first smart-account runtime bridge in `packages/policy/**`, `apps/api/**`, and `apps/web/**`. Do not attempt AA-native CoW or 1inch signing, do not reopen CRE autonomy policy, and do not broaden this tranche into hosted proof closure.
   - Verified starting truth on current `origin/main`: manual/user-approved execution still becomes `ready` from a linked wallet or embedded wallet, settlement already prefers the smart-account address when available, execution signer ownership still falls back to the wallet-first path, and frontend Privy state stops at auth/connect rather than surfacing smart-account bootstrap closure.
+  - Hosted smart-account proof continuation: on the clean worktree from updated `origin/main`, the repo already mounts `SmartWalletsProvider` and already persists bridge-state fields through policy and API, but the real frontend bootstrap path still stalls on linked-wallet logins because embedded-wallet auto-creation is configured for `users-without-wallets` only while Privy smart-wallet linking requires an embedded Privy signer. This pass may only close that hosted bootstrap/runtime truth and surface the exact blocker if smart-account closure still fails.
   - Fix intent for this tranche: make the smart account the canonical account-ownership and execution-destination surface for automation while preserving wallet-first manual execution, fail closing automation when the smart account is not ready, and persisting explicit bridge-state fields instead of inferring them indirectly.
   - Acceptance addendum:
     1. Policy emits explicit bridge-state fields: `manualSignerAddress`, `policyAccountAddress`, and `executionDestinationAddress`.
@@ -110,6 +111,7 @@ Last updated: 2026-04-02
     3. Automation readiness fails closed unless the smart account is ready.
     4. API persistence and response surfaces expose the bridge-state model without claiming smart-account-native venue signing.
     5. Frontend Privy state surfaces embedded-wallet and smart-account bootstrap truthfully enough to drive the bridge-state contract.
+    6. A real Privy login proves or truthfully blocks embedded-wallet bootstrap and smart-account bootstrap on the frontend path without changing current manual venue-signing ownership.
 - Executor prompt:
   - Implement the first smart-account runtime bridge under `XSL-005` only.
   - Keep current manual execution wallet-first, but require smart-account readiness for automation posture.

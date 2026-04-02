@@ -482,15 +482,22 @@ function mapLifecycleState(
 }
 
 function normalizeActivityItem(item: ApiActivityItem) {
+  const payloadSource =
+    "payload" in item
+      ? item.payload
+      : "details" in item
+        ? item.details
+        : undefined;
   const payload =
-    (item.payload as Record<string, unknown> | undefined) ??
-    (item.details as Record<string, unknown> | undefined) ??
+    (payloadSource as Record<string, unknown> | undefined) ??
     {};
 
   return {
-    id: item.eventId ?? item.event_id ?? "unknown-event",
-    occurredAt: item.occurredAt ?? item.created_at ?? new Date(0).toISOString(),
-    type: item.eventType ?? item.event_type ?? "activity",
+    id: ("eventId" in item ? item.eventId : item.event_id) ?? "unknown-event",
+    occurredAt:
+      ("occurredAt" in item ? item.occurredAt : item.created_at) ??
+      new Date(0).toISOString(),
+    type: ("eventType" in item ? item.eventType : item.event_type) ?? "activity",
     summary: item.summary,
     payload,
   };
