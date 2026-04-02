@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BrandLockup } from "@/components/home-terminal";
+
+export const metadata: Metadata = {
+  title: "Documentation — 24-7 MARKETS",
+  description: "How 24-7 Markets works. Autoresearch, portfolio construction, infrastructure, custody, rebalancing.",
+};
 
 export default function DocsPage() {
   return (

@@ -154,6 +154,10 @@ export default function SlidesPage() {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
+    document.title = "24-7 MARKETS — Pitch Deck";
+  }, []);
+
+  useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === "ArrowRight" || e.key === " ") {
         e.preventDefault();

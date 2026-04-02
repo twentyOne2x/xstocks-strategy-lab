@@ -7,23 +7,23 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
-        // docs.24-7.markets → /docs
+        // docs.24-7.markets root → /docs
         {
-          source: "/:path*",
+          source: "/",
           has: [{ type: "host", value: "docs.24-7.markets" }],
-          destination: "/docs/:path*",
+          destination: "/docs",
         },
-        // slides.24-7.markets → /slides
+        // slides.24-7.markets root → /slides
         {
-          source: "/:path*",
+          source: "/",
           has: [{ type: "host", value: "slides.24-7.markets" }],
-          destination: "/slides/:path*",
+          destination: "/slides",
         },
-        // xstocks.24-7.markets → /slides (the pitch deck)
+        // xstocks.24-7.markets root → /slides
         {
-          source: "/:path*",
+          source: "/",
           has: [{ type: "host", value: "xstocks.24-7.markets" }],
-          destination: "/slides/:path*",
+          destination: "/slides",
         },
       ],
     };
