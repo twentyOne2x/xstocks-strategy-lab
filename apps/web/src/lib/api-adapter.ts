@@ -21,8 +21,10 @@ import type {
   StateStripItem,
 } from "@/lib/contracts";
 import type {
+  ApiActivityItem,
   ApiActivityData,
   ApiBasketExplanationBundle,
+  ApiExecutionRequest,
   ApiBasketTuningSummary,
   ApiExecutionPlan,
   ApiExecutionPreview,
@@ -398,6 +400,102 @@ function buildRebalanceRowFromTruth(
   };
 }
 
+function formatUtcTime(timestamp: string): string {
+  return (
+    new Date(timestamp).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "UTC",
+    }) + " UTC"
+  );
+}
+
+function formatUsdValue(value: number): string {
+  return `$${value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+function mapLegStateToPositionState(
+  state: string,
+): PositionRow["state"] {
+  switch (state) {
+    case "confirmed":
+      return "settled";
+    case "submitted":
+    case "awaiting_approval":
+    case "quote_ready":
+    case "pending":
+      return "pending";
+    case "failed":
+    case "blocked":
+      return "blocked";
+    case "deferred":
+      return "watch";
+    default:
+      return "active";
+  }
+}
+
+function mapHistoryStatus(
+  status: string,
+  legState: string | null,
+): HistoryRow["status"] {
+  if (status === "blocked" || legState === "failed" || legState === "blocked") {
+    return "blocked";
+  }
+
+  if (status === "settled" || legState === "confirmed") {
+    return "settled";
+  }
+
+  return "pending";
+}
+
+function mapLifecycleState(
+  surfaceState: string,
+  legState: string | null,
+): ActivityEvent["state"] {
+  if (legState === "confirmed") {
+    return "settled";
+  }
+
+  if (
+    legState === "submitted" ||
+    legState === "awaiting_approval" ||
+    legState === "quote_ready" ||
+    surfaceState === "pending"
+  ) {
+    return "pending";
+  }
+
+  if (surfaceState === "preview") {
+    return "view_ready";
+  }
+
+  if (surfaceState === "blocked" || legState === "failed" || legState === "blocked") {
+    return "blocked";
+  }
+
+  return (surfaceState as ActivityEvent["state"]) ?? "view_ready";
+}
+
+function normalizeActivityItem(item: ApiActivityItem) {
+  const payload =
+    (item.payload as Record<string, unknown> | undefined) ??
+    (item.details as Record<string, unknown> | undefined) ??
+    {};
+
+  return {
+    id: item.eventId ?? item.event_id ?? "unknown-event",
+    occurredAt: item.occurredAt ?? item.created_at ?? new Date(0).toISOString(),
+    type: item.eventType ?? item.event_type ?? "activity",
+    summary: item.summary,
+    payload,
+  };
+}
+
 /* ── Manifest adapter ── */
 
 export function adaptManifestToFrontend(
@@ -709,6 +807,7 @@ export function adaptManifestToFrontend(
 export function adaptActivityToBlotter(
   activity: ApiActivityData,
   manifests: PromotedManifest[],
+  executionRequests: ApiExecutionRequest[] = [],
 ): BlotterData {
   const surface = activity.activitySurface;
   const activityManifest = activity.manifest
@@ -717,40 +816,113 @@ export function adaptActivityToBlotter(
   const orchestration = activity.rebalanceOrchestration
     ? adaptRebalanceOrchestration(activity.rebalanceOrchestration)
     : null;
+  const latestExecutionRequest = executionRequests[0] ?? null;
+  const legIndex = new Map(
+    executionRequests.flatMap((executionRequest) =>
+      executionRequest.legs.map((leg) => [leg.legId, leg] as const),
+    ),
+  );
+  const rawItemIndex = new Map(
+    activity.items.map((item) => {
+      const normalizedItem = normalizeActivityItem(item);
+      return [normalizedItem.id, normalizedItem] as const;
+    }),
+  );
 
-  const positions: PositionRow[] = surface?.positions.map((p, i) => ({
-    id: `pos_api_${i}`,
-    symbol: p.assetSymbol,
-    sleeve: p.sleeve.replace(/_/g, " "),
-    mode: manifests.find((m) => m.allocations.some((a) => a.symbol === p.assetSymbol))?.mode ?? "basket",
-    exposureUsd: `$${Math.round(p.targetNotionalUsd).toLocaleString("en-US")}`,
-    pnlPct: "—",
-    route: p.venueId ?? "xChange",
-    nextRebalance: orchestration
-      ? humanizeRebalanceState(orchestration.state)
-      : "Preview",
-    state: p.status === "preview" ? "active" as const : p.status === "active" ? "active" as const : "watch" as const,
-    updatedAt: new Date(p.updatedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC",
-  })) ?? [];
+  const positions: PositionRow[] =
+    latestExecutionRequest && latestExecutionRequest.legs.length > 0
+      ? latestExecutionRequest.legs.map((leg) => ({
+          id: leg.legId,
+          symbol: leg.assetSymbol ?? leg.sleeve,
+          sleeve: leg.sleeve.replace(/_/g, " "),
+          mode:
+            manifests.find((m) => m.allocations.some((a) => a.symbol === leg.assetSymbol))?.mode ??
+            "basket",
+          exposureUsd: formatUsdValue(leg.targetNotionalUsd),
+          pnlPct: "—",
+          route:
+            leg.venueStatus?.venueId ??
+            leg.venueId ??
+            leg.adapterId ??
+            "xChange",
+          nextRebalance:
+            latestExecutionRequest.state === "confirmed"
+              ? "Confirmed"
+              : (latestExecutionRequest.state as string).replaceAll("_", " "),
+          state: mapLegStateToPositionState(leg.state),
+          updatedAt: formatUtcTime(
+            leg.receipt?.lastCheckedAt ??
+              leg.venueStatus?.updatedAt ??
+              latestExecutionRequest.updatedAt,
+          ),
+        }))
+      : surface?.positions.map((p, i) => ({
+          id: `pos_api_${i}`,
+          symbol: p.assetSymbol,
+          sleeve: p.sleeve.replace(/_/g, " "),
+          mode:
+            manifests.find((m) => m.allocations.some((a) => a.symbol === p.assetSymbol))?.mode ??
+            "basket",
+          exposureUsd: formatUsdValue(p.targetNotionalUsd),
+          pnlPct: "—",
+          route: p.venueId ?? "xChange",
+          nextRebalance: orchestration
+            ? humanizeRebalanceState(orchestration.state)
+            : "Preview",
+          state:
+            p.status === "preview"
+              ? "watch"
+              : p.status === "active"
+                ? "active"
+                : "pending",
+          updatedAt: formatUtcTime(p.updatedAt),
+        })) ?? [];
 
-  const history: HistoryRow[] = surface?.history.map((h) => ({
-    id: h.id,
-    timestamp: new Date(h.occurredAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC",
-    type: h.type,
-    description: h.summary,
-    venue: "API",
-    amount: "—",
-    status: h.status as "settled" | "pending" | "blocked",
-  })) ?? [];
+  const history: HistoryRow[] = surface?.history.map((historyItem) => {
+    const rawItem = rawItemIndex.get(historyItem.id) ?? null;
+    const legId =
+      typeof rawItem?.payload?.legId === "string"
+        ? rawItem.payload.legId
+        : null;
+    const leg = legId ? legIndex.get(legId) ?? null : null;
 
-  const activityEvents: ActivityEvent[] = surface?.lifecycle.map((l) => ({
-    id: l.id,
-    time: new Date(l.occurredAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC",
-    title: l.title,
-    detail: l.detail,
-    state: (l.state === "preview" ? "view_ready" : l.state) as ActivityEvent["state"],
-    nextAction: l.nextAction ?? "No action",
-  })) ?? [];
+    return {
+      id: historyItem.id,
+      timestamp: formatUtcTime(historyItem.occurredAt),
+      type: historyItem.type,
+      description: historyItem.summary,
+      venue:
+        leg?.venueStatus?.venueId ??
+        leg?.venueId ??
+        leg?.adapterId ??
+        "API",
+      amount: leg ? formatUsdValue(leg.targetNotionalUsd) : "—",
+      status: mapHistoryStatus(historyItem.status, leg?.state ?? null),
+    };
+  }) ?? [];
+
+  const activityEvents: ActivityEvent[] = surface?.lifecycle.map((lifecycleItem) => {
+    const rawItem = rawItemIndex.get(lifecycleItem.id) ?? null;
+    const legId =
+      typeof rawItem?.payload?.legId === "string"
+        ? rawItem.payload.legId
+        : null;
+    const leg = legId ? legIndex.get(legId) ?? null : null;
+
+    return {
+      id: lifecycleItem.id,
+      time: formatUtcTime(lifecycleItem.occurredAt),
+      title: lifecycleItem.title,
+      detail:
+        leg?.venueStatus?.venueOrderId
+          ? `${lifecycleItem.detail} Venue order ${leg.venueStatus.venueOrderId}.`
+          : leg?.receipt?.txHash
+            ? `${lifecycleItem.detail} Receipt ${leg.receipt.txHash}.`
+            : lifecycleItem.detail,
+      state: mapLifecycleState(lifecycleItem.state, leg?.state ?? null),
+      nextAction: lifecycleItem.nextAction ?? "No action",
+    };
+  }) ?? [];
 
   const rebalancing: RebalanceRow[] =
     activityManifest && orchestration

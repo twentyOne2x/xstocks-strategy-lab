@@ -821,13 +821,59 @@ function SimulatedWorkspace({
               >
                 <svg className="workspace-chart" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <defs>
-                    <linearGradient id="pqLine" x1="0%" x2="100%" y1="0%" y2="0%">
-                      <stop offset="0%" stopColor="#ff1800" />
-                      <stop offset="100%" stopColor="#0a0a0a" />
-                    </linearGradient>
+                    {manifest.allocations.map((alloc, i) => {
+                      const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
+                      return (
+                        <linearGradient key={alloc.symbol} id={`area-${i}`} x1="0%" x2="0%" y1="0%" y2="100%">
+                          <stop offset="0%" stopColor={colors[i % colors.length]} stopOpacity="0.6" />
+                          <stop offset="100%" stopColor={colors[i % colors.length]} stopOpacity="0.1" />
+                        </linearGradient>
+                      );
+                    })}
                   </defs>
-                  <path className="workspace-chart-fill" d={`${path} L 100 100 L 0 100 Z`} />
-                  <path className="workspace-chart-line" d={path} style={{ stroke: "url(#pqLine)" }} />
+                  {(() => {
+                    const weights = manifest.allocations.map(a => parseFloat(a.targetWeight) || 0);
+                    const totalWeight = weights.reduce((s, w) => s + w, 0) || 1;
+                    const normWeights = weights.map(w => w / totalWeight);
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    const range = max - min || 1;
+                    const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
+
+                    // Build cumulative stacked areas from bottom to top
+                    return manifest.allocations.map((alloc, allocIdx) => {
+                      // Sum of weights below this allocation
+                      const belowPct = normWeights.slice(0, allocIdx).reduce((s, w) => s + w, 0);
+                      const thisPct = normWeights[allocIdx];
+
+                      const topPoints = values.map((v, j) => {
+                        const x = (j / Math.max(values.length - 1, 1)) * 100;
+                        const normalized = (v - min) / range;
+                        const y = 100 - (normalized * (belowPct + thisPct)) * 100;
+                        return `${x.toFixed(2)} ${y.toFixed(2)}`;
+                      });
+
+                      const bottomPoints = values.map((v, j) => {
+                        const x = (j / Math.max(values.length - 1, 1)) * 100;
+                        const normalized = (v - min) / range;
+                        const y = 100 - (normalized * belowPct) * 100;
+                        return `${x.toFixed(2)} ${y.toFixed(2)}`;
+                      }).reverse();
+
+                      const d = `M ${topPoints.join(" L ")} L ${bottomPoints.join(" L ")} Z`;
+
+                      return (
+                        <path
+                          key={alloc.symbol}
+                          d={d}
+                          fill={`url(#area-${allocIdx})`}
+                          stroke={colors[allocIdx % colors.length]}
+                          strokeWidth="0.5"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                      );
+                    }).reverse();
+                  })()}
                 </svg>
                 {chartHover && (
                   <div className="pq-chart-cursor" style={{ left: `${chartHover.x}%` }} />
@@ -1050,6 +1096,7 @@ function SimulatedWorkspace({
             <strong>Product</strong>
             <Link href="/onboarding">Find my portfolio</Link>
             <Link href="/#how-it-works">How it works</Link>
+            <Link href="/docs">Documentation</Link>
             <Link href="/#faq">FAQ</Link>
           </div>
           <div className="landing-footer-col">

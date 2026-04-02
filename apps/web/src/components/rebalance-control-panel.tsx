@@ -1,10 +1,23 @@
 "use client";
 
-import { getIdentityToken, usePrivy } from "@privy-io/react-auth";
+import {
+  getIdentityToken,
+  useActiveWallet,
+  usePrivy,
+  useWallets,
+} from "@privy-io/react-auth";
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 
-import { postExecutionAction, fetchActivationPreview } from "@/lib/api-client";
+import type {
+  ApiActivationView,
+  ApiExecutionRequest,
+} from "@/lib/api-client";
+import {
+  DEFAULT_MANUAL_NOTIONAL_USD,
+  fetchActivationPreview,
+  fetchExecutions,
+} from "@/lib/api-client";
 import { adaptExecutionPreview, adaptRebalanceOrchestration } from "@/lib/api-adapter";
 import type {
   ExecutionPreviewView,
@@ -12,9 +25,16 @@ import type {
   RebalanceOrchestrationView,
 } from "@/lib/contracts";
 import {
+  EXECUTION_REFRESH_EVENT,
+  getExecutionSignatureInputs,
+  runManualExecutionFlow,
+} from "@/lib/manual-execution";
+import {
   buildRebalanceControlSnapshot,
   humanizeRebalanceState,
 } from "@/lib/rebalance-control";
+
+import { useWalletState } from "@/components/wallet-connect-button";
 
 export function RebalanceControlPanel({
   manifest,
@@ -22,6 +42,13 @@ export function RebalanceControlPanel({
   manifest: PromotedManifest;
 }) {
   const { ready, authenticated, getAccessToken } = usePrivy();
+  const { wallets } = useWallets();
+  const { wallet: activeWallet } = useActiveWallet();
+  const activeConnectedWallet =
+    activeWallet && "getEthereumProvider" in activeWallet
+      ? (activeWallet as (typeof wallets)[number])
+      : null;
+  const walletState = useWalletState();
   const [executionPreview, setExecutionPreview] = useState<ExecutionPreviewView | null>(
     manifest.preview?.executionPreview ?? null,
   );
@@ -29,11 +56,18 @@ export function RebalanceControlPanel({
     manifest.preview?.rebalanceOrchestration ?? null,
   );
   const [latestActivationId, setLatestActivationId] = useState<string | null>(null);
+  const [latestActivation, setLatestActivation] = useState<ApiActivationView | null>(null);
+  const [latestRequestedNotionalUsd, setLatestRequestedNotionalUsd] = useState(
+    DEFAULT_MANUAL_NOTIONAL_USD,
+  );
+  const [executionRequest, setExecutionRequest] = useState<ApiExecutionRequest | null>(
+    null,
+  );
   const [statusMessage, setStatusMessage] = useState<{
     tone: "neutral" | "positive" | "warning";
     message: string;
   } | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,31 +92,66 @@ export function RebalanceControlPanel({
     }
 
     async function refreshPreviewTruth() {
-      const auth = await loadAuth();
-      const preview = await fetchActivationPreview(manifest.slot_id, 10, auth);
-
-      if (!preview || cancelled) {
+      if (!authenticated) {
         if (!cancelled) {
-          setStatusMessage((current) =>
-            current ?? {
-              tone: "warning",
-              message:
-                "Activation preview API is unavailable, so execute-all truth stays fail-closed on this surface.",
-            },
-          );
+          setLatestActivationId(null);
+          setLatestActivation(null);
+          setExecutionRequest(null);
         }
         return;
       }
 
-      setExecutionPreview(adaptExecutionPreview(preview.executionPlan));
-      setOrchestration(adaptRebalanceOrchestration(preview.rebalanceOrchestration));
-      setLatestActivationId(preview.latestActivation?.activationId ?? null);
+      const auth = await loadAuth();
+      const preview = await fetchActivationPreview(
+        manifest.slot_id,
+        DEFAULT_MANUAL_NOTIONAL_USD,
+        auth,
+      );
+
+      if (preview && !cancelled) {
+        setExecutionPreview(adaptExecutionPreview(preview.executionPlan));
+        setOrchestration(adaptRebalanceOrchestration(preview.rebalanceOrchestration));
+        setLatestActivationId(preview.latestActivation?.activationId ?? null);
+        setLatestActivation(preview.latestActivation ?? null);
+        setLatestRequestedNotionalUsd(
+          preview.latestActivation?.requestedNotionalUsd ??
+            DEFAULT_MANUAL_NOTIONAL_USD,
+        );
+      }
+
+      const executions = await fetchExecutions(
+        {
+          slotId: manifest.slot_id,
+          limit: 10,
+        },
+        auth,
+      );
+
+      if (!cancelled) {
+        setExecutionRequest(executions?.items[0] ?? null);
+      }
     }
 
     void refreshPreviewTruth();
 
+    function handleRefresh(event: Event) {
+      const customEvent = event as CustomEvent<{ slotId?: string }>;
+
+      if (customEvent.detail?.slotId && customEvent.detail.slotId !== manifest.slot_id) {
+        return;
+      }
+
+      void refreshPreviewTruth();
+    }
+
+    window.addEventListener(EXECUTION_REFRESH_EVENT, handleRefresh as EventListener);
+
     return () => {
       cancelled = true;
+      window.removeEventListener(
+        EXECUTION_REFRESH_EVENT,
+        handleRefresh as EventListener,
+      );
     };
   }, [authenticated, getAccessToken, manifest.slot_id]);
 
@@ -95,77 +164,75 @@ export function RebalanceControlPanel({
   const authBlocker = !ready
     ? "Wallet auth is still loading on this surface."
     : !authenticated
-      ? "Connect wallet with Privy before execute_all can stage an authenticated execution request."
+      ? "Connect wallet with Privy before execute_all can cross the authenticated signer boundary."
       : null;
   const executeAllBlocker = snapshot.executeAllBlocker ?? authBlocker;
   const executeAllEnabled = snapshot.executeAllEnabled && authBlocker === null;
   const combinedBlockers = [...new Set([executeAllBlocker, ...snapshot.blockers].filter(Boolean))];
+  const exactWeights =
+    manifest.explanationBundle?.targetWeights.map((item) => `${item.symbol} ${item.targetWeightPct.toFixed(1)}%`) ??
+    manifest.allocations
+      .filter((allocation) => allocation.sleeve === "core xstocks")
+      .map((allocation) => `${allocation.symbol} ${allocation.targetWeight}`);
+  const signatureInputs = getExecutionSignatureInputs(executionRequest);
 
   const executeAllLabel =
-    orchestration?.executionRequestState && orchestration.executionRequestId
-      ? `Execution staged · ${humanizeRebalanceState(orchestration.executionRequestState)}`
+    executionRequest?.state && executionRequest.triggerSource === "provider_staging"
+      ? `Continue execute_all · ${humanizeRebalanceState(executionRequest.state)}`
       : executeAllEnabled
-        ? "Execute all"
+        ? "Execute all and sign"
         : "Execute all unavailable";
 
-  function handleExecuteAll() {
-    if (!latestActivationId || !orchestration || !authenticated) {
+  async function handleExecuteAll() {
+    if (!orchestration || !authenticated) {
       return;
     }
 
-    startTransition(() => {
-      void (async () => {
-        const [accessToken, identityToken] = await Promise.all([
-          getAccessToken().catch(() => null),
-          getIdentityToken().catch(() => null),
-        ]);
+    setIsPending(true);
 
-        setStatusMessage({
-          tone: "neutral",
-          message: "Staging the backend execution request from the current rebalance review.",
-        });
+    try {
+      const [accessToken, identityToken] = await Promise.all([
+        getAccessToken().catch(() => null),
+        getIdentityToken().catch(() => null),
+      ]);
 
-        const result = await postExecutionAction({
-          action: "execute_all",
-          activationId: latestActivationId,
-          rebalanceId: orchestration.rebalanceId,
-        }, {
+      const result = await runManualExecutionFlow({
+        manifest,
+        requestedNotionalUsd: latestRequestedNotionalUsd,
+        initiationAction: "execute_all",
+        latestActivation,
+        existingExecutionRequest: executionRequest,
+        rebalanceId: orchestration.rebalanceId,
+        auth: {
           accessToken,
           identityToken,
-        });
-
-        if (!result.data) {
+        },
+        wallets,
+        activeWallet: activeConnectedWallet,
+        walletState: {
+          connected: walletState.connected,
+          walletAddress: walletState.walletAddress,
+          embeddedWallet: walletState.embeddedWallet,
+          smartAccount: walletState.smartAccount,
+        },
+        onStatus: (status) => {
           setStatusMessage({
-            tone: "warning",
-            message:
-              result.error ??
-              "Execute all failed closed before a backend execution request could be staged.",
+            tone: status.tone,
+            message: status.message,
           });
-          return;
-        }
+        },
+        onExecutionRequest: setExecutionRequest,
+      });
 
+      if (result.blocker) {
         setStatusMessage({
-          tone: "positive",
-          message:
-            result.data.executionRequest.linkage?.providerReceiptId
-              ? `Execution request ${result.data.executionRequest.executionRequestId} staged with provider linkage ${result.data.executionRequest.linkage.providerReceiptId}.`
-              : `Execution request ${result.data.executionRequest.executionRequestId} staged from the current rebalance review.`,
+          tone: "warning",
+          message: result.blocker,
         });
-
-        const preview = await fetchActivationPreview(manifest.slot_id, 10, {
-          accessToken,
-          identityToken,
-        });
-
-        if (!preview) {
-          return;
-        }
-
-        setExecutionPreview(adaptExecutionPreview(preview.executionPlan));
-        setOrchestration(adaptRebalanceOrchestration(preview.rebalanceOrchestration));
-        setLatestActivationId(preview.latestActivation?.activationId ?? null);
-      })();
-    });
+      }
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
@@ -193,17 +260,28 @@ export function RebalanceControlPanel({
           <strong>
             {orchestration
               ? `${humanizeRebalanceState(orchestration.state)}${orchestration.executionRequestState ? ` · ${humanizeRebalanceState(orchestration.executionRequestState)}` : ""}`
-              : "No persisted rebalance review"}
+              : executionRequest
+                ? `${humanizeRebalanceState(executionRequest.state)} · ${executionRequest.adapterId}`
+                : "No persisted rebalance review"}
           </strong>
         </div>
       </div>
 
       <div className="panel-list">
-        <span className="section-kicker">What changed</span>
+        <span className="section-kicker">Exact target weights</span>
         <ul>
-          {manifest.market_intelligence.whatChanged.slice(0, 3).map((item) => (
+          {exactWeights.slice(0, 4).map((item) => (
             <li key={item}>{item}</li>
           ))}
+        </ul>
+      </div>
+
+      <div className="panel-list">
+        <span className="section-kicker">Signature boundary</span>
+        <ul>
+          <li>{executionRequest?.fundingAssetSymbol ?? "USDC"} funding asset at ${latestRequestedNotionalUsd.toFixed(2)} requested notional.</li>
+          <li>Manual signer {executionRequest?.manualSignerAddress ?? walletState.manualSignerAddress ?? "not ready"} remains the required EIP-712 signer.</li>
+          <li>Backend submission only follows returned wallet-first 1inch signatures.</li>
         </ul>
       </div>
 
@@ -229,6 +307,19 @@ export function RebalanceControlPanel({
         </div>
       )}
 
+      {signatureInputs.length > 0 && (
+        <div className="panel-list">
+          <span className="section-kicker">Queued signature payloads</span>
+          <ul>
+            {signatureInputs.slice(0, 3).map((input) => (
+              <li key={input.legId}>
+                {input.assetSymbol} · {input.primaryType ?? "typed data"} · {input.orderHash ?? "pending order hash"}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {snapshot.warnings.length > 0 && (
         <div className="panel-list">
           <span className="section-kicker">Warnings</span>
@@ -250,7 +341,7 @@ export function RebalanceControlPanel({
           onClick={handleExecuteAll}
           type="button"
         >
-          {isPending ? "Staging execution..." : executeAllLabel}
+          {isPending ? "Running execute_all..." : executeAllLabel}
         </button>
         <Link className="button button-secondary" href={`/workspace/detail/${manifest.slug}`}>
           Open detail
@@ -264,6 +355,10 @@ export function RebalanceControlPanel({
         <div>
           <span>Latest activation</span>
           <strong>{latestActivationId ?? "No saved activation loaded"}</strong>
+        </div>
+        <div>
+          <span>Latest execution request</span>
+          <strong>{executionRequest?.executionRequestId ?? "No execution request loaded"}</strong>
         </div>
         <div>
           <span>Primary venue</span>

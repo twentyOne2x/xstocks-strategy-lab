@@ -214,6 +214,7 @@ export function HomeTerminal() {
             <strong>Product</strong>
             <Link href="/onboarding">Find my portfolio</Link>
             <a href="#how-it-works">How it works</a>
+            <Link href="/docs">Documentation</Link>
             <a href="#faq">FAQ</a>
           </div>
           <div className="landing-footer-col">

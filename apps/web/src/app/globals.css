@@ -2451,6 +2451,84 @@ button { font: inherit; }
   line-height: 1.55;
 }
 
+/* ── Documentation ── */
+
+.docs-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+  padding: 16px 0;
+  border-bottom: var(--border-w) solid var(--black);
+}
+
+.docs-toc a {
+  padding: 6px 14px;
+  border: 2px solid var(--black);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: var(--shadow-sm);
+}
+
+.docs-toc a:hover {
+  background: var(--accent-yellow);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--black);
+}
+
+.docs-section {
+  margin-bottom: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.docs-section:last-child {
+  border-bottom: none;
+}
+
+.docs-section h2 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  color: var(--black);
+}
+
+.docs-section h3 {
+  margin: 24px 0 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.docs-section p {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.docs-section ul,
+.docs-section ol {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.docs-section li {
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin-bottom: 8px;
+}
+
+.docs-section li strong {
+  color: var(--black);
+}
+
 .landing-section-center {
   text-align: center;
 }
