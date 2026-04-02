@@ -94,8 +94,18 @@ export function OnboardingTerminalExperience({
   recommendedStrategies: PublicStrategyCardData[];
   }) {
     const searchParams = useSearchParams();
-    const [answers, setAnswers] = useState<Record<string, string>>({});
-    const [started, setStarted] = useState(() => searchParams?.has("preset") ?? false);
+    const hasPortfolioId = searchParams?.has("p") ?? false;
+    const fastDefaults: Record<string, string> = {
+      q_goal_preference: "broad_exposure",
+      q_expression_preference: "simple",
+      q_risk_level: "medium",
+      q_rebalance_preference: "scheduled",
+      q_directional_appetite: "long_only",
+      q_automation_comfort: "medium",
+      q_certainty: "low",
+    };
+    const [answers, setAnswers] = useState<Record<string, string>>(() => hasPortfolioId ? fastDefaults : {});
+    const [started, setStarted] = useState(() => hasPortfolioId || (searchParams?.has("preset") ?? false));
   const [apiChrome, setApiChrome] = useState<TerminalChromeProps | null>(null);
   const [apiQualification, setApiQualification] = useState<XStocksQualificationReadData | null>(null);
   const [apiPreviewError, setApiPreviewError] = useState<string | null>(null);

@@ -837,26 +837,29 @@ function SimulatedWorkspace({
                     const normWeights = weights.map(w => w / totalWeight);
                     const min = Math.min(...values);
                     const max = Math.max(...values);
+                    const isFlat = max === min;
                     const range = max - min || 1;
                     const colors = ["#ff1800", "#0a0a0a", "#ffd84d", "#39d5ff", "#5ae15a", "#999"];
 
                     // Build cumulative stacked areas from bottom to top
                     return manifest.allocations.map((alloc, allocIdx) => {
-                      // Sum of weights below this allocation
                       const belowPct = normWeights.slice(0, allocIdx).reduce((s, w) => s + w, 0);
                       const thisPct = normWeights[allocIdx];
 
                       const topPoints = values.map((v, j) => {
                         const x = (j / Math.max(values.length - 1, 1)) * 100;
-                        const normalized = (v - min) / range;
-                        const y = 100 - (normalized * (belowPct + thisPct)) * 100;
+                        // When flat, show allocations as horizontal bands filling the chart
+                        const y = isFlat
+                          ? (1 - (belowPct + thisPct)) * 100
+                          : 100 - (((v - min) / range) * (belowPct + thisPct)) * 100;
                         return `${x.toFixed(2)} ${y.toFixed(2)}`;
                       });
 
                       const bottomPoints = values.map((v, j) => {
                         const x = (j / Math.max(values.length - 1, 1)) * 100;
-                        const normalized = (v - min) / range;
-                        const y = 100 - (normalized * belowPct) * 100;
+                        const y = isFlat
+                          ? (1 - belowPct) * 100
+                          : 100 - (((v - min) / range) * belowPct) * 100;
                         return `${x.toFixed(2)} ${y.toFixed(2)}`;
                       }).reverse();
 
