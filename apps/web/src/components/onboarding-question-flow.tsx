@@ -430,6 +430,9 @@ function RecommendationGate({
             See my portfolio
           </button>
         </div>
+        <span className="token-pill" title={qualification.optimizationMethod.details.join(" ")} style={{ cursor: "help" }}>
+          {qualification.optimizationMethod.pillLabel}
+        </span>
         <h1 className="pq-gate-title">{recommendation.title}</h1>
         <p className="pq-gate-sub">{qualification.summary}</p>
 
@@ -630,7 +633,9 @@ function SimulatedWorkspace({
   onTourDismiss: () => void;
   previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
-  const { login } = usePrivy();
+  const { login, authenticated, user, logout } = usePrivy();
+  const walletAddress = authenticated ? user?.wallet?.address : null;
+  const shortWallet = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : null;
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
@@ -648,7 +653,11 @@ function SimulatedWorkspace({
     if (!highlightId) return;
     const el = document.getElementById(highlightId);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: highlightId === "pq-rail" ? "start" : "center" });
+      if (highlightId === "pq-rail") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }
   }, [highlightId]);
 
@@ -670,16 +679,23 @@ function SimulatedWorkspace({
       {/* ── Preview bar with big deposit CTA ── */}
       <div className="pq-preview-bar">
         <div className="pq-preview-bar-left">
-          <Link href="/" className="landing-header-brand" style={{ padding: "0 16px 0 0", borderRight: "none", height: "auto" }}>
+          <Link href="/" className="landing-header-brand" style={{ padding: "8px 16px", height: "auto", marginRight: "12px" }}>
             <BrandLockup size="sm" />
           </Link>
           <span className="preview-chip">Simulation</span>
           <span>Preview. No money has moved.</span>
         </div>
         <div className="pq-preview-bar-actions">
-          <button className="button button-primary button-lg" id="pq-deposit-cta" onClick={login} type="button">
-            {directionalPreviewOnly ? "Review preview" : "Start deposit"}
-          </button>
+          {authenticated ? (
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span className="status-pill status-pill-active">{shortWallet}</span>
+              <button className="button button-ghost button-sm" onClick={logout} type="button">Disconnect</button>
+            </div>
+          ) : (
+            <button className="button button-primary button-lg" id="pq-deposit-cta" onClick={login} type="button">
+              {directionalPreviewOnly ? "Review preview" : "Start deposit"}
+            </button>
+          )}
           <button className="button button-ghost button-sm" onClick={onReset} type="button">
             Change answers
           </button>
@@ -723,9 +739,13 @@ function SimulatedWorkspace({
                 <span className="section-kicker">Your portfolio</span>
                 <h2>{recommendation.title}</h2>
               </div>
-              <button className="button button-primary button-lg" onClick={login} type="button">
-                {directionalPreviewOnly ? "Preview" : "Start deposit"}
-              </button>
+              {authenticated ? (
+                <span className="status-pill status-pill-active">{shortWallet}</span>
+              ) : (
+                <button className="button button-primary button-lg" onClick={login} type="button">
+                  {directionalPreviewOnly ? "Preview" : "Start deposit"}
+                </button>
+              )}
             </div>
 
             {/* Performance surface with hover */}
@@ -775,7 +795,7 @@ function SimulatedWorkspace({
               <div><span>Holdings</span><strong>{manifest.allocations.length}</strong></div>
               <div><span>Risk</span><strong>{manifest.frontend.risk_label}</strong></div>
               <div><span>Rebalance</span><strong>{recommendation.rebalance_cadence.replaceAll("_", " ")}</strong></div>
-              <div title="Autoresearch continuously replay-tests portfolio candidates against the promoted benchmark, promoting the best-performing manifest into the slot registry. Powered by the xStocks Strategy Lab evaluation pipeline."><span>Optimisation</span><strong>Autoresearch</strong></div>
+              <div title="Autoresearch automatically tests different portfolio configurations against historical data and picks the best one for you. Inspired by Andrej Karpathy's approach to neural network training — run many experiments, keep the winner. Your portfolio is the current champion from the latest evaluation cycle."><span>Optimisation</span><strong>Autoresearch</strong></div>
             </div>
 
             <div className="pq-summary-explain">

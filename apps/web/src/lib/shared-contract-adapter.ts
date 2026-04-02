@@ -924,11 +924,11 @@ export function buildQualificationFlowResult({
     label: "Optimisation method",
     pillLabel: "OPTIMISATION METHOD: AUTORESEARCH",
     summary:
-      "Repo-owned qualification and portfolio selection loop, not a hard-coded browser pick.",
+      "Your portfolio is selected automatically by testing many candidates and keeping the best performer.",
     details: [
-      `Your answers narrow the slot and mode first, then the backend qualifies you into ${activeSlotId}.`,
-      "Strategy Lab autoresearch replay-tests candidate portfolios, promotes the current winning manifest into the slot registry, and keeps that loop on a repo-owned Railway worker runtime.",
-      "The onboarding gate and workspace then render the backend-selected promoted manifest instead of inventing a local-only portfolio.",
+      "Your answers narrow down which type of portfolio fits you best.",
+      "Autoresearch then runs simulated performance tests on many portfolio configurations — different weights, different holdings — and picks the winner. Inspired by Andrej Karpathy's approach to training neural networks: run many experiments, keep the best.",
+      "The portfolio you see is the current champion from the latest evaluation cycle. It gets re-evaluated regularly so it stays competitive.",
     ],
   };
   const profileRows = [
