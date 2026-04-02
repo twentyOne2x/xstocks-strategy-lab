@@ -23,7 +23,7 @@ const requestDigestSchema = z.string().trim().regex(/^sha256:[a-f0-9]{64}$/u);
 
 const providerIdSchema = z.enum(["chainlink_cre"]);
 const eventTypeSchema = z.enum(["rebalance_review_requested"]);
-const triggerModeSchema = z.enum(["review_only"]);
+const triggerModeSchema = z.enum(["review_only", "canonical_execution"]);
 const receiptDecisionSchema = z.enum(["accepted", "rejected"]);
 const rebalanceStateSchema = z.enum([
   "preview_only",
@@ -39,6 +39,7 @@ const rebalanceStateSchema = z.enum([
 ]);
 const receiptReasonCodeSchema = z.enum([
   "accepted_review_only",
+  "accepted_canonical_execution",
   "activation_not_found",
   "authorization_missing",
   "authorization_scheme_invalid",

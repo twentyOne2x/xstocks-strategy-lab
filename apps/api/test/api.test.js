@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { privateKeyToAccount } from "../../../node_modules/.pnpm/node_modules/viem/_esm/accounts/index.js";
+import { privateKeyToAccount } from "viem/accounts";
 import { buildDirectionalPolicyRouteEntries } from "../../../packages/euler/dist/index.js";
 import { adaptResearchPromotedManifest } from "../../../packages/policy/src/index.js";
 import {
@@ -23,6 +23,7 @@ import {
 
 import { createLiveStateRepository } from "../src/repositories/live-state-repository.js";
 import { createRuntimeStore } from "../src/repositories/runtime-store.js";
+import { parseApiResponse } from "../src/contracts.js";
 import { createApiServer } from "../src/server.js";
 
 const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -47,10 +48,15 @@ const TEST_OTHER_WALLET_ADDRESS = "0x3333333333333333333333333333333333333333";
 const TEST_OTHER_SMART_WALLET_ADDRESS =
   "0x4444444444444444444444444444444444444444";
 const TEST_CHAINLINK_CRE_PRIVATE_KEY = `0x${"11".repeat(32)}`;
+const TEST_AUTONOMOUS_EXECUTION_PRIVATE_KEY = `0x${"33".repeat(32)}`;
 const TEST_CHAINLINK_CRE_WORKFLOW_ID = "cre_workflow_test";
 const TEST_CHAINLINK_CRE_ACCOUNT = privateKeyToAccount(
   TEST_CHAINLINK_CRE_PRIVATE_KEY,
 );
+const TEST_AUTONOMOUS_EXECUTION_ACCOUNT = privateKeyToAccount(
+  TEST_AUTONOMOUS_EXECUTION_PRIVATE_KEY,
+);
+const TEST_ONEINCH_ORDER_HASH = `0x${"9".repeat(64)}`;
 
 function encodeBase64UrlJson(value) {
   return Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -892,6 +898,97 @@ function createCowExecutionClientStub({
       return {
         ...orderStatus,
         uid,
+      };
+    },
+  };
+}
+
+function createOneInchExecutionClientStub({
+  orderHash = TEST_ONEINCH_ORDER_HASH,
+  settlementTxHash = TEST_SETTLEMENT_TX_HASH,
+  orderStatus = "filled",
+} = {}) {
+  return {
+    async prepareOrder(input) {
+      return {
+        quote: {
+          quoteId: "oneinch_quote_test",
+          fromTokenAmount: String(input.amount),
+          toTokenAmount: "1234500000000000000",
+          settlementAddress: (input.receiver ?? input.walletAddress).toLowerCase(),
+          recommendedPreset: "fast",
+          priceImpactPercent: 0.12,
+          fee: {
+            receiver: "0x5555555555555555555555555555555555555555",
+            bps: 10,
+            whitelistDiscountPercent: 0,
+          },
+          orderHash,
+          signerAddress: input.walletAddress.toLowerCase(),
+          receiver: (input.receiver ?? input.walletAddress).toLowerCase(),
+        },
+        quoteId: "oneinch_quote_test",
+        orderHash,
+        order: {
+          salt: "1",
+          maker: input.walletAddress.toLowerCase(),
+        },
+        extension: "0x",
+        typedData: {
+          domain: {
+            name: "1inch Fusion",
+            version: "1",
+            chainId: 1,
+            verifyingContract: "0x9999999999999999999999999999999999999999",
+          },
+          types: {
+            Order: [
+              {
+                name: "maker",
+                type: "address",
+              },
+              {
+                name: "salt",
+                type: "uint256",
+              },
+            ],
+          },
+          primaryType: "Order",
+          message: {
+            maker: input.walletAddress.toLowerCase(),
+            salt: 1,
+          },
+        },
+        signerAddress: input.walletAddress.toLowerCase(),
+        receiver: (input.receiver ?? input.walletAddress).toLowerCase(),
+      };
+    },
+    async submitOrder() {
+      return {
+        orderHash,
+        raw: {
+          status: "accepted",
+        },
+      };
+    },
+    async getOrderStatus(requestedOrderHash) {
+      return {
+        orderHash: requestedOrderHash,
+        status: orderStatus,
+        cancelTxHash: null,
+        settlementTxHash,
+        fills: [
+          {
+            txHash: settlementTxHash,
+            filledMakerAmount: "1000000",
+            filledAuctionTakerAmount: "1234500000000000000",
+            takerFeeAmount: "0",
+          },
+        ],
+        raw: {
+          status: orderStatus,
+          settlementTxHash,
+        },
       };
     },
   };
@@ -1997,6 +2094,167 @@ test("provider-triggered CRE review opens awaiting_operator and persists an acce
       true,
     );
     assert.ok(acceptedReceipt);
+  } finally {
+    await harness.close();
+  }
+});
+
+test("provider-triggered CRE canonical execution auto-stages, signs, submits, and settles on the repo-owned backend path", async () => {
+  const harness = await startServer({
+    now: () => "2026-04-01T08:02:00.000Z",
+    chainlinkCreSignerAllowlist: [TEST_CHAINLINK_CRE_ACCOUNT.address],
+    chainlinkCreWorkflowAllowlist: [TEST_CHAINLINK_CRE_WORKFLOW_ID],
+    oneInchExecutionClient: createOneInchExecutionClientStub(),
+    ethereumRpcClient: createEthereumRpcClientStub(),
+    chainlinkCreAutonomousExecution: {
+      enabled: true,
+      signerPrivateKey: TEST_AUTONOMOUS_EXECUTION_PRIVATE_KEY,
+      ownerProviderId: "repo_owned_hot_signer",
+      ownerAppId: "xstocks-internal",
+      ownerUserId: "did:privy:user_autonomous",
+      ownerSessionId: "chainlink_cre_autonomous_session",
+      ownerIssuer: "privy.io",
+      executionRouteId: "1inch.ethereum",
+    },
+  });
+  const runtimeStore = createRuntimeStore({
+    storePath: harness.storePath,
+    now: () => "2026-04-01T08:02:00.000Z",
+  });
+
+  try {
+    await runtimeStore.appendActivation({
+      activation: {
+        activationId: "act_autonomous_provider",
+        owner: {
+          providerId: "repo_owned_hot_signer",
+          appId: "xstocks-internal",
+          userId: "did:privy:user_autonomous",
+          sessionId: "chainlink_cre_autonomous_session",
+          issuer: "privy.io",
+          authenticatedAt: "2026-04-01T07:00:00.000Z",
+        },
+        chain: "ethereum",
+        manifestId: "onboarding.default_basket:basket-baseline-v0:promoted",
+        slotId: "onboarding.default_basket",
+        recommendationId: "rec_autonomous_provider",
+        activationManifestRef: {
+          manifestId: "onboarding.default_basket:basket-baseline-v0:promoted",
+          slotId: "onboarding.default_basket",
+          strategyVersion: "basket-baseline-v0",
+          chain: "ethereum",
+          mode: "basket",
+        },
+        requestedNotionalUsd: 1000,
+        surfaceTruth: "live",
+        status: "ready",
+        createdAt: "2026-04-01T07:00:00.000Z",
+        updatedAt: "2026-04-01T07:00:00.000Z",
+        walletState: {
+          walletConnected: true,
+          walletAddress: TEST_AUTONOMOUS_EXECUTION_ACCOUNT.address,
+          fundedNotionalUsd: 1250,
+        },
+        routeTruthLabels: [],
+        executionPlanSnapshot: createExecutionPlanSnapshotFixture({
+          manifestId: "onboarding.default_basket:basket-baseline-v0:promoted",
+          strategyVersion: "basket-baseline-v0",
+          generatedAt: "2026-04-01T07:00:00.000Z",
+          walletAddress: TEST_AUTONOMOUS_EXECUTION_ACCOUNT.address,
+          smartWalletAddress: null,
+        }),
+      },
+      activityEvents: [],
+    });
+
+    const body = createChainlinkCreEventBody({
+      workflowExecutionId: "exec_chainlink_autonomous_1",
+      providerEventId: "evt_chainlink_autonomous_1",
+      reviewIntent: {
+        requestedState: "awaiting_operator",
+        executionMode: "canonical_execution",
+      },
+    });
+    const token = await signChainlinkCreJwt({ body });
+    const response = await fetch(
+      `${harness.baseUrl}/api/internal/rebalances/provider-triggered-review`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      },
+    );
+    const payload = await response.json();
+    const latestRebalance = await runtimeStore.getLatestRebalance({
+      slotId: "onboarding.default_basket",
+    });
+    const [acceptedReceipt] = await runtimeStore.listProviderEventReceipts({
+      decision: "accepted",
+      slotId: "onboarding.default_basket",
+    });
+    const executionRequest = await runtimeStore.getExecutionRequest({
+      executionRequestId: latestRebalance.executionRequestId,
+      ownerUserId: "did:privy:user_autonomous",
+    });
+
+    assert.equal(response.status, 200);
+    parseApiResponse(
+      "provider_triggered_rebalance_review_write",
+      payload.data,
+    );
+    assert.ok(executionRequest);
+    const activeLeg = executionRequest.legs.find(
+      (leg) => leg.state === "confirmed",
+    );
+
+    assert.equal(payload.data.receipt.decision, "accepted");
+    assert.equal(payload.data.rebalanceOrchestration.state, "rebalanced");
+    assert.equal(
+      payload.data.rebalanceOrchestration.runtimeOwner,
+      "policy_bounded_automation",
+    );
+    assert.ok(
+      ["confirmed", "manual_followup_required"].includes(
+        payload.data.rebalanceOrchestration.executionRequestState,
+      ),
+    );
+    assert.equal(
+      payload.data.rebalanceOrchestration.automationTruth.operatorManualRequired,
+      false,
+    );
+    assert.equal(
+      payload.data.rebalanceOrchestration.automationTruth.autonomousExecutionProven,
+      true,
+    );
+    assert.ok(executionRequest);
+    assert.equal(executionRequest.runtimeOwner, "policy_bounded_automation");
+    assert.equal(executionRequest.triggerSource, "provider_staging");
+    assert.equal(executionRequest.adapterId, "oneinch_fusion");
+    assert.equal(
+      executionRequest.venueSigningMode,
+      "backend_repo_owned_eip712",
+    );
+    assert.equal(
+      executionRequest.linkage.providerReceiptId,
+      payload.data.receipt.receiptId,
+    );
+    assert.equal(
+      executionRequest.linkage.providerEventId,
+      "evt_chainlink_autonomous_1",
+    );
+    assert.ok(activeLeg);
+    assert.equal(activeLeg.quote.kind, "oneinch_fusion");
+    assert.equal(activeLeg.approval.status, "submitted");
+    assert.match(activeLeg.approval.signature, /^0x[a-f0-9]{130}$/u);
+    assert.equal(activeLeg.approval.venueOrderId, TEST_ONEINCH_ORDER_HASH);
+    assert.equal(activeLeg.receipt.txHash, TEST_SETTLEMENT_TX_HASH);
+    assert.equal(activeLeg.receipt.receiptStatus, "confirmed");
+    assert.equal(activeLeg.linkage.providerReceiptId, payload.data.receipt.receiptId);
+    assert.equal(activeLeg.linkage.providerEventId, "evt_chainlink_autonomous_1");
+    assert.equal(latestRebalance.executionRequestId, executionRequest.executionRequestId);
   } finally {
     await harness.close();
   }

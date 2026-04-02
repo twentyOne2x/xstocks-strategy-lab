@@ -6,6 +6,7 @@ import {
 export const REBALANCE_RUNTIME_OWNER = Object.freeze({
   OPERATOR_MANUAL: "operator_manual",
   WORKER_OFFCHAIN_SCHEDULER: "worker_offchain_scheduler",
+  POLICY_BOUNDED_AUTOMATION: "policy_bounded_automation",
 });
 
 export const REBALANCE_TRIGGER_SOURCE = Object.freeze({

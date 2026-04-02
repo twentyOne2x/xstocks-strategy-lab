@@ -480,6 +480,12 @@ function normalizeExecutionRequestLinkage(linkage) {
     providerReceiptId: normalizeNonEmptyString(
       firstDefined(linkage.providerReceiptId, linkage.provider_receipt_id, null),
     ),
+    providerDeliveryId: normalizeNonEmptyString(
+      firstDefined(linkage.providerDeliveryId, linkage.provider_delivery_id, null),
+    ),
+    providerEventId: normalizeNonEmptyString(
+      firstDefined(linkage.providerEventId, linkage.provider_event_id, null),
+    ),
   };
 
   return Object.values(normalized).some((value) => value !== null)
@@ -505,6 +511,8 @@ function normalizeExecutionLegArtifactLinkage(linkage) {
     ...(normalizeExecutionRequestLinkage(linkage) ?? {
       rebalanceId: null,
       providerReceiptId: null,
+      providerDeliveryId: null,
+      providerEventId: null,
     }),
   };
 }

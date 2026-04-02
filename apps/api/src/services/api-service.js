@@ -1,10 +1,17 @@
 import { randomUUID, timingSafeEqual } from "node:crypto";
+import { privateKeyToAccount } from "viem/accounts";
 
 import { activityEventSchema } from "../../../../packages/shared/dist/contracts/activity.js";
 import {
   xstocksFunnelEventIngestRequestSchema,
   xstocksFunnelEventSchema,
 } from "../../../../packages/shared/dist/contracts/reporting.js";
+import {
+  applyRebalanceTransition,
+} from "../../../../packages/shared/src/rebalance.js";
+import {
+  CHAINLINK_CRE_CANONICAL_EXECUTION_MODE,
+} from "../../../../packages/shared/src/rebalance-provider.js";
 import {
   deriveRebalanceOrchestration,
   createActivationManifestRef,
@@ -51,6 +58,9 @@ const COW_SWAP_EXECUTION_ADAPTER_ID = "cow_swap";
 const COW_SWAP_EXECUTION_ROUTE_ID = "cow_swap.ethereum";
 const ONEINCH_EXECUTION_ADAPTER_ID = "oneinch_fusion";
 const ONEINCH_EXECUTION_ROUTE_ID = "1inch.ethereum";
+const BACKEND_REPO_OWNED_SIGNER_MODE = "backend_repo_owned_signer";
+const REPO_OWNED_HOT_SIGNER_ACCOUNT_MODE = "repo_owned_hot_signer";
+const BACKEND_REPO_OWNED_EIP712_MODE = "backend_repo_owned_eip712";
 const MANUAL_EXECUTION_ROUTE_SELECTIONS = Object.freeze({
   venue_router: {
     requestAdapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
@@ -173,6 +183,102 @@ function normalizeTxHash(value) {
 
   const normalized = value.trim();
   return /^0x([A-Fa-f0-9]{64})$/u.test(normalized) ? normalized : null;
+}
+
+function normalizePrivateKey(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return /^0x([A-Fa-f0-9]{64})$/u.test(normalized)
+    ? normalized.toLowerCase()
+    : null;
+}
+
+function normalizeOptionalString(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : null;
+}
+
+function normalizeChainlinkCreAutonomousExecutionConfig(config = {}) {
+  const enabled = config?.enabled === true;
+  const privateKey = normalizePrivateKey(config?.signerPrivateKey);
+  const ownerUserId = normalizeOptionalString(config?.ownerUserId);
+  const ownerIssuer = normalizeOptionalString(config?.ownerIssuer);
+  let configError = null;
+  let signerAccount = null;
+  let routeSelection = MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router;
+
+  try {
+    routeSelection = resolveManualExecutionRouteSelection({
+      requestedRouteId: normalizeOptionalString(config?.executionRouteId),
+    });
+  } catch (error) {
+    if (enabled) {
+      configError = error instanceof Error ? error.message : String(error);
+    }
+  }
+
+  if (enabled) {
+    if (!privateKey) {
+      configError ??=
+        "CHAINLINK_CRE_AUTONOMOUS_SIGNER_PRIVATE_KEY must be a 32-byte 0x-prefixed hex private key.";
+    }
+
+    if (!ownerUserId) {
+      configError ??=
+        "CHAINLINK_CRE_AUTONOMOUS_OWNER_USER_ID is required for canonical provider execution.";
+    }
+
+    if (!ownerIssuer) {
+      configError ??=
+        "CHAINLINK_CRE_AUTONOMOUS_OWNER_ISSUER is required for canonical provider execution.";
+    }
+
+    if (!configError && privateKey) {
+      try {
+        signerAccount = privateKeyToAccount(privateKey);
+      } catch (error) {
+        configError =
+          error instanceof Error
+            ? error.message
+            : "Failed to derive the repo-owned autonomous signer account.";
+      }
+    }
+  }
+
+  return {
+    enabled,
+    configError,
+    signerAccount,
+    signerAddress: signerAccount?.address ?? null,
+    ownerProviderId:
+      normalizeOptionalString(config?.ownerProviderId) ??
+      "repo_owned_hot_signer",
+    ownerAppId:
+      normalizeOptionalString(config?.ownerAppId) ?? "xstocks-internal",
+    ownerUserId,
+    ownerSessionId:
+      normalizeOptionalString(config?.ownerSessionId) ??
+      "chainlink_cre_autonomous_session",
+    ownerIssuer,
+    routeSelection,
+  };
+}
+
+function createChainlinkCreAutonomousBridgeStateOverrides(config = {}) {
+  return {
+    manualSignerAddress: config?.signerAddress ?? null,
+    manualSigningMode: BACKEND_REPO_OWNED_SIGNER_MODE,
+    automationAccountMode: REPO_OWNED_HOT_SIGNER_ACCOUNT_MODE,
+    automationReadiness: "ready",
+    venueSigningMode: BACKEND_REPO_OWNED_EIP712_MODE,
+  };
 }
 
 function buildExecutionArtifactExplorerUrls({ chain, txHash }) {
@@ -1877,6 +1983,11 @@ function createExecutionRequestLinkage({
     rebalanceId: rebalance?.rebalanceId ?? null,
     providerReceiptId:
       providerReceipt?.receiptId ?? rebalance?.providerReceiptId ?? null,
+    providerDeliveryId: providerReceipt?.deliveryId ?? null,
+    providerEventId:
+      providerReceipt?.providerEventId ??
+      providerReceipt?.eventId ??
+      null,
   };
 
   return Object.values(linkage).some((value) => value !== null)
@@ -1896,6 +2007,8 @@ function createExecutionLegArtifactLinkage({
     executionRequestId,
     rebalanceId: requestLinkage.rebalanceId ?? null,
     providerReceiptId: requestLinkage.providerReceiptId ?? null,
+    providerDeliveryId: requestLinkage.providerDeliveryId ?? null,
+    providerEventId: requestLinkage.providerEventId ?? null,
   };
 }
 
@@ -1911,6 +2024,7 @@ function createExecutionLeg({
   manifest,
   activation,
   routeSelection = MANUAL_EXECUTION_ROUTE_SELECTIONS.venue_router,
+  runtimeOwner = "operator_manual",
   executionPlanSnapshot = activation.executionPlanSnapshot,
   requestLinkage = null,
 }) {
@@ -1967,6 +2081,7 @@ function createExecutionLeg({
                 : oneInchReceivingToken.source,
           };
   const blockers = [];
+  const repoOwnedAutomation = runtimeOwner === "policy_bounded_automation";
 
   if (!selectedReceivingToken.address) {
     blockers.push(
@@ -1986,13 +2101,17 @@ function createExecutionLeg({
 
   if (!signerAddress) {
     blockers.push(
-      "A verified signer wallet is required before the user-approved venue-routed lane can quote or submit this leg.",
+      repoOwnedAutomation
+        ? "A verified repo-owned signer wallet is required before canonical autonomous execution can quote or submit this leg."
+        : "A verified signer wallet is required before the user-approved venue-routed lane can quote or submit this leg.",
     );
   }
 
   if (!settlementAddress) {
     blockers.push(
-      "A settlement wallet or smart-wallet destination is required before the user-approved venue-routed lane can quote or submit this leg.",
+      repoOwnedAutomation
+        ? "A settlement wallet or smart-wallet destination is required before canonical autonomous execution can quote or submit this leg."
+        : "A settlement wallet or smart-wallet destination is required before the user-approved venue-routed lane can quote or submit this leg.",
     );
   }
 
@@ -2028,7 +2147,9 @@ function createExecutionLeg({
     state: blockers.length > 0 ? "blocked" : "pending",
     blockers,
     warnings: uniqueStrings([
-      "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+      repoOwnedAutomation
+        ? "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path."
+        : "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
       routeSelection.requestAdapterId === ONEINCH_EXECUTION_ADAPTER_ID
         ? `${allocation.assetSymbol} is pinned to the 1inch Ethereum route for this execution request.`
         : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
@@ -2122,6 +2243,7 @@ function createExecutionRequest({
   rebalance = null,
   providerReceipt = null,
   executionPlanSnapshot = activation.executionPlanSnapshot,
+  bridgeStateOverrides = null,
 }) {
   const requestedNotionalUsd = activation.requestedNotionalUsd;
   const fundingAssetSymbol =
@@ -2130,8 +2252,12 @@ function createExecutionRequest({
     walletState: activation.walletState,
     executionPlanSnapshot,
   });
-  const signerAddress = bridgeState.manualSignerAddress;
-  const settlementAddress = bridgeState.executionDestinationAddress;
+  const effectiveBridgeState = {
+    ...bridgeState,
+    ...(bridgeStateOverrides ?? {}),
+  };
+  const signerAddress = effectiveBridgeState.manualSignerAddress;
+  const settlementAddress = effectiveBridgeState.executionDestinationAddress;
   const executionRequestId = `execreq_${randomUUID()}`;
   const requestLinkage = createExecutionRequestLinkage({
     rebalance,
@@ -2156,13 +2282,13 @@ function createExecutionRequest({
     activationManifestRef: activation.activationManifestRef,
     requestedNotionalUsd,
     fundingAssetSymbol,
-    manualSignerAddress: bridgeState.manualSignerAddress,
-    policyAccountAddress: bridgeState.policyAccountAddress,
-    executionDestinationAddress: bridgeState.executionDestinationAddress,
-    manualSigningMode: bridgeState.manualSigningMode,
-    automationAccountMode: bridgeState.automationAccountMode,
-    automationReadiness: bridgeState.automationReadiness,
-    venueSigningMode: bridgeState.venueSigningMode,
+    manualSignerAddress: effectiveBridgeState.manualSignerAddress,
+    policyAccountAddress: effectiveBridgeState.policyAccountAddress,
+    executionDestinationAddress: effectiveBridgeState.executionDestinationAddress,
+    manualSigningMode: effectiveBridgeState.manualSigningMode,
+    automationAccountMode: effectiveBridgeState.automationAccountMode,
+    automationReadiness: effectiveBridgeState.automationReadiness,
+    venueSigningMode: effectiveBridgeState.venueSigningMode,
     settlementAddress,
     state: "requested",
     blockers: uniqueStrings(
@@ -2176,10 +2302,14 @@ function createExecutionRequest({
       ].filter(Boolean),
     ),
     warnings:
-      bridgeState.automationReadiness !== "ready"
+      effectiveBridgeState.automationReadiness !== "ready"
         ? [
             "Automation remains fail-closed until the Privy smart account is ready.",
           ]
+        : runtimeOwner === "policy_bounded_automation"
+          ? [
+              "Repo-owned policy-bounded automation is authorized to quote, sign, submit, and settle this canonical execution request.",
+            ]
         : [],
     legs: (manifest.targetAllocations ?? []).map((allocation, index) =>
       createExecutionLeg({
@@ -2196,6 +2326,7 @@ function createExecutionRequest({
         manifest,
         activation,
         routeSelection,
+        runtimeOwner,
         executionPlanSnapshot,
         requestLinkage,
       }),
@@ -2326,6 +2457,27 @@ function createApprovalFromQuote(storedQuote, preparedOrder = null) {
   return createApprovalFromCowQuote(storedQuote);
 }
 
+function adaptExecutionApprovalForRequest(approval, executionRequest) {
+  if (
+    !approval ||
+    !executionRequest ||
+    executionRequest.runtimeOwner !== "policy_bounded_automation"
+  ) {
+    return approval;
+  }
+
+  return {
+    ...approval,
+    status:
+      approval.status === "awaiting_user" ? "awaiting_backend" : approval.status,
+    notes: [
+      approval.approvalTarget === "oneinch_fusion_order"
+        ? "Repo-owned backend signing will produce the 1inch Fusion EIP-712 approval before canonical submission."
+        : "Repo-owned backend signing will produce the venue approval before canonical submission.",
+    ],
+  };
+}
+
 function getExecutionVenueLabel(leg) {
   if (leg?.quote?.kind === "oneinch_fusion") {
     return "1inch Fusion";
@@ -2353,6 +2505,9 @@ function buildExecutionActivityEvents({
   const txHash = leg.receipt?.txHash ?? null;
   const venueOrderId = leg.venueStatus?.venueOrderId ?? null;
   const venueLabel = getExecutionVenueLabel(leg);
+  const isRepoOwnedAutomation =
+    executionRequest?.runtimeOwner === "policy_bounded_automation" ||
+    executionRequest?.venueSigningMode === BACKEND_REPO_OWNED_EIP712_MODE;
 
   if (
     (leg.state === "awaiting_approval" || leg.state === "quote_ready") &&
@@ -2364,8 +2519,12 @@ function buildExecutionActivityEvents({
         eventType: "activation_ready",
         summary:
           leg.state === "awaiting_approval"
-            ? `${venueLabel} quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`
-            : `${venueLabel} quote prepared for ${leg.assetSymbol ?? leg.sleeve}; submission remains blocked on the current backend boundary.`,
+            ? isRepoOwnedAutomation
+              ? `${venueLabel} quote prepared and awaiting repo-owned autonomous signature for ${leg.assetSymbol ?? leg.sleeve}.`
+              : `${venueLabel} quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`
+            : isRepoOwnedAutomation
+              ? `${venueLabel} quote prepared for ${leg.assetSymbol ?? leg.sleeve}; repo-owned canonical execution continues on the backend.`
+              : `${venueLabel} quote prepared for ${leg.assetSymbol ?? leg.sleeve}; submission remains blocked on the current backend boundary.`,
         now,
         payload: {
           chain: activation.chain,
@@ -2383,7 +2542,9 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_submitted",
-        summary: `Recorded user-approved ${venueLabel} submission for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: isRepoOwnedAutomation
+          ? `Recorded repo-owned ${venueLabel} submission for ${leg.assetSymbol ?? leg.sleeve}.`
+          : `Recorded user-approved ${venueLabel} submission for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           chain: activation.chain,
@@ -2536,9 +2697,14 @@ export function createApiService({
   autoresearchProofToken = null,
   chainlinkCreSignerAllowlist = [],
   chainlinkCreWorkflowAllowlist = [],
+  chainlinkCreAutonomousExecution = {},
   now = () => new Date().toISOString(),
 }) {
   const smartAccountProvider = createSmartAccountProviderScaffold();
+  const chainlinkCreAutonomousExecutionConfig =
+    normalizeChainlinkCreAutonomousExecutionConfig(
+      chainlinkCreAutonomousExecution,
+    );
 
   async function resolvePromotedRecord(selector = {}) {
     const { manifestId, slotId } = normalizeSelector(selector);
@@ -2881,6 +3047,390 @@ export function createApiService({
     });
   }
 
+  function isChainlinkCreAutonomousRequestContext(requestContext) {
+    const authenticatedRequestContext =
+      requireAuthenticatedRequestContext(requestContext);
+
+    if (
+      !chainlinkCreAutonomousExecutionConfig.enabled ||
+      !chainlinkCreAutonomousExecutionConfig.signerAddress
+    ) {
+      return false;
+    }
+
+    return (
+      authenticatedRequestContext.owner?.providerId ===
+        chainlinkCreAutonomousExecutionConfig.ownerProviderId &&
+      authenticatedRequestContext.owner?.userId ===
+        chainlinkCreAutonomousExecutionConfig.ownerUserId &&
+      addressInVerifiedSet(
+        chainlinkCreAutonomousExecutionConfig.signerAddress,
+        uniqueStrings([
+          ...authenticatedRequestContext.linkedWalletAddresses,
+          ...authenticatedRequestContext.linkedEmbeddedWalletAddresses,
+        ]),
+      )
+    );
+  }
+
+  function createChainlinkCreAutonomousOwnerRequestContext({
+    walletState = {},
+    ownerOverrides = null,
+  } = {}) {
+    if (!chainlinkCreAutonomousExecutionConfig.enabled) {
+      throw new HttpError(
+        409,
+        "CHAINLINK_CRE_AUTONOMOUS_EXECUTION_ENABLED must be true before canonical provider execution can continue.",
+      );
+    }
+
+    if (chainlinkCreAutonomousExecutionConfig.configError) {
+      throw new HttpError(409, chainlinkCreAutonomousExecutionConfig.configError);
+    }
+
+    const linkedWalletAddresses = uniqueStrings(
+      [
+        chainlinkCreAutonomousExecutionConfig.signerAddress,
+        walletState?.walletAddress,
+        walletState?.embeddedWallet?.address,
+      ]
+        .map((value) => normalizeEthereumAddress(value))
+        .filter(Boolean),
+    );
+    const linkedSmartWalletAddresses = uniqueStrings(
+      [walletState?.smartAccount?.address]
+        .map((value) => normalizeEthereumAddress(value))
+        .filter(Boolean),
+    );
+
+    return {
+      owner: {
+        providerId:
+          normalizeOptionalString(ownerOverrides?.providerId) ??
+          chainlinkCreAutonomousExecutionConfig.ownerProviderId,
+        appId:
+          normalizeOptionalString(ownerOverrides?.appId) ??
+          chainlinkCreAutonomousExecutionConfig.ownerAppId,
+        userId:
+          normalizeOptionalString(ownerOverrides?.userId) ??
+          chainlinkCreAutonomousExecutionConfig.ownerUserId,
+        sessionId:
+          normalizeOptionalString(ownerOverrides?.sessionId) ??
+          chainlinkCreAutonomousExecutionConfig.ownerSessionId,
+        issuer:
+          normalizeOptionalString(ownerOverrides?.issuer) ??
+          chainlinkCreAutonomousExecutionConfig.ownerIssuer,
+        authenticatedAt: now(),
+      },
+      linkedWalletAddresses,
+      linkedEmbeddedWalletAddresses: linkedWalletAddresses,
+      linkedSmartWalletAddresses,
+      linkedAccounts: [],
+      accessTokenSource: "repo_owned_backend",
+      accessTokenVerified: true,
+      identityTokenSource: null,
+      identityTokenVerified: false,
+      linkedAccountsSource: "repo_owned_backend",
+      privyUserId:
+        normalizeOptionalString(ownerOverrides?.userId) ??
+        chainlinkCreAutonomousExecutionConfig.ownerUserId,
+    };
+  }
+
+  function createChainlinkCreAutonomousRequestContext({ activation }) {
+    return createChainlinkCreAutonomousOwnerRequestContext({
+      walletState: activation?.walletState ?? {},
+    });
+  }
+
+  function collectExecutionRequestBlockers(executionRequest) {
+    return uniqueStrings([
+      ...(executionRequest?.blockers ?? []),
+      ...(executionRequest?.legs ?? []).flatMap((leg) => leg.blockers ?? []),
+    ]);
+  }
+
+  function summarizeExecutionRequest(executionRequest) {
+    if (!executionRequest) {
+      return "Canonical execution request is unavailable.";
+    }
+
+    const stateCounts = executionRequest.legs
+      .filter((leg) => leg.state !== "deferred")
+      .reduce((accumulator, leg) => {
+        accumulator[leg.state] = (accumulator[leg.state] ?? 0) + 1;
+        return accumulator;
+      }, {});
+    const legSummary = Object.entries(stateCounts)
+      .map(([state, count]) => `${state}=${count}`)
+      .join(", ");
+
+    return [
+      `Canonical execution request ${executionRequest.executionRequestId} is ${executionRequest.state}.`,
+      legSummary ? `Actionable legs: ${legSummary}.` : null,
+    ]
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  function createProviderExecutionAutomationTruth({
+    rebalance,
+    autonomousExecutionProven = false,
+    operatorManualRequired = false,
+    notes = [],
+  }) {
+    return {
+      ...(rebalance?.automationTruth ?? {}),
+      operatorManualRequired,
+      autonomousExecutionProven,
+      providerTriggeredProven: true,
+      supportedTriggerSources: uniqueStrings([
+        ...(rebalance?.automationTruth?.supportedTriggerSources ?? []),
+        "operator_manual",
+        "scheduled_cron",
+        "provider_triggered",
+      ]),
+      notes: uniqueStrings([
+        ...(rebalance?.automationTruth?.notes ?? []),
+        operatorManualRequired
+          ? "Operator approval remains required before autonomous continuation can resume."
+          : "Repo-owned policy-bounded automation may continue this provider-triggered canonical execution path.",
+        autonomousExecutionProven
+          ? "A real canonical autonomous execution terminal proof exists for this provider-triggered path."
+          : "Canonical autonomous execution proof is not complete until the live execution request reaches a truthful terminal state.",
+        ...notes,
+      ]),
+    };
+  }
+
+  function mapExecutionRequestStateToRebalanceState(executionRequestState) {
+    switch (executionRequestState) {
+      case "confirmed":
+      case "manual_followup_required":
+        return "rebalanced";
+      case "blocked":
+        return "blocked";
+      case "failed":
+        return "failed";
+      default:
+        return "executing";
+    }
+  }
+
+  function buildProviderExecutionNextAction(
+    executionRequest,
+    { targetState = null, rationale = null } = {},
+  ) {
+    const effectiveState = executionRequest?.state ?? targetState;
+
+    switch (effectiveState) {
+      case "confirmed":
+        return {
+          title: "Execution settled",
+          detail:
+            "All actionable provider-triggered execution legs reached confirmed settlement.",
+          status: "completed",
+        };
+      case "manual_followup_required":
+        return {
+          title: "Resolve deferred follow-up",
+          detail:
+            "Canonical execution settled the actionable sleeve, but deferred follow-up remains for non-core legs.",
+          status: "manual_followup_required",
+        };
+      case "blocked":
+      case "failed":
+        return {
+          title: "Inspect execution blocker",
+          detail:
+            rationale ??
+            collectExecutionRequestBlockers(executionRequest)[0] ??
+            "Canonical execution failed without a structured blocker message.",
+          status: effectiveState,
+        };
+      default:
+        return {
+          title: "Monitor settlement",
+          detail:
+            "Canonical execution has been staged and is progressing through quote, signature, submission, or settlement polling.",
+          status: "pending",
+        };
+    }
+  }
+
+  async function persistProviderExecutionRebalanceProgress({
+    rebalance,
+    executionRequest = null,
+    providerReceipt = null,
+    forcedState = null,
+    summary,
+    rationale,
+    eventType = "execution_progress",
+    extraWarnings = [],
+    extraBlockers = [],
+  }) {
+    const targetState =
+      forcedState ??
+      mapExecutionRequestStateToRebalanceState(executionRequest?.state ?? null);
+    const autonomousExecutionProven = [
+      "confirmed",
+      "manual_followup_required",
+    ].includes(executionRequest?.state ?? "");
+    const patch = {
+      providerReceiptId:
+        providerReceipt?.receiptId ?? rebalance.providerReceiptId ?? null,
+      executionRequestId:
+        executionRequest?.executionRequestId ?? rebalance.executionRequestId ?? null,
+      executionTriggerSource:
+        executionRequest?.triggerSource ?? rebalance.executionTriggerSource ?? null,
+      executionRequestState:
+        executionRequest?.state ?? rebalance.executionRequestState ?? null,
+      runtimeOwner: "policy_bounded_automation",
+      triggerSource: "provider_triggered",
+      summary,
+      rationale,
+      blockers:
+        targetState === "blocked" || targetState === "failed"
+          ? uniqueStrings([
+              ...collectExecutionRequestBlockers(executionRequest),
+              ...extraBlockers,
+            ])
+          : [],
+      warnings: uniqueStrings([
+        ...(rebalance.warnings ?? []),
+        ...(executionRequest?.warnings ?? []),
+        ...extraWarnings,
+      ]),
+      automationTruth: createProviderExecutionAutomationTruth({
+        rebalance,
+        autonomousExecutionProven,
+        operatorManualRequired: false,
+        notes: [
+          summarizeExecutionRequest(executionRequest),
+          ...(targetState === "blocked" || targetState === "failed"
+            ? collectExecutionRequestBlockers(executionRequest)
+            : []),
+        ],
+      }),
+      nextAction: buildProviderExecutionNextAction(executionRequest, {
+        targetState,
+        rationale,
+      }),
+      executionState: rebalance.executionState,
+      executionEligibility:
+        targetState === "blocked" || targetState === "failed"
+          ? "blocked"
+          : rebalance.executionEligibility,
+      updatedAt: now(),
+    };
+
+    let nextRebalance = rebalance;
+
+    if (
+      targetState === "rebalanced" &&
+      nextRebalance.state !== "rebalanced"
+    ) {
+      if (nextRebalance.state !== "executing") {
+        nextRebalance = {
+          ...applyRebalanceTransition(nextRebalance, {
+            toState: "executing",
+            triggerSource: "provider_triggered",
+            runtimeOwner: "policy_bounded_automation",
+            summary:
+              "Provider-triggered canonical execution advanced beyond operator review.",
+            rationale: summarizeExecutionRequest(executionRequest),
+            eventType: "execution_started",
+            warnings: patch.warnings,
+            blockers: [],
+            executionState: rebalance.executionState,
+          }),
+          ...patch,
+          state: "executing",
+          blockers: [],
+        };
+      } else {
+        nextRebalance = {
+          ...nextRebalance,
+          ...patch,
+          state: "executing",
+          blockers: [],
+        };
+      }
+    }
+
+    if (nextRebalance.state !== targetState) {
+      nextRebalance = {
+        ...applyRebalanceTransition(nextRebalance, {
+          toState: targetState,
+          triggerSource: "provider_triggered",
+          runtimeOwner: "policy_bounded_automation",
+          summary,
+          rationale,
+          eventType,
+          warnings: patch.warnings,
+          blockers: patch.blockers,
+          nextAction: patch.nextAction,
+          executionState: rebalance.executionState,
+          executionEligibility: patch.executionEligibility,
+        }),
+        ...patch,
+        state: targetState,
+      };
+    } else {
+      nextRebalance = {
+        ...nextRebalance,
+        ...patch,
+        state: targetState,
+      };
+    }
+
+    return await runtimeStore.upsertRebalance({
+      rebalance: nextRebalance,
+      eventType,
+    });
+  }
+
+  async function signChainlinkCreAutonomousApproval({ leg }) {
+    if (!chainlinkCreAutonomousExecutionConfig.signerAccount) {
+      throw new HttpError(
+        409,
+        "Repo-owned autonomous signer account is unavailable for canonical execution.",
+      );
+    }
+
+    if (leg?.approval?.approvalTarget !== "oneinch_fusion_order") {
+      throw new HttpError(
+        409,
+        "Repo-owned canonical signing currently requires a 1inch Fusion typed-data approval payload.",
+      );
+    }
+
+    const typedData =
+      leg.approval?.orderToSign?.typedData &&
+      typeof leg.approval.orderToSign.typedData === "object"
+        ? leg.approval.orderToSign.typedData
+        : null;
+
+    if (
+      !typedData?.domain ||
+      !typedData?.types ||
+      !typedData?.primaryType ||
+      !typedData?.message
+    ) {
+      throw new HttpError(
+        409,
+        "1inch Fusion typed-data payload is missing, so repo-owned canonical signing cannot proceed.",
+      );
+    }
+
+    return await chainlinkCreAutonomousExecutionConfig.signerAccount.signTypedData({
+      domain: typedData.domain,
+      types: typedData.types,
+      primaryType: typedData.primaryType,
+      message: typedData.message,
+    });
+  }
+
   function buildProviderEventReceipt({
     validation = null,
     receiptCandidate = null,
@@ -3092,7 +3642,9 @@ export function createApiService({
     }
 
     const signerAddress = resolveExecutionSignerAddress(activation.walletState);
-    const settlementAddress = resolveSettlementAddress(activation.walletState);
+    const settlementAddress = resolveExecutionDestinationAddress(
+      activation.walletState,
+    );
     const verifiedAddresses = uniqueStrings([
       ...authenticatedRequestContext.linkedWalletAddresses,
       ...authenticatedRequestContext.linkedEmbeddedWalletAddresses,
@@ -4134,6 +4686,20 @@ export function createApiService({
       if (action === "execute_all") {
         const activationId = firstDefined(body.activationId, body.activation_id);
         const rebalanceId = firstDefined(body.rebalanceId, body.rebalance_id);
+        const routeSelection = resolveManualExecutionRouteSelection({
+          requestedRouteId: firstDefined(
+            body.executionRouteId,
+            body.execution_route_id,
+          ),
+          requestedAdapterId: firstDefined(
+            body.executionAdapterId,
+            body.execution_adapter_id,
+            body.adapterId,
+            body.adapter_id,
+          ),
+        });
+        const autonomousExecutionRequest =
+          isChainlinkCreAutonomousRequestContext(authenticatedRequestContext);
 
         if (!activationId) {
           throw new HttpError(
@@ -4202,10 +4768,18 @@ export function createApiService({
           manifest: record.manifest,
           fetchedAssets,
           now,
-          runtimeOwner: "operator_manual",
+          routeSelection,
+          runtimeOwner: autonomousExecutionRequest
+            ? "policy_bounded_automation"
+            : "operator_manual",
           triggerSource: "provider_staging",
           rebalance,
           providerReceipt,
+          bridgeStateOverrides: autonomousExecutionRequest
+            ? createChainlinkCreAutonomousBridgeStateOverrides(
+                chainlinkCreAutonomousExecutionConfig,
+              )
+            : null,
           executionPlanSnapshot: {
             executionState: rebalance.executionState,
             executionEligibility: rebalance.executionEligibility,
@@ -4542,7 +5116,10 @@ export function createApiService({
             fundingStablecoin?.decimals ?? leg.paymentTokenDecimals,
           receivingTokenAddress: selectedCandidate.receivingTokenAddress,
           quote: selectedCandidate.storedQuote,
-          approval: selectedCandidate.approval,
+          approval: adaptExecutionApprovalForRequest(
+            selectedCandidate.approval,
+            executionRequest,
+          ),
           warnings: uniqueStrings([
             ...nextLegBase.warnings,
             ...selectedCandidate.warnings,
@@ -5159,17 +5736,242 @@ export function createApiService({
         });
       }
 
-      const persistedRebalance = await runtimeStore.upsertRebalance({
+      let persistedRebalance = await runtimeStore.upsertRebalance({
         rebalance: rebalanceOrchestration,
         eventType: "provider_triggered_review",
       });
+      const executionMode = validation.body.reviewIntent.executionMode;
       const receipt = await persistProviderEventReceipt({
         validation,
         decision: "accepted",
         reason:
-          "Validated Chainlink CRE event opened operator review for the current promoted manifest.",
+          executionMode === CHAINLINK_CRE_CANONICAL_EXECUTION_MODE
+            ? "Validated Chainlink CRE event opened canonical provider-triggered execution for the current promoted manifest."
+            : "Validated Chainlink CRE event opened operator review for the current promoted manifest.",
         rebalance: persistedRebalance,
       });
+
+      if (executionMode !== CHAINLINK_CRE_CANONICAL_EXECUTION_MODE) {
+        return parseApiResponse("provider_triggered_rebalance_review_write", {
+          version: DEFAULT_RESPONSE_VERSION,
+          generatedAt: now(),
+          receipt,
+          rebalanceOrchestration: serializeRebalance(persistedRebalance),
+        });
+      }
+
+      const executionService = this;
+
+      if (typeof executionService?.writeExecution !== "function") {
+        throw new HttpError(
+          500,
+          "Canonical execution writer is unavailable on this runtime.",
+        );
+      }
+
+      try {
+        const autonomousRequestContext =
+          createChainlinkCreAutonomousRequestContext({
+            activation: slotRuntime.latestActivation,
+          });
+        let executionRequest = (
+          await executionService.writeExecution(
+            {
+              action: "execute_all",
+              activationId: slotRuntime.latestActivation.activationId,
+              rebalanceId: persistedRebalance.rebalanceId,
+              executionRouteId:
+                chainlinkCreAutonomousExecutionConfig.routeSelection.routeId,
+              executionAdapterId:
+                chainlinkCreAutonomousExecutionConfig.routeSelection
+                  .requestAdapterId,
+            },
+            {
+              requestContext: autonomousRequestContext,
+            },
+          )
+        ).executionRequest;
+
+        persistedRebalance = await persistProviderExecutionRebalanceProgress({
+          rebalance: persistedRebalance,
+          executionRequest,
+          providerReceipt: receipt,
+          summary:
+            "Provider-triggered canonical execution staged on the repo-owned backend path.",
+          rationale: summarizeExecutionRequest(executionRequest),
+          eventType: "execution_staged",
+        });
+
+        for (const initialLeg of executionRequest.legs.filter(
+          (leg) => leg.state !== "deferred",
+        )) {
+          let currentLeg =
+            executionRequest.legs.find((leg) => leg.legId === initialLeg.legId) ??
+            null;
+
+          if (!currentLeg) {
+            continue;
+          }
+
+          if (currentLeg.state === "pending") {
+            executionRequest = (
+              await executionService.writeExecution(
+                {
+                  action: "quote_leg",
+                  executionRequestId: executionRequest.executionRequestId,
+                  legId: currentLeg.legId,
+                },
+                {
+                  requestContext: autonomousRequestContext,
+                },
+              )
+            ).executionRequest;
+            persistedRebalance = await persistProviderExecutionRebalanceProgress({
+              rebalance: persistedRebalance,
+              executionRequest,
+              providerReceipt: receipt,
+              summary:
+                "Provider-triggered canonical execution refreshed live venue quote state.",
+              rationale: summarizeExecutionRequest(executionRequest),
+              eventType: "execution_quoted",
+            });
+            currentLeg =
+              executionRequest.legs.find((leg) => leg.legId === initialLeg.legId) ??
+              null;
+          }
+
+          if (
+            currentLeg &&
+            (currentLeg.state === "awaiting_approval" ||
+              currentLeg.state === "quote_ready")
+          ) {
+            try {
+              const signature = await signChainlinkCreAutonomousApproval({
+                leg: currentLeg,
+              });
+              executionRequest = (
+                await executionService.writeExecution(
+                  {
+                    action: "record_submission",
+                    executionRequestId: executionRequest.executionRequestId,
+                    legId: currentLeg.legId,
+                    signature,
+                  },
+                  {
+                    requestContext: autonomousRequestContext,
+                  },
+                )
+              ).executionRequest;
+              persistedRebalance =
+                await persistProviderExecutionRebalanceProgress({
+                  rebalance: persistedRebalance,
+                  executionRequest,
+                  providerReceipt: receipt,
+                  summary:
+                    "Provider-triggered canonical execution auto-signed and submitted a venue order.",
+                  rationale: summarizeExecutionRequest(executionRequest),
+                  eventType: "execution_submitted",
+                });
+              currentLeg =
+                executionRequest.legs.find((leg) => leg.legId === initialLeg.legId) ??
+                null;
+            } catch (error) {
+              const blockerMessage =
+                error instanceof Error ? error.message : String(error);
+              const blockedLeg = {
+                ...currentLeg,
+                state: "blocked",
+                approval: currentLeg.approval
+                  ? {
+                      ...currentLeg.approval,
+                      status: "failed",
+                    }
+                  : null,
+                blockers: uniqueStrings([
+                  ...currentLeg.blockers,
+                  `Repo-owned autonomous signing failed: ${blockerMessage}`,
+                ]),
+              };
+              const nextRequest = replaceExecutionLeg(executionRequest, blockedLeg);
+              executionRequest = (
+                await persistExecutionRequest({
+                  executionRequest: nextRequest,
+                  activation: slotRuntime.latestActivation,
+                  activityEvents: buildExecutionActivityEvents({
+                    activation: slotRuntime.latestActivation,
+                    executionRequest: updateExecutionRequestState(nextRequest),
+                    previousLeg: currentLeg,
+                    leg: blockedLeg,
+                    now,
+                  }),
+                })
+              ).executionRequest;
+              persistedRebalance =
+                await persistProviderExecutionRebalanceProgress({
+                  rebalance: persistedRebalance,
+                  executionRequest,
+                  providerReceipt: receipt,
+                  summary:
+                    "Provider-triggered canonical execution hit an autonomous signing blocker.",
+                  rationale: blockerMessage,
+                  eventType: "execution_failed",
+                });
+              continue;
+            }
+          }
+
+          if (
+            currentLeg &&
+            (currentLeg.state === "submitted" || currentLeg.receipt?.txHash)
+          ) {
+            executionRequest = (
+              await executionService.writeExecution(
+                {
+                  action: "poll_receipt",
+                  executionRequestId: executionRequest.executionRequestId,
+                  legId: currentLeg.legId,
+                },
+                {
+                  requestContext: autonomousRequestContext,
+                },
+              )
+            ).executionRequest;
+            persistedRebalance = await persistProviderExecutionRebalanceProgress({
+              rebalance: persistedRebalance,
+              executionRequest,
+              providerReceipt: receipt,
+              summary:
+                "Provider-triggered canonical execution refreshed venue and settlement status.",
+              rationale: summarizeExecutionRequest(executionRequest),
+              eventType: "execution_polled",
+            });
+          }
+        }
+
+        persistedRebalance = await persistProviderExecutionRebalanceProgress({
+          rebalance: persistedRebalance,
+          executionRequest,
+          providerReceipt: receipt,
+          summary: summarizeExecutionRequest(executionRequest),
+          rationale:
+            collectExecutionRequestBlockers(executionRequest)[0] ??
+            "Provider-triggered canonical execution completed its current bounded backend pass.",
+          eventType: "execution_progress",
+        });
+      } catch (error) {
+        persistedRebalance = await persistProviderExecutionRebalanceProgress({
+          rebalance: persistedRebalance,
+          providerReceipt: receipt,
+          forcedState: "failed",
+          summary:
+            "Provider-triggered canonical execution failed before reaching a terminal venue result.",
+          rationale: error instanceof Error ? error.message : String(error),
+          eventType: "execution_failed",
+          extraBlockers: [
+            error instanceof Error ? error.message : String(error),
+          ],
+        });
+      }
 
       return parseApiResponse("provider_triggered_rebalance_review_write", {
         version: DEFAULT_RESPONSE_VERSION,
@@ -5177,6 +5979,114 @@ export function createApiService({
         receipt,
         rebalanceOrchestration: serializeRebalance(persistedRebalance),
       });
+    },
+
+    async bootstrapChainlinkCreAutonomousBaseline(body = {}) {
+      const slotId = normalizeOptionalString(body.slotId);
+      const manifestId = normalizeOptionalString(body.manifestId);
+      const requestedNotionalUsd = resolveRequestedNotionalUsd(
+        firstDefined(body.userNotionalUsd, body.user_notional_usd),
+        20,
+      );
+      const walletAddress =
+        normalizeEthereumAddress(
+          firstDefined(
+            body.walletAddress,
+            body.wallet_address,
+            chainlinkCreAutonomousExecutionConfig.signerAddress,
+          ),
+        ) ?? chainlinkCreAutonomousExecutionConfig.signerAddress;
+      const smartAccountAddress = normalizeEthereumAddress(
+        firstDefined(body.smartAccountAddress, body.smart_account_address),
+      );
+
+      if (!walletAddress) {
+        throw new HttpError(
+          409,
+          "A repo-owned autonomous signer wallet address is required before bootstrapping the provider execution baseline.",
+        );
+      }
+
+      const walletState = {
+        walletConnected: true,
+        walletAddress,
+        fundedNotionalUsd: requestedNotionalUsd,
+        ...(smartAccountAddress
+          ? {
+              smartAccount: {
+                status: "ready",
+                address: smartAccountAddress,
+                providerId: "privy_smart_account",
+              },
+            }
+          : {}),
+      };
+      const requestContext = createChainlinkCreAutonomousOwnerRequestContext({
+        walletState,
+      });
+      const payload = {
+        userNotionalUsd: requestedNotionalUsd,
+        walletState,
+        ...(manifestId ? { manifestId } : {}),
+        ...(slotId ? { slotId } : {}),
+      };
+      const result = await this.saveActivation(payload, {
+        requestContext,
+      });
+
+      return {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        ...result,
+      };
+    },
+
+    async readChainlinkCreAutonomousProof(query = {}) {
+      const slotId =
+        normalizeOptionalString(query.slotId) ?? "onboarding.default_basket";
+      const ownerUserId = chainlinkCreAutonomousExecutionConfig.ownerUserId;
+      const activations = await runtimeStore.listActivations({
+        slotId,
+        ownerUserId,
+      });
+      const latestActivation =
+        activations.length > 0 ? serializeActivation(activations[0]) : null;
+      const latestRebalance = serializeRebalance(
+        await runtimeStore.getLatestRebalance({
+          slotId,
+        }),
+      );
+      const providerReceipts = await runtimeStore.listProviderEventReceipts({
+        slotId,
+        limit: 20,
+      });
+      const executionRequest = latestRebalance?.executionRequestId
+        ? await runtimeStore.getExecutionRequest({
+            executionRequestId: latestRebalance.executionRequestId,
+            ownerUserId:
+              latestActivation?.owner?.userId ??
+              latestRebalance?.owner?.userId ??
+              ownerUserId,
+          })
+        : null;
+      const activityEvents = await runtimeStore.listActivity({
+        manifestId:
+          latestRebalance?.targetManifestId ?? latestActivation?.manifestId ?? null,
+        ownerUserId: latestActivation?.owner?.userId ?? ownerUserId,
+        limit: Number(query.limit ?? 100),
+      });
+
+      return {
+        version: DEFAULT_RESPONSE_VERSION,
+        generatedAt: now(),
+        slotId,
+        ownerUserId,
+        latestActivation,
+        latestRebalance,
+        executionRequest,
+        providerReceipts,
+        activityEvents,
+      };
     },
 
     async readXStocksReporting(query = {}, { reportingContext = null } = {}) {

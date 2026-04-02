@@ -302,6 +302,7 @@ export type FundingMethodStatus = z.infer<typeof fundingMethodStatusSchema>;
 export const EXECUTION_APPROVAL_STATUS_VALUES = [
   "not_requested",
   "awaiting_user",
+  "awaiting_backend",
   "approved",
   "submitted",
   "failed",

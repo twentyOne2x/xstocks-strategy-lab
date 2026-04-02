@@ -10,5 +10,8 @@
     "proof:oneinch": "node ./scripts/oneinch-fusion-proof.js",
     "test": "node --test",
     "check": "node ./scripts/lint.js && node --test"
+  },
+  "dependencies": {
+    "viem": "^2.39.3"
   }
 }

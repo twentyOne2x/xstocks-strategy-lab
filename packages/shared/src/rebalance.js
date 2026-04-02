@@ -16,6 +16,7 @@ export const REBALANCE_STATES = Object.freeze([
 export const REBALANCE_RUNTIME_OWNERS = Object.freeze([
   "operator_manual",
   "worker_offchain_scheduler",
+  "policy_bounded_automation",
 ]);
 
 export const REBALANCE_TRIGGER_SOURCES = Object.freeze([
@@ -58,6 +59,7 @@ export const PROVIDER_REBALANCE_RECEIPT_DECISIONS = Object.freeze([
 
 export const PROVIDER_REBALANCE_RECEIPT_REASON_CODES = Object.freeze([
   "accepted_review_only",
+  "accepted_canonical_execution",
   "activation_not_found",
   "authorization_missing",
   "authorization_scheme_invalid",
@@ -267,6 +269,7 @@ export function createChainlinkTriggerBoundary(options = {}) {
 export function createAutomationTruth(options = {}) {
   const scheduledReviewEnabled = options.scheduledReviewEnabled === true;
   const autonomousExecutionProven = options.autonomousExecutionProven === true;
+  const operatorManualRequired = options.operatorManualRequired !== false;
   const chainlinkBoundary = options.chainlinkBoundary ?? createChainlinkTriggerBoundary();
   const supportedTriggerSources = ["operator_manual", "policy_event"];
 
@@ -278,12 +281,14 @@ export function createAutomationTruth(options = {}) {
   }
 
   return {
-    operatorManualRequired: true,
+    operatorManualRequired,
     autonomousExecutionProven,
     providerTriggeredProven: chainlinkBoundary.reviewProven,
     supportedTriggerSources,
     notes: uniqueStrings([
-      "Operator approval is required before any CoW execution request is created.",
+      operatorManualRequired
+        ? "Operator approval is required before any canonical execution request is created."
+        : "Repo-owned policy-bounded automation may advance the canonical execution path when exact proof exists.",
       scheduledReviewEnabled
         ? "Worker-owned scheduled reviews can queue operator review, but cannot submit trades."
         : "No worker-owned scheduled review loop is enabled in this runtime.",
@@ -306,7 +311,12 @@ export function createRebalanceRecord(input) {
     rebalanceId: input.rebalanceId,
     slotId: input.slotId,
     chain: input.chain,
+    activationManifestRef: input.activationManifestRef ?? null,
     targetManifestId: input.targetManifestId,
+    baselineActivationId: input.baselineActivationId ?? null,
+    baselineManifestId: input.baselineManifestId ?? null,
+    baselineManifestMatchesTarget:
+      input.baselineManifestMatchesTarget ?? false,
     state: input.state,
     runtimeOwner: input.runtimeOwner,
     triggerSource: input.triggerSource,
@@ -317,10 +327,16 @@ export function createRebalanceRecord(input) {
     executionState: input.executionState ?? "ready",
     executionEligibility: input.executionEligibility ?? "blocked",
     surfaceTruth: input.surfaceTruth ?? "preview",
+    providerReceiptId: input.providerReceiptId ?? null,
+    executionRequestId: input.executionRequestId ?? null,
+    executionTriggerSource: input.executionTriggerSource ?? null,
+    executionRequestState: input.executionRequestState ?? null,
     blockers: uniqueStrings(input.blockers),
     warnings: uniqueStrings(input.warnings),
     automationTruth: input.automationTruth ?? createAutomationTruth(),
     nextAction: input.nextAction ?? null,
+    createdAt: input.createdAt ?? new Date().toISOString(),
+    updatedAt: input.updatedAt ?? new Date().toISOString(),
     allowedTransitions: [...REBALANCE_ALLOWED_TRANSITIONS[input.state]],
     history: [...(input.history ?? [])],
   };

@@ -220,6 +220,7 @@ function isAwaitingApprovalLeg(leg) {
   return (
     leg?.state === "awaiting_approval" ||
     leg?.approval?.status === "awaiting_user" ||
+    leg?.approval?.status === "awaiting_backend" ||
     isQuotedLeg(leg)
   );
 }
@@ -596,7 +597,11 @@ export function buildXStocksReportingSnapshot({
         requestHasQuotedLeg = true;
       }
 
-      if (leg?.state === "awaiting_approval" || leg?.approval?.status === "awaiting_user") {
+      if (
+        leg?.state === "awaiting_approval" ||
+        leg?.approval?.status === "awaiting_user" ||
+        leg?.approval?.status === "awaiting_backend"
+      ) {
         requestAwaitingApproval = true;
       }
 

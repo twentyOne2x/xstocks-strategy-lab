@@ -80,6 +80,7 @@ const rebalanceTriggerSourceSchema = z.enum([
 const rebalanceRuntimeOwnerSchema = z.enum([
   "operator_manual",
   "worker_offchain_scheduler",
+  "policy_bounded_automation",
 ]);
 const routeTruthLabelViewSchema = z.object({
   routeId: nonEmptyStringSchema,
@@ -696,6 +697,10 @@ export const API_ENDPOINTS = Object.freeze({
   AUTORESEARCH_RUNTIME_RECEIPTS: "/api/internal/autoresearch/receipts",
   CHAINLINK_CRE_PROVIDER_TRIGGERED_REVIEW:
     "/api/internal/rebalances/provider-triggered-review",
+  CHAINLINK_CRE_AUTONOMOUS_BASELINE:
+    "/api/internal/rebalances/provider-autonomous/baseline",
+  CHAINLINK_CRE_AUTONOMOUS_PROOF:
+    "/api/internal/rebalances/provider-autonomous/proof",
   XSTOCKS_FUNNEL_EVENTS: "/api/funnel-events/xstocks",
   XSTOCKS_REPORTING: "/api/reporting/xstocks",
 });

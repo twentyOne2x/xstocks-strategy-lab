@@ -5,7 +5,10 @@ import {
   timestampSchema,
 } from "./common.js";
 
-export const AUTH_PROVIDER_VALUES = ["privy"] as const;
+export const AUTH_PROVIDER_VALUES = [
+  "privy",
+  "repo_owned_hot_signer",
+] as const;
 export const authProviderSchema = z.enum(AUTH_PROVIDER_VALUES);
 export type AuthProvider = z.infer<typeof authProviderSchema>;
 

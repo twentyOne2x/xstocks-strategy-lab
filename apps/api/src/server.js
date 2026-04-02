@@ -20,6 +20,18 @@ const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(CURRENT_DIR, "..");
 const REPO_ROOT = resolve(APP_ROOT, "..", "..");
 
+function readBooleanEnv(value) {
+  if (value === true || value === false) {
+    return value;
+  }
+
+  if (typeof value !== "string") {
+    return false;
+  }
+
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
 function createDefaultConfig() {
   return {
     repoRoot: REPO_ROOT,
@@ -48,6 +60,22 @@ function createDefaultConfig() {
       process.env.CHAINLINK_CRE_SIGNER_ALLOWLIST ?? "",
     chainlinkCreWorkflowAllowlist:
       process.env.CHAINLINK_CRE_WORKFLOW_ALLOWLIST ?? "",
+    chainlinkCreAutonomousExecutionEnabled:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_EXECUTION_ENABLED ?? "",
+    chainlinkCreAutonomousSignerPrivateKey:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_SIGNER_PRIVATE_KEY ?? null,
+    chainlinkCreAutonomousOwnerProviderId:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_OWNER_PROVIDER_ID ?? null,
+    chainlinkCreAutonomousOwnerAppId:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_OWNER_APP_ID ?? null,
+    chainlinkCreAutonomousOwnerUserId:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_OWNER_USER_ID ?? null,
+    chainlinkCreAutonomousOwnerSessionId:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_OWNER_SESSION_ID ?? null,
+    chainlinkCreAutonomousOwnerIssuer:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_OWNER_ISSUER ?? null,
+    chainlinkCreAutonomousExecutionRouteId:
+      process.env.CHAINLINK_CRE_AUTONOMOUS_EXECUTION_ROUTE_ID ?? null,
   };
 }
 
@@ -110,6 +138,17 @@ export function createApiRuntimeService(overrides = {}) {
     autoresearchProofToken: config.autoresearchProofToken,
     chainlinkCreSignerAllowlist: config.chainlinkCreSignerAllowlist,
     chainlinkCreWorkflowAllowlist: config.chainlinkCreWorkflowAllowlist,
+    chainlinkCreAutonomousExecution:
+      overrides.chainlinkCreAutonomousExecution ?? {
+        enabled: readBooleanEnv(config.chainlinkCreAutonomousExecutionEnabled),
+        signerPrivateKey: config.chainlinkCreAutonomousSignerPrivateKey,
+        ownerProviderId: config.chainlinkCreAutonomousOwnerProviderId,
+        ownerAppId: config.chainlinkCreAutonomousOwnerAppId,
+        ownerUserId: config.chainlinkCreAutonomousOwnerUserId,
+        ownerSessionId: config.chainlinkCreAutonomousOwnerSessionId,
+        ownerIssuer: config.chainlinkCreAutonomousOwnerIssuer,
+        executionRouteId: config.chainlinkCreAutonomousExecutionRouteId,
+      },
     now: overrides.now,
   });
 }
@@ -305,6 +344,33 @@ export function createApiServer(overrides = {}) {
           required: true,
         });
         const result = await service.recordAutoresearchRuntimeReceipt(body);
+        sendJson(response, 200, { data: result });
+        return;
+      }
+
+      if (
+        request.method === "POST" &&
+        url.pathname === API_ENDPOINTS.CHAINLINK_CRE_AUTONOMOUS_BASELINE
+      ) {
+        const body = await readJsonRequestBody(request);
+        await service.authenticateAutoresearchProofRequest(request, {
+          required: true,
+        });
+        const result = await service.bootstrapChainlinkCreAutonomousBaseline(body);
+        sendJson(response, 200, { data: result });
+        return;
+      }
+
+      if (
+        request.method === "GET" &&
+        url.pathname === API_ENDPOINTS.CHAINLINK_CRE_AUTONOMOUS_PROOF
+      ) {
+        await service.authenticateAutoresearchProofRequest(request, {
+          required: true,
+        });
+        const result = await service.readChainlinkCreAutonomousProof(
+          Object.fromEntries(url.searchParams),
+        );
         sendJson(response, 200, { data: result });
         return;
       }

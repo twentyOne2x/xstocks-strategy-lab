@@ -80,6 +80,7 @@ export type ExecutionReceiptStatus = z.infer<
 
 export const EXECUTION_MANUAL_SIGNING_MODE_VALUES = [
   "wallet_first",
+  "backend_repo_owned_signer",
 ] as const;
 export const executionManualSigningModeSchema = z.enum(
   EXECUTION_MANUAL_SIGNING_MODE_VALUES,
@@ -90,6 +91,7 @@ export type ExecutionManualSigningMode = z.infer<
 
 export const EXECUTION_AUTOMATION_ACCOUNT_MODE_VALUES = [
   "smart_account_required",
+  "repo_owned_hot_signer",
 ] as const;
 export const executionAutomationAccountModeSchema = z.enum(
   EXECUTION_AUTOMATION_ACCOUNT_MODE_VALUES,
@@ -113,6 +115,7 @@ export type ExecutionAutomationReadiness = z.infer<
 
 export const EXECUTION_VENUE_SIGNING_MODE_VALUES = [
   "wallet_signer_manual_only",
+  "backend_repo_owned_eip712",
 ] as const;
 export const executionVenueSigningModeSchema = z.enum(
   EXECUTION_VENUE_SIGNING_MODE_VALUES,

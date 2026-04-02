@@ -13,6 +13,7 @@ export const CHAINLINK_CRE_PROVIDER_ID = "chainlink_cre";
 export const CHAINLINK_CRE_EVENT_VERSION = "1";
 export const CHAINLINK_CRE_REVIEW_REQUESTED_STATE = "awaiting_operator";
 export const CHAINLINK_CRE_REVIEW_EXECUTION_MODE = "review_only";
+export const CHAINLINK_CRE_CANONICAL_EXECUTION_MODE = "canonical_execution";
 export const CHAINLINK_CRE_ETH_JWT_ALGORITHM = "ETH_PERSONAL_SIGN";
 
 export const CHAINLINK_CRE_PROVIDER_EVENT_SCHEMA = z.object({
@@ -34,7 +35,10 @@ export const CHAINLINK_CRE_PROVIDER_EVENT_SCHEMA = z.object({
   }),
   reviewIntent: z.object({
     requestedState: z.literal(CHAINLINK_CRE_REVIEW_REQUESTED_STATE),
-    executionMode: z.literal(CHAINLINK_CRE_REVIEW_EXECUTION_MODE),
+    executionMode: z.enum([
+      CHAINLINK_CRE_REVIEW_EXECUTION_MODE,
+      CHAINLINK_CRE_CANONICAL_EXECUTION_MODE,
+    ]),
   }),
 });
 
