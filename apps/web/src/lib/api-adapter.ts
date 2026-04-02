@@ -9,7 +9,6 @@ import type {
   BasketExplanationBundle,
   BasketTuningSummary,
   BlotterData,
-  ExecutionArtifacts,
   ExecutionPreviewView,
   PortfolioExplanationBundle,
   PositionRow,
@@ -24,8 +23,8 @@ import type {
 import type {
   ApiActivityItem,
   ApiActivityData,
+  ApiExecutionArtifact,
   ApiBasketExplanationBundle,
-  ApiExecutionArtifacts,
   ApiExecutionRequest,
   ApiBasketTuningSummary,
   ApiExecutionPlan,
@@ -37,6 +36,10 @@ import type {
   ApiRecommendation,
   ApiSlot,
 } from "@/lib/api-client";
+import {
+  buildExecutionArtifact,
+  buildExecutionArtifactFromLeg,
+} from "@/lib/execution-artifacts";
 import { buildPromotedManifestSlug } from "@/lib/promoted-manifest-identity";
 
 function adaptExplanationBundle(
@@ -467,16 +470,25 @@ function mapLifecycleState(
     legState === "submitted" ||
     legState === "awaiting_approval" ||
     legState === "quote_ready" ||
+    legState === "pending" ||
     surfaceState === "pending"
   ) {
     return "pending";
   }
 
-  if (surfaceState === "preview") {
+  if (surfaceState === "preview" || surfaceState === "ready" || surfaceState === "view_ready") {
     return "view_ready";
   }
 
-  if (surfaceState === "blocked" || legState === "failed" || legState === "blocked") {
+  if (
+    surfaceState === "blocked" ||
+    surfaceState === "wallet_required" ||
+    surfaceState === "funding_required" ||
+    surfaceState === "smart_account_required" ||
+    surfaceState === "smart_account_pending" ||
+    legState === "failed" ||
+    legState === "blocked"
+  ) {
     return "blocked";
   }
 
@@ -505,24 +517,36 @@ function normalizeActivityItem(item: ApiActivityItem) {
   };
 }
 
-function adaptExecutionArtifacts(
-  artifacts: ApiExecutionArtifacts | null | undefined,
-): ExecutionArtifacts | null {
-  if (!artifacts) {
-    return null;
-  }
-
-  return {
-    txHash: artifacts.txHash ?? null,
-    venueOrderId: artifacts.venueOrderId ?? null,
-    chain: artifacts.chain ?? null,
-    explorerUrls: artifacts.explorerUrls
-      ? {
-          etherscanTx: artifacts.explorerUrls.etherscanTx ?? null,
-          eigenPhiTx: artifacts.explorerUrls.eigenPhiTx ?? null,
-        }
-      : null,
-  };
+function buildRowExecutionArtifact({
+  apiArtifact,
+  rawItem,
+  leg,
+  chain,
+}: {
+  apiArtifact: ApiExecutionArtifact | null | undefined;
+  rawItem: ReturnType<typeof normalizeActivityItem> | null;
+  leg: ApiExecutionRequest["legs"][number] | null;
+  chain: string | null;
+}) {
+  return (
+    apiArtifact ??
+    buildExecutionArtifactFromLeg(leg, chain) ??
+    buildExecutionArtifact({
+      chain,
+      txHash:
+        typeof rawItem?.payload?.txHash === "string"
+          ? rawItem.payload.txHash
+          : typeof rawItem?.payload?.tx_hash === "string"
+            ? rawItem.payload.tx_hash
+            : null,
+      venueOrderId:
+        typeof rawItem?.payload?.venueOrderId === "string"
+          ? rawItem.payload.venueOrderId
+          : typeof rawItem?.payload?.venue_order_id === "string"
+            ? rawItem.payload.venue_order_id
+            : null,
+    })
+  );
 }
 
 /* ── Manifest adapter ── */
@@ -854,6 +878,7 @@ export function adaptActivityToBlotter(
     ? adaptRebalanceOrchestration(activity.rebalanceOrchestration)
     : null;
   const latestExecutionRequest = executionRequests[0] ?? null;
+  const chain = activity.manifest?.chain ?? activity.slot?.chain ?? null;
   const legIndex = new Map(
     executionRequests.flatMap((executionRequest) =>
       executionRequest.legs.map((leg) => [leg.legId, leg] as const),
@@ -867,28 +892,7 @@ export function adaptActivityToBlotter(
   );
 
   const positions: PositionRow[] =
-    surface?.positions.map((p, i) => ({
-          id: `pos_api_${i}`,
-          symbol: p.assetSymbol,
-          sleeve: p.sleeve.replace(/_/g, " "),
-          mode:
-            manifests.find((m) => m.allocations.some((a) => a.symbol === p.assetSymbol))?.mode ??
-            "basket",
-          exposureUsd: formatUsdValue(p.targetNotionalUsd),
-          pnlPct: "—",
-          route: p.venueId ?? "xChange",
-          nextRebalance: orchestration
-            ? humanizeRebalanceState(orchestration.state)
-            : "Preview",
-          state:
-            p.status === "preview"
-              ? "watch"
-              : p.status === "active"
-                ? "active"
-                : "pending",
-          updatedAt: formatUtcTime(p.updatedAt),
-        })) ??
-    (latestExecutionRequest && latestExecutionRequest.legs.length > 0
+    latestExecutionRequest && latestExecutionRequest.legs.length > 0
       ? latestExecutionRequest.legs.map((leg) => ({
           id: leg.legId,
           symbol: leg.assetSymbol ?? leg.sleeve,
@@ -914,7 +918,27 @@ export function adaptActivityToBlotter(
               latestExecutionRequest.updatedAt,
           ),
         }))
-      : []);
+      : surface?.positions.map((p, i) => ({
+          id: `pos_api_${i}`,
+          symbol: p.assetSymbol,
+          sleeve: p.sleeve.replace(/_/g, " "),
+          mode:
+            manifests.find((m) => m.allocations.some((a) => a.symbol === p.assetSymbol))?.mode ??
+            "basket",
+          exposureUsd: formatUsdValue(p.targetNotionalUsd),
+          pnlPct: "—",
+          route: p.venueId ?? "xChange",
+          nextRebalance: orchestration
+            ? humanizeRebalanceState(orchestration.state)
+            : "Preview",
+          state:
+            p.status === "preview"
+              ? "watch"
+              : p.status === "active"
+                ? "active"
+                : "pending",
+          updatedAt: formatUtcTime(p.updatedAt),
+        })) ?? [];
 
   const history: HistoryRow[] = surface?.history.map((historyItem) => {
     const rawItem = rawItemIndex.get(historyItem.id) ?? null;
@@ -936,9 +960,12 @@ export function adaptActivityToBlotter(
         "API",
       amount: leg ? formatUsdValue(leg.targetNotionalUsd) : "—",
       status: mapHistoryStatus(historyItem.status, leg?.state ?? null),
-      executionArtifacts: adaptExecutionArtifacts(
-        historyItem.executionArtifacts ?? null,
-      ),
+      execution: buildRowExecutionArtifact({
+        apiArtifact: historyItem.execution,
+        rawItem,
+        leg,
+        chain,
+      }),
     };
   }) ?? [];
 
@@ -957,9 +984,12 @@ export function adaptActivityToBlotter(
       detail: lifecycleItem.detail,
       state: mapLifecycleState(lifecycleItem.state, leg?.state ?? null),
       nextAction: lifecycleItem.nextAction ?? "No action",
-      executionArtifacts: adaptExecutionArtifacts(
-        lifecycleItem.executionArtifacts ?? null,
-      ),
+      execution: buildRowExecutionArtifact({
+        apiArtifact: lifecycleItem.execution,
+        rawItem,
+        leg,
+        chain,
+      }),
     };
   }) ?? [];
 

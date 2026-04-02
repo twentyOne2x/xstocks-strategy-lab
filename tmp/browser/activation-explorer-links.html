@@ -1,4 +1,11 @@
-/* ──────────────────────────────────────────────
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Activation execution explorer links</title>
+    <style>
+      /* ──────────────────────────────────────────────
    24-7 MARKETS — Design Tokens
    ────────────────────────────────────────────── */
 
@@ -718,40 +725,6 @@ button { font: inherit; }
   stroke: url(#workspaceLine);
   stroke-width: 2.2;
   vector-effect: non-scaling-stroke;
-}
-
-.workspace-buy-slot {
-  display: grid;
-  gap: 10px;
-}
-
-.workspace-buy-surface {
-  display: grid;
-  gap: 12px;
-  padding: 14px;
-  border-radius: var(--radius-row);
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.workspace-buy-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.workspace-buy-head h3 {
-  margin-top: 6px;
-  font-size: 1.2rem;
-}
-
-.workspace-buy-controls {
-  display: flex;
-}
-
-.workspace-buy-controls > * {
-  width: 100%;
 }
 
 .workspace-mini-grid,
@@ -4005,8 +3978,7 @@ button { font: inherit; }
 
   .progress-meta,
   .workspace-chart-head,
-  .blotter-header,
-  .workspace-buy-head {
+  .blotter-header {
     flex-direction: column;
     align-items: stretch;
   }
@@ -4611,3 +4583,51 @@ button { font: inherit; }
   .landing-powered-band { gap: 12px; padding: 14px 16px; flex-wrap: wrap; }
   .landing-powered-name { font-size: 0.88rem; }
 }
+
+
+      body {
+        padding: 32px;
+      }
+
+      .screenshot-shell {
+        max-width: 1120px;
+        margin: 0 auto;
+        display: grid;
+        gap: 20px;
+      }
+
+      .screenshot-grid {
+        display: grid;
+        gap: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="screenshot-shell">
+      
+    <article class="panel-card panel-card-subtle">
+      <span class="section-kicker">Submission and receipt truth</span>
+      <div class="allocation-stack">
+        <div class="allocation-row">
+          <div>
+            <strong>NVDAx</strong>
+            <p>Structured execution artifact captured.</p>
+            <p class="panel-note">Settlement transaction captured.</p>
+            <div class="artifact-links"><span class="artifact-chip">Venue order 0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</span><span class="artifact-chip">Tx 0xaaaaaaaa...aaaaaaaa</span><a class="table-link" href="https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" rel="noopener noreferrer" target="_blank">Etherscan</a><a class="table-link" href="https://eigenphi.io/mev/eigentx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" rel="noopener noreferrer" target="_blank">EigenPhi</a></div>
+          </div>
+          <span>confirmed</span>
+        </div>
+        <div class="allocation-row">
+          <div>
+            <strong>MSFTx</strong>
+            <p>No venue order id yet</p>
+            <p class="panel-note">awaiting approval</p>
+          </div>
+          <span>awaiting approval</span>
+        </div>
+      </div>
+    </article>
+  
+    </main>
+  </body>
+</html>

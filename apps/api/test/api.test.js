@@ -2304,6 +2304,39 @@ test("execution quote, approval, submission, and receipt actions persist live Co
       ),
       true,
     );
+
+    const activityResponse = await fetch(
+      `${harness.baseUrl}/api/activity?manifestId=${DEFAULT_MANIFEST_ID}`,
+      {
+        headers: harness.auth.headers({
+          includeIdentityToken: false,
+        }),
+      },
+    );
+    const activityPayload = await activityResponse.json();
+    const historyItem = activityPayload.data.activitySurface.history.find(
+      (item) => item.type === "activation_succeeded",
+    );
+    const lifecycleItem = activityPayload.data.activitySurface.lifecycle.find(
+      (item) => item.title === "activation_succeeded",
+    );
+
+    assert.equal(activityResponse.status, 200);
+    assert.ok(historyItem);
+    assert.ok(historyItem.execution);
+    assert.ok(lifecycleItem);
+    assert.ok(lifecycleItem.execution);
+    assert.equal(historyItem.execution.venueOrderId, TEST_COW_ORDER_UID);
+    assert.equal(historyItem.execution.chain, "ethereum");
+    assert.equal(
+      historyItem.execution.explorerUrls.etherscanTx,
+      `https://etherscan.io/tx/${TEST_SETTLEMENT_TX_HASH}`,
+    );
+    assert.equal(
+      historyItem.execution.explorerUrls.eigenPhiTx,
+      `https://eigenphi.io/mev/eigentx/${TEST_SETTLEMENT_TX_HASH}`,
+    );
+    assert.equal(lifecycleItem.execution.venueOrderId, TEST_COW_ORDER_UID);
   } finally {
     await harness.close();
   }

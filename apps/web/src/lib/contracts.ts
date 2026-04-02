@@ -441,11 +441,11 @@ export interface ExecutionExplorerUrls {
   eigenPhiTx: string | null;
 }
 
-export interface ExecutionArtifacts {
+export interface ExecutionArtifactView {
   txHash: string | null;
   venueOrderId: string | null;
   chain: string | null;
-  explorerUrls: ExecutionExplorerUrls | null;
+  explorerUrls: ExecutionExplorerUrls;
 }
 
 export interface HistoryRow {
@@ -456,7 +456,7 @@ export interface HistoryRow {
   venue: string;
   amount: string;
   status: "settled" | "pending" | "blocked";
-  executionArtifacts?: ExecutionArtifacts | null;
+  execution: ExecutionArtifactView | null;
 }
 
 export interface ActivityEvent {
@@ -466,7 +466,7 @@ export interface ActivityEvent {
   detail: string;
   state: UserVisibleState;
   nextAction: string;
-  executionArtifacts?: ExecutionArtifacts | null;
+  execution: ExecutionArtifactView | null;
 }
 
 export type RebalanceState = "act" | "consider" | "monitor" | "none";

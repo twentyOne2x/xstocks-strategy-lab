@@ -16,13 +16,13 @@ describe("resolveApiBase", () => {
   it("falls back to localhost in development", () => {
     vi.stubEnv("NEXT_PUBLIC_API_URL", "");
     vi.stubEnv("NODE_ENV", "development");
-    expect(resolveApiBase()).toBe("http://localhost:4000");
+    expect(resolveApiBase()).toBe("http://localhost:3001");
   });
 
   it("falls back to localhost in test", () => {
     vi.stubEnv("NEXT_PUBLIC_API_URL", "");
     vi.stubEnv("NODE_ENV", "test");
-    expect(resolveApiBase()).toBe("http://localhost:4000");
+    expect(resolveApiBase()).toBe("http://localhost:3001");
   });
 
   it("throws in production without explicit URL", () => {

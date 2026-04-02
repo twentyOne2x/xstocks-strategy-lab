@@ -299,6 +299,109 @@ describe("adaptManifestToFrontend", () => {
     ]);
     expect(spotlight.points.at(-1)?.value).toBe(1450);
   });
+
+  it("preserves structured execution artifacts for blotter history and activity rows", () => {
+    const adaptedManifest = adaptManifestToFrontend(manifest, slot);
+    const txHash = `0x${"a".repeat(64)}`;
+    const activityData: ApiActivityData = {
+      version: "1",
+      generatedAt: "2026-04-02T10:00:00.000Z",
+      limit: 50,
+      manifest,
+      slot,
+      items: [
+        {
+          version: "1",
+          eventId: "evt_submission",
+          eventType: "activation_submitted",
+          scope: {
+            type: "activation",
+            id: "act_1",
+          },
+          summary: "Recorded user-approved 1inch Fusion submission for NVDAx.",
+          occurredAt: "2026-04-02T10:00:00.000Z",
+          payload: {
+            legId: "leg_1",
+            venueOrderId: "fusion-order-1",
+            txHash,
+            requestState: "submitted",
+          },
+        },
+      ],
+      activations: [],
+      rebalanceOrchestration: null,
+      rebalanceHistory: [],
+      activitySurface: {
+        source: "activation_snapshot",
+        currentState: {
+          surfaceTruth: "live",
+          executionState: "pending",
+          pauseAvailable: true,
+          turnOffAvailable: true,
+        },
+        positions: [],
+        history: [
+          {
+            id: "evt_submission",
+            occurredAt: "2026-04-02T10:00:00.000Z",
+            type: "activation_submitted",
+            summary: "Recorded user-approved 1inch Fusion submission for NVDAx.",
+            status: "pending",
+            execution: {
+              txHash,
+              venueOrderId: "fusion-order-1",
+              chain: "ethereum",
+              explorerUrls: {
+                etherscanTx: `https://etherscan.io/tx/${txHash}`,
+                eigenPhiTx: `https://eigenphi.io/mev/eigentx/${txHash}`,
+              },
+            },
+          },
+        ],
+        lifecycle: [
+          {
+            id: "evt_submission",
+            occurredAt: "2026-04-02T10:00:00.000Z",
+            title: "activation_submitted",
+            detail: "Recorded user-approved 1inch Fusion submission for NVDAx.",
+            state: "pending",
+            nextAction: "Watch settlement",
+            execution: {
+              txHash,
+              venueOrderId: "fusion-order-1",
+              chain: "ethereum",
+              explorerUrls: {
+                etherscanTx: `https://etherscan.io/tx/${txHash}`,
+                eigenPhiTx: `https://eigenphi.io/mev/eigentx/${txHash}`,
+              },
+            },
+          },
+        ],
+        nextAction: null,
+      },
+    };
+
+    const blotter = adaptActivityToBlotter(activityData, [adaptedManifest]);
+
+    expect(blotter.history[0]?.description).toBe(
+      "Recorded user-approved 1inch Fusion submission for NVDAx.",
+    );
+    expect(blotter.history[0]?.execution).toEqual({
+      txHash,
+      venueOrderId: "fusion-order-1",
+      chain: "ethereum",
+      explorerUrls: {
+        etherscanTx: `https://etherscan.io/tx/${txHash}`,
+        eigenPhiTx: `https://eigenphi.io/mev/eigentx/${txHash}`,
+      },
+    });
+    expect(blotter.activity[0]?.detail).toBe(
+      "Recorded user-approved 1inch Fusion submission for NVDAx.",
+    );
+    expect(blotter.activity[0]?.execution?.explorerUrls.etherscanTx).toBe(
+      `https://etherscan.io/tx/${txHash}`,
+    );
+  });
 });
 
 describe("adaptActivityToBlotter", () => {

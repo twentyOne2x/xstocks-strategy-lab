@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 
 import type {
   ApiActivationView,
-  ApiExecutionLeg,
   ApiExecutionPlan,
   ApiExecutionRequest,
 } from "@/lib/api-client";
@@ -20,7 +19,8 @@ import {
   fetchActivationPreview,
   fetchExecutions,
 } from "@/lib/api-client";
-import type { ActivationScreenProps, ExecutionArtifacts } from "@/lib/contracts";
+import type { ActivationScreenProps } from "@/lib/contracts";
+import { buildExecutionArtifactFromLeg } from "@/lib/execution-artifacts";
 import {
   EXECUTION_REFRESH_EVENT,
   getExecutionSignatureInputs,
@@ -33,45 +33,11 @@ import {
 } from "@/lib/portfolio-ui";
 import { buildManifestContractBundle } from "@/lib/shared-contract-adapter";
 
+import { ExecutionArtifactSummary } from "@/components/execution-artifact-summary";
 import { WalletConnectButton, useWalletState } from "@/components/wallet-connect-button";
-import { ExecutionArtifactLinks } from "@/components/execution-artifact-links";
 import { XStocksFunnelStageTracker } from "@/components/xstocks-funnel-stage-tracker";
 
 type StatusTone = "neutral" | "positive" | "warning";
-
-function buildTxExplorerUrls(
-  chain: string,
-  txHash: string | null,
-): ExecutionArtifacts["explorerUrls"] {
-  if (!txHash || chain.toLowerCase() !== "ethereum") {
-    return null;
-  }
-
-  return {
-    etherscanTx: `https://etherscan.io/tx/${txHash}`,
-    eigenPhiTx: `https://eigenphi.io/mev/eigentx/${txHash}`,
-  };
-}
-
-function buildLegExecutionArtifacts(
-  chain: string,
-  leg: ApiExecutionLeg,
-): ExecutionArtifacts | null {
-  const txHash = leg.receipt?.txHash ?? leg.venueStatus?.settlementTxHash ?? null;
-  const venueOrderId =
-    leg.venueStatus?.venueOrderId ?? leg.approval?.venueOrderId ?? null;
-
-  if (!txHash && !venueOrderId) {
-    return null;
-  }
-
-  return {
-    txHash,
-    venueOrderId,
-    chain,
-    explorerUrls: buildTxExplorerUrls(chain, txHash),
-  };
-}
 
 export function ActivationScreen({ manifest }: ActivationScreenProps) {
   const contracts = buildManifestContractBundle(manifest);
@@ -616,9 +582,9 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
                 {executionRequest.legs
                   .filter((leg) => leg.sleeve === "core_xstocks")
                   .map((leg) => {
-                    const artifacts = buildLegExecutionArtifacts(
-                      executionRequest.chain,
+                    const executionArtifact = buildExecutionArtifactFromLeg(
                       leg,
+                      executionRequest.chain ?? manifest.chain,
                     );
 
                     return (
@@ -626,18 +592,18 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
                         <div>
                           <strong>{leg.assetSymbol ?? leg.sleeve}</strong>
                           <p>
-                            {artifacts?.venueOrderId
-                              ? "Recorded venue order id is available."
-                              : "No venue order id recorded yet."}
+                            {executionArtifact?.venueOrderId
+                              ? "Structured execution artifact captured."
+                              : "No venue order id yet"}
                           </p>
                           <p className="panel-note">
-                            {artifacts?.txHash
-                              ? "Settlement receipt is recorded for this leg."
+                            {executionArtifact?.txHash
+                              ? "Settlement transaction captured."
                               : leg.venueStatus?.status
-                                ? `Venue status ${leg.venueStatus.status}`
-                                : "Awaiting a recorded settlement receipt."}
+                                ? `venue status ${leg.venueStatus.status}`
+                                : leg.state.replaceAll("_", " ")}
                           </p>
-                          <ExecutionArtifactLinks artifacts={artifacts} />
+                          <ExecutionArtifactSummary execution={executionArtifact} />
                         </div>
                         <span>{leg.state.replaceAll("_", " ")}</span>
                       </div>

@@ -20,7 +20,7 @@ export function resolveApiBase(): string {
     process.env.NODE_ENV === "development" ||
     process.env.NODE_ENV === "test";
 
-  if (isDev) return "http://localhost:4000";
+  if (isDev) return "http://localhost:3001";
 
   throw new Error(
     "NEXT_PUBLIC_API_URL is not set. " +
@@ -466,6 +466,18 @@ export interface ApiActivationPreviewData {
   latestActivation: ApiActivationView | null;
 }
 
+export interface ApiExecutionExplorerUrls {
+  etherscanTx: string | null;
+  eigenPhiTx: string | null;
+}
+
+export interface ApiExecutionArtifact {
+  txHash: string | null;
+  venueOrderId: string | null;
+  chain: string | null;
+  explorerUrls: ApiExecutionExplorerUrls;
+}
+
 export interface ApiActivityPosition {
   positionId: string;
   assetSymbol: string;
@@ -484,7 +496,7 @@ export interface ApiActivityHistoryItem {
   type: string;
   summary: string;
   status: string;
-  executionArtifacts?: ApiExecutionArtifacts | null;
+  execution: ApiExecutionArtifact | null;
 }
 
 export interface ApiActivityLifecycleItem {
@@ -494,7 +506,7 @@ export interface ApiActivityLifecycleItem {
   detail: string;
   state: string;
   nextAction: string | null;
-  executionArtifacts?: ApiExecutionArtifacts | null;
+  execution: ApiExecutionArtifact | null;
 }
 
 export interface ApiActivitySurface {
@@ -633,18 +645,6 @@ export interface ApiExecutionApproval {
   submittedAt: string | null;
   venueOrderId: string | null;
   notes: string[];
-}
-
-export interface ApiExecutionExplorerUrls {
-  etherscanTx: string | null;
-  eigenPhiTx: string | null;
-}
-
-export interface ApiExecutionArtifacts {
-  txHash: string | null;
-  venueOrderId: string | null;
-  chain: string | null;
-  explorerUrls: ApiExecutionExplorerUrls | null;
 }
 
 export interface ApiExecutionReceipt {

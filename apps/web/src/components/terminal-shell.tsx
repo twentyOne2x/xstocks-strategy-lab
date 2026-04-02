@@ -15,7 +15,7 @@ const routeLabels: Array<{ id: RouteId; label: string }> = [
   { id: "onboarding", label: "Onboarding" },
   { id: "comparison", label: "Compare" },
   { id: "detail", label: "Detail" },
-  { id: "activation", label: "Deposit" },
+  { id: "activation", label: "Activation" },
   { id: "activity", label: "Activity" },
 ];
 

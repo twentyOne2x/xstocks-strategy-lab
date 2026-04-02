@@ -1343,6 +1343,7 @@ export const blotter: BlotterData = {
       venue: "Cow Swap",
       amount: "$2,500",
       status: "settled",
+      execution: null,
     },
     {
       id: "hist_2",
@@ -1352,6 +1353,7 @@ export const blotter: BlotterData = {
       venue: "1inch",
       amount: "$420",
       status: "settled",
+      execution: null,
     },
     {
       id: "hist_3",
@@ -1361,6 +1363,7 @@ export const blotter: BlotterData = {
       venue: "Smart account",
       amount: "$1,200",
       status: "pending",
+      execution: null,
     },
   ],
   activity: [
@@ -1371,6 +1374,7 @@ export const blotter: BlotterData = {
       detail: "A directional position was paused because funding dropped below the required level.",
       state: "paused",
       nextAction: "Check funding",
+      execution: null,
     },
     {
       id: "event_2",
@@ -1379,6 +1383,7 @@ export const blotter: BlotterData = {
       detail: "All holdings are within target. No rebalance needed right now.",
       state: "active",
       nextAction: "No action needed",
+      execution: null,
     },
     {
       id: "event_3",
@@ -1387,6 +1392,7 @@ export const blotter: BlotterData = {
       detail: "You answered the profile questions and were matched to this portfolio.",
       state: "view_ready",
       nextAction: "View portfolio",
+      execution: null,
     },
   ],
   rebalancing: [

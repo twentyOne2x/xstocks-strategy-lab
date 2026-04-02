@@ -1,4 +1,11 @@
-/* ──────────────────────────────────────────────
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bottom blotter explorer links</title>
+    <style>
+      /* ──────────────────────────────────────────────
    24-7 MARKETS — Design Tokens
    ────────────────────────────────────────────── */
 
@@ -718,40 +725,6 @@ button { font: inherit; }
   stroke: url(#workspaceLine);
   stroke-width: 2.2;
   vector-effect: non-scaling-stroke;
-}
-
-.workspace-buy-slot {
-  display: grid;
-  gap: 10px;
-}
-
-.workspace-buy-surface {
-  display: grid;
-  gap: 12px;
-  padding: 14px;
-  border-radius: var(--radius-row);
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.workspace-buy-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.workspace-buy-head h3 {
-  margin-top: 6px;
-  font-size: 1.2rem;
-}
-
-.workspace-buy-controls {
-  display: flex;
-}
-
-.workspace-buy-controls > * {
-  width: 100%;
 }
 
 .workspace-mini-grid,
@@ -4005,8 +3978,7 @@ button { font: inherit; }
 
   .progress-meta,
   .workspace-chart-head,
-  .blotter-header,
-  .workspace-buy-head {
+  .blotter-header {
     flex-direction: column;
     align-items: stretch;
   }
@@ -4611,3 +4583,79 @@ button { font: inherit; }
   .landing-powered-band { gap: 12px; padding: 14px 16px; flex-wrap: wrap; }
   .landing-powered-name { font-size: 0.88rem; }
 }
+
+
+      body {
+        padding: 32px;
+      }
+
+      .screenshot-shell {
+        max-width: 1120px;
+        margin: 0 auto;
+        display: grid;
+        gap: 20px;
+      }
+
+      .screenshot-grid {
+        display: grid;
+        gap: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="screenshot-shell">
+      
+    <section class="blotter">
+      <div class="blotter-header">
+        <div>
+          <span class="section-kicker">Portfolio ledger</span>
+          <p class="blotter-note">Structured execution artifacts with explorer links.</p>
+        </div>
+      </div>
+      <div class="screenshot-grid">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>10:00 UTC</td>
+              <td><span class="status-pill status-pill-pending">pending</span></td>
+              <td>activation_submitted</td>
+              <td>
+                <div class="table-cell-stack">
+                  <span>Recorded user-approved venue submission for NVDAx.</span>
+                  <div class="artifact-links"><span class="artifact-chip">Venue order 0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</span><span class="artifact-chip">Tx 0xaaaaaaaa...aaaaaaaa</span><a class="table-link" href="https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" rel="noopener noreferrer" target="_blank">Etherscan</a><a class="table-link" href="https://eigenphi.io/mev/eigentx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" rel="noopener noreferrer" target="_blank">EigenPhi</a></div>
+                </div>
+              </td>
+              <td>$1,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="timeline-list">
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <span class="timeline-time">10:01 UTC</span>
+              <span class="status-pill status-pill-settled">settled</span>
+            </div>
+            <div class="timeline-copy">
+              <h3>activation_succeeded</h3>
+              <p>Settlement confirmation is now persisted for the execution leg.</p>
+              <div class="artifact-links"><span class="artifact-chip">Venue order 0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</span><span class="artifact-chip">Tx 0xaaaaaaaa...aaaaaaaa</span><a class="table-link" href="https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" rel="noopener noreferrer" target="_blank">Etherscan</a><a class="table-link" href="https://eigenphi.io/mev/eigentx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" rel="noopener noreferrer" target="_blank">EigenPhi</a></div>
+              <p class="panel-note">Next action: none.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  
+    </main>
+  </body>
+</html>

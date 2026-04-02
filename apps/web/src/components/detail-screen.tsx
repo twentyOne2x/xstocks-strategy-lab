@@ -5,12 +5,12 @@ import {
   describeRebalanceState,
   getPrimaryPortfolioComponents,
   getManifestExplanationBundle,
-  getPrimaryActionLabel,
   getRebalanceOrchestration,
   isDirectionalPreviewOnly,
 } from "@/lib/portfolio-ui";
 import { getAssetDescription, getAssetHref, getCleanRationale, getVenueDisplay } from "@/lib/holdings-display";
 
+import { PortfolioBuySurface } from "@/components/portfolio-buy-surface";
 import { WorkspaceSpotlight } from "@/components/workspace-spotlight";
 
 export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
@@ -18,6 +18,7 @@ export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
   const orchestration = getRebalanceOrchestration(manifest);
   const directionalPreviewOnly = isDirectionalPreviewOnly(manifest);
   const primaryComponents = getPrimaryPortfolioComponents(manifest, 5);
+  const activationHref = `/activate/${manifest.slug}`;
 
   return (
     <div className="screen-stack">
@@ -27,14 +28,17 @@ export function DetailScreen({ manifest, blotter }: DetailScreenProps) {
         contextLabel="Portfolio detail"
         title={manifest.frontend.title}
         description={bundle.whatThisPortfolioDoes}
-        primaryAction={{
-          href: `/activate/${manifest.slug}`,
-          label: getPrimaryActionLabel(manifest),
-        }}
         secondaryAction={{
           href: "/workspace/comparison",
           label: "Compare portfolios",
         }}
+        buySurface={(
+          <PortfolioBuySurface
+            activationHref={activationHref}
+            directionalPreviewOnly={directionalPreviewOnly}
+            manifestTitle={manifest.frontend.title}
+          />
+        )}
       />
 
       <section className="panel-grid panel-grid-two">

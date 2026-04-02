@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import type { BlotterData, PromotedManifest } from "@/lib/contracts";
 import { formatCurrency, formatPercent, getWorkspaceSpotlightData } from "@/lib/data-source";
@@ -28,20 +29,23 @@ export function WorkspaceSpotlight({
   description,
   primaryAction,
   secondaryAction,
+  buySurface,
 }: {
   manifest: PromotedManifest;
   blotter?: BlotterData;
   contextLabel: string;
   title: string;
   description: string;
-  primaryAction: { href: string; label: string };
+  primaryAction?: { href: string; label: string };
   secondaryAction?: { href: string; label: string };
+  buySurface?: ReactNode;
 }) {
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
   const path = buildPath(values);
   const bundle = getManifestExplanationBundle(manifest);
   const primaryComponents = getPrimaryPortfolioComponents(manifest, 4);
+  const hasActions = Boolean(primaryAction || secondaryAction);
 
   return (
     <section className="workspace-showcase">
@@ -106,16 +110,22 @@ export function WorkspaceSpotlight({
             </svg>
           </div>
 
-          <div className="action-stack action-stack-inline">
-            <Link className="button button-primary" href={primaryAction.href}>
-              {primaryAction.label}
-            </Link>
-            {secondaryAction ? (
-              <Link className="button button-secondary" href={secondaryAction.href}>
-                {secondaryAction.label}
-              </Link>
-            ) : null}
-          </div>
+          {buySurface ? <div className="workspace-buy-slot">{buySurface}</div> : null}
+
+          {hasActions ? (
+            <div className="action-stack action-stack-inline">
+              {primaryAction ? (
+                <Link className="button button-primary" href={primaryAction.href}>
+                  {primaryAction.label}
+                </Link>
+              ) : null}
+              {secondaryAction ? (
+                <Link className="button button-secondary" href={secondaryAction.href}>
+                  {secondaryAction.label}
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
         </article>
       </div>
 
