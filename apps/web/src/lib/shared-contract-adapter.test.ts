@@ -152,8 +152,19 @@ describe("shared contract adapter", () => {
     expect(result.optimizationMethod.pillLabel).toBe(
       "OPTIMISATION METHOD: AUTORESEARCH",
     );
-    expect(result.optimizationMethod.details[0]).toContain(
-      "onboarding.default_basket",
-    );
+    expect(
+      result.optimizationMethod.details.some((detail) =>
+        /simulated performance tests|testing many candidates|many portfolio configurations/i.test(
+          detail,
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      result.optimizationMethod.details.some((detail) =>
+        /keeping the best performer|picks the winner|current champion/i.test(
+          detail,
+        ),
+      ),
+    ).toBe(true);
   });
 });

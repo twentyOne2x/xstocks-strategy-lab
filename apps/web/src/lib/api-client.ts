@@ -460,7 +460,7 @@ export interface ApiActivationPreviewData {
   executionPlan: ApiExecutionPlan;
   liveState: ApiLiveState;
   rebalanceOrchestration: ApiRebalanceOrchestration;
-  latestActivation: unknown | null;
+  latestActivation: ApiActivationView | null;
 }
 
 export interface ApiActivityPosition {
@@ -569,10 +569,47 @@ export interface ApiRebalanceOrchestration {
   executionState: string;
   executionEligibility: string;
   surfaceTruth: string;
+  providerReceiptId: string | null;
+  executionRequestId: string | null;
+  executionTriggerSource: string | null;
+  executionRequestState: string | null;
   blockers: string[];
   warnings: string[];
   automationTruth: ApiRebalanceAutomationTruth;
   nextAction: ApiRebalanceNextAction | null;
+}
+
+export interface ApiActivationView {
+  activationId: string;
+  manifestId: string;
+  slotId: string;
+  requestedNotionalUsd: number;
+  surfaceTruth: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiExecutionWriteResponse {
+  version: string;
+  generatedAt: string;
+  action: "create" | "execute_all" | "quote_leg" | "record_submission" | "poll_receipt";
+  executionRequest: {
+    executionRequestId: string;
+    rebalanceId?: string | null;
+    triggerSource: string;
+    runtimeOwner: string;
+    state: string;
+    blockers: string[];
+    warnings: string[];
+    linkage?: {
+      providerReceiptId?: string | null;
+    } | null;
+  };
+  activityEvents: Array<{
+    eventId: string;
+    summary: string;
+  }>;
 }
 
 export interface ApiRebalanceTransition {
@@ -609,6 +646,35 @@ async function apiFetch<T>(path: string): Promise<T | null> {
   }
 }
 
+interface ApiAuthHeaders {
+  accessToken?: string | null;
+  identityToken?: string | null;
+}
+
+async function apiFetchWithAuth<T>(
+  path: string,
+  auth?: ApiAuthHeaders,
+): Promise<T | null> {
+  try {
+    const base = resolveApiBase();
+    const isServer = typeof window === "undefined";
+    const res = await fetch(`${base}${path}`, {
+      ...(isServer ? { next: { revalidate: 30 } } : {}),
+      headers: {
+        ...(auth?.accessToken ? { Authorization: `Bearer ${auth.accessToken}` } : {}),
+        ...(auth?.identityToken
+          ? { "X-Privy-Identity-Token": auth.identityToken }
+          : {}),
+      },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data as T;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchCatalog(surface?: string): Promise<ApiCatalogData | null> {
   const qs = surface ? `?surface=${surface}` : "";
   return apiFetch<ApiCatalogData>(`/api/catalog${qs}`);
@@ -620,9 +686,14 @@ export async function fetchWorkspace(slotId: string, notionalUsd = 10): Promise<
   );
 }
 
-export async function fetchActivationPreview(slotId: string, notionalUsd = 10): Promise<ApiActivationPreviewData | null> {
-  return apiFetch<ApiActivationPreviewData>(
+export async function fetchActivationPreview(
+  slotId: string,
+  notionalUsd = 10,
+  auth?: ApiAuthHeaders,
+): Promise<ApiActivationPreviewData | null> {
+  return apiFetchWithAuth<ApiActivationPreviewData>(
     `/api/activation-preview?slotId=${encodeURIComponent(slotId)}&userNotionalUsd=${notionalUsd}`,
+    auth,
   );
 }
 
@@ -636,4 +707,56 @@ export async function fetchRecommendation(slotId: string, notionalUsd = 10): Pro
   return apiFetch<ApiRecommendation>(
     `/api/recommendations?slotId=${encodeURIComponent(slotId)}&userNotionalUsd=${notionalUsd}`,
   );
+}
+
+export async function postExecutionAction(
+  body: Record<string, unknown>,
+  auth?: ApiAuthHeaders,
+): Promise<{
+  status: number;
+  data: ApiExecutionWriteResponse | null;
+  error: string | null;
+  details: unknown;
+}> {
+  try {
+    const base = resolveApiBase();
+    const res = await fetch(`${base}/api/executions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(auth?.accessToken ? { Authorization: `Bearer ${auth.accessToken}` } : {}),
+        ...(auth?.identityToken
+          ? { "X-Privy-Identity-Token": auth.identityToken }
+          : {}),
+      },
+      body: JSON.stringify(body),
+    });
+    const json = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      return {
+        status: res.status,
+        data: null,
+        error:
+          typeof json?.error === "string"
+            ? json.error
+            : `Execution request failed with status ${res.status}.`,
+        details: json?.details ?? null,
+      };
+    }
+
+    return {
+      status: res.status,
+      data: (json?.data as ApiExecutionWriteResponse) ?? null,
+      error: null,
+      details: null,
+    };
+  } catch (error) {
+    return {
+      status: 0,
+      data: null,
+      error: error instanceof Error ? error.message : "Execution request failed.",
+      details: null,
+    };
+  }
 }

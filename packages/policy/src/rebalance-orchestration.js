@@ -384,6 +384,10 @@ function createSnapshot({
     executionState: executionPlan.executionState,
     executionEligibility: executionPlan.executionEligibility,
     surfaceTruth: executionPlan.surfaceTruth,
+    providerReceiptId: latestRebalance?.providerReceiptId ?? null,
+    executionRequestId: latestRebalance?.executionRequestId ?? null,
+    executionTriggerSource: latestRebalance?.executionTriggerSource ?? null,
+    executionRequestState: latestRebalance?.executionRequestState ?? null,
     blockers,
     warnings,
     automationTruth: buildAutomationTruth({

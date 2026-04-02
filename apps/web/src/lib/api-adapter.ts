@@ -9,6 +9,7 @@ import type {
   BasketExplanationBundle,
   BasketTuningSummary,
   BlotterData,
+  ExecutionPreviewView,
   PortfolioExplanationBundle,
   PositionRow,
   HistoryRow,
@@ -242,6 +243,29 @@ function formatUtcTimestamp(timestamp: string | null): string {
   });
 }
 
+export function adaptExecutionPreview(
+  preview: ApiExecutionPreview | ApiExecutionPlan,
+): ExecutionPreviewView {
+  return {
+    surfaceTruth: preview.surfaceTruth,
+    executionState: preview.executionState,
+    executionEligibility: preview.executionEligibility,
+    routeTruthLabels: preview.routeTruthLabels.map((routeTruthLabel) => ({
+      routeId: routeTruthLabel.routeId,
+      label: routeTruthLabel.label,
+      routeKind: routeTruthLabel.routeKind,
+      chain: routeTruthLabel.chain,
+      verificationTier: routeTruthLabel.verificationTier,
+      truthState: routeTruthLabel.truthState,
+      availability: routeTruthLabel.availability,
+      requiredFor: routeTruthLabel.requiredFor,
+      reason: routeTruthLabel.reason,
+    })),
+    blockers: [...preview.blockers],
+    warnings: [...preview.warnings],
+  };
+}
+
 export function adaptRebalanceOrchestration(
   orchestration: ApiRebalanceOrchestration,
 ): RebalanceOrchestrationView {
@@ -260,6 +284,10 @@ export function adaptRebalanceOrchestration(
     executionState: orchestration.executionState,
     executionEligibility: orchestration.executionEligibility,
     surfaceTruth: orchestration.surfaceTruth,
+    providerReceiptId: orchestration.providerReceiptId,
+    executionRequestId: orchestration.executionRequestId,
+    executionTriggerSource: orchestration.executionTriggerSource,
+    executionRequestState: orchestration.executionRequestState,
     blockers: [...orchestration.blockers],
     warnings: [...orchestration.warnings],
     automationTruth: {
@@ -290,6 +318,7 @@ export function attachPreviewTruthToManifest(
   const preview = manifest.preview ?? {
     recommendationExplanationBundle: null,
     rebalanceOrchestration: null,
+    executionPreview: null,
   };
   const executionState = options.executionPreview?.executionState ?? null;
   const readinessState =
@@ -353,6 +382,9 @@ export function attachPreviewTruthToManifest(
       rebalanceOrchestration: options.rebalanceOrchestration
         ? adaptRebalanceOrchestration(options.rebalanceOrchestration)
         : preview.rebalanceOrchestration,
+      executionPreview: options.executionPreview
+        ? adaptExecutionPreview(options.executionPreview)
+        : preview.executionPreview,
     },
   };
 }
@@ -676,6 +708,7 @@ export function adaptManifestToFrontend(
     preview: {
       recommendationExplanationBundle: null,
       rebalanceOrchestration: null,
+      executionPreview: null,
     },
   };
 }

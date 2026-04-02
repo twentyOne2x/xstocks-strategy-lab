@@ -340,6 +340,34 @@ function normalizeRebalance(rebalance, index, now) {
       "blocked",
     surfaceTruth:
       rebalance.surfaceTruth ?? rebalance.surface_truth ?? "blocked",
+    providerReceiptId: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.providerReceiptId,
+        rebalance.provider_receipt_id,
+        null,
+      ),
+    ),
+    executionRequestId: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.executionRequestId,
+        rebalance.execution_request_id,
+        null,
+      ),
+    ),
+    executionTriggerSource: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.executionTriggerSource,
+        rebalance.execution_trigger_source,
+        null,
+      ),
+    ),
+    executionRequestState: normalizeNonEmptyString(
+      firstDefined(
+        rebalance.executionRequestState,
+        rebalance.execution_request_state,
+        null,
+      ),
+    ),
     blockers: (rebalance.blockers ?? []).map((value) => String(value)),
     warnings: (rebalance.warnings ?? []).map((value) => String(value)),
     automationTruth: normalizeAutomationTruth(
@@ -373,6 +401,12 @@ function normalizeProviderEventReceipt(receipt, index, now) {
     receivedAt: receipt.receivedAt ?? receipt.received_at ?? now(),
     providerId: normalizeNonEmptyString(
       firstDefined(receipt.providerId, receipt.provider_id, "chainlink_cre"),
+    ),
+    deliveryId: normalizeNonEmptyString(
+      firstDefined(receipt.deliveryId, receipt.delivery_id, null),
+    ),
+    eventId: normalizeNonEmptyString(
+      firstDefined(receipt.eventId, receipt.event_id, null),
     ),
     providerEventId: normalizeNonEmptyString(
       firstDefined(receipt.providerEventId, receipt.provider_event_id, null),
@@ -422,12 +456,56 @@ function normalizeProviderEventReceipt(receipt, index, now) {
     errorCode: normalizeNonEmptyString(
       firstDefined(receipt.errorCode, receipt.error_code, null),
     ),
+    rebalanceId: normalizeNonEmptyString(
+      firstDefined(receipt.rebalanceId, receipt.rebalance_id, null),
+    ),
     reason:
       normalizeNonEmptyString(firstDefined(receipt.reason, null)) ??
       "Provider event receipt recorded.",
     duplicateOfReceiptId: normalizeNonEmptyString(
       firstDefined(receipt.duplicateOfReceiptId, receipt.duplicate_of_receipt_id, null),
     ),
+  };
+}
+
+function normalizeExecutionRequestLinkage(linkage) {
+  if (!linkage || typeof linkage !== "object") {
+    return null;
+  }
+
+  const normalized = {
+    rebalanceId: normalizeNonEmptyString(
+      firstDefined(linkage.rebalanceId, linkage.rebalance_id, null),
+    ),
+    providerReceiptId: normalizeNonEmptyString(
+      firstDefined(linkage.providerReceiptId, linkage.provider_receipt_id, null),
+    ),
+  };
+
+  return Object.values(normalized).some((value) => value !== null)
+    ? normalized
+    : null;
+}
+
+function normalizeExecutionLegArtifactLinkage(linkage) {
+  if (!linkage || typeof linkage !== "object") {
+    return null;
+  }
+
+  const executionRequestId = normalizeNonEmptyString(
+    firstDefined(linkage.executionRequestId, linkage.execution_request_id, null),
+  );
+
+  if (!executionRequestId) {
+    return null;
+  }
+
+  return {
+    executionRequestId,
+    ...(normalizeExecutionRequestLinkage(linkage) ?? {
+      rebalanceId: null,
+      providerReceiptId: null,
+    }),
   };
 }
 
@@ -724,6 +802,9 @@ function normalizeExecutionLeg(leg, index, now) {
     venueStatus: normalizeExecutionVenueStatus(leg.venueStatus, now),
     receipt: normalizeExecutionReceipt(leg.receipt),
     trade: normalizeExecutionTrade(leg.trade, now),
+    linkage: normalizeExecutionLegArtifactLinkage(
+      firstDefined(leg.linkage, leg.artifactLinkage, leg.artifact_linkage, null),
+    ),
   };
 }
 
@@ -740,6 +821,15 @@ function normalizeExecutionRequest(request, index, now) {
       `execution_request_${index + 1}`,
     owner: normalizeAuthenticatedOwner(
       request.owner ?? request.authenticated_owner,
+    ),
+    rebalanceId: normalizeNonEmptyString(
+      firstDefined(
+        request.rebalanceId,
+        request.rebalance_id,
+        request.linkage?.rebalanceId,
+        request.linkage?.rebalance_id,
+        null,
+      ),
     ),
     activationId: request.activationId ?? request.activation_id,
     manifestId: request.manifestId ?? request.manifest_id,
@@ -801,6 +891,9 @@ function normalizeExecutionRequest(request, index, now) {
     warnings: (request.warnings ?? []).map((value) => String(value)),
     legs: (request.legs ?? []).map((leg, legIndex) =>
       normalizeExecutionLeg(leg, legIndex, now),
+    ),
+    linkage: normalizeExecutionRequestLinkage(
+      firstDefined(request.linkage, request.executionLinkage, request.execution_linkage, null),
     ),
     createdAt: request.createdAt ?? request.created_at ?? now(),
     updatedAt: request.updatedAt ?? request.updated_at ?? now(),

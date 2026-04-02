@@ -429,6 +429,7 @@ export async function getActivationScreenDataAsync(slug: string): Promise<{
         {
           recommendation: preview.recommendation,
           rebalanceOrchestration: preview.rebalanceOrchestration,
+          executionPreview: preview.executionPlan,
         },
       )
     : chrome.selectedManifest;
