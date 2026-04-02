@@ -7,6 +7,7 @@ import type {
   HomeTerminalProps,
   MethodologyBadge,
   PromotedManifest,
+  PublicStrategyCardData,
   RebalanceState,
   ReplayPoint,
   RouteId,
@@ -30,29 +31,53 @@ import {
 } from "@/lib/api-adapter";
 import {
   blotter as mockBlotter,
-  featuredManifestSlug,
   manifests as mockManifests,
   onboardingQuestions,
-  publicStrategies,
+  publicStrategies as mockPublicStrategies,
   stateStrip as mockStateStrip,
   themes,
 } from "@/lib/mock-data";
+import {
+  buildPublicStrategiesFromManifests,
+  DEFAULT_STRATEGY_SLOT_ID,
+  resolveManifestSelector,
+} from "@/lib/promoted-manifest-identity";
 import { buildManifestContractBundle, findManifestRebalance } from "@/lib/shared-contract-adapter";
 
 /* ── Local manifest map (fallback) ── */
 
 const mockManifestMap = new Map(mockManifests.map((m) => [m.slug, m]));
+const emptyPublicBlotter: BlotterData = {
+  positions: [],
+  history: [],
+  activity: [],
+  rebalancing: [],
+};
 
 /* ── API-backed catalog fetch ── */
 
-async function fetchApiManifests(): Promise<PromotedManifest[] | null> {
+interface CatalogSnapshot {
+  defaultSlotId: string;
+  manifests: PromotedManifest[];
+  publicStrategies: PublicStrategyCardData[];
+}
+
+async function fetchApiCatalogSnapshot(
+  surface?: string,
+): Promise<CatalogSnapshot | null> {
   try {
-    const catalog = await fetchCatalog();
+    const catalog = await fetchCatalog(surface);
     if (!catalog || catalog.items.length === 0) return null;
 
-    return catalog.items.map((item) =>
+    const manifests = catalog.items.map((item) =>
       adaptManifestToFrontend(item.manifest, item.slot),
     );
+
+    return {
+      defaultSlotId: catalog.defaultSlotId,
+      manifests,
+      publicStrategies: buildPublicStrategiesFromManifests(manifests),
+    };
   } catch {
     return null;
   }
@@ -61,12 +86,16 @@ async function fetchApiManifests(): Promise<PromotedManifest[] | null> {
 /* ── Manifest getters (sync fallback, async preferred) ── */
 
 export function getPromotedManifest(slug: string): PromotedManifest | undefined {
-  return mockManifestMap.get(slug);
+  return resolveManifestSelector(mockManifests, slug) ?? mockManifestMap.get(slug);
 }
 
 export function getFeaturedManifest(): PromotedManifest {
-  const manifest = getPromotedManifest(featuredManifestSlug);
-  if (!manifest) throw new Error(`Featured manifest "${featuredManifestSlug}" is missing.`);
+  const manifest = getPromotedManifest(DEFAULT_STRATEGY_SLOT_ID);
+  if (!manifest) {
+    throw new Error(
+      `Featured manifest for slot "${DEFAULT_STRATEGY_SLOT_ID}" is missing.`,
+    );
+  }
   return manifest;
 }
 
@@ -255,23 +284,30 @@ export function getSmartAccountPanelData(manifest: PromotedManifest): SmartAccou
 
 export async function getTerminalChromeAsync(
   currentRoute: RouteId,
-  slugOrSlot = featuredManifestSlug,
+  slugOrSlot = DEFAULT_STRATEGY_SLOT_ID,
   options: {
     allowMockFallback?: boolean;
+    requireSelectorMatch?: boolean;
   } = {},
 ): Promise<TerminalChromeProps> {
   const allowMockFallback = options.allowMockFallback ?? true;
-  // Try to load manifests from API
-  const apiManifests = await fetchApiManifests();
-  if (!apiManifests && !allowMockFallback) {
+  const requireSelectorMatch = options.requireSelectorMatch ?? false;
+  const catalogSnapshot = await fetchApiCatalogSnapshot();
+  if (!catalogSnapshot && !allowMockFallback) {
     throw new Error("Catalog API is unavailable. The canonical preview path stayed fail-closed instead of falling back to local mock data.");
   }
-  const allManifests = apiManifests ?? mockManifests;
+  const allManifests = catalogSnapshot?.manifests ?? mockManifests;
+  const selectorMatch = resolveManifestSelector(allManifests, slugOrSlot);
 
-  // Find selected manifest
-  const selectedManifest = allManifests.find(
-    (m) => m.slug === slugOrSlot || m.slot_id === slugOrSlot,
-  )
+  if (requireSelectorMatch && slugOrSlot && !selectorMatch) {
+    throw new Error(`No promoted manifest matched selector "${slugOrSlot}".`);
+  }
+
+  const selectedManifest = selectorMatch
+    ?? resolveManifestSelector(
+      allManifests,
+      catalogSnapshot?.defaultSlotId ?? DEFAULT_STRATEGY_SLOT_ID,
+    )
     ?? allManifests[0]
     ?? getFeaturedManifest();
 
@@ -308,9 +344,6 @@ export async function getTerminalChromeAsync(
 
   // Try to load activity for blotter
   const activityData = await fetchActivity(selectedManifest.slot_id);
-  if (!activityData && !allowMockFallback) {
-    throw new Error(`Activity API is unavailable for ${selectedManifest.slot_id}. The canonical preview path did not fall back silently.`);
-  }
   if (activityData) {
     if (activityData.rebalanceOrchestration) {
       enrichedManifest = attachPreviewTruthToManifest(enrichedManifest, {
@@ -321,13 +354,18 @@ export async function getTerminalChromeAsync(
       );
     }
     blotter = adaptActivityToBlotter(activityData, manifestsForUi);
+  } else if (!allowMockFallback) {
+    // Public comparison/detail flows must not depend on the authenticated
+    // activity API or silently reuse stale mock history when that owner-only
+    // surface is unavailable.
+    blotter = emptyPublicBlotter;
   }
 
   return {
     currentRoute,
     stateStrip,
     themes,
-    publicStrategies,
+    publicStrategies: buildPublicStrategiesFromManifests(manifestsForUi),
     promotedWinners: manifestsForUi,
     selectedManifest: enrichedManifest,
     blotter,
@@ -338,16 +376,15 @@ export async function getTerminalChromeAsync(
 
 export function getTerminalChrome(
   currentRoute: RouteId,
-  slugOrSlot = featuredManifestSlug,
+  slugOrSlot = DEFAULT_STRATEGY_SLOT_ID,
 ): TerminalChromeProps {
-  const selectedManifest = getPromotedManifest(slugOrSlot)
-    ?? mockManifests.find((manifest) => manifest.slot_id === slugOrSlot)
+  const selectedManifest = resolveManifestSelector(mockManifests, slugOrSlot)
     ?? getFeaturedManifest();
   return {
     currentRoute,
     stateStrip: mockStateStrip,
     themes,
-    publicStrategies,
+    publicStrategies: mockPublicStrategies,
     promotedWinners: mockManifests,
     selectedManifest,
     blotter: mockBlotter,
@@ -394,7 +431,10 @@ export async function getDetailScreenDataAsync(slug: string): Promise<{
   chrome: TerminalChromeProps;
   apiSourced: boolean;
 }> {
-  const chrome = await getTerminalChromeAsync("detail", slug);
+  const chrome = await getTerminalChromeAsync("detail", slug, {
+    allowMockFallback: false,
+    requireSelectorMatch: true,
+  });
   return {
     props: { manifest: chrome.selectedManifest, blotter: chrome.blotter },
     chrome,
@@ -406,7 +446,11 @@ export async function getComparisonWorkspaceDataAsync(slug?: string): Promise<{
   props: ComparisonWorkspaceProps;
   chrome: TerminalChromeProps;
 }> {
-  const chrome = await getTerminalChromeAsync("comparison", slug ?? featuredManifestSlug);
+  const chrome = await getTerminalChromeAsync(
+    "comparison",
+    slug ?? DEFAULT_STRATEGY_SLOT_ID,
+    { allowMockFallback: false },
+  );
   return {
     props: { focusManifest: chrome.selectedManifest, blotter: chrome.blotter },
     chrome,
@@ -418,7 +462,10 @@ export async function getActivationScreenDataAsync(slug: string): Promise<{
   chrome: TerminalChromeProps;
   executionPlan: unknown | null;
 }> {
-  const chrome = await getTerminalChromeAsync("activation", slug);
+  const chrome = await getTerminalChromeAsync("activation", slug, {
+    allowMockFallback: false,
+    requireSelectorMatch: true,
+  });
   const preview = await fetchActivationPreview(chrome.selectedManifest.slot_id);
   const manifest = preview
     ? attachPreviewTruthToManifest(
@@ -447,7 +494,11 @@ export async function getActivityWorkspaceDataAsync(slug?: string): Promise<{
   props: ActivityWorkspaceProps;
   chrome: TerminalChromeProps;
 }> {
-  const chrome = await getTerminalChromeAsync("activity", slug ?? featuredManifestSlug);
+  const chrome = await getTerminalChromeAsync(
+    "activity",
+    slug ?? DEFAULT_STRATEGY_SLOT_ID,
+    { allowMockFallback: false },
+  );
   return {
     props: { manifest: chrome.selectedManifest, blotter: chrome.blotter },
     chrome,
@@ -478,11 +529,28 @@ export function getHomeTerminalData(): HomeTerminalProps {
   };
 }
 
-export function getOnboardingQuestionFlowData() {
-  return { questions: onboardingQuestions, recommendedStrategies: publicStrategies };
+export async function getOnboardingQuestionFlowDataAsync() {
+  const catalogSnapshot = await fetchApiCatalogSnapshot("onboarding");
+
+  if (!catalogSnapshot) {
+    throw new Error(
+      "Catalog API is unavailable for onboarding. The recommendation picker stayed fail-closed instead of reusing stale mock strategies.",
+    );
+  }
+
+  return {
+    questions: onboardingQuestions,
+    recommendedStrategies: catalogSnapshot.publicStrategies,
+  };
 }
 
-export function getComparisonWorkspaceData(slug = featuredManifestSlug): ComparisonWorkspaceProps {
+export function getOnboardingQuestionFlowData() {
+  return { questions: onboardingQuestions, recommendedStrategies: mockPublicStrategies };
+}
+
+export function getComparisonWorkspaceData(
+  slug = DEFAULT_STRATEGY_SLOT_ID,
+): ComparisonWorkspaceProps {
   return { focusManifest: getPromotedManifest(slug) ?? getFeaturedManifest(), blotter: mockBlotter };
 }
 
@@ -497,7 +565,9 @@ export function getActivationScreenData(slug: string): ActivationScreenProps {
   return { manifest: detail.manifest };
 }
 
-export function getActivityWorkspaceData(slug = featuredManifestSlug): ActivityWorkspaceProps {
+export function getActivityWorkspaceData(
+  slug = DEFAULT_STRATEGY_SLOT_ID,
+): ActivityWorkspaceProps {
   return {
     manifest: getPromotedManifest(slug) ?? getFeaturedManifest(),
     blotter: mockBlotter,

@@ -9,8 +9,6 @@ import type {
   TerminalChromeProps,
 } from "@/lib/contracts";
 import {
-  getFeaturedManifest,
-  getPromotedManifest,
   getTerminalChrome,
   getTerminalChromeAsync,
 } from "@/lib/data-source";
@@ -112,12 +110,10 @@ export function OnboardingTerminalExperience({
     questions,
     recommendedStrategies,
   });
-  const localRecommendedManifest =
-    getPromotedManifest(localRecommendedStrategy.manifestSlug) ?? getFeaturedManifest();
   const apiQualifiedSlotId = apiQualification?.qualification?.selection?.slotId;
   const effectiveSlotId = isKnownStrategySlotId(apiQualifiedSlotId)
     ? apiQualifiedSlotId
-    : localRecommendedManifest.slot_id;
+    : localRecommendedStrategy.slotId;
   const recommendation = isKnownStrategySlotId(apiQualifiedSlotId)
     ? buildStrategyRecommendationForMode(profile, apiQualifiedSlotId)
     : localRecommendation;
@@ -126,7 +122,7 @@ export function OnboardingTerminalExperience({
   const recommendedManifest = apiChrome?.selectedManifest ?? fallbackChrome.selectedManifest;
   const recommendedStrategy =
     recommendedStrategies.find(
-      (strategy) => strategy.manifestSlug === recommendedManifest.slug,
+      (strategy) => strategy.slotId === recommendedManifest.slot_id,
     ) ?? localRecommendedStrategy;
 
   const qualification = buildQualificationFlowResult({

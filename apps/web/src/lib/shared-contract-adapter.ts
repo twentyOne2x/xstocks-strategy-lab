@@ -26,16 +26,19 @@ import type {
   StrategyMode,
   UserVisibleState,
 } from "@/lib/contracts";
+import { DEFAULT_STRATEGY_SLOT_ID } from "@/lib/promoted-manifest-identity";
 
-const SLOT_ID_BY_MANIFEST: Record<string, SharedStrategySlotId> = {
-  "ai-infra-autopilot": "onboarding.default_basket",
-  "mag7-cash-balance": "onboarding.alt_basket_1",
-  "spy-core-shield": "onboarding.alt_basket_2",
-  "mstr-conviction-long": "advanced.default_directional",
-};
+function getSharedSlotId(slotId: string | null | undefined): SharedStrategySlotId {
+  if (
+    slotId === "onboarding.default_basket" ||
+    slotId === "onboarding.alt_basket_1" ||
+    slotId === "onboarding.alt_basket_2" ||
+    slotId === "advanced.default_directional"
+  ) {
+    return slotId;
+  }
 
-function getSharedSlotId(manifestSlug: string): SharedStrategySlotId {
-  return SLOT_ID_BY_MANIFEST[manifestSlug] ?? "onboarding.default_basket";
+  return DEFAULT_STRATEGY_SLOT_ID;
 }
 
 function parseWeightBps(weightLabel: string): number {
@@ -223,7 +226,7 @@ function buildActivationActions(
 function buildActivationManifest(
   manifest: PromotedManifest,
 ): SharedActivationManifest {
-  const slotId = getSharedSlotId(manifest.slug);
+  const slotId = getSharedSlotId(manifest.slot_id);
   const fundingAssetSymbol = "USDC";
   const targetAllocations = manifest.allocations.map((allocation) => ({
     sleeve: mapSleeveId(allocation.symbol, manifest.mode),
@@ -305,7 +308,7 @@ function buildActivationPayload(
   const truthState = toSharedTruthState(manifest.live_state.state);
   const hasConnectedWallet =
     manifest.market_intelligence.walletState.state !== "view_ready";
-  const slotId = getSharedSlotId(manifest.slug);
+  const slotId = getSharedSlotId(manifest.slot_id);
   const common = {
     version: "1" as const,
     payloadId: `payload_${manifest.slug}`,
@@ -356,7 +359,7 @@ function buildActivationPayload(
 function buildRecommendationContract(
   manifest: PromotedManifest,
 ): SharedRecommendation {
-  const slotId = getSharedSlotId(manifest.slug);
+  const slotId = getSharedSlotId(manifest.slot_id);
   const truthState = toSharedTruthState(manifest.live_state.state);
   const targetAllocations =
     manifest.mode === "basket"
@@ -466,7 +469,7 @@ function buildContractSnapshot(
   activationPayload: SharedActivationPayload,
 ): ManifestContractSnapshot {
   return {
-    slotId: getSharedSlotId(manifest.slug),
+    slotId: getSharedSlotId(manifest.slot_id),
     truthState: activationPayload.routeContext.truthState,
     sourceId:
       "recommendationId" in activationPayload.source
@@ -804,16 +807,6 @@ export function buildStrategyRecommendation(profile: OnboardingProfile): Strateg
   return buildStrategyRecommendationForResolvedMode(profile, modeId);
 }
 
-/** Maps mode_id to the manifest slug used in mock data */
-function modeIdToManifestSlug(modeId: LocalStrategySlotId): string {
-  switch (modeId) {
-    case "onboarding.default_basket": return "ai-infra-autopilot";
-    case "onboarding.alt_basket_1": return "mag7-cash-balance";
-    case "onboarding.alt_basket_2": return "spy-core-shield";
-    case "advanced.default_directional": return "mstr-conviction-long";
-  }
-}
-
 export function recommendStrategyFromAnswers({
   answers,
   recommendedStrategies,
@@ -824,14 +817,17 @@ export function recommendStrategyFromAnswers({
 }): PublicStrategyCardData {
   const profile = buildOnboardingProfile(answers);
   const recommendation = buildStrategyRecommendation(profile);
-  const targetSlug = modeIdToManifestSlug(recommendation.mode_id);
-  const fallbackStrategy = recommendedStrategies[0];
-
-  return (
-    recommendedStrategies.find(
-      (strategy) => strategy.manifestSlug === targetSlug,
-    ) ?? fallbackStrategy
+  const matchingStrategy = recommendedStrategies.find(
+    (strategy) => strategy.slotId === recommendation.mode_id,
   );
+
+  if (!matchingStrategy) {
+    throw new Error(
+      `No public strategy card matches slot ${recommendation.mode_id}.`,
+    );
+  }
+
+  return matchingStrategy;
 }
 
 export function buildQualificationFlowResult({
@@ -868,7 +864,7 @@ export function buildQualificationFlowResult({
   const yieldBufferAllowed =
     selectedOptions.some((option) => option.qualification.yieldBufferAllowed) ||
     recommendedStrategy.mode === "basket";
-  const activeSlotId = getSharedSlotId(recommendedStrategy.manifestSlug);
+  const activeSlotId = getSharedSlotId(recommendedStrategy.slotId);
   const whyRecommended = [
     manifest.frontend.summary,
     manifest.frontend.thesis,
@@ -1063,7 +1059,7 @@ export function buildSharedLifecycleSummary(
   return [
     {
       title: "Promoted contract slot",
-      detail: getSharedSlotId(manifest.slug),
+      detail: getSharedSlotId(manifest.slot_id),
     },
     {
       title: "Route truth state",

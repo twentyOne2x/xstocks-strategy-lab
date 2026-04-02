@@ -1,25 +1,15 @@
 "use client";
 
-import { getIdentityToken, usePrivy, useWallets } from "@privy-io/react-auth";
 import { useEffect, useRef } from "react";
 
+import type {
+  PrivyConnectedWalletLike,
+  PrivyLinkedAccountLike,
+} from "@/components/privy-provider";
+import { usePrivyRuntime } from "@/components/privy-provider";
 import { trackXStocksFunnelStage } from "@/lib/funnel-tracking";
 
-type LinkedAccountLike = {
-  type?: string;
-  address?: string;
-  walletClientType?: string;
-  wallet_client_type?: string;
-  chainType?: string;
-  chain_type?: string;
-};
-
-type ConnectedWalletLike = {
-  address?: string;
-  walletClientType?: string;
-};
-
-function getLinkedAccounts(user: unknown): LinkedAccountLike[] {
+function getLinkedAccounts(user: unknown): PrivyLinkedAccountLike[] {
   if (!user || typeof user !== "object") {
     return [];
   }
@@ -29,12 +19,14 @@ function getLinkedAccounts(user: unknown): LinkedAccountLike[] {
     (user as { linked_accounts?: unknown[] }).linked_accounts ??
     [];
 
-  return Array.isArray(linkedAccounts) ? (linkedAccounts as LinkedAccountLike[]) : [];
+  return Array.isArray(linkedAccounts)
+    ? (linkedAccounts as PrivyLinkedAccountLike[])
+    : [];
 }
 
 function findEmbeddedWalletAddress(
-  wallets: ConnectedWalletLike[],
-  linkedAccounts: LinkedAccountLike[],
+  wallets: PrivyConnectedWalletLike[],
+  linkedAccounts: PrivyLinkedAccountLike[],
 ) {
   const connectedWallet = wallets.find(
     (wallet) => wallet.walletClientType === "privy" && wallet.address,
@@ -57,7 +49,7 @@ function findEmbeddedWalletAddress(
   return linkedWallet?.address ?? null;
 }
 
-function findSmartAccountAddress(linkedAccounts: LinkedAccountLike[]) {
+function findSmartAccountAddress(linkedAccounts: PrivyLinkedAccountLike[]) {
   return (
     linkedAccounts.find(
       (account) => account.type === "smart_wallet" && account.address,
@@ -70,7 +62,8 @@ function shortAddress(value: string | null) {
 }
 
 export function WalletConnectButton() {
-  const { ready, authenticated, user, login, logout, getAccessToken } = usePrivy();
+  const { enabled, ready, authenticated, user, login, logout, getAccessToken, getIdentityToken } =
+    usePrivyRuntime();
   const trackedWalletRef = useRef<string | null>(null);
   const walletState = useWalletState();
 
@@ -103,7 +96,15 @@ export function WalletConnectButton() {
         trackedWalletRef.current = null;
       }
     })();
-  }, [authenticated, getAccessToken, user]);
+  }, [authenticated, getAccessToken, getIdentityToken, user]);
+
+  if (!enabled) {
+    return (
+      <button className="button button-primary" type="button" disabled style={{ width: "100%", opacity: 0.5 }}>
+        Wallet connect unavailable
+      </button>
+    );
+  }
 
   if (!ready) {
     return (
@@ -161,10 +162,7 @@ export function WalletConnectButton() {
 
 /** Hook to read wallet state from other components */
 export function useWalletState() {
-  const { ready, authenticated, user } = usePrivy();
-  const { wallets = [] } = useWallets() as {
-    wallets?: ConnectedWalletLike[];
-  };
+  const { enabled, ready, authenticated, user, wallets } = usePrivyRuntime();
   const linkedAccounts = authenticated ? getLinkedAccounts(user) : [];
   const walletAddress = authenticated ? user?.wallet?.address ?? null : null;
   const embeddedWalletAddress = authenticated
@@ -181,6 +179,7 @@ export function useWalletState() {
       : "smart_account_required";
 
   return {
+    enabled,
     ready,
     connected: authenticated,
     walletAddress,

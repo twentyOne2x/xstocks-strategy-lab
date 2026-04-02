@@ -32,19 +32,7 @@ import type {
   ApiRecommendation,
   ApiSlot,
 } from "@/lib/api-client";
-
-/* ── Slot to slug mapping ── */
-
-const SLOT_TO_SLUG: Record<string, string> = {
-  "onboarding.default_basket": "ai-infra-autopilot",
-  "onboarding.alt_basket_1": "mag7-cash-balance",
-  "onboarding.alt_basket_2": "spy-core-shield",
-  "advanced.default_directional": "mstr-conviction-long",
-};
-
-function slugFromSlot(slotId: string): string {
-  return SLOT_TO_SLUG[slotId] ?? slotId.replace(/\./g, "-");
-}
+import { buildPromotedManifestSlug } from "@/lib/promoted-manifest-identity";
 
 function adaptExplanationBundle(
   bundle: ApiPortfolioExplanationBundle,
@@ -384,7 +372,10 @@ export function adaptManifestToFrontend(
   manifest: ApiManifestView,
   slot: ApiSlot,
 ): PromotedManifest {
-  const slugVal = slugFromSlot(manifest.slotId);
+  const slugVal = buildPromotedManifestSlug(
+    manifest.slotId,
+    manifest.strategyVersion,
+  );
   const leadAsset = manifest.requiredAssets.find((a) => a !== "AUSD") ?? manifest.requiredAssets[0] ?? "xStock";
   const rationaleMap = buildHoldingRationaleMap(manifest);
   const explanationBundle = adaptExplanationBundle(manifest.explanation.bundle);

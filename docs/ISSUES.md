@@ -252,6 +252,35 @@ Last updated: 2026-04-02
 - Complexity: high
 - Plan links:
   - [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md)
+- Continuation note:
+  - Date: 2026-04-02
+  - Scope freeze: investigate only the stale autoresearch/showcase freshness bug as a narrow `XSL-010` sub-lane coordinated with `XSL-004` and `XSL-006`. Do not open a duplicate owner lane and do not widen this pass into deployment-host closure beyond identifying an exact blocker if one exists.
+  - Proven starting truth on updated `origin/main`: the frontend repeatedly surfaces the same showcased portfolio identity because several public routes still anchor to the legacy slug `ai-infra-autopilot`, onboarding still seeds recommendation cards from static mock data, the web adapter rewrites live promoted slots back onto fixed legacy slugs, and recommendation fallback still collapses unresolved matches to the first mock card. The repeated surface is not a literal wallet-address repeat.
+  - Proven distinction to preserve during the fix:
+    1. `apps/api` catalog ordering is already deterministic by `surface` then `slot.position`, so `always first item` is not the primary bug.
+    2. The live promoted default slot in [slot-registry.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl010-fresh/packages/research/manifests/slot-registry.json) no longer matches the legacy showcased identity, so the bug is a frontend freshness and identity-mapping collapse.
+    3. Silent mock/default fallback currently masks stale or missing catalog truth on some public surfaces.
+  - Fix intent for this tranche: make home, onboarding, comparison, detail, and activation surfaces select the showcased portfolio from truthful live catalog or live slot truth instead of fixed mock slugs; remove the fallback-to-first-card collapse; and fail closed where live catalog truth is required instead of silently reusing stale mock defaults.
+  - Acceptance addendum:
+    1. The repo can prove whether the repeated surface was the same slot, same manifest slug, same catalog order, or same wallet address.
+    2. At least two distinct showcased portfolios can be surfaced locally from live slot/profile truth without collapsing to the same default card.
+    3. The strongest final claim states exactly whether the fix changes slot selection, manifest identity, or both.
+    4. Browser proof includes home, onboarding, comparison, and at least two detail/activation surfaces.
+  - Closeout note:
+    1. The repeated showcase was the same stale frontend manifest identity, not the same wallet address.
+    2. Live questionnaire fixtures now resolve four distinct slot outcomes, and public routes follow live catalog/slot truth instead of collapsing onto the old showcased slug.
+    3. The activation-route `useWallets` warning was a real composition bug when `NEXT_PUBLIC_PRIVY_APP_ID` was unset locally: the app intentionally skipped the Privy provider but still rendered Privy hook consumers. The fix moved those reads behind an app-owned runtime context so unconfigured environments render a truthful disabled wallet state without invoking hooks outside provider boundaries.
+  - Executor prompt:
+    - Trace the exact fallback path from onboarding and public route defaults to the repeated showcased result.
+    - Replace hard-coded showcase identity with live catalog-backed selection only where the cause is proven.
+    - Keep API/catalog failures fail-closed on canonical freshness paths instead of silently reusing stale mock defaults.
+    - Add regression coverage proving profile or live promoted truth can surface distinct portfolios.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] visual/screenshot verification
 
 ### XSL-011 Rebalance Automation And Execution Orchestration
 
