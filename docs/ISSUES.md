@@ -103,7 +103,7 @@ Last updated: 2026-04-02
   - Date: 2026-04-02
   - Scope freeze: implement only the first smart-account runtime bridge in `packages/policy/**`, `apps/api/**`, and `apps/web/**`. Do not attempt AA-native CoW or 1inch signing, do not reopen CRE autonomy policy, and do not broaden this tranche into hosted proof closure.
   - Verified starting truth on current `origin/main`: manual/user-approved execution still becomes `ready` from a linked wallet or embedded wallet, settlement already prefers the smart-account address when available, execution signer ownership still falls back to the wallet-first path, and frontend Privy state stops at auth/connect rather than surfacing smart-account bootstrap closure.
-  - Hosted smart-account proof continuation: on the clean worktree from updated `origin/main`, the repo already mounts `SmartWalletsProvider` and already persists bridge-state fields through policy and API, but the real frontend bootstrap path still stalls on linked-wallet logins because embedded-wallet auto-creation is configured for `users-without-wallets` only while Privy smart-wallet linking requires an embedded Privy signer. This pass may only close that hosted bootstrap/runtime truth and surface the exact blocker if smart-account closure still fails.
+  - Hosted smart-account proof continuation: on the clean worktree from updated `origin/main`, the repo already mounts `SmartWalletsProvider` and already persists bridge-state fields through policy and API. Live repro on `2026-04-02` showed the Privy user can hold both the Backpack-linked external wallet `0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2` and the embedded Privy wallet `0xc3a79c8551bd33e3a17539df6db85a5989e22e3a`, but `smart_wallet` still remains null because the live Privy app config for `cmnfzikzk02ey0ckyx8m14qv2` returns `smart_wallet_config.enabled=false`. This tranche may only surface that blocker truthfully and fail closed; it must not mask the missing Privy-side enablement as a pending local bootstrap.
   - Fix intent for this tranche: make the smart account the canonical account-ownership and execution-destination surface for automation while preserving wallet-first manual execution, fail closing automation when the smart account is not ready, and persisting explicit bridge-state fields instead of inferring them indirectly.
   - Acceptance addendum:
     1. Policy emits explicit bridge-state fields: `manualSignerAddress`, `policyAccountAddress`, and `executionDestinationAddress`.
@@ -121,8 +121,8 @@ Last updated: 2026-04-02
 - Checklist:
   - [x] report captured
   - [x] context added
-  - [ ] fix applied
-  - [ ] tests run
+  - [x] fix applied
+  - [x] tests run
   - [ ] visual/screenshot verification
 
 ### XSL-006 Strategy Lab Operating Model
