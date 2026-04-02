@@ -120,6 +120,49 @@ describe("shared contract adapter", () => {
     expect(recommendation.stance).toBe("long_only");
   });
 
+  it("matches the recommended card by slot instead of collapsing to the first strategy", () => {
+    const answers = {
+      q_goal_preference: "theme_tilt",
+      q_theme_preference: "tech_ai",
+      q_expression_preference: "tilted",
+      q_risk_level: "medium",
+      q_rebalance_preference: "scheduled",
+      q_directional_appetite: "long_only",
+      q_automation_comfort: "medium",
+      q_certainty: "high",
+    };
+
+    const recommendedStrategy = recommendStrategyFromAnswers({
+      answers,
+      questions: onboardingQuestions,
+      recommendedStrategies: publicStrategies,
+    });
+
+    expect(recommendedStrategy.slotId).toBe("onboarding.alt_basket_1");
+    expect(recommendedStrategy.manifestSlug).toBe("mag7-cash-balance");
+  });
+
+  it("throws when the target slot is missing instead of reusing the first strategy card", () => {
+    const answers = {
+      q_goal_preference: "theme_tilt",
+      q_theme_preference: "tech_ai",
+      q_expression_preference: "tilted",
+      q_risk_level: "medium",
+      q_rebalance_preference: "scheduled",
+      q_directional_appetite: "long_only",
+      q_automation_comfort: "medium",
+      q_certainty: "high",
+    };
+
+    expect(() =>
+      recommendStrategyFromAnswers({
+        answers,
+        questions: onboardingQuestions,
+        recommendedStrategies: [publicStrategies[0], publicStrategies[3]],
+      }),
+    ).toThrow(/No public strategy card matches slot onboarding\.alt_basket_1/);
+  });
+
   it("builds qualification flow result with deposit CTA", () => {
     const answers = {
       q_goal_preference: "broad_exposure",

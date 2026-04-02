@@ -59,6 +59,7 @@ export interface ThemeSummary {
 
 export interface PublicStrategyCardData {
   id: string;
+  slotId: string;
   manifestSlug: string;
   title: string;
   summary: string;

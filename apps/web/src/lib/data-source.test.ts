@@ -31,6 +31,13 @@ describe("data source", () => {
     expect(chrome.promotedWinners).toHaveLength(4);
   });
 
+  it("can resolve the selected manifest from a strategy slot instead of a fixed slug", () => {
+    const chrome = getTerminalChrome("comparison", "onboarding.alt_basket_2");
+
+    expect(chrome.selectedManifest.slot_id).toBe("onboarding.alt_basket_2");
+    expect(chrome.selectedManifest.slug).toBe("spy-core-shield");
+  });
+
   it("throws when a detail route requests a non-promoted view", () => {
     expect(() => getDetailScreenData("lab-only-view")).toThrow(
       /not found/,

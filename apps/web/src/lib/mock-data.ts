@@ -7,8 +7,6 @@ import type {
   ThemeSummary,
 } from "@/lib/contracts";
 
-export const featuredManifestSlug = "ai-infra-autopilot";
-
 export const themes: ThemeSummary[] = [
   {
     id: "ai-infra",
@@ -1245,6 +1243,7 @@ export const manifests: PromotedManifest[] = [
 export const publicStrategies: PublicStrategyCardData[] = [
   {
     id: "strategy_ai_infra",
+    slotId: "onboarding.default_basket",
     manifestSlug: "ai-infra-autopilot",
     title: "AI Infra Leaders",
     summary: "Concentrated AI infrastructure basket with reserve carry.",
@@ -1257,6 +1256,7 @@ export const publicStrategies: PublicStrategyCardData[] = [
   },
   {
     id: "strategy_mag7_balance",
+    slotId: "onboarding.alt_basket_1",
     manifestSlug: "mag7-cash-balance",
     title: "Mag 7 Cash Balance",
     summary: "Broader quality basket with calmer turnover.",
@@ -1269,6 +1269,7 @@ export const publicStrategies: PublicStrategyCardData[] = [
   },
   {
     id: "strategy_spy_core",
+    slotId: "onboarding.alt_basket_2",
     manifestSlug: "spy-core-shield",
     title: "SPY Core Shield",
     summary: "Index-centered starter path with defensive reserve posture.",
@@ -1281,6 +1282,7 @@ export const publicStrategies: PublicStrategyCardData[] = [
   },
   {
     id: "strategy_mstr_long",
+    slotId: "advanced.default_directional",
     manifestSlug: "mstr-conviction-long",
     title: "MSTRx Conviction Long",
     summary: "Directional shell with funding and fallback route context visible.",

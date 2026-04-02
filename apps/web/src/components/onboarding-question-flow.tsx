@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { usePrivy } from "@privy-io/react-auth";
 
 import { BrandLockup } from "@/components/home-terminal";
+import { usePrivyRuntime } from "@/components/privy-provider";
 
 import type {
   BlotterData,
@@ -650,9 +650,12 @@ function SimulatedWorkspace({
   onTourDismiss: () => void;
   previewStatus?: { tone: "loading" | "error"; message: string; onRetry?: () => void; } | null;
 }) {
-  const { login, authenticated, user, logout } = usePrivy();
+  const { enabled: privyEnabled, login, authenticated, user, logout } =
+    usePrivyRuntime();
   const walletAddress = authenticated ? user?.wallet?.address : null;
-  const shortWallet = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : null;
+  const shortWallet = walletAddress
+    ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+    : null;
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
   const path = buildChartPath(values);
@@ -664,6 +667,11 @@ function SimulatedWorkspace({
   const [chartHover, setChartHover] = useState<{ x: number; value: number } | null>(null);
   const [tourWelcomeShown, setTourWelcomeShown] = useState(false);
   const bundle = getRecommendationExplanationBundle(manifest);
+  const activationLabel = privyEnabled
+    ? directionalPreviewOnly
+      ? "Review preview"
+      : "Start deposit"
+    : "Wallet connect unavailable";
 
   // Scroll highlighted section into view when tour advances
   useEffect(() => {
@@ -717,8 +725,14 @@ function SimulatedWorkspace({
               <button className="button button-ghost button-sm" onClick={logout} type="button">Disconnect</button>
             </div>
           ) : (
-            <button className="button button-primary button-lg" id="pq-deposit-cta" onClick={login} type="button">
-              {directionalPreviewOnly ? "Review preview" : "Start deposit"}
+            <button
+              className="button button-primary button-lg"
+              disabled={!privyEnabled}
+              id="pq-deposit-cta"
+              onClick={privyEnabled ? login : undefined}
+              type="button"
+            >
+              {activationLabel}
             </button>
           )}
           <button className="button button-ghost button-sm" onClick={onReset} type="button">
@@ -767,8 +781,17 @@ function SimulatedWorkspace({
               {authenticated ? (
                 <span className="status-pill status-pill-active">{shortWallet}</span>
               ) : (
-                <button className="button button-primary button-lg" onClick={login} type="button">
-                  {directionalPreviewOnly ? "Preview" : "Start deposit"}
+                <button
+                  className="button button-primary button-lg"
+                  disabled={!privyEnabled}
+                  onClick={privyEnabled ? login : undefined}
+                  type="button"
+                >
+                  {privyEnabled
+                    ? directionalPreviewOnly
+                      ? "Preview"
+                      : "Start deposit"
+                    : "Wallet connect unavailable"}
                 </button>
               )}
             </div>

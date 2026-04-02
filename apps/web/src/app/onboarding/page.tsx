@@ -1,10 +1,12 @@
 import { Suspense } from "react";
 
 import { OnboardingTerminalExperience } from "@/components/onboarding-terminal-experience";
-import { getOnboardingQuestionFlowData } from "@/lib/data-source";
+import { getOnboardingQuestionFlowDataAsync } from "@/lib/data-source";
 
-export default function OnboardingPage() {
-  const data = getOnboardingQuestionFlowData();
+export const dynamic = "force-dynamic";
+
+export default async function OnboardingPage() {
+  const data = await getOnboardingQuestionFlowDataAsync();
 
   return (
     <Suspense>

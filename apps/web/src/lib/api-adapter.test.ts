@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { ApiManifestView, ApiSlot } from "./api-client";
 import { adaptManifestToFrontend } from "./api-adapter";
+import { buildPromotedManifestSlug } from "./promoted-manifest-identity";
 
 const slot: ApiSlot = {
   slotId: "onboarding.default_basket",
@@ -240,6 +241,12 @@ describe("adaptManifestToFrontend", () => {
   it("uses API replay and market intelligence fields instead of local score formulas", () => {
     const adapted = adaptManifestToFrontend(manifest, slot);
 
+    expect(adapted.slug).toBe(
+      buildPromotedManifestSlug(
+        manifest.slotId,
+        manifest.strategyVersion,
+      ),
+    );
     expect(adapted.replay.endingCapital).toBe(1450);
     expect(adapted.replay.netReturnPct).toBe(45);
     expect(adapted.replay.maxDrawdownPct).toBe(-6.5);

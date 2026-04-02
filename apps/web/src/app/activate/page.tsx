@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 
-import { featuredManifestSlug } from "@/lib/mock-data";
+import { getComparisonWorkspaceDataAsync } from "@/lib/data-source";
 
-export default function ActivateIndexPage() {
-  redirect(`/activate/${featuredManifestSlug}`);
+export const dynamic = "force-dynamic";
+
+export default async function ActivateIndexPage() {
+  const { chrome } = await getComparisonWorkspaceDataAsync();
+  redirect(`/activate/${chrome.selectedManifest.slug}`);
 }

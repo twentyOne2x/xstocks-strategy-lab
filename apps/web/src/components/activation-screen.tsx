@@ -58,6 +58,12 @@ export function ActivationScreen({ manifest }: ActivationScreenProps) {
               status={funnelState === "disconnected" ? "next" : "complete"}
             >
               <WalletConnectButton />
+              {!wallet.enabled && (
+                <p className="panel-note" style={{ marginTop: 10 }}>
+                  Wallet connection is disabled in this environment until
+                  `NEXT_PUBLIC_PRIVY_APP_ID` is configured.
+                </p>
+              )}
             </ActivationStep>
 
             <ActivationStep
