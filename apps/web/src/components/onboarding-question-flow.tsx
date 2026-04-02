@@ -1185,7 +1185,7 @@ function SimulatedWorkspace({
             </div>
             <div style={{ display: "flex", gap: "8px" }}>
               <button className="button button-primary" onClick={() => setBuyModalOpen(true)} type="button">
-                Buy with 1inch
+                Buy portfolio
               </button>
               <button className="button button-ghost" type="button" title="Rebalance reviews portfolio drift and adjusts weights. Currently requires manual operator approval.">
                 Rebalance
@@ -1362,7 +1362,7 @@ function SimulatedWorkspace({
           <div className="pq-how-row">
             <div><span className="section-kicker">Rebalance</span><strong>Chainlink CRE</strong></div>
             <div><span className="section-kicker">Custody</span><strong>Privy smart wallet</strong></div>
-            <div><span className="section-kicker">Execution</span><strong>CoW Protocol + 1inch</strong></div>
+            <div><span className="section-kicker">Execution</span><strong>Enso bundle</strong></div>
           </div>
         </div>
       </section>
