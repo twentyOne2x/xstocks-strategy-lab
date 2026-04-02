@@ -74,6 +74,18 @@ When this work closes:
 | `apps/web` | real Privy auth/connect, funnel tracking, honest preview-only activation copy | wallet connect is real | no smart-wallet provider, no bootstrap closure, no smart-account-linked proof, no smart-wallet order approval path |
 | hosted proof | authenticated linked-wallet hosted boundary | per-leg quote truth only | no hosted smart-account bootstrap, no hosted manual-versus-automation posture proof, no hosted bridge-state proof |
 
+## 2026-04-02 Live Repro Addendum
+
+1. Live Privy app config for `cmnfzikzk02ey0ckyx8m14qv2` now proves the external blocker directly: `smart_wallet_config.enabled=false` and `embedded_wallet_config.ethereum.create_on_login="off"` on the server-side app record, even though the web app still asks Privy client-side for `embeddedWallets.ethereum.createOnLogin="all-users"`.
+2. The real Privy user record for `did:privy:cmng4u99003bf0ckye9oqgopk` proves the hosted/local truth after embedded-wallet bootstrap:
+   - linked external wallet = `0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2` (`wallet_client_type="backpack"`, `connector_type="injected"`)
+   - embedded wallet = `0xc3a79c8551bd33e3a17539df6db85a5989e22e3a` (`wallet_client_type="privy"`, `connector_type="embedded"`)
+   - linked smart-wallet addresses = none
+   - `smart_wallet` = `null`
+3. This means the remaining linkage gap is not that embedded-wallet bootstrap never happened. The embedded wallet already exists, but Privy smart-wallet linking cannot complete for this app because smart wallets are disabled at the Privy app/project layer.
+4. Strongest truthful claim after this pass: the repo proves real linked-wallet auth plus real embedded-wallet bootstrap and preserves wallet-first manual execution, but it still does not prove a linked Privy smart wallet or a resolved `policyAccountAddress` on this app until Privy smart wallets are enabled for the app's Ethereum mainnet configuration.
+5. Required external unblock step: enable Privy smart wallets for app `equityterminal` (`cmnfzikzk02ey0ckyx8m14qv2`) on `eip155:1`, then rerun the hosted bootstrap path and verify that the same user record gains either `smart_wallet.address` or a `linked_accounts` entry with `type="smart_wallet"`.
+
 ## Completion Reconciliation
 
 1. Completion relative to the earlier posture-only smart-account spec = partial. It documented the ambiguity, but it did not define the implementation contract that would remove it.

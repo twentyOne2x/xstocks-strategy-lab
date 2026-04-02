@@ -143,12 +143,14 @@ export function WalletConnectButton() {
 
 /** Hook to read wallet state from other components */
 export function useWalletState() {
-  const { enabled, ready, authenticated, user, wallets } = usePrivyRuntime();
+  const { enabled, ready, authenticated, user, wallets, appConfig } =
+    usePrivyRuntime();
   return deriveWalletState({
     enabled,
     ready,
     authenticated,
     user,
     wallets,
+    appConfig,
   });
 }

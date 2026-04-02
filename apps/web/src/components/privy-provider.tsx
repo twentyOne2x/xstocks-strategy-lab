@@ -8,7 +8,13 @@ import {
   useWallets,
 } from "@privy-io/react-auth";
 import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
-import { createContext, useContext, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { mainnet } from "viem/chains";
 
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? "";
@@ -25,6 +31,12 @@ export type PrivyLinkedAccountLike = {
 export type PrivyConnectedWalletLike = {
   address?: string;
   walletClientType?: string;
+};
+
+export type PrivyAppConfigLike = {
+  status: "idle" | "loaded" | "error";
+  embeddedWalletCreateOnLogin: string | null;
+  smartWalletsEnabled: boolean | null;
 };
 
 type PrivySmartWalletLike = {
@@ -51,11 +63,24 @@ type PrivyRuntimeContextValue = {
   authenticated: boolean;
   user: PrivyUserLike;
   wallets: PrivyConnectedWalletLike[];
+  appConfig: PrivyAppConfigLike;
   login: () => void;
   logout: () => void;
   getAccessToken: () => Promise<string | null>;
   getIdentityToken: () => Promise<string | null>;
   createEmbeddedWallet: () => Promise<string | null>;
+};
+
+type PrivyPublicAppConfigResponse = {
+  embedded_wallet_config?: {
+    create_on_login?: string | null;
+    ethereum?: {
+      create_on_login?: string | null;
+    } | null;
+  } | null;
+  smart_wallet_config?: {
+    enabled?: boolean | null;
+  } | null;
 };
 
 const disabledPrivyRuntimeContextValue: PrivyRuntimeContextValue = {
@@ -64,6 +89,11 @@ const disabledPrivyRuntimeContextValue: PrivyRuntimeContextValue = {
   authenticated: false,
   user: null,
   wallets: [],
+  appConfig: {
+    status: "idle",
+    embeddedWalletCreateOnLogin: null,
+    smartWalletsEnabled: null,
+  },
   login: () => undefined,
   logout: () => undefined,
   getAccessToken: async () => null,
@@ -75,12 +105,71 @@ const PrivyRuntimeContext = createContext<PrivyRuntimeContextValue>(
   disabledPrivyRuntimeContextValue,
 );
 
+function toRuntimeAppConfig(
+  payload: PrivyPublicAppConfigResponse | null,
+  status: PrivyAppConfigLike["status"],
+): PrivyAppConfigLike {
+  return {
+    status,
+    embeddedWalletCreateOnLogin:
+      payload?.embedded_wallet_config?.ethereum?.create_on_login ??
+      payload?.embedded_wallet_config?.create_on_login ??
+      null,
+    smartWalletsEnabled:
+      typeof payload?.smart_wallet_config?.enabled === "boolean"
+        ? payload.smart_wallet_config.enabled
+        : null,
+  };
+}
+
 function PrivyRuntimeBridge({ children }: { children: ReactNode }) {
   const { ready, authenticated, user, login, logout, getAccessToken } = usePrivy();
   const { createWallet } = useCreateWallet();
   const { wallets = [] } = useWallets() as {
     wallets?: PrivyConnectedWalletLike[];
   };
+  const [appConfig, setAppConfig] = useState<PrivyAppConfigLike>(
+    disabledPrivyRuntimeContextValue.appConfig,
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAppConfig() {
+      try {
+        const response = await fetch(
+          `https://auth.privy.io/api/v1/apps/${PRIVY_APP_ID}`,
+          {
+            headers: {
+              Accept: "application/json",
+              "privy-app-id": PRIVY_APP_ID,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Privy app config lookup failed with ${response.status}.`);
+        }
+
+        const payload =
+          (await response.json()) as PrivyPublicAppConfigResponse;
+
+        if (!cancelled) {
+          setAppConfig(toRuntimeAppConfig(payload, "loaded"));
+        }
+      } catch {
+        if (!cancelled) {
+          setAppConfig(toRuntimeAppConfig(null, "error"));
+        }
+      }
+    }
+
+    void loadAppConfig();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <PrivyRuntimeContext.Provider
@@ -90,6 +179,7 @@ function PrivyRuntimeBridge({ children }: { children: ReactNode }) {
         authenticated,
         user: (user as PrivyUserLike) ?? null,
         wallets,
+        appConfig,
         login,
         logout,
         getAccessToken: async () => (await getAccessToken()) ?? null,

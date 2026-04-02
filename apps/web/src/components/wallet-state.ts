@@ -1,4 +1,5 @@
 import type {
+  PrivyAppConfigLike,
   PrivyConnectedWalletLike,
   PrivyLinkedAccountLike,
   PrivyUserLike,
@@ -84,12 +85,14 @@ export function deriveWalletState({
   authenticated,
   user,
   wallets,
+  appConfig,
 }: {
   enabled: boolean;
   ready: boolean;
   authenticated: boolean;
   user: PrivyUserLike;
   wallets: PrivyConnectedWalletLike[];
+  appConfig?: PrivyAppConfigLike;
 }) {
   const linkedAccounts = authenticated ? getLinkedAccounts(user) : [];
   const walletAddress = authenticated
@@ -104,8 +107,12 @@ export function deriveWalletState({
   const manualSignerAddress = embeddedWalletAddress ?? walletAddress ?? null;
   const needsEmbeddedWalletBootstrap =
     authenticated && !embeddedWalletAddress;
+  const smartWalletsDisabled = authenticated && appConfig?.smartWalletsEnabled === false;
   const needsSmartAccountBootstrap =
-    authenticated && Boolean(embeddedWalletAddress) && !smartAccountAddress;
+    authenticated &&
+    Boolean(embeddedWalletAddress) &&
+    !smartAccountAddress &&
+    !smartWalletsDisabled;
   const embeddedWalletStatus = !authenticated
     ? "not_created"
     : embeddedWalletAddress
@@ -115,6 +122,8 @@ export function deriveWalletState({
     ? "not_started"
     : smartAccountAddress
       ? "ready"
+      : smartWalletsDisabled
+        ? "disabled"
       : needsSmartAccountBootstrap
         ? "creating"
         : "not_started";
@@ -122,6 +131,8 @@ export function deriveWalletState({
     ? "wallet_required"
     : smartAccountAddress
       ? "ready"
+      : smartWalletsDisabled
+        ? "smart_account_required"
       : embeddedWalletAddress
         ? "smart_account_pending"
         : "smart_account_required";
@@ -129,6 +140,8 @@ export function deriveWalletState({
     ? "Connect a wallet to start the hosted bootstrap path."
     : !embeddedWalletAddress
       ? "Privy has not finished creating the embedded wallet yet."
+      : smartWalletsDisabled
+        ? "Privy smart wallets are disabled for this app. Enable them in Privy before policyAccountAddress can resolve."
       : !smartAccountAddress
         ? "Privy has not finished linking the Ethereum smart account yet."
         : null;
@@ -146,6 +159,7 @@ export function deriveWalletState({
       status: smartAccountStatus,
       address: smartAccountAddress,
     },
+    smartWalletsEnabled: appConfig?.smartWalletsEnabled ?? null,
     needsEmbeddedWalletBootstrap,
     needsSmartAccountBootstrap,
     manualSignerAddress,

@@ -120,4 +120,48 @@ describe("deriveWalletState", () => {
     expect(state.automationReadiness).toBe("ready");
     expect(state.smartAccount.status).toBe("ready");
   });
+
+  it("fails closed when Privy smart wallets are disabled for the app", () => {
+    const state = deriveWalletState({
+      enabled: true,
+      ready: true,
+      authenticated: true,
+      user: {
+        wallet: {
+          address: "0x1111111111111111111111111111111111111111",
+        },
+        linkedAccounts: [
+          {
+            type: "wallet",
+            address: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            chainType: "ethereum",
+            walletClientType: "privy",
+          },
+        ],
+      },
+      wallets: [
+        {
+          address: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          walletClientType: "privy",
+        },
+      ],
+      appConfig: {
+        status: "loaded",
+        embeddedWalletCreateOnLogin: "off",
+        smartWalletsEnabled: false,
+      },
+    });
+
+    expect(state.smartWalletsEnabled).toBe(false);
+    expect(state.needsSmartAccountBootstrap).toBe(false);
+    expect(state.smartAccount.status).toBe("disabled");
+    expect(state.policyAccountAddress).toBeNull();
+    expect(state.executionDestinationAddress).toBe(
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    );
+    expect(state.automationReadiness).toBe("smart_account_required");
+    expect(state.automationBlocker).toBe(
+      "Privy smart wallets are disabled for this app. Enable them in Privy before policyAccountAddress can resolve.",
+    );
+  });
 });
