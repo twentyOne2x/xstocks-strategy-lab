@@ -28,12 +28,56 @@ import {
   runManualExecutionFlow,
 } from "@/lib/manual-execution";
 import {
+  buildDefaultRebalanceEventDraft,
   buildRebalanceControlSnapshot,
+  buildRebalanceRecommendations,
+  coerceRebalanceEventDraft,
   humanizeRebalanceState,
+  type RebalanceEventDraft,
 } from "@/lib/rebalance-control";
 
 import { usePrivyRuntime } from "@/components/privy-provider";
 import { useWalletState } from "@/components/wallet-connect-button";
+
+const EVENT_STORAGE_PREFIX = "xstocks:right-rail-event:";
+
+function formatStoredEventTimestamp(timestamp: string | null) {
+  if (!timestamp) {
+    return "Local stub only";
+  }
+
+  return new Date(timestamp).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+}
+
+function parseListInput(value: string): string[] {
+  return value
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
+function listToInput(values: string[]) {
+  return values.join(", ");
+}
+
+function controlToneClass(mode: "review_only" | "stage_only" | "blocked") {
+  if (mode === "stage_only") {
+    return "ready";
+  }
+
+  if (mode === "review_only") {
+    return "steady";
+  }
+
+  return "warning";
+}
 
 export function RebalanceControlPanel({
   manifest,
@@ -49,6 +93,14 @@ export function RebalanceControlPanel({
       ? (activeWallet as (typeof wallets)[number])
       : null;
   const walletState = useWalletState();
+  const eventStorageKey = `${EVENT_STORAGE_PREFIX}${manifest.slot_id}`;
+  const defaultEventSeed = buildDefaultRebalanceEventDraft(manifest);
+  const defaultEventSource = defaultEventSeed.source;
+  const defaultEventSummary = defaultEventSeed.summary;
+  const defaultEventConfidence = defaultEventSeed.confidence;
+  const defaultEventAffectedSleeves = defaultEventSeed.affectedSleeves.join("|");
+  const defaultEventAffectedSymbols = defaultEventSeed.affectedSymbols.join("|");
+  const defaultEventPortfolioImplication = defaultEventSeed.portfolioImplication;
   const [executionPreview, setExecutionPreview] = useState<ExecutionPreviewView | null>(
     manifest.preview?.executionPreview ?? null,
   );
@@ -68,6 +120,58 @@ export function RebalanceControlPanel({
     message: string;
   } | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [currentEvent, setCurrentEvent] = useState<RebalanceEventDraft>(() =>
+    buildDefaultRebalanceEventDraft(manifest),
+  );
+  const [eventEditor, setEventEditor] = useState<RebalanceEventDraft>(() =>
+    buildDefaultRebalanceEventDraft(manifest),
+  );
+  const [isEditingEvent, setIsEditingEvent] = useState(false);
+  const [expandedRecommendations, setExpandedRecommendations] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fallback: RebalanceEventDraft = {
+      source: defaultEventSource,
+      summary: defaultEventSummary,
+      confidence: defaultEventConfidence,
+      affectedSleeves: defaultEventAffectedSleeves
+        .split("|")
+        .filter(Boolean),
+      affectedSymbols: defaultEventAffectedSymbols
+        .split("|")
+        .filter(Boolean),
+      portfolioImplication: defaultEventPortfolioImplication,
+      persistence: "local_stub",
+      updatedAt: null,
+    };
+
+    if (typeof window === "undefined") {
+      setCurrentEvent(fallback);
+      setEventEditor(fallback);
+      return;
+    }
+
+    try {
+      const stored = window.localStorage.getItem(eventStorageKey);
+      const nextEvent = stored
+        ? coerceRebalanceEventDraft(JSON.parse(stored), fallback)
+        : fallback;
+
+      setCurrentEvent(nextEvent);
+      setEventEditor(nextEvent);
+    } catch {
+      setCurrentEvent(fallback);
+      setEventEditor(fallback);
+    }
+  }, [
+    defaultEventAffectedSleeves,
+    defaultEventAffectedSymbols,
+    defaultEventConfidence,
+    defaultEventPortfolioImplication,
+    defaultEventSource,
+    defaultEventSummary,
+    eventStorageKey,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -187,31 +291,95 @@ export function RebalanceControlPanel({
     orchestration,
     executionPreview,
     latestActivationId,
+    authenticated,
+    ready,
+    executionRequest,
   });
-  const authBlocker = !ready
-    ? "Wallet auth is still loading on this surface."
-    : !authenticated
-      ? "Connect wallet with Privy before execute_all can cross the authenticated signer boundary."
-      : null;
-  const executeAllBlocker = snapshot.executeAllBlocker ?? authBlocker;
-  const executeAllEnabled = snapshot.executeAllEnabled && authBlocker === null;
-  const combinedBlockers = [...new Set([executeAllBlocker, ...snapshot.blockers].filter(Boolean))];
+  const recommendations = buildRebalanceRecommendations({
+    manifest,
+    event: currentEvent,
+    snapshot,
+  });
+  const combinedBlockers = [...new Set(snapshot.blockers.filter(Boolean))];
   const exactWeights =
-    manifest.explanationBundle?.targetWeights.map((item) => `${item.symbol} ${item.targetWeightPct.toFixed(1)}%`) ??
+    manifest.explanationBundle?.targetWeights.map(
+      (item) => `${item.symbol} ${item.targetWeightPct.toFixed(1)}%`,
+    ) ??
     manifest.allocations
       .filter((allocation) => allocation.sleeve === "core xstocks")
       .map((allocation) => `${allocation.symbol} ${allocation.targetWeight}`);
   const signatureInputs = getExecutionSignatureInputs(executionRequest);
+  const doAllControl = snapshot.doAllControl;
 
-  const executeAllLabel =
-    executionRequest?.state && executionRequest.triggerSource === "provider_staging"
-      ? `Continue execute_all · ${humanizeRebalanceState(executionRequest.state)}`
-      : executeAllEnabled
-        ? "Execute all and sign"
-        : "Execute all unavailable";
+  useEffect(() => {
+    setExpandedRecommendations((current) => {
+      const availableIds = new Set(recommendations.map((item) => item.id));
+      const stillOpen = current.filter((item) => availableIds.has(item));
+
+      if (stillOpen.length > 0) {
+        return stillOpen;
+      }
+
+      return recommendations[0] ? [recommendations[0].id] : [];
+    });
+  }, [recommendations]);
+
+  function persistCurrentEvent(nextEvent: RebalanceEventDraft) {
+    setCurrentEvent(nextEvent);
+    setEventEditor(nextEvent);
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(eventStorageKey, JSON.stringify(nextEvent));
+    }
+
+    setStatusMessage({
+      tone: "neutral",
+      message:
+        "Manual event stub saved locally to this browser only. No persistent event-intent API is wired in this pass.",
+    });
+  }
+
+  function handleSaveEvent() {
+    const nextEvent = coerceRebalanceEventDraft(
+      {
+        ...eventEditor,
+        updatedAt: new Date().toISOString(),
+      },
+      buildDefaultRebalanceEventDraft(manifest),
+    );
+
+    persistCurrentEvent(nextEvent);
+    setIsEditingEvent(false);
+  }
+
+  function handleResetEvent() {
+    const nextEvent = buildDefaultRebalanceEventDraft(manifest);
+
+    setCurrentEvent(nextEvent);
+    setEventEditor(nextEvent);
+    setIsEditingEvent(false);
+
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(eventStorageKey);
+    }
+
+    setStatusMessage({
+      tone: "neutral",
+      message:
+        "Right-rail event stub reset to the current manifest intelligence view. Persistence remains local-only.",
+    });
+  }
+
+  function toggleRecommendation(recommendationId: string) {
+    setExpandedRecommendations((current) =>
+      current.includes(recommendationId)
+        ? current.filter((item) => item !== recommendationId)
+        : [...current, recommendationId],
+    );
+  }
 
   async function handleExecuteAll() {
-    if (!orchestration || !authenticated) {
+    if (!orchestration || !authenticated || !doAllControl.enabled) {
       return;
     }
 
@@ -269,15 +437,276 @@ export function RebalanceControlPanel({
         <p>{snapshot.eventSummary}</p>
       </div>
 
+      <article className="event-surface-card">
+        <div className="event-surface-head">
+          <div>
+            <span className="section-kicker">Current event</span>
+            <h3>{currentEvent.summary}</h3>
+          </div>
+          <div className="event-chip-row">
+            <span className="token-pill">{currentEvent.source}</span>
+            <span
+              className={`inline-pill inline-pill-${controlToneClass(doAllControl.mode)}`}
+            >
+              {doAllControl.badgeLabel}
+            </span>
+          </div>
+        </div>
+
+        <p className="panel-note">
+          {currentEvent.updatedAt
+            ? `Saved locally on ${formatStoredEventTimestamp(currentEvent.updatedAt)}.`
+            : "Local stub only. No persistent event-intent API is wired in this pass."}
+        </p>
+
+        <div className="info-stack">
+          <div>
+            <span>Source</span>
+            <strong>{currentEvent.source}</strong>
+          </div>
+          <div>
+            <span>Confidence</span>
+            <strong>{currentEvent.confidence}</strong>
+          </div>
+          <div>
+            <span>Portfolio implication</span>
+            <strong>{currentEvent.portfolioImplication}</strong>
+          </div>
+          <div>
+            <span>Current action mode</span>
+            <strong>{doAllControl.badgeLabel}</strong>
+          </div>
+        </div>
+
+        <div className="event-meta-grid">
+          <div>
+            <span className="section-kicker">Affected sleeves</span>
+            <div className="event-chip-row">
+              {currentEvent.affectedSleeves.map((sleeve) => (
+                <span className="token-pill" key={sleeve}>
+                  {sleeve}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <span className="section-kicker">Affected symbols</span>
+            <div className="event-chip-row">
+              {currentEvent.affectedSymbols.map((symbol) => (
+                <span className="token-pill" key={symbol}>
+                  {symbol}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="action-stack action-stack-inline">
+          <button
+            className="button button-secondary"
+            onClick={() => {
+              setEventEditor(currentEvent);
+              setIsEditingEvent((current) => !current);
+            }}
+            type="button"
+          >
+            {isEditingEvent ? "Close event editor" : "Edit event stub"}
+          </button>
+          <button
+            className="button button-secondary"
+            onClick={handleResetEvent}
+            type="button"
+          >
+            Reset stub
+          </button>
+        </div>
+
+        {isEditingEvent ? (
+          <div className="event-editor">
+            <label className="event-editor-field">
+              <span>Source</span>
+              <input
+                className="event-editor-input"
+                onChange={(event) =>
+                  setEventEditor((current) => ({
+                    ...current,
+                    source: event.target.value,
+                  }))
+                }
+                type="text"
+                value={eventEditor.source}
+              />
+            </label>
+            <label className="event-editor-field">
+              <span>Summary</span>
+              <textarea
+                className="event-editor-textarea"
+                onChange={(event) =>
+                  setEventEditor((current) => ({
+                    ...current,
+                    summary: event.target.value,
+                  }))
+                }
+                rows={3}
+                value={eventEditor.summary}
+              />
+            </label>
+            <label className="event-editor-field">
+              <span>Confidence</span>
+              <input
+                className="event-editor-input"
+                onChange={(event) =>
+                  setEventEditor((current) => ({
+                    ...current,
+                    confidence: event.target.value,
+                  }))
+                }
+                type="text"
+                value={eventEditor.confidence}
+              />
+            </label>
+            <label className="event-editor-field">
+              <span>Affected sleeves</span>
+              <input
+                className="event-editor-input"
+                onChange={(event) =>
+                  setEventEditor((current) => ({
+                    ...current,
+                    affectedSleeves: parseListInput(event.target.value),
+                  }))
+                }
+                type="text"
+                value={listToInput(eventEditor.affectedSleeves)}
+              />
+            </label>
+            <label className="event-editor-field">
+              <span>Affected symbols</span>
+              <input
+                className="event-editor-input"
+                onChange={(event) =>
+                  setEventEditor((current) => ({
+                    ...current,
+                    affectedSymbols: parseListInput(event.target.value),
+                  }))
+                }
+                type="text"
+                value={listToInput(eventEditor.affectedSymbols)}
+              />
+            </label>
+            <label className="event-editor-field">
+              <span>Portfolio implication</span>
+              <textarea
+                className="event-editor-textarea"
+                onChange={(event) =>
+                  setEventEditor((current) => ({
+                    ...current,
+                    portfolioImplication: event.target.value,
+                  }))
+                }
+                rows={3}
+                value={eventEditor.portfolioImplication}
+              />
+            </label>
+
+            <div className="action-stack action-stack-inline">
+              <button
+                className="button button-primary"
+                onClick={handleSaveEvent}
+                type="button"
+              >
+                Save local event
+              </button>
+              <button
+                className="button button-secondary"
+                onClick={() => {
+                  setEventEditor(currentEvent);
+                  setIsEditingEvent(false);
+                }}
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </article>
+
+      <section className="panel-list">
+        <div className="event-surface-head">
+          <div>
+            <span className="section-kicker">Recommended actions</span>
+            <p className="panel-note">
+              Derived from the current event stub and the truthful backend posture on
+              this slot.
+            </p>
+          </div>
+        </div>
+
+        <div className="recommendation-grid">
+          {recommendations.map((recommendation) => {
+            const expanded = expandedRecommendations.includes(recommendation.id);
+
+            return (
+              <article
+                className={`recommendation-card recommendation-card-${recommendation.tone}`}
+                key={recommendation.id}
+              >
+                <button
+                  aria-expanded={expanded}
+                  className="recommendation-chip"
+                  onClick={() => toggleRecommendation(recommendation.id)}
+                  type="button"
+                >
+                  <span>{recommendation.label}</span>
+                  <span>{expanded ? "Hide rationale" : "Show rationale"}</span>
+                </button>
+
+                {expanded ? (
+                  <div className="recommendation-detail">
+                    <p>{recommendation.rationale}</p>
+                    <p className="panel-note">{recommendation.portfolioEffect}</p>
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <article className="recommendation-control-card">
+        <div className="event-surface-head">
+          <div>
+            <span className="section-kicker">Grouped action</span>
+            <h3>Do all recommendations</h3>
+          </div>
+          <span
+            className={`inline-pill inline-pill-${controlToneClass(doAllControl.mode)}`}
+          >
+            {doAllControl.badgeLabel}
+          </span>
+        </div>
+
+        <p className="panel-note">{doAllControl.detail}</p>
+
+        <div className="action-stack">
+          <button
+            className="button button-primary"
+            disabled={!doAllControl.enabled || isPending}
+            onClick={handleExecuteAll}
+            type="button"
+          >
+            {isPending ? "Running do_all..." : "Do all recommendations"}
+          </button>
+          <Link className="button button-secondary" href={`/workspace/detail/${manifest.slug}`}>
+            Open detail
+          </Link>
+          <Link className="button button-secondary" href={`/activate/${manifest.slug}`}>
+            Open activation
+          </Link>
+        </div>
+      </article>
+
       <div className="info-stack">
-        <div>
-          <span>Confidence</span>
-          <strong>{snapshot.confidenceLabel}</strong>
-        </div>
-        <div>
-          <span>Portfolio implication</span>
-          <strong>{snapshot.portfolioImplication}</strong>
-        </div>
         <div>
           <span>Readiness</span>
           <strong>{snapshot.readinessLabel}</strong>
@@ -292,10 +721,18 @@ export function RebalanceControlPanel({
                 : "No persisted rebalance review"}
           </strong>
         </div>
+        <div>
+          <span>Latest activation</span>
+          <strong>{latestActivationId ?? "Will persist on demand"}</strong>
+        </div>
+        <div>
+          <span>Latest execution request</span>
+          <strong>{executionRequest?.executionRequestId ?? "No execution request loaded"}</strong>
+        </div>
       </div>
 
       <div className="panel-list">
-        <span className="section-kicker">Exact target weights</span>
+        <span className="section-kicker">Portfolio implications and target weights</span>
         <ul>
           {exactWeights.slice(0, 4).map((item) => (
             <li key={item}>{item}</li>
@@ -306,8 +743,17 @@ export function RebalanceControlPanel({
       <div className="panel-list">
         <span className="section-kicker">Signature boundary</span>
         <ul>
-          <li>{executionRequest?.fundingAssetSymbol ?? "USDC"} funding asset at ${latestRequestedNotionalUsd.toFixed(2)} requested notional.</li>
-          <li>Manual signer {executionRequest?.manualSignerAddress ?? walletState.manualSignerAddress ?? "not ready"} remains the required EIP-712 signer.</li>
+          <li>
+            {executionRequest?.fundingAssetSymbol ?? "USDC"} funding asset at $
+            {latestRequestedNotionalUsd.toFixed(2)} requested notional.
+          </li>
+          <li>
+            Manual signer{" "}
+            {executionRequest?.manualSignerAddress ??
+              walletState.manualSignerAddress ??
+              "not ready"}{" "}
+            remains the required EIP-712 signer.
+          </li>
           <li>Backend submission only follows returned wallet-first 1inch signatures.</li>
         </ul>
       </div>
@@ -325,29 +771,30 @@ export function RebalanceControlPanel({
         )}
       </div>
 
-      {snapshot.liveBoundary && (
+      {snapshot.liveBoundary ? (
         <div className="info-stack">
           <div>
             <span>Current live boundary</span>
             <strong>{snapshot.liveBoundary}</strong>
           </div>
         </div>
-      )}
+      ) : null}
 
-      {signatureInputs.length > 0 && (
+      {signatureInputs.length > 0 ? (
         <div className="panel-list">
           <span className="section-kicker">Queued signature payloads</span>
           <ul>
             {signatureInputs.slice(0, 3).map((input) => (
               <li key={input.legId}>
-                {input.assetSymbol} · {input.primaryType ?? "typed data"} · {input.orderHash ?? "pending order hash"}
+                {input.assetSymbol} · {input.primaryType ?? "typed data"} ·{" "}
+                {input.orderHash ?? "pending order hash"}
               </li>
             ))}
           </ul>
         </div>
-      )}
+      ) : null}
 
-      {snapshot.warnings.length > 0 && (
+      {snapshot.warnings.length > 0 ? (
         <div className="panel-list">
           <span className="section-kicker">Warnings</span>
           <ul>
@@ -356,44 +803,9 @@ export function RebalanceControlPanel({
             ))}
           </ul>
         </div>
-      )}
+      ) : null}
 
-      <div className="action-stack">
-        {executeAllBlocker && (
-          <p className="panel-note">{executeAllBlocker}</p>
-        )}
-        <button
-          className="button button-primary"
-          disabled={!executeAllEnabled || isPending}
-          onClick={handleExecuteAll}
-          type="button"
-        >
-          {isPending ? "Running execute_all..." : executeAllLabel}
-        </button>
-        <Link className="button button-secondary" href={`/workspace/detail/${manifest.slug}`}>
-          Open detail
-        </Link>
-        <Link className="button button-secondary" href={`/activate/${manifest.slug}`}>
-          Open activation
-        </Link>
-      </div>
-
-      <div className="info-stack">
-        <div>
-          <span>Latest activation</span>
-          <strong>{latestActivationId ?? "No saved activation loaded"}</strong>
-        </div>
-        <div>
-          <span>Latest execution request</span>
-          <strong>{executionRequest?.executionRequestId ?? "No execution request loaded"}</strong>
-        </div>
-        <div>
-          <span>Primary venue</span>
-          <strong>{manifest.market_intelligence.routeState.primaryVenue}</strong>
-        </div>
-      </div>
-
-      {statusMessage && (
+      {statusMessage ? (
         <p
           className="panel-note"
           style={{
@@ -407,7 +819,7 @@ export function RebalanceControlPanel({
         >
           {statusMessage.message}
         </p>
-      )}
+      ) : null}
     </section>
   );
 }
