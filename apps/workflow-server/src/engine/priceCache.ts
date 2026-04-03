@@ -71,7 +71,12 @@ export async function fetchUsdPrice(symbol: string): Promise<number | null> {
     );
     if (!resp.ok) return null;
     const data = await resp.json();
-    const price = data[geckoId]?.usd ?? null;
+    const priceMap =
+      typeof data === "object" && data !== null
+        ? (data as Record<string, { usd?: unknown } | undefined>)
+        : null;
+    const priceEntry = priceMap?.[geckoId];
+    const price = typeof priceEntry?.usd === "number" ? priceEntry.usd : null;
     if (price !== null) setCachedPrice(geckoId, price);
     return price;
   } catch {

@@ -49,6 +49,15 @@ function createStaticLiveStateRepository() {
               notes: "Verified Ethereum execution rail.",
             },
             {
+              routeId: "1inch.ethereum",
+              label: "1inch on Ethereum",
+              routeKind: "execution",
+              chain: "ethereum",
+              verificationTier: "public_verified",
+              availability: "available",
+              notes: "Verified hosted 1inch execution rail.",
+            },
+            {
               routeId: "flowdesk.ausd-rwa-strategy",
               label: "Flowdesk AUSD RWA Strategy",
               routeKind: "yield_vault",
