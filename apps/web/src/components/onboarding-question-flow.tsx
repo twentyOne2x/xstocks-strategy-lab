@@ -251,6 +251,7 @@ function buildChartPath(values: number[]) {
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min || 1;
+
   return values
     .map((value, index) => {
       const x = (index / Math.max(values.length - 1, 1)) * 100;
@@ -740,7 +741,7 @@ function SimulatedWorkspace({
     }
 
     setBuyRunning(true);
-    setBuyStatus("Preparing the Enso portfolio bundle...");
+    setBuyStatus("Preparing the 1inch portfolio route...");
     try {
       const [accessToken, identityToken] = await Promise.all([
         getAccessToken().catch(() => null),
@@ -772,10 +773,12 @@ function SimulatedWorkspace({
             .replace(/hosted manual lane/gi, "execution")
             .replace(/Persisting activation truth with the current/gi, "Saving portfolio with your")
             .replace(/wallet-first manual execution request/gi, "trade order")
-            .replace(/Creating the/gi, "Creating")
-            .replace(/Staging the authenticated execute_all handoff/gi, "Preparing execution")
+            .replace(/Creating the wallet-first 1inch execution request/gi, "Creating your 1inch route")
             .replace(/Creating the Enso portfolio execution request/gi, "Creating your portfolio transaction")
             .replace(/Preparing the Enso portfolio bundle/gi, "Preparing the portfolio bundle")
+            .replace(/Awaiting wallet-first 1inch signature for (.+?)\./gi, "Sign the 1inch order for $1 in your wallet.")
+            .replace(/Creating the/gi, "Creating")
+            .replace(/Staging the authenticated execute_all handoff/gi, "Preparing execution")
             .replace(
               /Enso returned the portfolio bundle\. Preparing wallet approval and transaction submission\./gi,
               "Portfolio bundle ready. Preparing wallet approval and transaction.",
@@ -797,7 +800,7 @@ function SimulatedWorkspace({
           .trim();
         setBuyStatus(cleanBlocker);
       } else {
-        setBuyStatus("Portfolio transaction submitted. Confirmation tracking is live.");
+        setBuyStatus("Portfolio orders submitted. Confirmation tracking is live.");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "An unexpected error occurred.";
@@ -815,7 +818,6 @@ function SimulatedWorkspace({
   }
   const spotlight = getWorkspaceSpotlightData(manifest, blotter);
   const values = spotlight.points.map((p) => p.value);
-  const path = buildChartPath(values);
   const mi = manifest.market_intelligence;
   const positions = blotter?.positions ?? [];
   const activity = blotter?.activity ?? [];
@@ -1328,7 +1330,7 @@ function SimulatedWorkspace({
 
             <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 0", color: "var(--text-muted)", fontSize: "0.82rem" }}>
               <span>Execution via</span>
-              <strong style={{ color: "var(--text)" }}>Enso bundle</strong>
+              <strong style={{ color: "var(--text)" }}>1inch route</strong>
               <span>on</span>
               <strong style={{ color: "var(--text)" }}>Ethereum</strong>
             </div>
@@ -1346,11 +1348,11 @@ function SimulatedWorkspace({
               disabled={buyRunning || parseBuyAmount() <= 0}
               onClick={handleBuy}
             >
-              {buyRunning ? "Processing portfolio transaction..." : !authenticated ? "Connect wallet to buy" : `Buy $${buyAmount} of ${recommendation.title}`}
+              {buyRunning ? "Processing portfolio route..." : !authenticated ? "Connect wallet to buy" : `Buy $${buyAmount} of ${recommendation.title}`}
             </button>
 
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.78rem", textAlign: "center" }}>
-              You will approve the starting USDC and sign the portfolio transaction with your connected wallet. Nothing executes without your approval.
+              You will sign each trade with your connected wallet. Nothing executes without your approval.
             </p>
           </div>
         </div>
@@ -1362,7 +1364,7 @@ function SimulatedWorkspace({
           <div className="pq-how-row">
             <div><span className="section-kicker">Rebalance</span><strong>Chainlink CRE</strong></div>
             <div><span className="section-kicker">Custody</span><strong>Privy smart wallet</strong></div>
-            <div><span className="section-kicker">Execution</span><strong>Enso bundle</strong></div>
+            <div><span className="section-kicker">Execution</span><strong>1inch route</strong></div>
           </div>
         </div>
       </section>

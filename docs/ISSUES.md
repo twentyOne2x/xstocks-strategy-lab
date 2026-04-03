@@ -1,6 +1,6 @@
 # Issues
 
-Last updated: 2026-04-02
+Last updated: 2026-04-03
 
 ## 2026-04-01 Live Gap Canonical Owners
 
@@ -10,14 +10,14 @@ Last updated: 2026-04-02
 | Privy smart accounts: partial or stale, not canonically proven live | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | reuse the existing Privy boundary sub-spec; do not open another owner lane |
 | Chainlink CRE ongoing implementation | `XSL-011B` | [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md) | keep as the only active CRE lane |
 | xStocks usage live baseline dependency, not a gap lane | `XSL-008` baseline only | [2026-03-31-xstocks-and-euler-adapter-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-and-euler-adapter-implementation.md) | tracked as dependency, not a new closure lane |
-| Autoresearch runtime: repo yes, deployed recurring no | `XSL-006` with `XSL-006A` | [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | `XSL-006A` remains the narrow runtime-host sub-lane |
+| Autoresearch runtime: repo proof seed rehydrated locally, public API deploy parity still pending | `XSL-006` with `XSL-006A` | [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | `XSL-006A` is now a merge/deploy parity residual, not a runtime-logic reopen |
 | Post-qualification autoresearch screen: partial | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | controlled on the canonical frontend via `XSL-004` |
 | Autoresearch explainability in app: partial or light on prod | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | coordinated with `XSL-004` and `XSL-006` |
 | Deposits via Mesh: no | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | explicit absence or proof only |
 | LI.FI portfolio deposit from one `USDC` into the promoted default basket: spec only, atomic claim not proven | `XSL-005` with `XSL-005A` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting LI.FI deposit lane stays under funding or deposit ownership; do not move to `XSL-014` |
 | Enso portfolio multi-deposit from one `USDC` into the promoted default basket: spec only, atomic bundle not yet repo-proven | `XSL-005` with `XSL-005B` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting Enso atomic-bundle lane stays under funding or deposit ownership; do not move to `XSL-014` |
-| Portfolio buy surface plus Enso one-transaction bundle execution from one `USDC` input: implementation active | `XSL-005` with `XSL-005C` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | implementation lane for `Buy portfolio`, one-bundle execution, and honest approval truth |
-| All frontend deployed on prod: no | `XSL-004` | [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md) | includes route, copy, and deployment parity |
+| Portfolio buy public-default route: hosted `1inch`; Enso implementation candidate still awaits live proof | `XSL-005` with `XSL-005C` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | `Buy portfolio` stays public, but route truth must remain explicit |
+| Frontend prod parity: onboarding shell live, direct detail-route parity still open | `XSL-004` | [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md) | includes route, copy, and deployment parity |
 | Agent and `skill.md` testability coverage | `XSL-016B` | [2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md) | public/private smoke ownership |
 
 ## Active
@@ -211,38 +211,43 @@ Last updated: 2026-04-02
 - [ ] tests run
 - [ ] visual/screenshot verification not applicable in this spec-only pass
 
-### XSL-005C Portfolio Buy Surface And Enso Bundle Execution
+### XSL-005C Portfolio Buy Surface Closure
 
 - Type: execution/frontend
 - Status: active
 - Canonical owner lane: `XSL-005`
 - Date opened: 2026-04-02
-- Context: the user now wants the visible `Buy with 1inch` surface replaced with `Buy portfolio`, and the actual buy path changed from a 1inch-pinned flow into one `USDC`-to-portfolio Enso bundle that the user can approve and submit once on the frontend.
-- Suspected cause: current repo runtime is still hard-pinned to `1inch.ethereum` in the frontend buy flow and in the authenticated manual execution handoff, while Enso only exists as a supporting spec and partial runtime branch with no active owner-lane implementation.
-- Fix intent: implement one repo-owned portfolio buy lane that stages all promoted portfolio token targets from one `USDC` input, requests one Enso bundle quote, and executes it with truthful provider-specific wallet approvals.
+- Context: the repo now has two different truths for similar user intent:
+  the already-proven hosted `1inch` approval boundary and an Enso implementation candidate with local verification only. The public `Buy portfolio` path cannot stay ambiguous between them.
+- Suspected cause: the 2026-04-02 implementation tranche flipped the default authenticated buy path to Enso before there was live wallet/onchain proof, while the stronger public proof still lived on hosted `1inch`.
+- Fix intent: keep the `Buy portfolio` surface, restore hosted `1inch` as the canonical public-default create path until Enso is live-proven, preserve Enso only as an explicit or pre-existing execution-request path, and keep `LI.FI` separate as spec-only truth.
 - Acceptance criteria:
-  1. The active buy CTA says `Buy portfolio` on the real buy surfaces instead of `Buy with 1inch`.
-  2. The default authenticated portfolio buy path no longer hard-pins creation to `1inch.ethereum`; it stages an `enso_bundle` execution request instead.
-  3. The runtime requests one Enso bundle quote for the promoted default basket and fails closed if Enso does not return a usable bundle.
-  4. The shipped approval model stays truthful:
-     the user may need one `USDC` approval transaction first, then signs one Enso portfolio transaction.
-  5. The implementation buys all promoted target portfolio tokens, including `AUSD` acquisition for the yield buffer, and no surface claims downstream Flowdesk sleeve settlement unless the returned Enso bundle actually includes it.
-  6. Stale blocked activations or stale non-Enso execution requests are not silently reused by the buy surface.
-  7. Vendor API keys stay env-only and are not written to tracked files.
+  1. The active buy CTA still says `Buy portfolio` on the real buy surfaces.
+  2. The default authenticated portfolio buy path creates `executionRouteId = 1inch.ethereum`.
+  3. Enso remains available only when explicitly requested or when an Enso execution request already exists.
+  4. The shipped public approval model matches the active route: wallet-first hosted `1inch`, user-approved, no hidden automation.
+  5. `LI.FI` and `Enso` remain separate from the shared hosted `1inch` truth in docs and copy.
+  6. Browser proof exists for the public onboarding journey and the issue text does not overclaim Enso or direct detail-route parity.
 - Complexity: high
-- Plan: [2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md)
+- Plan links:
+  - [2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md)
+  - [2026-04-03-xstocks-portfolio-buy-and-deposit-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-portfolio-buy-and-deposit-closure.md)
 - Executor prompt:
-  - Keep ownership under `XSL-005` and implement only the Enso portfolio buy lane for the promoted default basket.
-  - Touch `packages/shared/**`, `apps/api/**`, `apps/web/**`, and the narrow docs needed for `XSL-005C`.
-  - Do not write the provided Enso API key to tracked files.
-  - Do not reopen `XSL-014A`, do not widen into CRE or right-rail redesign work, and do not imply that LI.FI is the active one-transaction basket lane.
-  - Keep approval copy honest on the final surfaces: one `USDC` approval if needed, then one portfolio transaction.
+  - Keep ownership under `XSL-005`.
+  - Touch only the narrow web and doc surfaces needed to keep the public-default route truthful.
+  - Do not imply that `LI.FI` is the active one-transaction basket lane.
+  - Do not imply Enso is live just because local checks pass.
+  - Keep approval copy honest for the active public route.
 - Checklist:
   - [x] report captured
   - [x] context added
   - [x] fix applied
   - [x] tests run
-  - [ ] visual/screenshot verification
+  - [x] visual/screenshot verification
+- Resolution note:
+  - The public CTA remains `Buy portfolio`, but the default authenticated create path has been restored to hosted `1inch` via `executionRouteId = "1inch.ethereum"`.
+  - Enso is still supported as an explicit or pre-existing execution-request path, but it is no longer the public default until live proof exists.
+  - Public copy now matches the active approval model: wallet-first hosted `1inch`, per-trade user approval, no hidden autonomous execution.
 
 ### XSL-006 Strategy Lab Operating Model
 
@@ -266,28 +271,31 @@ Last updated: 2026-04-02
 - Status: active
 - Canonical owner lane: `XSL-006`
 - Date opened: 2026-04-01
-- Context: The repo already owns the local worker runtime and now also persists `autoresearchRuntime` on the deployed Railway runtime store, but live truth on 2026-04-01 still says `truthBoundary: "worker_runtime_only"` and `recurringAutonomousProven: false`. The linked Railway project still exposes only the `api` service in `production`, local worktree has candidate worker cron files in `apps/worker`, and the deployed host still lacks a public runtime-proof route and a proven recurring scheduler receipt path.
-- Suspected cause: local worker runtime and candidate Railway cron config landed before a deployed recurring host plus receipt surface were fully wired and deployed, so repo truth advanced locally faster than deployed-runtime proof.
-- Fix intent: establish or prove the narrowest repo-owned recurring host, capture host identity plus cadence and receipts, and keep `worker_runtime_only` active unless those receipts are real.
+- Context: the repo now has a canonical Railway cron proof seed and local API/runtime rehydration tests for recurring autoresearch, but the public host still served stale `worker_runtime_only` truth at the start of this pass.
+- Suspected cause: the cleanup and proof-seed rehydration slice existed only on a branch, so deployed parity lagged the strongest repo-owned runtime truth.
+- Fix intent: merge the cleanup slice, keep runtime logic closed, and recheck deploy parity rather than reopening scheduler-host implementation.
 - Acceptance criteria:
-  1. Either an existing recurring host is proven with exact host, cadence, last run, next run, and runtime evidence, or a new narrow repo-owned scheduler host is deployed.
-  2. The chosen host is classified explicitly among Railway worker/service, Railway cron/job, GitHub Actions, and Vercel cron.
-  3. `apps/api` gains at most one tiny runtime-proof surface if needed so future verification does not require SSH-only truth.
-  4. `recurringAutonomousProven` remains `false` and `worker_runtime_only` remains active unless host-level proof and receipts exist.
-  5. If closure still fails, one exact infrastructure blocker is recorded.
+  1. The repo carries the canonical Railway cron proof seed and local runtime surface rehydrates it.
+  2. The branch-only cleanup slice is merged or explicitly superseded.
+  3. Public deploy parity is rechecked after the merge.
+  4. If the public host still lags, one exact deploy-parity blocker is recorded instead of reopening runtime logic.
 - Complexity: medium
-- Plan: [2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md)
+- Plan links:
+  - [2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md)
+  - [2026-04-03-xstocks-repo-truth-sync-and-cleanup-closeout.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-repo-truth-sync-and-cleanup-closeout.md)
 - Executor prompt:
-  - Audit Railway, GitHub Actions, and Vercel ownership for the autoresearch recurring lane using current live access.
-  - If no recurring host already exists, implement the narrowest truthful scheduler path in `apps/worker` plus deployment/runtime config only.
-  - Touch `apps/api` only if one tiny receipt or runtime-proof surface is needed so later verification does not require SSH.
-  - Capture real deployed receipts before changing repo truth, and fail closed at the first exact deploy blocker if the host still cannot be established.
+  - Do not reopen runtime logic.
+  - Merge or supersede the branch-only cleanup slice.
+  - Recheck the public runtime surface after deploy and stop at one exact parity blocker if it still lags.
 - Checklist:
   - [x] report captured
   - [x] context added
-  - [ ] fix applied
-  - [ ] tests run
+  - [x] fix applied
+  - [x] tests run
   - [ ] visual/screenshot verification not applicable because this lane is worker/deploy/runtime only
+- Resolution note:
+  - This pass cherry-picked the branch-only cleanup into local commit `66fbeba7` and verified the runtime surface locally through `node --test apps/api/test/api.test.js`, `node --test apps/api/test/provider-rebalance-api.test.js`, and `pnpm --filter @xstocks/api test`.
+  - The public host still returned stale runtime truth at audit time, so the remaining residual is merge/deploy parity rather than scheduler-host logic.
 
 ### XSL-007 Manifest-To-Execution API Boundary
 
@@ -356,6 +364,11 @@ Last updated: 2026-04-02
 - Complexity: high
 - Plan links:
   - [2026-03-31-xstocks-gap-closure-and-readiness-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-gap-closure-and-readiness-spec.md)
+  - [2026-04-03-xstocks-final-closure-wave-control-plane.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-final-closure-wave-control-plane.md)
+- Continuation note:
+  - Date: 2026-04-03
+  - The closure-wave control-plane doc now exists and reconciles the current blocker map, route decision, right-rail proof split, and repo-truth sync requirements.
+  - The residual gap for `XSL-009` is no longer “missing closeout control doc”; it is landing the final verified slices and deploy rechecks without reintroducing thread drift.
 
 ### XSL-010 Portfolio Explainability And Autoresearch Interpretability
 
@@ -688,6 +701,8 @@ Last updated: 2026-04-02
   - A fresh live `24-7.markets` Privy session was then recaptured from the active Brave profile at `2026-04-02T00:00:21Z`, and Privy accepted the session refresh check with `200` for authenticated user `did:privy:cmng4u99003bf0ckye9oqgopk`.
   - After rebasing onto the current `origin/main`, verification again passed with `pnpm --filter @xstocks-strategy-lab/xstocks test`, `node --test apps/api/test/api.test.js`, and `git diff --check`, and the latest hosted proof rerun wrote [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-07-22.272Z/summary.json), [approval-payloads.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-07-22.272Z/approval-payloads.json), and [signature-inputs.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl014-proof/tmp/proof/oneinch-fusion-2026-04-02T00-07-22.272Z/signature-inputs.json).
   - The first exact remaining external blocker is now signer-owned approval: the rerun stopped with `code=missing_user_signature`, `stage=awaiting_signature`, and `message="Signer-owned 1inch Fusion EIP-712 signatures are still required for 6 quoted core legs before backend submission can be recorded."` No signed submission, venue order id, venue-status update beyond `quote_ready`, or receipt truth exists yet.
+  - A fresh 2026-04-03 rerun wrote [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T14-22-58.811Z/summary.json), [approval-payloads.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T14-22-58.811Z/approval-payloads.json), and [signature-inputs.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T14-22-58.811Z/signature-inputs.json) after refreshing the Privy session.
+  - That rerun still stopped at the same signer-owned approval boundary, and this pass did not find a repo-owned artifact proving the later `ORDER_SAVER_ERROR / NotEnoughBalanceOrAllowance` claim.
 
 ### XSL-014D Structured Execution Explorer Links And Blotter Truth
 

@@ -1,0 +1,233 @@
+{
+  "generatedAt": "2026-04-03T14:22:58.811Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "requestedNotionalUsd": 20,
+  "executionRouteId": "1inch.ethereum",
+  "runtimeStorePath": "/var/folders/_g/r34b0jm95m71gc_tmqjxnkl80000gn/T/xstocks-oneinch-fusion-proof-1775226178814.json",
+  "auth": {
+    "providerId": "privy",
+    "userId": "did:privy:...gopk",
+    "linkedAccountsSource": "privy_api",
+    "accessTokenVerified": true,
+    "identityTokenVerified": false
+  },
+  "signerAddress": "0xa28d...71b2",
+  "smartAccountAddress": "0x00c6...ce39",
+  "state": "awaiting_approval",
+  "blocker": {
+    "code": "missing_user_signature",
+    "stage": "awaiting_signature",
+    "message": "Signer-owned 1inch Fusion EIP-712 signatures are still required for 6 quoted core legs before backend submission can be recorded.",
+    "legs": [
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:1",
+        "assetSymbol": "NVDAx",
+        "quoteId": "48782bd4-e6dd-4564-8e83-219480c3c2b8",
+        "orderHash": "0xa93d86c327ea5390ba9146cf3c64bbd24bb73427e86f62590eaa74abd9fbb2f7"
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:2",
+        "assetSymbol": "MSFTx",
+        "quoteId": "b61903bc-c059-44f2-8912-f899227dc3cb",
+        "orderHash": "0xfca428bd03131754d206ca18f56c2d4211da0b1e04d194d0f4726a14dda3c049"
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:3",
+        "assetSymbol": "AAPLx",
+        "quoteId": "57b779ee-c789-459e-8ba2-b3b6b7b2e60b",
+        "orderHash": "0xcb1fe0c585454693be01ac6e0137c0d502c03f52571dc985bdfbb3217c34373d"
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:4",
+        "assetSymbol": "METAx",
+        "quoteId": "839b7dda-0e85-4db9-8c75-383f58dd79bc",
+        "orderHash": "0x96f10b9a21a0141804178346e6c9023a572f51c4e63c5fc033dbde5c5332bb64"
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:5",
+        "assetSymbol": "AMZNx",
+        "quoteId": "014b08cb-28b1-4716-ba6a-7cfe166cae47",
+        "orderHash": "0x2f54848687e5dc478b5123ed05c0c35e053fa47dd5b16bc2fc9e6aad20beb263"
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:6",
+        "assetSymbol": "GOOGLx",
+        "quoteId": "c6c31417-9290-4747-aa46-89c6b4a1c574",
+        "orderHash": "0x1bc1f5f212c680e8a165aa5c65d1fcb0e3d15e5c2aec9144d1f13bfa94bcfc5f"
+      }
+    ]
+  },
+  "activationId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b",
+  "executionRequestId": "execreq_8df3d2a0-f471-430c-bbed-890b407423eb",
+  "executionRequest": {
+    "state": "awaiting_approval",
+    "totalLegCount": 7,
+    "actionableLegCount": 6,
+    "deferredLegCount": 1,
+    "legs": [
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:1",
+        "assetSymbol": "NVDAx",
+        "sleeve": "core_xstocks",
+        "state": "awaiting_approval",
+        "quoteKind": "oneinch_fusion",
+        "quoteId": "48782bd4-e6dd-4564-8e83-219480c3c2b8",
+        "orderHash": "0xa93d86c327ea5390ba9146cf3c64bbd24bb73427e86f62590eaa74abd9fbb2f7",
+        "approvalStatus": "awaiting_user",
+        "approvalTarget": "oneinch_fusion_order",
+        "signerAddress": "0xa28d...71b2",
+        "receiverAddress": "0x00c6...ce39",
+        "venueOrderId": null,
+        "venueStatus": "quote_ready",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "NVDAx is pinned to the 1inch Ethereum route for this execution request.",
+          "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:2",
+        "assetSymbol": "MSFTx",
+        "sleeve": "core_xstocks",
+        "state": "awaiting_approval",
+        "quoteKind": "oneinch_fusion",
+        "quoteId": "b61903bc-c059-44f2-8912-f899227dc3cb",
+        "orderHash": "0xfca428bd03131754d206ca18f56c2d4211da0b1e04d194d0f4726a14dda3c049",
+        "approvalStatus": "awaiting_user",
+        "approvalTarget": "oneinch_fusion_order",
+        "signerAddress": "0xa28d...71b2",
+        "receiverAddress": "0x00c6...ce39",
+        "venueOrderId": null,
+        "venueStatus": "quote_ready",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "MSFTx is pinned to the 1inch Ethereum route for this execution request.",
+          "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:3",
+        "assetSymbol": "AAPLx",
+        "sleeve": "core_xstocks",
+        "state": "awaiting_approval",
+        "quoteKind": "oneinch_fusion",
+        "quoteId": "57b779ee-c789-459e-8ba2-b3b6b7b2e60b",
+        "orderHash": "0xcb1fe0c585454693be01ac6e0137c0d502c03f52571dc985bdfbb3217c34373d",
+        "approvalStatus": "awaiting_user",
+        "approvalTarget": "oneinch_fusion_order",
+        "signerAddress": "0xa28d...71b2",
+        "receiverAddress": "0x00c6...ce39",
+        "venueOrderId": null,
+        "venueStatus": "quote_ready",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AAPLx is pinned to the 1inch Ethereum route for this execution request.",
+          "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:4",
+        "assetSymbol": "METAx",
+        "sleeve": "core_xstocks",
+        "state": "awaiting_approval",
+        "quoteKind": "oneinch_fusion",
+        "quoteId": "839b7dda-0e85-4db9-8c75-383f58dd79bc",
+        "orderHash": "0x96f10b9a21a0141804178346e6c9023a572f51c4e63c5fc033dbde5c5332bb64",
+        "approvalStatus": "awaiting_user",
+        "approvalTarget": "oneinch_fusion_order",
+        "signerAddress": "0xa28d...71b2",
+        "receiverAddress": "0x00c6...ce39",
+        "venueOrderId": null,
+        "venueStatus": "quote_ready",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "METAx is pinned to the 1inch Ethereum route for this execution request.",
+          "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:5",
+        "assetSymbol": "AMZNx",
+        "sleeve": "core_xstocks",
+        "state": "awaiting_approval",
+        "quoteKind": "oneinch_fusion",
+        "quoteId": "014b08cb-28b1-4716-ba6a-7cfe166cae47",
+        "orderHash": "0x2f54848687e5dc478b5123ed05c0c35e053fa47dd5b16bc2fc9e6aad20beb263",
+        "approvalStatus": "awaiting_user",
+        "approvalTarget": "oneinch_fusion_order",
+        "signerAddress": "0xa28d...71b2",
+        "receiverAddress": "0x00c6...ce39",
+        "venueOrderId": null,
+        "venueStatus": "quote_ready",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AMZNx is pinned to the 1inch Ethereum route for this execution request.",
+          "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:6",
+        "assetSymbol": "GOOGLx",
+        "sleeve": "core_xstocks",
+        "state": "awaiting_approval",
+        "quoteKind": "oneinch_fusion",
+        "quoteId": "c6c31417-9290-4747-aa46-89c6b4a1c574",
+        "orderHash": "0x1bc1f5f212c680e8a165aa5c65d1fcb0e3d15e5c2aec9144d1f13bfa94bcfc5f",
+        "approvalStatus": "awaiting_user",
+        "approvalTarget": "oneinch_fusion_order",
+        "signerAddress": "0xa28d...71b2",
+        "receiverAddress": "0x00c6...ce39",
+        "venueOrderId": null,
+        "venueStatus": "quote_ready",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "GOOGLx is pinned to the 1inch Ethereum route for this execution request.",
+          "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      }
+    ],
+    "deferredLegs": [
+      {
+        "legId": "act_6ded6210-b714-41d7-ad18-b096bfb7139b:leg:7",
+        "assetSymbol": "AUSD",
+        "sleeve": "yield_buffer",
+        "state": "deferred",
+        "quoteKind": null,
+        "quoteId": null,
+        "orderHash": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "receiverAddress": null,
+        "venueOrderId": null,
+        "venueStatus": null,
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [],
+        "warnings": [
+          "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+        ]
+      }
+    ]
+  },
+  "approvalPayloadCount": 6,
+  "submissionResults": []
+}
