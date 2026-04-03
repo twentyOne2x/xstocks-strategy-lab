@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-04-03T21:05:06.597Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "executionRequestId": "execreq_459653b0-d4cf-4454-bdfa-594f68452c6e",
+  "approvalModel": "Approve the starting USDC if required, then send the Enso bundle transaction with the connected wallet.",
+  "approvalTransaction": null,
+  "bundleTransaction": null,
+  "route": [],
+  "bundle": []
+}

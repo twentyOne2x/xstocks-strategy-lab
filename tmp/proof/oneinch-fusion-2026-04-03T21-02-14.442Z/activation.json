@@ -1,0 +1,673 @@
+{
+  "activation": {
+    "activationId": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3",
+    "owner": {
+      "providerId": "privy",
+      "appId": "cmnfzikzk02ey0ckyx8m14qv2",
+      "userId": "did:privy:cmng4u99003bf0ckye9oqgopk",
+      "sessionId": "cmnjdy8a5002x0bjrhgb6auem",
+      "issuer": "privy.io",
+      "authenticatedAt": "2026-04-03T20:58:13.000Z"
+    },
+    "chain": "ethereum",
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "slotId": "onboarding.default_basket",
+    "recommendationId": "rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "activationManifestRef": {
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+    },
+    "requestedNotionalUsd": 20,
+    "surfaceTruth": "live",
+    "status": "ready",
+    "createdAt": "2026-04-03T21:02:26.368Z",
+    "updatedAt": "2026-04-03T21:02:26.368Z",
+    "walletState": {
+      "walletConnected": true,
+      "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fundedNotionalUsd": 20,
+      "fundingSource": null,
+      "embeddedWallet": {
+        "providerId": "privy_embedded_wallet",
+        "status": "ready",
+        "address": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2"
+      },
+      "smartAccount": {
+        "providerId": "privy_smart_account",
+        "status": "ready",
+        "address": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "implementation": "privy_smart_wallet",
+        "chain": "ethereum"
+      }
+    },
+    "routeTruthLabels": [
+      {
+        "routeId": "1inch.ethereum",
+        "label": "1inch on Ethereum",
+        "routeKind": "execution",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "truthState": "live",
+        "availability": "available",
+        "requiredFor": "core_xstocks",
+        "reason": "Publicly verified rail is available."
+      },
+      {
+        "routeId": "flowdesk.ausd-rwa-strategy",
+        "label": "Flowdesk AUSD RWA Strategy",
+        "routeKind": "yield_vault",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "truthState": "live",
+        "availability": "available",
+        "requiredFor": "yield_buffer",
+        "reason": "Publicly verified rail is available."
+      }
+    ],
+    "executionPlanSnapshot": {
+      "executionPlanId": "exec_c38d1565e647",
+      "generatedAt": "2026-04-03T21:02:26.367Z",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "surfaceTruth": "live",
+      "executionState": "ready",
+      "executionEligibility": "executable",
+      "requestedNotionalUsd": 20,
+      "walletConnectionLate": true,
+      "routeTruthLabels": [
+        {
+          "routeId": "1inch.ethereum",
+          "label": "1inch on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "core_xstocks",
+          "reason": "Publicly verified rail is available."
+        },
+        {
+          "routeId": "flowdesk.ausd-rwa-strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "routeKind": "yield_vault",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "yield_buffer",
+          "reason": "Publicly verified rail is available."
+        }
+      ],
+      "assetChecks": [
+        {
+          "assetSymbol": "NVDAx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 174.44849
+        },
+        {
+          "assetSymbol": "MSFTx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 360.86683
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 254.39414
+        },
+        {
+          "assetSymbol": "METAx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 573.99554
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 209.941375
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 293.407705
+        },
+        {
+          "assetSymbol": "AUSD",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 1
+        }
+      ],
+      "fundingPath": {
+        "provider": "privy",
+        "minRequiredUsd": 20,
+        "fundedNotionalUsd": 20,
+        "fundingGapUsd": 0,
+        "topUpAsset": "USDC",
+        "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "destinationKind": "smart_account",
+        "readiness": "funded",
+        "status": "funded",
+        "recommendedMethodId": null,
+        "surfaces": [
+          {
+            "methodId": "privy_wallet",
+            "providerId": "privy",
+            "kind": "wallet",
+            "status": "available",
+            "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Canonical self-serve path: transfer from your external wallet into the revealed same-chain destination address.",
+              "This wallet-funded path does not introduce a new app-level KYC/KYB step."
+            ]
+          },
+          {
+            "methodId": "manual_transfer",
+            "providerId": "manual",
+            "kind": "manual_transfer",
+            "status": "available",
+            "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Canonical strict self-serve fallback: complete a manual same-chain transfer from your external wallet into the revealed destination address.",
+              "Use this fail-closed path when hosted convenience rails are unavailable or not desired."
+            ]
+          },
+          {
+            "methodId": "privy_card",
+            "providerId": "privy",
+            "kind": "card",
+            "status": "available",
+            "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Optional hosted convenience rail for card top-up on mainnet.",
+              "A regulated on-ramp may require identity verification before funding completes."
+            ]
+          },
+          {
+            "methodId": "privy_exchange",
+            "providerId": "privy",
+            "kind": "exchange",
+            "status": "available",
+            "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Optional hosted convenience rail for exchange-linked funding into the current destination on mainnet.",
+              "A regulated exchange or on-ramp partner may require identity verification before funding completes."
+            ]
+          }
+        ]
+      },
+      "smartAccount": {
+        "readiness": "not_required",
+        "automationReadiness": "ready",
+        "providerId": "privy",
+        "status": "not_required",
+        "address": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "manualSigningMode": "wallet_first",
+        "automationAccountMode": "smart_account_required",
+        "venueSigningMode": "wallet_signer_manual_only",
+        "bridgeState": {
+          "manualSignerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "manualSignerKind": "embedded_wallet",
+          "policyAccountAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "executionDestinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "executionDestinationKind": "smart_account",
+          "supportsSeparateExecutionDestination": true,
+          "manualSigningMode": "wallet_first",
+          "automationAccountMode": "smart_account_required",
+          "venueSigningMode": "wallet_signer_manual_only",
+          "notes": [
+            "Manual venue signing stays wallet-first until AA-native venue signing is separately proven.",
+            "The Privy smart account is the canonical policy and automation account.",
+            "The current venue path supports a separate execution destination, so settlement can target the smart account while manual signing stays wallet-first."
+          ]
+        },
+        "bootstrap": {
+          "state": "ready",
+          "chain": "ethereum",
+          "implementation": "privy_smart_wallet",
+          "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "embeddedWalletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "smartAccountAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "approvalMode": "user_approved_only",
+          "paymasterReady": false,
+          "notes": [
+            "Current manual venue signing remains wallet-first for this manifest.",
+            "The Privy smart wallet is also ready as the canonical automation and destination account."
+          ]
+        },
+        "reviewArtifact": {
+          "providerId": "privy",
+          "providerName": "Privy smart wallet",
+          "supportedChains": [
+            "ethereum"
+          ],
+          "permissions": [
+            "activate_promoted_manifest_only",
+            "pause_strategy",
+            "turn_off_strategy"
+          ],
+          "approvalMode": "user_approved_only",
+          "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+          "fundingBoundary": "Funding remains provider-agnostic and should target the current manual signer or smart-wallet destination address through Privy-supported methods.",
+          "walletConnectionLate": true,
+          "notes": [
+            "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+            "Manual execution remains wallet-first while automation still requires the Privy smart wallet.",
+            "Funding readiness follows the user-requested notional for the current venue-routed lane.",
+            "Manual signing mode remains wallet_first.",
+            "Automation account mode remains smart_account_required.",
+            "Venue signing mode remains wallet_signer_manual_only.",
+            "Operator and user approvals stay explicit; no autonomous execution is implied."
+          ]
+        }
+      },
+      "automationExecution": {
+        "accountMode": "smart_account_required",
+        "readiness": "ready",
+        "status": "ready",
+        "manualSigningMode": "wallet_first",
+        "venueSigningMode": "wallet_signer_manual_only",
+        "policyAccountAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "executionDestinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "blockers": [],
+        "notes": [
+          "Current manual execution remains wallet-first.",
+          "The smart account is recorded as the canonical policy and automation account.",
+          "AA-native CoW or 1inch signing remains deferred."
+        ]
+      },
+      "steps": [
+        {
+          "stepId": "review_promoted_manifest",
+          "title": "Review promoted manifest",
+          "status": "complete",
+          "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted."
+        },
+        {
+          "stepId": "connect_wallet",
+          "title": "Connect wallet late in flow",
+          "status": "complete",
+          "detail": "Wallet connection is only required at activation time."
+        },
+        {
+          "stepId": "fund_wallet",
+          "title": "Fund wallet",
+          "status": "complete",
+          "detail": "Wallet funding meets the current requested notional."
+        },
+        {
+          "stepId": "prepare_smart_account",
+          "title": "Smart wallet architecture",
+          "status": "complete",
+          "detail": "Manual venue signing stays wallet-first. The Privy smart wallet is also ready as the canonical automation and execution-destination account."
+        },
+        {
+          "stepId": "request_cow_quote",
+          "title": "Request 1inch quote",
+          "status": "pending",
+          "detail": "All required rails, wallet, and funding checks are satisfied for 1inch quote preparation."
+        },
+        {
+          "stepId": "approve_cow_order",
+          "title": "Approve 1inch order",
+          "status": "pending",
+          "detail": "The user must sign and approve the 1inch Fusion order before submission."
+        }
+      ],
+      "allowedActions": [
+        "review_manifest",
+        "read_route_truth",
+        "request_cow_quote",
+        "approve_cow_order",
+        "pause_after_activation",
+        "turn_off_strategy"
+      ],
+      "blockers": [],
+      "warnings": [],
+      "liveStateSummary": {
+        "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+        "routeStateVersion": "2026-03-31.route-live.package.v1"
+      }
+    }
+  },
+  "activityEvents": [
+    {
+      "version": "1",
+      "eventId": "evt_4aef7e61-f08c-40d6-afc8-7640bf655c14",
+      "eventType": "activation_requested",
+      "scope": {
+        "type": "activation",
+        "id": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3"
+      },
+      "summary": "Saved activation request for promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+      "occurredAt": "2026-04-03T21:02:26.368Z",
+      "payload": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "surfaceTruth": "live",
+        "executionState": "ready"
+      }
+    }
+  ],
+  "executionPlan": {
+    "executionPlanId": "exec_c38d1565e647",
+    "generatedAt": "2026-04-03T21:02:26.367Z",
+    "activationManifestRef": {
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+    },
+    "surfaceTruth": "live",
+    "executionState": "ready",
+    "executionEligibility": "executable",
+    "requestedNotionalUsd": 20,
+    "walletConnectionLate": true,
+    "routeTruthLabels": [
+      {
+        "routeId": "1inch.ethereum",
+        "label": "1inch on Ethereum",
+        "routeKind": "execution",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "truthState": "live",
+        "availability": "available",
+        "requiredFor": "core_xstocks",
+        "reason": "Publicly verified rail is available."
+      },
+      {
+        "routeId": "flowdesk.ausd-rwa-strategy",
+        "label": "Flowdesk AUSD RWA Strategy",
+        "routeKind": "yield_vault",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "truthState": "live",
+        "availability": "available",
+        "requiredFor": "yield_buffer",
+        "reason": "Publicly verified rail is available."
+      }
+    ],
+    "assetChecks": [
+      {
+        "assetSymbol": "NVDAx",
+        "truthState": "live",
+        "status": "active",
+        "reason": "Asset is active in live xStocks state.",
+        "chain": "ethereum",
+        "priceUsd": 174.44849
+      },
+      {
+        "assetSymbol": "MSFTx",
+        "truthState": "live",
+        "status": "active",
+        "reason": "Asset is active in live xStocks state.",
+        "chain": "ethereum",
+        "priceUsd": 360.86683
+      },
+      {
+        "assetSymbol": "AAPLx",
+        "truthState": "live",
+        "status": "active",
+        "reason": "Asset is active in live xStocks state.",
+        "chain": "ethereum",
+        "priceUsd": 254.39414
+      },
+      {
+        "assetSymbol": "METAx",
+        "truthState": "live",
+        "status": "active",
+        "reason": "Asset is active in live xStocks state.",
+        "chain": "ethereum",
+        "priceUsd": 573.99554
+      },
+      {
+        "assetSymbol": "AMZNx",
+        "truthState": "live",
+        "status": "active",
+        "reason": "Asset is active in live xStocks state.",
+        "chain": "ethereum",
+        "priceUsd": 209.941375
+      },
+      {
+        "assetSymbol": "GOOGLx",
+        "truthState": "live",
+        "status": "active",
+        "reason": "Asset is active in live xStocks state.",
+        "chain": "ethereum",
+        "priceUsd": 293.407705
+      },
+      {
+        "assetSymbol": "AUSD",
+        "truthState": "live",
+        "status": "active",
+        "reason": "Asset is active in live xStocks state.",
+        "chain": "ethereum",
+        "priceUsd": 1
+      }
+    ],
+    "fundingPath": {
+      "provider": "privy",
+      "minRequiredUsd": 20,
+      "fundedNotionalUsd": 20,
+      "fundingGapUsd": 0,
+      "topUpAsset": "USDC",
+      "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+      "destinationKind": "smart_account",
+      "readiness": "funded",
+      "status": "funded",
+      "recommendedMethodId": null,
+      "surfaces": [
+        {
+          "methodId": "privy_wallet",
+          "providerId": "privy",
+          "kind": "wallet",
+          "status": "available",
+          "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "assetSymbol": "USDC",
+          "notes": [
+            "Canonical self-serve path: transfer from your external wallet into the revealed same-chain destination address.",
+            "This wallet-funded path does not introduce a new app-level KYC/KYB step."
+          ]
+        },
+        {
+          "methodId": "manual_transfer",
+          "providerId": "manual",
+          "kind": "manual_transfer",
+          "status": "available",
+          "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "assetSymbol": "USDC",
+          "notes": [
+            "Canonical strict self-serve fallback: complete a manual same-chain transfer from your external wallet into the revealed destination address.",
+            "Use this fail-closed path when hosted convenience rails are unavailable or not desired."
+          ]
+        },
+        {
+          "methodId": "privy_card",
+          "providerId": "privy",
+          "kind": "card",
+          "status": "available",
+          "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "assetSymbol": "USDC",
+          "notes": [
+            "Optional hosted convenience rail for card top-up on mainnet.",
+            "A regulated on-ramp may require identity verification before funding completes."
+          ]
+        },
+        {
+          "methodId": "privy_exchange",
+          "providerId": "privy",
+          "kind": "exchange",
+          "status": "available",
+          "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+          "assetSymbol": "USDC",
+          "notes": [
+            "Optional hosted convenience rail for exchange-linked funding into the current destination on mainnet.",
+            "A regulated exchange or on-ramp partner may require identity verification before funding completes."
+          ]
+        }
+      ]
+    },
+    "smartAccount": {
+      "readiness": "not_required",
+      "automationReadiness": "ready",
+      "providerId": "privy",
+      "status": "not_required",
+      "address": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+      "manualSigningMode": "wallet_first",
+      "automationAccountMode": "smart_account_required",
+      "venueSigningMode": "wallet_signer_manual_only",
+      "bridgeState": {
+        "manualSignerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "manualSignerKind": "embedded_wallet",
+        "policyAccountAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "executionDestinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "executionDestinationKind": "smart_account",
+        "supportsSeparateExecutionDestination": true,
+        "manualSigningMode": "wallet_first",
+        "automationAccountMode": "smart_account_required",
+        "venueSigningMode": "wallet_signer_manual_only",
+        "notes": [
+          "Manual venue signing stays wallet-first until AA-native venue signing is separately proven.",
+          "The Privy smart account is the canonical policy and automation account.",
+          "The current venue path supports a separate execution destination, so settlement can target the smart account while manual signing stays wallet-first."
+        ]
+      },
+      "bootstrap": {
+        "state": "ready",
+        "chain": "ethereum",
+        "implementation": "privy_smart_wallet",
+        "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "embeddedWalletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "smartAccountAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "destinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "approvalMode": "user_approved_only",
+        "paymasterReady": false,
+        "notes": [
+          "Current manual venue signing remains wallet-first for this manifest.",
+          "The Privy smart wallet is also ready as the canonical automation and destination account."
+        ]
+      },
+      "reviewArtifact": {
+        "providerId": "privy",
+        "providerName": "Privy smart wallet",
+        "supportedChains": [
+          "ethereum"
+        ],
+        "permissions": [
+          "activate_promoted_manifest_only",
+          "pause_strategy",
+          "turn_off_strategy"
+        ],
+        "approvalMode": "user_approved_only",
+        "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+        "fundingBoundary": "Funding remains provider-agnostic and should target the current manual signer or smart-wallet destination address through Privy-supported methods.",
+        "walletConnectionLate": true,
+        "notes": [
+          "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+          "Manual execution remains wallet-first while automation still requires the Privy smart wallet.",
+          "Funding readiness follows the user-requested notional for the current venue-routed lane.",
+          "Manual signing mode remains wallet_first.",
+          "Automation account mode remains smart_account_required.",
+          "Venue signing mode remains wallet_signer_manual_only.",
+          "Operator and user approvals stay explicit; no autonomous execution is implied."
+        ]
+      }
+    },
+    "automationExecution": {
+      "accountMode": "smart_account_required",
+      "readiness": "ready",
+      "status": "ready",
+      "manualSigningMode": "wallet_first",
+      "venueSigningMode": "wallet_signer_manual_only",
+      "policyAccountAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+      "executionDestinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+      "blockers": [],
+      "notes": [
+        "Current manual execution remains wallet-first.",
+        "The smart account is recorded as the canonical policy and automation account.",
+        "AA-native CoW or 1inch signing remains deferred."
+      ]
+    },
+    "steps": [
+      {
+        "stepId": "review_promoted_manifest",
+        "title": "Review promoted manifest",
+        "status": "complete",
+        "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted."
+      },
+      {
+        "stepId": "connect_wallet",
+        "title": "Connect wallet late in flow",
+        "status": "complete",
+        "detail": "Wallet connection is only required at activation time."
+      },
+      {
+        "stepId": "fund_wallet",
+        "title": "Fund wallet",
+        "status": "complete",
+        "detail": "Wallet funding meets the current requested notional."
+      },
+      {
+        "stepId": "prepare_smart_account",
+        "title": "Smart wallet architecture",
+        "status": "complete",
+        "detail": "Manual venue signing stays wallet-first. The Privy smart wallet is also ready as the canonical automation and execution-destination account."
+      },
+      {
+        "stepId": "request_cow_quote",
+        "title": "Request 1inch quote",
+        "status": "pending",
+        "detail": "All required rails, wallet, and funding checks are satisfied for 1inch quote preparation."
+      },
+      {
+        "stepId": "approve_cow_order",
+        "title": "Approve 1inch order",
+        "status": "pending",
+        "detail": "The user must sign and approve the 1inch Fusion order before submission."
+      }
+    ],
+    "allowedActions": [
+      "review_manifest",
+      "read_route_truth",
+      "request_cow_quote",
+      "approve_cow_order",
+      "pause_after_activation",
+      "turn_off_strategy"
+    ],
+    "blockers": [],
+    "warnings": [],
+    "liveStateSummary": {
+      "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+      "routeStateVersion": "2026-03-31.route-live.package.v1"
+    }
+  }
+}

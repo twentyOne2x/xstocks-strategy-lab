@@ -3916,6 +3916,7 @@ export function createApiService({
         chainId: ETHEREUM_CHAIN_ID,
         fromAddress,
         tokenAddress: actionableLegs[0]?.paymentTokenAddress,
+        routingStrategy: "router",
       }),
       Promise.all(actionableLegs.map((leg) => resolveLegOutputMeta(leg))),
     ]);

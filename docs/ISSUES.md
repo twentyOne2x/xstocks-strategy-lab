@@ -216,8 +216,10 @@ Last updated: 2026-04-03
 - Continuation note:
   - Date: 2026-04-03 remaining-gap closure pass
   - Current repo truth is no longer “proof-runner missing.” The repo now includes [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js), which reuses the authenticated activation plus `quote_portfolio` path and writes approval, bundle, and wallet-packet artifacts for the promoted basket when env is present.
-  - The first exact blocker from this machine is now operator config, not missing code: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T16-59-28.918Z/summary.json) stopped with `code=missing_environment_input` and `message="ENSO_API_KEY is required for the Enso proof runner."`
-  - The next honest move is still not a route switch. It is one env-backed proof attempt under `XSL-005B` against the full promoted basket including the `AUSD` sleeve.
+  - The env/config blocker is now closed. A fresh browser-backed rerun first exposed a repo bug: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T21-02-14.442Z/summary.json) failed because the client still called dead endpoint `/api/v1/shortcuts/approve`.
+  - That approval-path bug is now fixed in repo code, and the latest proof [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T21-05-06.597Z/summary.json) moves the lane to the next exact blocker: Enso bundle generation still fails upstream on the exact promoted basket.
+  - Direct upstream checks in [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-enso-live-proof-refresh/summary.md) show `NVDAx` and `AMZNx` quote individually, while `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx` fail individually with `Swap not found...`, and `AUSD` still lacks the Ethereum/USDC metadata needed for this lane.
+  - The next honest move is still not a route switch. It is either an upstream Enso-routing resolution for the failing promoted legs or an explicit freeze of Enso as non-canonical while hosted `1inch` remains the public default.
 
 ### XSL-005C Portfolio Buy Surface Closure
 

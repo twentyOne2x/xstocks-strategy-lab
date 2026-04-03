@@ -1,0 +1,402 @@
+{
+  "generatedAt": "2026-04-03T21:02:14.442Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "requestedNotionalUsd": 1000,
+  "executionAdapterId": "enso_bundle",
+  "executionRouteId": "enso.ethereum",
+  "runtimeStorePath": "/var/folders/_g/r34b0jm95m71gc_tmqjxnkl80000gn/T/xstocks-enso-proof-1775250134447.json",
+  "auth": {
+    "providerId": "privy",
+    "userId": "did:privy:cmng4u99003bf0ckye9oqgopk",
+    "linkedAccountsSource": "privy_api",
+    "accessTokenVerified": true,
+    "identityTokenVerified": false
+  },
+  "signerAddress": "0xa28d...71b2",
+  "smartAccountAddress": "0x00c6...ce39",
+  "state": "blocked",
+  "blocker": {
+    "code": "basket_leg_blocked",
+    "stage": "quote_portfolio",
+    "message": "At least one promoted-basket leg remained blocked after the Enso portfolio quote attempt.",
+    "legs": [
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:1",
+        "assetSymbol": "NVDAx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "NVDAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:2",
+        "assetSymbol": "MSFTx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "MSFTx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:3",
+        "assetSymbol": "AAPLx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AAPLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:4",
+        "assetSymbol": "METAx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "METAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:5",
+        "assetSymbol": "AMZNx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AMZNx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:6",
+        "assetSymbol": "GOOGLx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "GOOGLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:7",
+        "assetSymbol": "AUSD",
+        "sleeve": "yield_buffer",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Ethereum execution token metadata is missing for AUSD; portfolio multiquote requires deployment.address metadata on the live asset.",
+          "AUSD does not expose USDC as an Ethereum payment asset in the live xstocks metadata required for venue-routed execution.",
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AUSD is staged for the provider-aware portfolio buy lane from one USDC input."
+        ]
+      }
+    ]
+  },
+  "activationId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7",
+  "executionRequestId": "execreq_886fcbbb-7ddb-4706-99f7-b22a379d517d",
+  "executionRequest": {
+    "state": "blocked",
+    "totalLegCount": 7,
+    "actionableLegCount": 7,
+    "deferredLegCount": 0,
+    "warnings": [
+      "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+      "NVDAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "MSFTx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AAPLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "METAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AMZNx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "GOOGLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AUSD is staged for the provider-aware portfolio buy lane from one USDC input."
+    ],
+    "blockers": [
+      "Ethereum execution token metadata is missing for AUSD; portfolio multiquote requires deployment.address metadata on the live asset.",
+      "AUSD does not expose USDC as an Ethereum payment asset in the live xstocks metadata required for venue-routed execution.",
+      "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+    ],
+    "legs": [
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:1",
+        "assetSymbol": "NVDAx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "NVDAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:2",
+        "assetSymbol": "MSFTx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "MSFTx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:3",
+        "assetSymbol": "AAPLx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AAPLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:4",
+        "assetSymbol": "METAx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "METAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:5",
+        "assetSymbol": "AMZNx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AMZNx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:6",
+        "assetSymbol": "GOOGLx",
+        "sleeve": "core_xstocks",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "GOOGLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ]
+      },
+      {
+        "legId": "act_5f48b7f3-a8fc-4822-a183-33b831093be7:leg:7",
+        "assetSymbol": "AUSD",
+        "sleeve": "yield_buffer",
+        "state": "blocked",
+        "quoteKind": null,
+        "quoteId": null,
+        "approvalStatus": null,
+        "approvalTarget": null,
+        "signerAddress": null,
+        "venueOrderId": null,
+        "venueStatus": "quote_failed",
+        "txHash": null,
+        "receiptStatus": null,
+        "blockers": [
+          "Ethereum execution token metadata is missing for AUSD; portfolio multiquote requires deployment.address metadata on the live asset.",
+          "AUSD does not expose USDC as an Ethereum payment asset in the live xstocks metadata required for venue-routed execution.",
+          "Enso approval request failed with status 404: {\"message\":\"Cannot GET /api/v1/shortcuts/approve?amount=1000000000&chainId=1&fromAddress=0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2&tokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"975a4225-15f7-bda4-1caf-84167b8e5f10\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AUSD is staged for the provider-aware portfolio buy lane from one USDC input."
+        ]
+      }
+    ],
+    "deferredLegs": []
+  },
+  "bundleQuoteId": null,
+  "approvalTransactionTo": null,
+  "bundleTransactionTo": null
+}
