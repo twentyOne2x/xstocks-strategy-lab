@@ -23,6 +23,7 @@ import {
 
 import { createLiveStateRepository } from "../src/repositories/live-state-repository.js";
 import { createRuntimeStore } from "../src/repositories/runtime-store.js";
+import { createEnsoExecutionClient } from "../src/services/enso-execution-client.js";
 import { createApiServer } from "../src/server.js";
 
 const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -1088,6 +1089,57 @@ function createEnsoExecutionClientStub() {
     },
   };
 }
+
+test("Enso approval client uses the live wallet approval endpoint", async () => {
+  let requestedUrl = null;
+  let requestedMethod = null;
+
+  const client = createEnsoExecutionClient({
+    apiKey: "enso-api-key-test",
+    fetchImpl: async (url, init) => {
+      requestedUrl = new URL(String(url));
+      requestedMethod = init?.method ?? "GET";
+
+      return new Response(
+        JSON.stringify({
+          tx: {
+            to: "0x8888888888888888888888888888888888888888",
+            data: "0xapprove",
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+          },
+        },
+      );
+    },
+  });
+
+  const approval = await client.requestApproval({
+    amount: "1000000000",
+    chainId: 1,
+    fromAddress: "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    tokenAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    routingStrategy: "router",
+  });
+
+  assert.equal(requestedMethod, "GET");
+  assert.equal(requestedUrl.pathname, "/api/v1/wallet/approve");
+  assert.equal(requestedUrl.searchParams.get("amount"), "1000000000");
+  assert.equal(requestedUrl.searchParams.get("chainId"), "1");
+  assert.equal(
+    requestedUrl.searchParams.get("fromAddress"),
+    "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+  );
+  assert.equal(
+    requestedUrl.searchParams.get("tokenAddress"),
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  );
+  assert.equal(requestedUrl.searchParams.get("routingStrategy"), "router");
+  assert.equal(approval.tx.to, "0x8888888888888888888888888888888888888888");
+});
 
 test("live-state repository matches the package-owned boundary repository for manifest-scoped reads", async () => {
   const manifest = await loadPromotedManifest("advanced.default_directional");
@@ -2642,6 +2694,7 @@ test("execution quote_portfolio returns one Enso bundle quote for the promoted b
     );
     assert.equal(ensoExecutionClient.lastBundleRequest.routingStrategy, "router");
     assert.equal(ensoExecutionClient.lastApprovalRequest.amount, "1000000000");
+    assert.equal(ensoExecutionClient.lastApprovalRequest.routingStrategy, "router");
 
     const invalidLegQuoteResponse = await fetch(`${harness.baseUrl}/api/executions`, {
       method: "POST",

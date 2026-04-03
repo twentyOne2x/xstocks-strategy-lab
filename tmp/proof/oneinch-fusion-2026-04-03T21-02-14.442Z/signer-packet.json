@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-04-03T21:02:14.442Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "executionRequestId": "execreq_56581a53-e869-4b05-86de-27d40f4ce230",
+  "instructions": "Collect one EIP-712 signature per leg using the typedData payloads below, then rerun this script with XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH or XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON.",
+  "legs": [
+    {
+      "legId": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3:leg:1",
+      "assetSymbol": "NVDAx",
+      "signerAddress": null,
+      "quoteId": null,
+      "orderHash": null,
+      "primaryType": null,
+      "domainName": null,
+      "typedData": null,
+      "order": null,
+      "extension": null,
+      "signature": null
+    },
+    {
+      "legId": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3:leg:2",
+      "assetSymbol": "MSFTx",
+      "signerAddress": null,
+      "quoteId": null,
+      "orderHash": null,
+      "primaryType": null,
+      "domainName": null,
+      "typedData": null,
+      "order": null,
+      "extension": null,
+      "signature": null
+    },
+    {
+      "legId": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3:leg:3",
+      "assetSymbol": "AAPLx",
+      "signerAddress": null,
+      "quoteId": null,
+      "orderHash": null,
+      "primaryType": null,
+      "domainName": null,
+      "typedData": null,
+      "order": null,
+      "extension": null,
+      "signature": null
+    },
+    {
+      "legId": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3:leg:4",
+      "assetSymbol": "METAx",
+      "signerAddress": null,
+      "quoteId": null,
+      "orderHash": null,
+      "primaryType": null,
+      "domainName": null,
+      "typedData": null,
+      "order": null,
+      "extension": null,
+      "signature": null
+    },
+    {
+      "legId": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3:leg:5",
+      "assetSymbol": "AMZNx",
+      "signerAddress": null,
+      "quoteId": null,
+      "orderHash": null,
+      "primaryType": null,
+      "domainName": null,
+      "typedData": null,
+      "order": null,
+      "extension": null,
+      "signature": null
+    },
+    {
+      "legId": "act_9379cbf6-a82b-462f-b1e6-a31ec4d006b3:leg:6",
+      "assetSymbol": "GOOGLx",
+      "signerAddress": null,
+      "quoteId": null,
+      "orderHash": null,
+      "primaryType": null,
+      "domainName": null,
+      "typedData": null,
+      "order": null,
+      "extension": null,
+      "signature": null
+    }
+  ]
+}

@@ -1,0 +1,384 @@
+{
+  "version": "1",
+  "generatedAt": "2026-04-03T21:05:10.277Z",
+  "action": "quote_portfolio",
+  "executionRequest": {
+    "version": "1",
+    "executionRequestId": "execreq_459653b0-d4cf-4454-bdfa-594f68452c6e",
+    "owner": {
+      "providerId": "privy",
+      "appId": "cmnfzikzk02ey0ckyx8m14qv2",
+      "userId": "did:privy:cmng4u99003bf0ckye9oqgopk",
+      "sessionId": "cmnjdy8a5002x0bjrhgb6auem",
+      "issuer": "privy.io",
+      "authenticatedAt": "2026-04-03T20:58:13.000Z"
+    },
+    "rebalanceId": null,
+    "activationId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19",
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "slotId": "onboarding.default_basket",
+    "chain": "ethereum",
+    "mode": "basket",
+    "runtimeOwner": "operator_manual",
+    "triggerSource": "operator_manual",
+    "adapterId": "enso_bundle",
+    "activationManifestRef": {
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+    },
+    "requestedNotionalUsd": 1000,
+    "fundingAssetSymbol": "USDC",
+    "manualSignerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "policyAccountAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "executionDestinationAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "manualSigningMode": "wallet_first",
+    "automationAccountMode": "smart_account_required",
+    "automationReadiness": "ready",
+    "venueSigningMode": "wallet_signer_manual_only",
+    "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "state": "blocked",
+    "blockers": [
+      "Ethereum execution token metadata is missing for AUSD; portfolio multiquote requires deployment.address metadata on the live asset.",
+      "AUSD does not expose USDC as an Ethereum payment asset in the live xstocks metadata required for venue-routed execution.",
+      "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+    ],
+    "warnings": [
+      "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+      "NVDAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "MSFTx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AAPLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "METAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AMZNx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "GOOGLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+      "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+      "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AUSD is staged for the provider-aware portfolio buy lane from one USDC input."
+    ],
+    "legs": [
+      {
+        "legId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19:leg:1",
+        "sequence": 1,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "NVDAx",
+        "venueId": "enso.ethereum",
+        "adapterId": "enso_bundle",
+        "requiredRouteId": "enso.ethereum",
+        "targetWeightPct": 18,
+        "targetNotionalUsd": 180,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "state": "blocked",
+        "blockers": [
+          "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "NVDAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "NVDAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": {
+          "venueId": "enso.ethereum",
+          "venueOrderId": null,
+          "status": "quote_failed",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-03T21:05:10.275Z",
+          "rawStatus": {
+            "provider": "enso",
+            "executionKind": "single_bundle_transaction"
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": null
+      },
+      {
+        "legId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19:leg:2",
+        "sequence": 2,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "MSFTx",
+        "venueId": "enso.ethereum",
+        "adapterId": "enso_bundle",
+        "requiredRouteId": "enso.ethereum",
+        "targetWeightPct": 16.43,
+        "targetNotionalUsd": 164.3,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "state": "blocked",
+        "blockers": [
+          "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "MSFTx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "MSFTx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": {
+          "venueId": "enso.ethereum",
+          "venueOrderId": null,
+          "status": "quote_failed",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-03T21:05:10.275Z",
+          "rawStatus": {
+            "provider": "enso",
+            "executionKind": "single_bundle_transaction"
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": null
+      },
+      {
+        "legId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19:leg:3",
+        "sequence": 3,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "AAPLx",
+        "venueId": "enso.ethereum",
+        "adapterId": "enso_bundle",
+        "requiredRouteId": "enso.ethereum",
+        "targetWeightPct": 15.74,
+        "targetNotionalUsd": 157.4,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "state": "blocked",
+        "blockers": [
+          "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AAPLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "AAPLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": {
+          "venueId": "enso.ethereum",
+          "venueOrderId": null,
+          "status": "quote_failed",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-03T21:05:10.275Z",
+          "rawStatus": {
+            "provider": "enso",
+            "executionKind": "single_bundle_transaction"
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": null
+      },
+      {
+        "legId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19:leg:4",
+        "sequence": 4,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "METAx",
+        "venueId": "enso.ethereum",
+        "adapterId": "enso_bundle",
+        "requiredRouteId": "enso.ethereum",
+        "targetWeightPct": 15.4,
+        "targetNotionalUsd": 154,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "state": "blocked",
+        "blockers": [
+          "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "METAx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "METAx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": {
+          "venueId": "enso.ethereum",
+          "venueOrderId": null,
+          "status": "quote_failed",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-03T21:05:10.275Z",
+          "rawStatus": {
+            "provider": "enso",
+            "executionKind": "single_bundle_transaction"
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": null
+      },
+      {
+        "legId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19:leg:5",
+        "sequence": 5,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "AMZNx",
+        "venueId": "enso.ethereum",
+        "adapterId": "enso_bundle",
+        "requiredRouteId": "enso.ethereum",
+        "targetWeightPct": 14.89,
+        "targetNotionalUsd": 148.9,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "state": "blocked",
+        "blockers": [
+          "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AMZNx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "AMZNx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": {
+          "venueId": "enso.ethereum",
+          "venueOrderId": null,
+          "status": "quote_failed",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-03T21:05:10.275Z",
+          "rawStatus": {
+            "provider": "enso",
+            "executionKind": "single_bundle_transaction"
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": null
+      },
+      {
+        "legId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19:leg:6",
+        "sequence": 6,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "GOOGLx",
+        "venueId": "enso.ethereum",
+        "adapterId": "enso_bundle",
+        "requiredRouteId": "enso.ethereum",
+        "targetWeightPct": 14.54,
+        "targetNotionalUsd": 145.4,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "state": "blocked",
+        "blockers": [
+          "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "GOOGLx is staged for the provider-aware portfolio buy lane from one USDC input.",
+          "GOOGLx will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.",
+          "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": {
+          "venueId": "enso.ethereum",
+          "venueOrderId": null,
+          "status": "quote_failed",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-03T21:05:10.275Z",
+          "rawStatus": {
+            "provider": "enso",
+            "executionKind": "single_bundle_transaction"
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": null
+      },
+      {
+        "legId": "act_ac1a08c2-1a02-410e-b75f-f093a61eae19:leg:7",
+        "sequence": 7,
+        "sleeve": "yield_buffer",
+        "assetSymbol": "AUSD",
+        "venueId": "enso.ethereum",
+        "adapterId": "enso_bundle",
+        "requiredRouteId": "enso.ethereum",
+        "targetWeightPct": 5,
+        "targetNotionalUsd": 50,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": null,
+        "paymentTokenDecimals": null,
+        "receivingTokenAddress": null,
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+        "state": "blocked",
+        "blockers": [
+          "Ethereum execution token metadata is missing for AUSD; portfolio multiquote requires deployment.address metadata on the live asset.",
+          "AUSD does not expose USDC as an Ethereum payment asset in the live xstocks metadata required for venue-routed execution.",
+          "Enso bundle request failed with status 500: {\"statusCode\":500,\"message\":\"Internal server error\",\"requestId\":\"74215c94-56e3-48ef-8963-009902408ac3\"}"
+        ],
+        "warnings": [
+          "Venue-routed execution stays user-approved: venue-specific orders must be signed before the backend can submit them.",
+          "AUSD is staged for the provider-aware portfolio buy lane from one USDC input."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": {
+          "venueId": "enso.ethereum",
+          "venueOrderId": null,
+          "status": "quote_failed",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-03T21:05:10.275Z",
+          "rawStatus": {
+            "provider": "enso",
+            "executionKind": "single_bundle_transaction"
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": null
+      }
+    ],
+    "linkage": null,
+    "createdAt": "2026-04-03T21:05:09.524Z",
+    "updatedAt": "2026-04-03T21:05:10.275Z"
+  },
+  "activityEvents": []
+}

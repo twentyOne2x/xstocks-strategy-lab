@@ -121,6 +121,7 @@ export function createEnsoExecutionClient({
       chainId = 1,
       fromAddress,
       tokenAddress,
+      routingStrategy = "router",
     }) {
       if (!amount || !fromAddress || !tokenAddress) {
         throw new Error(
@@ -128,11 +129,12 @@ export function createEnsoExecutionClient({
         );
       }
 
-      const url = new URL(`${normalizedBaseUrl}/shortcuts/approve`);
+      const url = new URL(`${normalizedBaseUrl}/wallet/approve`);
       url.searchParams.set("amount", String(amount));
       url.searchParams.set("chainId", String(chainId));
       url.searchParams.set("fromAddress", fromAddress);
       url.searchParams.set("tokenAddress", tokenAddress);
+      url.searchParams.set("routingStrategy", routingStrategy);
 
       return await requestJson(
         url.toString(),
