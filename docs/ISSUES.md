@@ -404,6 +404,7 @@ Last updated: 2026-04-03
 - Recovery resolution note:
   - 2026-04-03: local repo truth is green again. `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm check`, `pnpm --filter @xstocks/worker test`, `pnpm --filter @xstocks/workflow-client build`, `pnpm --filter @xstocks/workflow-server build`, `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:validate`, `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:generate`, and `git diff --check` all pass on `codex/xsl-009-verification-recovery`.
   - 2026-04-03: live-host parity is still not closed. `https://24-7.markets/onboarding` returns `200` but still serves stale onboarding content with old manifest slugs; the canonical detail and activate routes still return `404`; and `GET https://24-7.markets/api/runtime/autoresearch?limit=1` still returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`.
+  - 2026-04-03: the recovery slice is merged on `origin/main` as `c1436e79b8aaf20c41c7442e9ec58e7bea41a6f8` via PR `#7`, and an immediate post-merge host recheck still shows the same stale runtime and `404` route posture.
   - 2026-04-03: the remaining blocker is deployment access, not repo code. This workspace has no `.vercel` link, `vercel` CLI is not installed, and `railway whoami` fails with `invalid_grant`, so this pass cannot truthfully claim public deploy closure from the current environment.
 
 ### XSL-010 Portfolio Explainability And Autoresearch Interpretability

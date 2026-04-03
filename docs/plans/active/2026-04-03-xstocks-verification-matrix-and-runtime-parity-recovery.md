@@ -281,3 +281,4 @@ Expected proof artifacts:
 8. 2026-04-03: reran `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm check`, Prisma validation or generation with explicit `DATABASE_URL`, and `git diff --check`; all now pass locally.
 9. 2026-04-03: rechecked the public host after local recovery; onboarding still returns `200` with stale manifest slugs, detail and activate still return `404`, and the runtime API still reports `worker_runtime_only`.
 10. 2026-04-03: deployment closure is blocked from this environment because there is no `.vercel` project link, `vercel` CLI is unavailable, and `railway whoami` fails with `invalid_grant`.
+11. 2026-04-03: merged the recovery slice to `origin/main` as `c1436e79b8aaf20c41c7442e9ec58e7bea41a6f8` via PR `#7`, then immediately rechecked the public host; the stale runtime and `404` route parity remained unchanged after the merge.
