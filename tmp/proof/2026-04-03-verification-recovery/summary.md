@@ -32,6 +32,8 @@
 ## Remaining blocker
 
 - Repo code is locally green.
+- Recovery slice merged to `origin/main` as `c1436e79b8aaf20c41c7442e9ec58e7bea41a6f8` via PR `#7`.
+- Immediate post-merge public checks still returned the same `404` activate/detail responses and stale runtime payload.
 - Public deploy parity is still stale.
 - Exact tooling blocker in this environment:
   - no `.vercel` project link present in the repo worktree,
