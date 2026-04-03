@@ -1,6 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { fetchActivationPreview, resolveApiBase } from "./api-client";
+import {
+  CLIENT_API_TIMEOUT_MS,
+  fetchActivationPreview,
+  getApiFetchTimeoutMs,
+  resolveApiBase,
+  SERVER_API_TIMEOUT_MS,
+} from "./api-client";
 
 describe("resolveApiBase", () => {
   afterEach(() => {
@@ -62,9 +68,25 @@ describe("resolveApiBase", () => {
     expect(() => resolveApiBase()).toThrow("API base URL is not set");
   });
 
+  it("uses the longer timeout for server-side API fetches", () => {
+    expect(getApiFetchTimeoutMs()).toBe(SERVER_API_TIMEOUT_MS);
+  });
+
+  it("uses the shorter timeout for client-side API fetches", () => {
+    vi.stubGlobal("window", {
+      location: {
+        origin: "https://24-7.markets",
+      },
+    });
+    expect(getApiFetchTimeoutMs()).toBe(CLIENT_API_TIMEOUT_MS);
+  });
+
   it("serializes live wallet state into activation preview requests", async () => {
     vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com");
     vi.stubEnv("NODE_ENV", "test");
+    const timeoutSpy = vi
+      .spyOn(AbortSignal, "timeout")
+      .mockReturnValue(new AbortController().signal);
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ data: { executionPlan: null } }),
@@ -122,5 +144,6 @@ describe("resolveApiBase", () => {
       Authorization: "Bearer access-token",
       "X-Privy-Identity-Token": "identity-token",
     });
+    expect(timeoutSpy).toHaveBeenCalledWith(SERVER_API_TIMEOUT_MS);
   });
 });

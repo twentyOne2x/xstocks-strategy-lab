@@ -87,7 +87,7 @@ As of `2026-04-03`, the strongest repo-owned truth is:
 4. accepted `Chainlink CRE` / provider-triggered review can now hand off into canonical execution staging through `execute_all` under landed `XSL-018B`,
 5. execution is still user-approved and signer-owned,
 6. the canonical public-default buy route remains hosted `1inch` on Ethereum while Enso stays unproven,
-7. the rebalance right rail is visibly present in the onboarding preview shell and remains fail-closed,
+7. the rebalance right rail is publicly visible on both the onboarding preview shell and the canonical `workspace/detail` route, and it remains fail-closed,
 8. full autonomous rebalancing is not live.
 
 What is not true yet:
@@ -95,7 +95,7 @@ What is not true yet:
 2. provider-triggered `CRE` does not autonomously execute end to end,
 3. `LI.FI` is not the active atomic whole-basket execution lane,
 4. `Enso` is not live-proven on the canonical public route,
-5. direct public detail-route parity is not yet proven on the current prod host,
+5. the public runtime surface does not prove a deployed recurring scheduler host beyond `worker_runtime_only`,
 6. Privy smart-account-first execution remains an active `XSL-005` posture lane, not the current proven runtime branch.
 
 ## Architecture
@@ -213,10 +213,8 @@ What is already strong:
 
 What is still active:
 1. signer-owned `1inch Fusion` signature plus first accepted submission or receipt proof for the six quoted core legs,
-2. direct detail-route right-rail prod parity after the web API-origin fix ships,
-3. `Enso` live proof on the promoted default basket,
-4. public deploy parity for the `XSL-006A` runtime surface,
-5. smart-account-first execution posture,
-6. policy-bounded automation and full autonomous CRE execution above the current operator-manual closure.
+2. `Enso` live proof on the promoted default basket,
+3. smart-account-first execution posture,
+4. policy-bounded automation and full autonomous CRE execution above the current operator-manual closure.
 
 This README should track current repo truth, not demo framing. If execution, wallet, or automation claims change, update the owning spec and [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md) first, then refresh this file.

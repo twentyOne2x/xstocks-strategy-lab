@@ -36,7 +36,7 @@ Close the remaining product gaps without reopening solved runtime lanes, inventi
    - Restored hosted `1inch` as the canonical public-default buy route in the web flow.
 3. Right rail
    - Proved the panel is visible in the live onboarding preview shell with fail-closed controls.
-   - Audited direct detail-route parity separately and found an SSR/API-base failure path that still needs deploy proof.
+   - Closed direct detail-route parity on prod after fixing the server-side API timeout path and redeploying Vercel.
 4. Repo truth sync
    - Landed the `XSL-006A` cleanup slice onto this branch.
    - Synced the closeout docs, issue tracker, and README to the audited blocker and route truth.
@@ -44,7 +44,7 @@ Close the remaining product gaps without reopening solved runtime lanes, inventi
 ## Canonical Public Routes After This Pass
 
 1. Buy route: hosted `1inch` remains the canonical public-default path. The public entry stays [https://24-7.markets/onboarding](https://24-7.markets/onboarding), and the authenticated activation surface remains [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1).
-2. Right rail: the strongest current public proof is the onboarding preview shell reached from [https://24-7.markets/onboarding](https://24-7.markets/onboarding). Direct detail-route parity remains an explicit deploy recheck item, not a closed claim.
+2. Right rail: the canonical public route is now [https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1), with the onboarding preview shell at [https://24-7.markets/onboarding](https://24-7.markets/onboarding) as the top-of-funnel companion surface. Both are live on Vercel deployment `dpl_4w35481YsNzPnkMSCMqAjD4CzxMc`.
 
 ## Proof Bundles
 
@@ -55,6 +55,10 @@ Close the remaining product gaps without reopening solved runtime lanes, inventi
    - [detail-desktop.png](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-live-audit/detail-desktop.png)
    - [detail-mobile.png](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-live-audit/detail-mobile.png)
    - [onboarding-desktop.png](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-live-audit/onboarding-desktop.png)
+3. Prod parity redeploy:
+   - [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-prod-parity-redeploy/summary.md)
+   - [activate.headers](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-prod-parity-redeploy/activate.headers)
+   - [detail.headers](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-prod-parity-redeploy/detail.headers)
 
 ## Exit Criteria
 
