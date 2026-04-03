@@ -12,6 +12,7 @@ Close the remaining blockers the user is explicitly still asking about:
 2. prove Enso live on the real promoted basket or freeze it as non-live with exact reasons,
 3. reconcile the stale Railway recurring-runtime proof story with the current live `worker_runtime_only` API truth,
 4. and restore or bypass the blocked Railway CLI enough to operate the runtime lane without thread folklore.
+5. Execution lanes under this umbrella are only done when a real onchain transaction lands; blocker capture is progress, not execution closure.
 
 ## Non-goals
 
@@ -97,24 +98,24 @@ Create new alongside:
    - Enso has partial code plus a proof runner, and the approval endpoint bug is now fixed, but the promoted basket still fails upstream bundle generation because several core legs are not quoteable and `AUSD` remains metadata-blocked,
    - runtime API truth is honest and fail-closed, and the repo now keeps the stale historical Railway host proof as an opt-in artifact instead of a default runtime override.
 3. Honestly complete means:
-   - shared `1inch`: one signature-fed rerun reaches venue submission or one exact new blocker,
-   - Enso: one exact promoted-basket proof either produces the whole-basket bundle truth or an exact blocker, and the current exact blocker is now known,
+   - shared `1inch`: a signature-fed rerun reaches a real landed tx, or else the lane stays open with the next exact blocker captured,
+   - Enso: one exact promoted-basket proof either produces a landed onchain bundle path or stays open with an exact blocker,
    - runtime: the repo either re-proves the existing Railway host with fresh evidence or explicitly retires the stale host proof and keeps `worker_runtime_only`.
 
 ## Completion Percent And Remaining Delta
 
 | Workstream | Implementation | Proof | Prod / operator | Remaining delta |
 | --- | ---: | ---: | ---: | --- |
-| Shared `1inch` signer advance | 95% | 78% | 55% | collect signatures, rerun, classify first post-signature blocker, and capture venue artifacts if any |
-| Enso bundle lane | 82% | 45% | 0% | resolve upstream quoteability for `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx`, resolve `AUSD` metadata, then re-run the promoted basket and decide live vs non-live |
+| Shared `1inch` signer advance | 95% | 78% | 55% | collect signatures, rerun, capture venue artifacts, and still treat the lane as open until a landed tx exists |
+| Enso bundle lane | 82% | 45% | 0% | resolve upstream quoteability for `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx`, resolve `AUSD` metadata, then re-run the promoted basket and still require landed onchain proof before any live claim |
 | Recurring runtime host | 82% | 35% | 10% | restore or bypass Railway access, verify whether `autoresearch-worker` still exists, then re-prove or retire the stale host claim |
 
 ## Closure, Endpoint, And Deployment Truth
 
 | Workstream | Earliest honest closure condition | Relevant surface | Local status | Deployed-host status | Production status | Proof command or artifact |
 | --- | --- | --- | --- | --- | --- | --- |
-| Shared `1inch` | one rerun with real signatures reaches submission or exact new blocker | [oneinch-fusion-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/oneinch-fusion-proof.js), `POST /api/executions` | ready to accept external signatures | hosted/session-backed path again quoted six legs with fresh auth and stopped only at the signer boundary | public route is live but still pre-signature | [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T21-02-14.442Z/summary.json) |
-| Enso | one exact promoted-basket run captures approval, bundle tx payload, and all required outputs or exact blocker | `quote_portfolio` in [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js), [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js) | partial implementation with proof harness and fixed approval endpoint | env-backed live status now reaches the exact upstream blocker: partial quoteability only, plus `AUSD` metadata gap | not on canonical public route | [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T21-02-14.442Z/summary.json), [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T21-05-06.597Z/summary.json), and [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-enso-live-proof-refresh/summary.md) |
+| Shared `1inch` | one rerun with real signatures reaches a landed tx, or else records the next exact blocker without claiming closure | [oneinch-fusion-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/oneinch-fusion-proof.js), `POST /api/executions` | ready to accept external signatures | hosted/session-backed path again quoted six legs with fresh auth and stopped only at the signer boundary | public route is live but still pre-signature and not done execution | [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T21-02-14.442Z/summary.json) |
+| Enso | one exact promoted-basket run reaches a landed onchain bundle path, or else records the exact blocker without claiming closure | `quote_portfolio` in [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js), [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js) | partial implementation with proof harness and fixed approval endpoint | env-backed live status now reaches the exact upstream blocker: partial quoteability only, plus `AUSD` metadata gap | not on canonical public route and not done execution | [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T21-02-14.442Z/summary.json), [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T21-05-06.597Z/summary.json), and [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-enso-live-proof-refresh/summary.md) |
 | Recurring runtime host | fresh live receipt or explicit retirement of stale host proof | [https://24-7.markets/api/runtime/autoresearch?limit=1](https://24-7.markets/api/runtime/autoresearch?limit=1), [autoresearch-railway-cron.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/src/autoresearch-railway-cron.js), [railway.json](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/railway.json) | host code and tests exist, and local default truth is now fail-closed | live host inventory currently inaccessible from CLI | public runtime remains fail-closed and truthful | [runtime-autoresearch-24-7.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-remaining-gap-closure/runtime-autoresearch-24-7.json) and [cli-status.txt](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-remaining-gap-closure/cli-status.txt) |
 
 ## Delivery Posture

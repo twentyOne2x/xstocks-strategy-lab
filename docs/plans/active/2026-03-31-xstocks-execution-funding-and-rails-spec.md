@@ -74,7 +74,8 @@ When this lane closes:
 2. public, API, and runtime surfaces agree on whether the lane is linked-wallet-first, smart-account-optional, or smart-account-required,
 3. `live execution works` has one exact proof bar and one lower claim bar for partial hosted proof,
 4. deposit and funding rails say exactly what exists now and what is deferred,
-5. Mesh is either still explicitly absent or proven through a real UI/backend contract before any public claim.
+5. Mesh is either still explicitly absent or proven through a real UI/backend contract before any public claim,
+6. no execution lane is called `done`, `implemented`, `works`, or `live` until the required landed onchain proof exists for that lane.
 
 ## State-And-Truth Contract
 
@@ -92,14 +93,35 @@ Truth rules:
 3. `smart wallet live` may be claimed only if a hosted proof bundle shows the smart-wallet branch is actually required or actually used.
 4. `live execution works` requires more than activation save or one quoted leg; it requires the full execution proof contract below.
 5. Mesh may not be named as a deposit rail in public product language until the UI and backend contract are both real.
+6. Quote-ready, approval-ready, awaiting-signature, bundle-payload, and submission-ready states are not `done` execution.
+
+## Execution Completion Semantics Upgrade
+
+Execution lanes in this repo now use these reserved meanings:
+1. `done`, `implemented`, `works`, `live`, and `closed` require a real landed onchain transaction or equivalent onchain receipt for that lane.
+2. Frontend-facing execution lanes additionally require canonical frontend/browser-actuated proof of that same landed path before those words are allowed for the user-facing surface.
+3. Route truth, copy truth, frontend parity, activation readiness, quoteability, approval payload capture, and venue-submission readiness are all still valuable, but they are lower proof states and must be named as such.
+
+Allowed pre-onchain language:
+1. `spec-only`
+2. `repo-implemented only`
+3. `activation-ready`
+4. `quote-ready`
+5. `approval-payload proven`
+6. `awaiting user signature`
+7. `bundle payload proven`
+8. `venue-submission-ready`
+9. `venue-submitted, not landed`
+10. `exact blocker captured`
 
 ## Proof / Measurement Contract
 
 | Claim level | Required proof | Current status |
 | --- | --- | --- |
 | `linked-wallet activation ready` | hosted activation save and execution create without smart wallet | proven |
-| `hosted CoW quote boundary` | real venue response for the promoted execution request | partially proven |
-| `live execution works` | hosted activation save, all-leg quoteability or explicit resolved blockers, user approval, order submission, and receipt or settlement proof | not yet proven |
+| `hosted CoW quote boundary` | real venue response for the promoted execution request | partially proven; not done execution |
+| `backend execution works` | hosted activation save, all-leg quoteability or explicit resolved blockers, user approval, order submission, and landed onchain receipt proof | not yet proven |
+| `frontend execution works` | backend landed-tx proof plus canonical frontend/browser proof of that landed path | not yet proven |
 | `smart wallet required or live` | hosted smart-wallet bootstrap plus execution proof on that branch | not proven |
 | `Mesh live` | deployed UI choice, backend contract, runtime receipt, and public copy proof | not implemented |
 
@@ -108,7 +130,8 @@ Exact proof needed before the repo may say `live execution works`:
 2. one hosted execution request on that activation,
 3. truthful per-leg venue diagnostics with no hidden `smart_account_required` fallback,
 4. one user-approved submission that produces an order UID or transaction hash,
-5. one downstream receipt or exact external blocker at the venue or chain boundary.
+5. one downstream landed onchain receipt or equivalent chain proof for the execution lane,
+6. if the lane is frontend-facing, canonical frontend/browser proof that the same landed path is user-actuated on the real surface.
 
 ## Acceptance Criteria
 
@@ -119,6 +142,7 @@ Exact proof needed before the repo may say `live execution works`:
 5. Funding and deposit copy matches repo-owned rails only.
 6. Mesh is classified explicitly as absent, deferred, or live with proof.
 7. Agent surfaces can verify the public deposit boundary and the internal execution boundary without mixing them.
+8. No execution lane is marked `done`, `implemented`, `works`, or `live` before the required landed onchain proof exists.
 
 ## Blocker Taxonomy
 
@@ -149,9 +173,9 @@ Exact proof needed before the repo may say `live execution works`:
 
 ## Completion Relative To Spec / Thread Asks / Prior Claims
 
-1. Completion relative to this spec: open; local and partial hosted proof exist, but the canonical hosted execution claim is not closed.
+1. Completion relative to this spec: open; local and partial hosted proof exist, but no canonical hosted execution lane has landed onchain proof yet.
 2. Completion relative to the current live-gap list: this spec now owns gap 1, gap 2, and gap 8.
-3. Completion relative to prior claims: the earlier `repo yes, prod no` summary is now refined to `production partially proven through activation and execution-create, but not yet closed enough for a full live-execution claim`.
+3. Completion relative to prior claims: the earlier `repo yes, prod no` summary is now refined to `production partially proven through activation, route truth, and execution-create, but not yet closed enough for any live-execution claim`.
 
 ## Agent-Testability Contract
 

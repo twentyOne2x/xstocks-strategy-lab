@@ -7,7 +7,7 @@ Canonical issues: `XSL-006A`, `XSL-005A`, `XSL-005B`, `XSL-005C`, `XSL-014C`, `X
 
 ## Goal
 
-Close the remaining product gaps without reopening solved runtime lanes, inventing new execution owners, or flattening vendor-specific truth into one vague router claim.
+Close the remaining product gaps without reopening solved runtime lanes, inventing new execution owners, flattening vendor-specific truth into one vague router claim, or calling any execution lane done before a real onchain transaction lands.
 
 ## Audited Start State
 
@@ -30,10 +30,12 @@ Close the remaining product gaps without reopening solved runtime lanes, inventi
    - Re-ran the hosted/session-backed proof with a refreshed Privy session.
    - Confirmed the exact current blocker remains signer-owned `1inch Fusion` signatures.
    - Refused to restate the unproven funding/custody claim as repo truth.
+   - Did not call the lane implemented or done, because no landed onchain transaction exists yet.
 2. Portfolio buy and deposit family
    - Kept `LI.FI` as spec-only.
    - Kept `Enso` as implementation candidate awaiting live proof.
    - Restored hosted `1inch` as the canonical public-default buy route in the web flow.
+   - Kept route truth separate from execution closure; no frontend-facing execution lane in this pass reached a landed tx.
 3. Right rail
    - Proved the panel is visible in the live onboarding preview shell with fail-closed controls.
    - Closed direct detail-route parity on prod after fixing the server-side API timeout path and redeploying Vercel.
@@ -43,7 +45,7 @@ Close the remaining product gaps without reopening solved runtime lanes, inventi
 
 ## Canonical Public Routes After This Pass
 
-1. Buy route: hosted `1inch` remains the canonical public-default path. The public entry stays [https://24-7.markets/onboarding](https://24-7.markets/onboarding), and the authenticated activation surface remains [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1).
+1. Buy route: hosted `1inch` remains the canonical public-default path. The public entry stays [https://24-7.markets/onboarding](https://24-7.markets/onboarding), and the authenticated activation surface remains [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1). This is route truth, not landed-execution closure.
 2. Right rail: the canonical public route is now [https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1), with the onboarding preview shell at [https://24-7.markets/onboarding](https://24-7.markets/onboarding) as the top-of-funnel companion surface. Both are live on Vercel deployment `dpl_4w35481YsNzPnkMSCMqAjD4CzxMc`.
 
 ## Proof Bundles
@@ -74,4 +76,6 @@ Close the remaining product gaps without reopening solved runtime lanes, inventi
 This closure wave is materially complete only when:
 1. the public-default buy route, shared `1inch` blocker, and right-rail surface are all stated conservatively and specifically,
 2. `XSL-006A` repo truth no longer depends on a branch-only cleanup,
-3. any remaining blocker is one exact external requirement rather than thread drift or route ambiguity.
+3. any remaining blocker is one exact external requirement rather than thread drift or route ambiguity,
+4. no execution lane in the closure reporting is described as done, live, or implemented unless a real onchain transaction landed for that lane,
+5. and any frontend-facing execution-closure claim requires canonical frontend proof of the landed path rather than backend-only progress.
