@@ -5,7 +5,6 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createPrivyAuthService } from "../src/services/privy-auth.js";
-import { createApiServer } from "../src/server.js";
 
 const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(CURRENT_DIR, "..");
@@ -152,6 +151,11 @@ function createAuthHeaders(accessToken, identityToken = null) {
         }
       : {}),
   };
+}
+
+async function loadCreateApiServer() {
+  const module = await import("../src/server.js");
+  return module.createApiServer;
 }
 
 async function listen(server) {
@@ -552,6 +556,8 @@ try {
   summary.signerAddress = redactAddress(walletAddress);
   summary.smartAccountAddress = redactAddress(smartWalletAddress);
 
+  const createApiServer = await loadCreateApiServer();
+
   server = createApiServer({
     storePath: runtimeStorePath,
   });
@@ -633,7 +639,7 @@ try {
   const blockedLegs = summary.executionRequest.legs.filter(
     (leg) => leg.state === "blocked" || (leg.blockers?.length ?? 0) > 0,
   );
-  const quotedLegs = summary.executionRequest.legs.filter(
+  const quotedLegs = latestExecutionRequest.legs.filter(
     (leg) => leg.state === "awaiting_approval" || leg.state === "quote_ready",
   );
   const approvalPayloads = latestExecutionRequest.legs
@@ -691,8 +697,11 @@ try {
       .map((entry) => ({
         legId: entry.leg.legId,
         assetSymbol: entry.leg.assetSymbol,
-        quoteId: entry.leg.quoteId,
-        orderHash: entry.leg.orderHash,
+        quoteId: entry.leg.quote?.quoteId ?? null,
+        orderHash:
+          entry.leg.approval?.orderToSign?.orderHash ??
+          entry.leg.quote?.orderHash ??
+          null,
       }));
 
     if (unsignedLegs.length > 0) {
