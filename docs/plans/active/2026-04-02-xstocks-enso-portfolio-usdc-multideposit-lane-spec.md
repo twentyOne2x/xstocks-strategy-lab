@@ -216,3 +216,9 @@ Proof gates:
 5. The spec defines the request-level bundle artifacts and action-level verification artifacts that must persist.
 6. The coexistence boundary with current 1inch and CoW truth is explicit and non-vague.
 7. The next implementation lane is bounded to shared contracts, policy, API, proof harness, and the narrow docs needed for `XSL-005B`.
+
+## Continuation Note
+
+1. The repo now includes the canonical proof harness at [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js), so this lane is no longer blocked on missing runner code.
+2. The first exact blocker from the current operator environment is [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T16-59-28.918Z/summary.json), which stopped with `code=missing_environment_input` and `message="ENSO_API_KEY is required for the Enso proof runner."`
+3. Until an env-backed proof run closes the promoted basket including the `AUSD` sleeve, this lane remains implementation-candidate truth only and must not replace the hosted `1inch` public-default route.

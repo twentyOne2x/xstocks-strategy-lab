@@ -22,6 +22,14 @@ const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = resolve(CURRENT_DIR, "..");
 const REPO_ROOT = resolve(APP_ROOT, "..", "..");
 
+function resolveOptionalRepoPath(value) {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return null;
+  }
+
+  return resolve(REPO_ROOT, value.trim());
+}
+
 function createDefaultConfig() {
   return {
     repoRoot: REPO_ROOT,
@@ -30,9 +38,10 @@ function createDefaultConfig() {
       "packages/research/manifests/slot-registry.json",
     ),
     storePath: resolve(APP_ROOT, "data/runtime-store.json"),
-    autoresearchProofPath: resolve(
-      APP_ROOT,
-      "data/autoresearch-runtime-proof.json",
+    autoresearchProofPath: resolveOptionalRepoPath(
+      process.env.AUTORESEARCH_PROOF_PATH ??
+        process.env.XSTOCKS_AUTORESEARCH_PROOF_PATH ??
+        "",
     ),
     xstocksBaseUrl:
       process.env.XSTOCKS_API_BASE_URL ?? "https://api.xstocks.fi/api/v2",

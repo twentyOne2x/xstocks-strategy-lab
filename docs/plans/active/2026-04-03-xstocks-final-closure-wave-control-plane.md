@@ -60,6 +60,15 @@ Close the remaining product gaps without reopening solved runtime lanes, inventi
    - [activate.headers](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-prod-parity-redeploy/activate.headers)
    - [detail.headers](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-prod-parity-redeploy/detail.headers)
 
+## Continuation Note
+
+1. Shared `1inch` is still the canonical public route, but the current rerun from the fresh closure worktree now stops at expired Privy auth before it can reach the already-proven signer boundary again:
+   - [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T16-59-39.353Z/summary.json)
+2. Enso now has a canonical proof runner, but the first exact blocker from this machine is missing `ENSO_API_KEY`, not route ambiguity:
+   - [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T16-59-28.918Z/summary.json)
+3. Runtime default truth is now fail-closed in both local and public paths; the historical Railway proof seed remains checked in only as an opt-in artifact, not the default runtime story:
+   - [runtime-autoresearch-24-7.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-remaining-gap-closure/runtime-autoresearch-24-7.json)
+
 ## Exit Criteria
 
 This closure wave is materially complete only when:

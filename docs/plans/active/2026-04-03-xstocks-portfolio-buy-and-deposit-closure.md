@@ -42,3 +42,5 @@ Freeze the canonical public buy-route decision without collapsing `LI.FI`, `Enso
 
 1. If Enso later gets real browser plus wallet/onchain proof on the promoted default basket, reopen only the route-decision portion of `XSL-005C`.
 2. Until then, keep hosted `1inch` as the public default and Enso as implementation-candidate truth.
+3. The Enso implementation-candidate lane now has a canonical proof runner, but the current exact blocker from this machine is missing `ENSO_API_KEY`, not missing route code:
+   - [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T16-59-28.918Z/summary.json)
