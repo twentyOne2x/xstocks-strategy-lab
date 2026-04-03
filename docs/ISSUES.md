@@ -15,9 +15,10 @@ Last updated: 2026-04-03
 | Autoresearch explainability in app: partial or light on prod | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | coordinated with `XSL-004` and `XSL-006` |
 | Deposits via Mesh: no | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | explicit absence or proof only |
 | LI.FI portfolio deposit from one `USDC` into the promoted default basket: spec only, atomic claim not proven | `XSL-005` with `XSL-005A` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting LI.FI deposit lane stays under funding or deposit ownership; do not move to `XSL-014` |
-| Enso portfolio multi-deposit from one `USDC` into the promoted default basket: partial implementation exists, proof runner now exists, atomic bundle still not repo-proven | `XSL-005` with `XSL-005B` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | current exact blocker from this machine is missing `ENSO_API_KEY`; live bundle proof still does not exist |
-| Portfolio buy public-default route: hosted `1inch`; Enso implementation candidate still awaits live proof | `XSL-005` with `XSL-005C` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | `Buy portfolio` stays public, but route truth must remain explicit |
-| Shared `1inch` signer advance: strongest fresh-auth proof still stops at missing signatures, and the current local rerun now fails earlier on expired Privy auth | `XSL-014` with `XSL-014C` | [2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md) | runner now supports `XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH` and writes `signer-packet.json`; next move is fresh Privy auth plus one signer handoff rerun |
+| Enso portfolio multi-deposit from one `USDC` into the promoted default basket: partial implementation exists, proof runner now exists, atomic bundle still not repo-proven | `XSL-005` with `XSL-005B` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | approval-path bug is fixed, but no landed tx exists; current exact blocker is upstream quoteability on `MSFTx`, `AAPLx`, `METAx`, `GOOGLx`, plus `AUSD` metadata |
+| Portfolio buy public-default route: hosted `1inch`; Enso implementation candidate still awaits live proof | `XSL-005` with `XSL-005C` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | `Buy portfolio` stays public, but no public execution lane may be called done until a landed tx is proven through the canonical surface |
+| Execution closure semantics: no execution lane is done until an onchain transaction lands; frontend-facing lanes also require canonical frontend proof | `XSL-005` with `XSL-005D` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | standards lane that tightens allowed completion language across hosted `1inch`, Enso, LI.FI, and other execution claims |
+| Shared `1inch` signer advance: strongest fresh-auth proof still stops at missing signatures | `XSL-014` with `XSL-014C` | [2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md) | fresh-auth proof reaches six live quotes and `awaiting_signature`, but no landed tx proof exists yet |
 | Frontend prod parity: onboarding, canonical detail, and canonical activate routes are live on prod | `XSL-004` | [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md) | includes route, copy, and deployment parity |
 | Agent and `skill.md` testability coverage | `XSL-016B` | [2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md) | public/private smoke ownership |
 
@@ -220,6 +221,7 @@ Last updated: 2026-04-03
   - That approval-path bug is now fixed in repo code, and the latest proof [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T21-05-06.597Z/summary.json) moves the lane to the next exact blocker: Enso bundle generation still fails upstream on the exact promoted basket.
   - Direct upstream checks in [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-03-enso-live-proof-refresh/summary.md) show `NVDAx` and `AMZNx` quote individually, while `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx` fail individually with `Swap not found...`, and `AUSD` still lacks the Ethereum/USDC metadata needed for this lane.
   - The next honest move is still not a route switch. It is either an upstream Enso-routing resolution for the failing promoted legs or an explicit freeze of Enso as non-canonical while hosted `1inch` remains the public default.
+  - Under `XSL-005D`, this lane is still not done or implemented because no Enso onchain transaction has landed on the promoted basket.
 
 ### XSL-005C Portfolio Buy Surface Closure
 
@@ -258,6 +260,40 @@ Last updated: 2026-04-03
   - The public CTA remains `Buy portfolio`, but the default authenticated create path has been restored to hosted `1inch` via `executionRouteId = "1inch.ethereum"`.
   - Enso is still supported as an explicit or pre-existing execution-request path, but it is no longer the public default until live proof exists.
   - Public copy now matches the active approval model: wallet-first hosted `1inch`, per-trade user approval, no hidden autonomous execution.
+  - This surface closure only proves route and copy truth. It does not mean the hosted `1inch` lane is execution-complete; under `XSL-005D` that lane still requires a landed onchain transaction through the canonical path before it can be called done.
+
+### XSL-005D Onchain Closure Proof Standard
+
+- Type: execution/proof/standards
+- Status: active
+- Canonical owner lane: `XSL-005`
+- Date opened: 2026-04-03
+- Context: repeated closure-wave reporting still allowed partial execution boundaries to read too close to implementation or closure. Examples in this repo include hosted `1inch` reaching `awaiting_signature`, Enso proving an approval endpoint and some single-leg bundle quoteability, and frontend-route parity being discussed near execution closure even though no landed onchain transaction exists for those lanes.
+- Suspected cause: the spec set already distinguishes activation, quote, approval, submission, and receipt boundaries, but it does not yet reserve words like `done`, `implemented`, `works`, `live`, and `public default works` strictly enough for execution lanes. That leaves too much room for pre-onchain states to sound like completed implementation.
+- Fix intent: upgrade the repo’s execution completion standard so an execution lane is only `done`, `implemented`, `works`, `live`, or `closed` after a real onchain transaction lands for that lane, and any frontend-facing execution lane also requires canonical frontend/browser proof for that landed path.
+- Acceptance criteria:
+  1. The canonical execution owner spec explicitly says that quote-ready, approval-ready, awaiting-signature, bundle-payload, and venue-submission states are not `done`.
+  2. Backend or API execution lanes require at least one real landed tx or equivalent onchain receipt before `done`, `implemented`, `works`, or `live` language is allowed.
+  3. Frontend-facing execution lanes require both backend/API proof and canonical frontend/browser-actuated proof to a landed tx before those labels are allowed.
+  4. Current owner docs and issue summaries reclassify hosted `1inch`, Enso, and LI.FI under that stricter bar.
+  5. Replacement language is explicit so future threads can say `quote-only`, `awaiting user signature`, `approval payload proven`, or `partial bundle quoteability` without flattening those into execution closure.
+- Complexity: medium
+- Plan: [2026-04-03-xstocks-onchain-closure-proof-standard-upgrade.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-onchain-closure-proof-standard-upgrade.md)
+- Executor prompt:
+  - Keep ownership under `XSL-005`.
+  - Touch only the issue tracker, the canonical execution owner spec, and the closeout/control docs that currently describe execution closure.
+  - Preserve exact current lane truth; do not soften the user’s requirement and do not invent new execution owners.
+  - Reclassify any current wording that makes pre-onchain states sound implemented or done.
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [ ] visual/screenshot verification not applicable in this docs-only standards pass
+- Verification note:
+  - The canonical execution owner spec, final closure-wave control doc, and remaining-live-proof control doc now all reserve `done`/`implemented`/`works`/`live` for landed onchain proof on execution lanes.
+  - The issue tracker now reclassifies hosted `1inch`, Enso, and LI.FI under that stricter bar and explicitly separates route truth from execution closure.
+  - `git diff --check` passed for this standards-only tranche.
 
 ### XSL-006 Strategy Lab Operating Model
 
@@ -720,9 +756,10 @@ Last updated: 2026-04-03
   - [x] proof artifacts captured
 - Resolution note:
   - The promoted `c5` basket now truthfully adapts to `1inch.ethereum`, and saved activations for the promoted default basket can reach `surfaceTruth=live`, `executionState=ready`, and `executionEligibility=executable` when authenticated wallet readiness and requested notional are supplied.
-  - Strongest truthful claim: the current promoted `c5` basket is executable now under venue-routed 1inch truth through a multi-leg signer-owned quote and approval boundary for `NVDAx`, `MSFTx`, `AAPLx`, `METAx`, `AMZNx`, and `GOOGLx`.
+  - Strongest truthful claim: the current promoted `c5` basket can reach a multi-leg signer-owned quote and approval boundary for `NVDAx`, `MSFTx`, `AAPLx`, `METAx`, `AMZNx`, and `GOOGLx`.
   - Exact remaining execution boundary: six quoted core legs now stop at `awaiting_approval`, and signer-owned 1inch Fusion EIP-712 signatures are still required before backend submission can be recorded.
   - The `AUSD` yield-buffer leg remains intentionally deferred/manual and is not included in the signer-owned 1inch core execution claim.
+  - Under `XSL-005D`, this does not count as implemented or done execution because no landed onchain transaction exists yet.
 - Proof artifact: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-01T23-02-30.237Z/summary.json)
 
 ### XSL-014C Hosted / Session-Backed 1inch Signer Proof
@@ -772,6 +809,7 @@ Last updated: 2026-04-03
   - Date: 2026-04-03 remaining-gap closure pass
   - The current proof runner now accepts externally supplied signatures via both `XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON` and `XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH`, and it writes a richer `signer-packet.json` artifact once the quote path is reached.
   - The shortest truthful next move is now: refresh the Privy session material, reuse the generated signer packet for the six EIP-712 legs, and rerun once. The lane still must not be widened into a new funding/custody diagnosis until that rerun advances past the signer boundary again.
+  - Under `XSL-005D`, even a venue submission is not the same as done execution. This lane only closes when a real onchain transaction lands or one exact post-submission external blocker is captured without overstating completion.
 
 ### XSL-014D Structured Execution Explorer Links And Blotter Truth
 
