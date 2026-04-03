@@ -1,6 +1,6 @@
 # Issues
 
-Last updated: 2026-04-03
+Last updated: 2026-04-04
 
 ## 2026-04-01 Live Gap Canonical Owners
 
@@ -314,12 +314,12 @@ Last updated: 2026-04-03
 ### XSL-006A Deployed Recurring Autoresearch Scheduler Host
 
 - Type: runtime/deployment
-- Status: active
+- Status: completed
 - Canonical owner lane: `XSL-006`
 - Date opened: 2026-04-01
-- Context: the repo now has a canonical Railway cron proof seed, Railway cron code, and tests for recurring autoresearch, but the live public API still truthfully reports `worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, while the local Railway CLI is blocked with `invalid_grant`.
+- Context: the repo now has a canonical Railway cron proof seed, Railway cron code, and tests for recurring autoresearch, and as of 2026-04-04 the live public API returns `truthBoundary=railway_cron_service`, `recurringAutonomousProven=true`, and a non-null `schedulerHost` for Railway service `autoresearch-worker`; the remaining operator blocker is local Railway CLI re-auth after `invalid_grant`.
 - Suspected cause: the earlier Railway host proof became stale or unreproducible, the issue was prematurely reframed as cleanup-only once web deploy parity closed, and the repo still carries both a positive historical Railway proof doc and a fail-closed live API without one current reconciliation owner.
-- Fix intent: reconcile the recurring-host claim against current live truth by keeping the default API path fail-closed, restoring or bypassing Railway operator access, auditing whether `autoresearch-worker` still exists, and either re-proving the existing host with fresh receipts or explicitly retiring the stale Railway host claim.
+- Fix intent: reconcile the recurring-host claim against current live truth by keeping the default API path fail-closed until fresh proof exists, restoring or bypassing Railway operator access, auditing whether `autoresearch-worker` still exists, and then recording the exact live host proof or exact blocker.
 - Acceptance criteria:
   1. The default API runtime surface stays `worker_runtime_only` unless a fresh host receipt is recorded or an explicit proof-path override is supplied.
   2. The repo records one current owner doc explaining whether the Railway host claim is live, stale, or retired.
@@ -341,11 +341,12 @@ Last updated: 2026-04-03
   - [x] context added
   - [x] fix applied
   - [x] tests run
-  - [ ] visual/screenshot verification not applicable because this lane is worker/deploy/runtime only
+  - [x] visual/screenshot verification not applicable because this lane is worker/deploy/runtime only
 - Resolution note:
-  - [server.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/server.js) no longer auto-loads the checked-in Railway proof seed unless `AUTORESEARCH_PROOF_PATH` or `XSTOCKS_AUTORESEARCH_PROOF_PATH` is explicitly set, so local default truth now matches the fail-closed public runtime API.
+  - [server.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/server.js) no longer auto-loads the checked-in Railway proof seed unless `AUTORESEARCH_PROOF_PATH` or `XSTOCKS_AUTORESEARCH_PROOF_PATH` is explicitly set, so local default truth remains fail-closed unless current proof is explicitly supplied.
   - New regression coverage in [api.test.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/test/api.test.js) proves the default API boot remains `worker_runtime_only` even though [autoresearch-runtime-proof.json](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/data/autoresearch-runtime-proof.json) is still kept as a historical artifact.
-  - `GET https://24-7.markets/api/runtime/autoresearch?limit=1` still returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, and `railway whoami` still fails with `invalid_grant`, so the scheduler-host claim remains unresolved even though default repo truth is now aligned with live truth.
+  - On 2026-04-04, `GET https://24-7.markets/api/runtime/autoresearch?limit=1` returned `truthBoundary=railway_cron_service`, `recurringAutonomousProven=true`, `schedulerHost.serviceName=autoresearch-worker`, and a current scheduler receipt with deployment `38862730-0d6a-42f7-8246-b639ea48a9c3`, snapshot `116ecc2e-ca12-4a9f-b6c8-ec3898419779`, and private domain `autoresearch-worker.railway.internal`; proof is captured in [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/runtime-20260404-001709/summary.md).
+  - `railway whoami` still fails with OAuth refresh `invalid_grant`, and the current shared-env `RAILWAY_API_TOKEN` is not accepted by the Railway CLI, so the remaining blocker is Railway operator re-auth on this machine, not runtime-host truth.
 
 ### XSL-007 Manifest-To-Execution API Boundary
 

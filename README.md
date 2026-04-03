@@ -80,9 +80,9 @@ This does not mean portfolio execution is already fully autonomous.
 
 ## Current Repo Truth
 
-As of `2026-04-03`, the strongest repo-owned truth is:
+As of `2026-04-04`, the strongest repo-owned truth is:
 1. onboarding qualification, workspace/detail, activation preview, and authenticated activation surfaces exist,
-2. the repo now carries the canonical `XSL-006A` Railway cron proof seed and the API runtime surface rehydrates it locally,
+2. the repo now carries the canonical `XSL-006A` Railway cron proof seed, the API runtime surface stays fail-closed by default unless explicit proof is supplied, and the live public runtime surface currently proves the deployed Railway `autoresearch-worker` host,
 3. the backend owns a shared `ExecutionRequest` / `ExecutionRequestLeg` contract for venue-routed execution across `CoW` and `1inch`,
 4. accepted `Chainlink CRE` / provider-triggered review can now hand off into canonical execution staging through `execute_all` under landed `XSL-018B`,
 5. execution is still user-approved and signer-owned,
@@ -95,7 +95,7 @@ What is not true yet:
 2. provider-triggered `CRE` does not autonomously execute end to end,
 3. `LI.FI` is not the active atomic whole-basket execution lane,
 4. `Enso` is not live-proven on the canonical public route,
-5. the public runtime surface does not prove a deployed recurring scheduler host beyond `worker_runtime_only`,
+5. Railway operator CLI access on this machine is not restored yet; `railway whoami` still fails with `invalid_grant`, and the current shared-env `RAILWAY_API_TOKEN` also fails direct CLI auth,
 6. Privy smart-account-first execution remains an active `XSL-005` posture lane, not the current proven runtime branch.
 
 ## Architecture

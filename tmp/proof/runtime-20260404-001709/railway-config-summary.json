@@ -1,0 +1,55 @@
+{
+  "linkedProjects": [
+    {
+      "name": "xlayer-credit-api-temp-20260328",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    },
+    {
+      "name": "xstocks-strategy-lab-preview",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    },
+    {
+      "name": "xstocks-strategy-lab-preview",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    },
+    {
+      "name": "xstocks-strategy-lab-preview",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    },
+    {
+      "name": "xstocks-strategy-lab-preview",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    },
+    {
+      "name": "xstocks-strategy-lab-preview",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    },
+    {
+      "name": "xstocks-strategy-lab-preview",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    },
+    {
+      "name": "xstocks-strategy-lab-preview",
+      "projectId": null,
+      "environmentId": null,
+      "serviceId": null
+    }
+  ],
+  "hasToken": false,
+  "hasRefreshToken": false,
+  "hasUser": true
+}

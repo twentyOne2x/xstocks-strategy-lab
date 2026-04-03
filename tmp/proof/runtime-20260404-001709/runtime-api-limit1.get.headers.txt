@@ -1,0 +1,18 @@
+HTTP/2 200
+access-control-allow-headers: Content-Type,Authorization,X-Privy-Identity-Token,X-Reporting-Token,X-Autoresearch-Proof-Token
+access-control-allow-methods: GET,POST,OPTIONS
+access-control-allow-origin: *
+cache-control: public, max-age=0, must-revalidate
+content-type: application/json; charset=utf-8
+date: Fri, 03 Apr 2026 22:19:57 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-cache: MISS
+x-cache-hits: 0
+x-railway-cdn-edge: fastly/cache-iad-kiad7000047-IAD
+x-railway-edge: railway/us-east4-eqdc4a
+x-railway-request-id: x66TfG8xQmSafY1_Cx5-qw
+x-served-by: cache-iad-kiad7000047-IAD
+x-vercel-cache: MISS
+x-vercel-id: iad1::nkstz-1775254797610-133f37c38bd7
+content-length: 4552
