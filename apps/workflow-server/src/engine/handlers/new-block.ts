@@ -21,7 +21,13 @@ export async function execute(config: Record<string, unknown>): Promise<HandlerR
       body: JSON.stringify({ jsonrpc: "2.0", method: "eth_blockNumber", params: [], id: 1 }),
     });
     const data = await resp.json();
-    const blockNumber = parseInt(data.result, 16);
+    const payload = typeof data === "object" && data !== null ? (data as { result?: unknown }) : null;
+    const result = typeof payload?.result === "string" ? payload.result : null;
+    const blockNumber = result ? parseInt(result, 16) : Number.NaN;
+
+    if (!Number.isFinite(blockNumber)) {
+      return { output: { chain, error: "Invalid blockNumber response" } };
+    }
 
     return {
       output: { chain, blockNumber, timestamp: new Date().toISOString() },

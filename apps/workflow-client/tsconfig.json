@@ -10,7 +10,9 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "noEmit": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["react", "react-dom"]
   },
-  "include": ["src"]
+  "include": ["src", "node_modules/vite/client.d.ts"]
 }

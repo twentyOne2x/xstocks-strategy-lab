@@ -352,23 +352,59 @@ Last updated: 2026-04-03
 
 - Type: program/integration
 - Status: active
-- Context: The non-frontend stack is now locally green across shared contracts, runtime adapters, research, worker, policy, and API, but the repo still lacks one current-state closeout control doc tying those verified lanes to the canonical frontend rewrite, integrated browser proof, and release hygiene.
-- Suspected cause: The product was decomposed correctly into workstreams, but the remaining closure work is spread across multiple threads and one contaminated research lane, so thread claims and actual repo proof no longer line up cleanly without a dedicated reconciliation spec.
-- Fix intent: Create one execution-grade gap-closure control doc that freezes current verified truth, defines the exact step-by-step end-to-end closure sequence, keeps directional preview-only, and states what must happen in order before the whole app can be used coherently from onboarding through preview and activation readiness.
+- Context: The closeout control docs now exist, and the local root matrix has been recovered on 2026-04-03, but public deploy parity is still not closed. Fresh repo-wide verification on the recovery branch now shows `pnpm lint`, `pnpm test`, `pnpm build`, and `pnpm check` all passing again, while the public host still serves stale `XSL-006A` runtime truth plus `404` detail and activate routes.
+- Suspected cause: the final closure-wave pass corrected public buy-route and repo-truth wording, but it did not re-run the full root matrix before merge, so three different classes of residual were left behind:
+  1. a stale worker test harness that no longer matches the promoted-basket route truth,
+  2. stale workflow-package workspace config and dependency posture,
+  3. production deploy parity still lagging behind merged repo truth and this environment does not currently have usable deploy credentials or tooling to close that last gap directly.
+- Fix intent: Recover one truthful green baseline by updating the canonical `XSL-009` owner lane, fixing the worker and workflow regressions, rerunning the full root verification matrix, and rechecking the canonical public routes and runtime surface after the code path is green again.
 - Acceptance criteria:
-  1. A closeout control-plane spec exists and explicitly reconciles spec requirements, thread claims, current code, and proof status.
-  2. The spec includes an ordered step-by-step executor runbook for getting the app coherent end to end.
-  3. The canonical frontend lane is verified against API-backed data with browser-clickable proof rather than endpoint-only checks.
-  4. Remaining partial lanes are classified explicitly as close-now, defer, or open-a-clean-follow-up-thread.
-  5. Release hygiene and landing posture are tracked explicitly instead of being implied by green package tests.
+  1. The repo has one execution-grade recovery spec linked from this owner lane that freezes the exact red verification surface and deploy-parity gap.
+  2. `pnpm test`, `pnpm build`, `pnpm lint`, and `pnpm check` all pass on the merged recovery branch without narrowing the root workspace scope.
+  3. `pnpm --filter @xstocks/worker test`, `pnpm --filter @xstocks/workflow-client build`, and `pnpm --filter @xstocks/workflow-server build` all pass under current repo truth.
+  4. The worker rebalance lane remains truthful: scheduled review stays manual-only, no autonomous execution is implied, and the recovery does not reopen `XSL-006` runtime logic.
+  5. The repo records exact post-fix public-host truth for `https://24-7.markets/onboarding`, the canonical detail route, the canonical activate route, and `GET /api/runtime/autoresearch?limit=1`.
+  6. Release hygiene and landing posture are tracked explicitly instead of being implied by partial green package tests.
 - Complexity: high
 - Plan links:
   - [2026-03-31-xstocks-gap-closure-and-readiness-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-gap-closure-and-readiness-spec.md)
   - [2026-04-03-xstocks-final-closure-wave-control-plane.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-final-closure-wave-control-plane.md)
+  - [2026-04-03-xstocks-verification-matrix-and-runtime-parity-recovery.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-verification-matrix-and-runtime-parity-recovery.md)
 - Continuation note:
   - Date: 2026-04-03
   - The closure-wave control-plane doc now exists and reconciles the current blocker map, route decision, right-rail proof split, and repo-truth sync requirements.
   - The residual gap for `XSL-009` is no longer “missing closeout control doc”; it is landing the final verified slices and deploy rechecks without reintroducing thread drift.
+- Continuation note:
+  - Date: 2026-04-03 verification recovery
+  - User-stated desired outcome:
+    1. `test everything so i know stuff works`
+    2. `spec out the gaps with spec of spec then go fix it`
+  - Verified starting truth on merged `origin/main`:
+    1. `pnpm lint` passes.
+    2. `pnpm test` and `pnpm check` fail because `apps/worker/src/__tests__/rebalance-orchestrator.test.js` now resolves `blocked` where the existing owner docs still expected `scheduled` or `rebalance_recommended`.
+    3. `pnpm build` fails because `@xstocks/workflow-client` and `@xstocks/workflow-server` do not currently compile in the shared workspace.
+    4. `pnpm prisma:validate` still needs explicit `DATABASE_URL` env, but the schema itself validates when the documented Postgres URL is supplied.
+    5. Live host recheck still shows `https://24-7.markets/onboarding` returning `200`, while the canonical detail and activate routes return `404`, and `GET /api/runtime/autoresearch?limit=1` still reports `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`.
+  - Fix intent for this tranche:
+    1. update the repo-tracked spec and issue truth to reflect the real red surface,
+    2. repair the worker scheduled-review regression without widening the runtime claim,
+    3. repair workflow package build posture so the root workspace can build truthfully,
+    4. rerun the full matrix and record exact public-host parity after the fixes.
+  - Executor prompt:
+    - Keep ownership under `XSL-009`; do not open a new owner lane.
+    - Fix the worker regression in the narrowest truthful way, preserving the current public `1inch` route truth while keeping rebalance review manual-only.
+    - Fix workflow package build posture without hiding them from the root matrix.
+    - Rerun root and targeted verification plus live host smoke checks, then sync the docs to the exact resulting state.
+- Recovery checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [ ] visual/screenshot verification
+- Recovery resolution note:
+  - 2026-04-03: local repo truth is green again. `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm check`, `pnpm --filter @xstocks/worker test`, `pnpm --filter @xstocks/workflow-client build`, `pnpm --filter @xstocks/workflow-server build`, `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:validate`, `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:generate`, and `git diff --check` all pass on `codex/xsl-009-verification-recovery`.
+  - 2026-04-03: live-host parity is still not closed. `https://24-7.markets/onboarding` returns `200` but still serves stale onboarding content with old manifest slugs; the canonical detail and activate routes still return `404`; and `GET https://24-7.markets/api/runtime/autoresearch?limit=1` still returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`.
+  - 2026-04-03: the remaining blocker is deployment access, not repo code. This workspace has no `.vercel` link, `vercel` CLI is not installed, and `railway whoami` fails with `invalid_grant`, so this pass cannot truthfully claim public deploy closure from the current environment.
 
 ### XSL-010 Portfolio Explainability And Autoresearch Interpretability
 
