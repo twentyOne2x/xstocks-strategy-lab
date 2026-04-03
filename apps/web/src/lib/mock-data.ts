@@ -15,7 +15,6 @@ export const themes: ThemeSummary[] = [
     description:
       "High-conviction basket for platform and infrastructure names tied to AI capex.",
     leadSymbols: ["NVDAx", "AVGOx", "MSFTx"],
-    manifestSlugs: ["ai-infra-autopilot", "mstr-conviction-long"],
   },
   {
     id: "us-tech-leaders",
@@ -24,7 +23,6 @@ export const themes: ThemeSummary[] = [
     description:
       "Broader basket for users who want high information density without single-name concentration.",
     leadSymbols: ["AAPLx", "MSFTx", "GOOGLx"],
-    manifestSlugs: ["mag7-cash-balance"],
   },
   {
     id: "spy-core",
@@ -33,7 +31,6 @@ export const themes: ThemeSummary[] = [
     description:
       "Lower-volatility path designed for first-run users and funding-constrained accounts.",
     leadSymbols: ["SPYx", "BRK.Bx", "MSFTx"],
-    manifestSlugs: ["spy-core-shield"],
   },
 ];
 
@@ -74,9 +71,9 @@ export const manifests: PromotedManifest[] = [
     slot_id: "onboarding.default_basket",
     mode: "basket",
     chain: "Ethereum",
-    strategy_version: "v12",
+    strategy_version: "basket-starter-h6-p100-c5-cap18-a0-r300-v1",
     theme_id: "ai-infra",
-    slug: "ai-infra-autopilot",
+    slug: "onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
     hero_symbol: "NVDAx",
     frontend: {
       title: "AI Infra Leaders",
@@ -319,7 +316,7 @@ export const manifests: PromotedManifest[] = [
         drawdownPct: -9.8,
         score: 74,
         riskLabel: "Moderate",
-        href: "/workspace/detail/ai-infra-autopilot",
+        href: "/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
       },
       {
         label: "Mag 7 Cash Balance",
@@ -332,7 +329,7 @@ export const manifests: PromotedManifest[] = [
         drawdownPct: -7.2,
         score: 66,
         riskLabel: "Moderate",
-        href: "/workspace/detail/mag7-cash-balance",
+        href: "/workspace/detail/onboarding-alt-basket-1--basket-core-h5-p100-c2-cap22-a0-r275-v1",
       },
       {
         label: "SPY Core Shield",
@@ -345,7 +342,7 @@ export const manifests: PromotedManifest[] = [
         drawdownPct: -4.1,
         score: 59,
         riskLabel: "Measured",
-        href: "/workspace/detail/spy-core-shield",
+        href: "/workspace/detail/onboarding-alt-basket-2--basket-starter-h6-p100-c1-cap17-a0-r275-v1",
       },
     ],
     allocations: [
@@ -416,9 +413,9 @@ export const manifests: PromotedManifest[] = [
     slot_id: "onboarding.alt_basket_1",
     mode: "basket",
     chain: "Ethereum",
-    strategy_version: "v7",
+    strategy_version: "basket-core-h5-p100-c2-cap22-a0-r275-v1",
     theme_id: "us-tech-leaders",
-    slug: "mag7-cash-balance",
+    slug: "onboarding-alt-basket-1--basket-core-h5-p100-c2-cap22-a0-r275-v1",
     hero_symbol: "MSFTx",
     frontend: {
       title: "Mag 7 Cash Balance",
@@ -708,9 +705,9 @@ export const manifests: PromotedManifest[] = [
     slot_id: "onboarding.alt_basket_2",
     mode: "basket",
     chain: "Ethereum",
-    strategy_version: "v5",
+    strategy_version: "basket-starter-h6-p100-c1-cap17-a0-r275-v1",
     theme_id: "spy-core",
-    slug: "spy-core-shield",
+    slug: "onboarding-alt-basket-2--basket-starter-h6-p100-c1-cap17-a0-r275-v1",
     hero_symbol: "SPYx",
     frontend: {
       title: "SPY Core Shield",
@@ -967,9 +964,9 @@ export const manifests: PromotedManifest[] = [
     slot_id: "advanced.default_directional",
     mode: "directional",
     chain: "Ethereum",
-    strategy_version: "v3",
+    strategy_version: "directional-preview-v1",
     theme_id: "ai-infra",
-    slug: "mstr-conviction-long",
+    slug: "advanced-default-directional--directional-preview-v1",
     hero_symbol: "MSTRx",
     frontend: {
       title: "MSTRx Conviction Long",
@@ -1178,7 +1175,7 @@ export const manifests: PromotedManifest[] = [
         drawdownPct: -18.6,
         score: 71,
         riskLabel: "High",
-        href: "/workspace/detail/mstr-conviction-long",
+        href: "/workspace/detail/advanced-default-directional--directional-preview-v1",
       },
       {
         label: "AI Infra Leaders",
@@ -1191,7 +1188,7 @@ export const manifests: PromotedManifest[] = [
         drawdownPct: -9.8,
         score: 74,
         riskLabel: "Moderate",
-        href: "/workspace/detail/ai-infra-autopilot",
+        href: "/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
       },
     ],
     allocations: [
@@ -1244,7 +1241,7 @@ export const publicStrategies: PublicStrategyCardData[] = [
   {
     id: "strategy_ai_infra",
     slotId: "onboarding.default_basket",
-    manifestSlug: "ai-infra-autopilot",
+    manifestSlug: "onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
     title: "AI Infra Leaders",
     summary: "Concentrated AI infrastructure basket with reserve carry.",
     mode: "basket",
@@ -1257,7 +1254,7 @@ export const publicStrategies: PublicStrategyCardData[] = [
   {
     id: "strategy_mag7_balance",
     slotId: "onboarding.alt_basket_1",
-    manifestSlug: "mag7-cash-balance",
+    manifestSlug: "onboarding-alt-basket-1--basket-core-h5-p100-c2-cap22-a0-r275-v1",
     title: "Mag 7 Cash Balance",
     summary: "Broader quality basket with calmer turnover.",
     mode: "basket",
@@ -1270,7 +1267,7 @@ export const publicStrategies: PublicStrategyCardData[] = [
   {
     id: "strategy_spy_core",
     slotId: "onboarding.alt_basket_2",
-    manifestSlug: "spy-core-shield",
+    manifestSlug: "onboarding-alt-basket-2--basket-starter-h6-p100-c1-cap17-a0-r275-v1",
     title: "SPY Core Shield",
     summary: "Index-centered starter path with defensive reserve posture.",
     mode: "basket",
@@ -1283,7 +1280,7 @@ export const publicStrategies: PublicStrategyCardData[] = [
   {
     id: "strategy_mstr_long",
     slotId: "advanced.default_directional",
-    manifestSlug: "mstr-conviction-long",
+    manifestSlug: "advanced-default-directional--directional-preview-v1",
     title: "MSTRx Conviction Long",
     summary: "Directional shell with funding and fallback route context visible.",
     mode: "directional",
@@ -1398,7 +1395,7 @@ export const blotter: BlotterData = {
   rebalancing: [
     {
       id: "rebalance_1",
-      manifestSlug: "ai-infra-autopilot",
+      manifestSlug: "onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
       strategyTitle: "AI Infra Leaders",
       window: "10:30 UTC quote check",
       trigger: "AVGOx spread widened above the replay band while reserve cash remains intact.",
@@ -1409,7 +1406,7 @@ export const blotter: BlotterData = {
     },
     {
       id: "rebalance_2",
-      manifestSlug: "mstr-conviction-long",
+      manifestSlug: "advanced-default-directional--directional-preview-v1",
       strategyTitle: "MSTRx Conviction Long",
       window: "On funding arrival",
       trigger: "Smart account is provisioned but still below the directional funding threshold.",
@@ -1420,7 +1417,7 @@ export const blotter: BlotterData = {
     },
     {
       id: "rebalance_3",
-      manifestSlug: "mag7-cash-balance",
+      manifestSlug: "onboarding-alt-basket-1--basket-core-h5-p100-c2-cap22-a0-r275-v1",
       strategyTitle: "Mag 7 Cash Balance",
       window: "16:00 UTC breadth pass",
       trigger: "Breadth remains constructive, but the cash reserve can absorb more than usual.",
@@ -1431,7 +1428,7 @@ export const blotter: BlotterData = {
     },
     {
       id: "rebalance_4",
-      manifestSlug: "spy-core-shield",
+      manifestSlug: "onboarding-alt-basket-2--basket-starter-h6-p100-c1-cap17-a0-r275-v1",
       strategyTitle: "SPY Core Shield",
       window: "Daily close review",
       trigger: "Capital-preservation mandate remains intact and no route stress is visible.",
@@ -1454,7 +1451,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "broad_exposure",
         label: "Broad exposure",
         description: "Wide basket across tokenized equities.",
-        manifestSlugs: ["ai-infra-autopilot", "mag7-cash-balance", "spy-core-shield"],
         qualification: {
           selection: { type: "theme", key: "broad_market" },
           yieldBufferAllowed: true,
@@ -1465,7 +1461,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "theme_tilt",
         label: "A specific theme",
         description: "Lean into a sector like AI or tech leaders.",
-        manifestSlugs: ["ai-infra-autopilot", "mag7-cash-balance"],
         qualification: {
           selection: { type: "theme", key: "ai-infra" },
           yieldBufferAllowed: false,
@@ -1476,7 +1471,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "leaders",
         label: "Highest conviction",
         description: "Concentrate in the strongest names.",
-        manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           selection: { type: "theme", key: "cross_market_leaders" },
           fitNote: "Leader-first selection means a tighter, more active basket.",
@@ -1486,7 +1480,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Choose a strong default for me",
         description: "Not sure yet is fine. Start with the broadest, simplest preview.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Uncertainty routes to the safest default preview.",
@@ -1507,7 +1500,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "tech_ai",
         label: "Tech + AI",
         description: "AI infrastructure and platform leaders.",
-        manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           selection: { type: "theme", key: "ai-infra" },
           fitNote: "Tech/AI lane selected.",
@@ -1517,7 +1509,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "consumer_platforms",
         label: "Consumer platforms",
         description: "Internet and marketplace names.",
-        manifestSlugs: ["mag7-cash-balance"],
         qualification: {
           selection: { type: "theme", key: "us-tech-leaders" },
           fitNote: "Consumer platform lane selected.",
@@ -1527,7 +1518,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "quality_cashflow",
         label: "Quality cashflow",
         description: "Steady cash-generating mega caps.",
-        manifestSlugs: ["mag7-cash-balance", "spy-core-shield"],
         qualification: {
           selection: { type: "theme", key: "spy-core" },
           fitNote: "Quality/cashflow lane selected.",
@@ -1537,7 +1527,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Not sure: pick the cleanest setup",
         description: "Pick the theme with the cleanest setup right now.",
-        manifestSlugs: ["ai-infra-autopilot", "mag7-cash-balance"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Theme left open; system picks the cleanest default.",
@@ -1555,7 +1544,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "simple",
         label: "Keep it simple",
         description: "Broader holdings, less movement.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Simple expression caps concentration and activity.",
@@ -1565,7 +1553,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "tilted",
         label: "Noticeable tilt",
         description: "Some conviction, not constant movement.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           fitNote: "Tilted expression supports thematic or moderately active baskets.",
         },
@@ -1574,7 +1561,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "active",
         label: "Selective and active",
         description: "Tighter basket, higher conviction.",
-        manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "Active expression required for directional eligibility.",
         },
@@ -1583,7 +1569,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Not sure",
         description: "Default toward simpler unless other signals are clear.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Expression uncertainty resolves toward simpler setup.",
@@ -1601,7 +1586,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "low",
         label: "Lower swings",
         description: "Broader basket, tighter caps.",
-        manifestSlugs: ["spy-core-shield"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Low risk means broader basket and tighter caps.",
@@ -1611,7 +1595,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "medium",
         label: "Balanced",
         description: "Middle ground between protection and upside.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           fitNote: "Medium risk is the default band.",
         },
@@ -1620,7 +1603,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "high",
         label: "More upside",
         description: "Tighter basket, larger top weights.",
-        manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "High risk allows tighter baskets and larger position sizes.",
         },
@@ -1629,7 +1611,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Not sure",
         description: "Resolve to medium unless the safe-default path applies.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Risk uncertainty resolves to medium.",
@@ -1650,7 +1631,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "high",
         label: "Tighter protection",
         description: "Reduce worst-case depth.",
-        manifestSlugs: ["spy-core-shield"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "High drawdown sensitivity clips risk one tier.",
@@ -1660,7 +1640,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "medium",
         label: "Moderate pullbacks OK",
         description: "Some depth for better upside.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           fitNote: "Moderate drawdown tolerance is the default.",
         },
@@ -1669,7 +1648,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "low",
         label: "Deeper pullbacks OK",
         description: "More room for the strategy to run.",
-        manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "Low drawdown sensitivity allows higher volatility tolerance.",
         },
@@ -1678,7 +1656,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unset",
         label: "Skip / not sure",
         description: "Leave this unset and let the risk answer do the work.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           fitNote: "Drawdown refinement skipped.",
         },
@@ -1695,7 +1672,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "low_touch",
         label: "Leave it alone mostly",
         description: "Monthly checks. Minimal changes.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Low-touch rebalancing keeps turnover minimal.",
@@ -1705,7 +1681,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "scheduled",
         label: "Steady rhythm",
         description: "Regular refreshes on a schedule.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           fitNote: "Scheduled rebalancing is the default cadence.",
         },
@@ -1714,7 +1689,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "active",
         label: "Track leadership actively",
         description: "Weekly or event-driven refreshes.",
-        manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "Active rebalancing supports faster leadership tracking.",
         },
@@ -1723,7 +1697,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Not sure",
         description: "Resolve to a steady scheduled rhythm.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Rebalance uncertainty resolves to scheduled cadence.",
@@ -1741,7 +1714,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "long_only",
         label: "Stay long, rotate names",
         description: "Long-only basket, rotates between holdings.",
-        manifestSlugs: ["ai-infra-autopilot", "mag7-cash-balance", "spy-core-shield"],
         qualification: {
           modePreference: "basket",
           directionalOptIn: false,
@@ -1752,7 +1724,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "adaptive",
         label: "Stay long, get defensive",
         description: "Long-led but can get cautious in downturns.",
-        manifestSlugs: ["ai-infra-autopilot", "mag7-cash-balance"],
         qualification: {
           modePreference: "basket",
           directionalOptIn: false,
@@ -1763,7 +1734,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "directional",
         label: "Change stance entirely",
         description: "Can shift market direction, not just reshuffle.",
-        manifestSlugs: ["mstr-conviction-long"],
         qualification: {
           modePreference: "directional",
           directionalOptIn: true,
@@ -1774,7 +1744,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Keep it simple for now",
         description: "Resolve to long-only to keep it straightforward.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           modePreference: "basket",
           directionalOptIn: false,
@@ -1794,7 +1763,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "low",
         label: "Predictable only",
         description: "Changes only on a fixed schedule.",
-        manifestSlugs: ["spy-core-shield"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Low automation blocks directional and caps mode complexity.",
@@ -1804,7 +1772,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "medium",
         label: "Rules-based is fine",
         description: "Follows its own rules on schedule.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           fitNote: "Medium automation is the default comfort level.",
         },
@@ -1813,7 +1780,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "high",
         label: "Fast rules-based shifts",
         description: "Acts quickly when conditions warrant.",
-        manifestSlugs: ["ai-infra-autopilot", "mstr-conviction-long"],
         qualification: {
           fitNote: "High automation required for directional eligibility.",
         },
@@ -1822,7 +1788,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Not sure",
         description: "Resolve to medium and keep changes rules-based.",
-        manifestSlugs: ["mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Automation uncertainty resolves to medium.",
@@ -1840,7 +1805,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "high",
         label: "I know what I want",
         description: "Lock in with high confidence.",
-        manifestSlugs: ["ai-infra-autopilot"],
         qualification: {
           fitNote: "High certainty supports full recommendation confidence.",
         },
@@ -1849,7 +1813,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "medium",
         label: "I have a leaning",
         description: "Match me on my answers.",
-        manifestSlugs: ["ai-infra-autopilot", "mag7-cash-balance"],
         qualification: {
           fitNote: "Medium certainty supports solid recommendation.",
         },
@@ -1858,7 +1821,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "unsure",
         label: "Skip / not sure",
         description: "Treat this as exploring and keep the preview flexible.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance", "ai-infra-autopilot"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Certainty left open: treat the user as exploring.",
@@ -1868,7 +1830,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "low",
         label: "Just exploring",
         description: "Show me the preview.",
-        manifestSlugs: ["mag7-cash-balance", "spy-core-shield"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Exploring: preview stays broad and low-commitment.",
@@ -1878,7 +1839,6 @@ export const onboardingQuestions: OnboardingQuestion[] = [
         id: "default_requested",
         label: "Give me the safest default preview",
         description: "Start broad and simple now. Tighten it later.",
-        manifestSlugs: ["spy-core-shield", "mag7-cash-balance"],
         qualification: {
           yieldBufferAllowed: true,
           fitNote: "Default requested: safe fallback applied.",

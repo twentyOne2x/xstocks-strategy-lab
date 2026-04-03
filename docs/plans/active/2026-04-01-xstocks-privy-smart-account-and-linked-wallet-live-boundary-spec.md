@@ -99,7 +99,7 @@ When this work closes:
    - local activation now shows `manualSignerAddress = 0xc3a79c8551bd33e3a17539df6db85a5989e22e3a`, `policyAccountAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`, `executionDestinationAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`, `automationReadiness = ready`, and `Current blocker = None` on the real Privy session;
    - the local right-rail account panel now consumes the same live-or-saved preview truth instead of rendering the stale public fallback labels;
    - the exact hosted route `https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1` now matches that same bridge truth on the real session, no longer reproduces the old `manualSignerAddress` crash, and showed one `https://auth.privy.io/api/v1/users/me` resource hit in the verified browser load;
-   - a separate pre-existing hosted `ai-infra-autopilot` tab in the same session still displayed the generic client-side exception shell with five `users/me` resource hits, but that route is outside this exact repair slice.
+   - a separate pre-existing hosted legacy showcase activation tab in the same session still displayed the generic client-side exception shell with five `users/me` resource hits, but that route is outside this exact repair slice.
 
 ## Completion Reconciliation
 

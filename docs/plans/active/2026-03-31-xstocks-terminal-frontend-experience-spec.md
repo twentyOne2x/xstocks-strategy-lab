@@ -37,7 +37,7 @@ This workstream does not:
 
 1. On 2026-04-01 `https://equityterminal.app/` returns `200` and serves a Vercel-hosted landing page.
 2. That live landing page is not in copy parity with local [home-terminal.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/home-terminal.tsx): production says `Tokenized equities. Your wallet. Your rules.` with CTA `Open Terminal`, while local still says `Tokenized equity portfolios you actually control.` with CTA `Find my portfolio`.
-3. `https://equityterminal.app/onboarding`, `/workspace/comparison`, `/activate/ai-infra-autopilot`, `/activity`, and `/skill.md` all return `200` on 2026-04-01.
+3. `https://equityterminal.app/onboarding`, `/workspace/comparison`, `/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`, `/activity`, and `/skill.md` all return `200` on 2026-04-01.
 4. `https://equityterminal.app/ops/xstocks` returns `404` on 2026-04-01 even though the local route exists.
 5. Same-host `https://equityterminal.app/api/*` returns `404`, so frontend parity cannot assume the repo API is available on the same origin.
 6. The Railway API host `https://api-production-e70b.up.railway.app` is live separately, which means production truth depends on explicit frontend-to-backend origin handling.
@@ -122,7 +122,7 @@ Truth rules:
 3. `curl -I -s https://equityterminal.app/`
 4. `curl -I -s https://equityterminal.app/onboarding`
 5. `curl -I -s https://equityterminal.app/workspace/comparison`
-6. `curl -I -s https://equityterminal.app/activate/ai-infra-autopilot`
+6. `curl -I -s https://equityterminal.app/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`
 7. `curl -I -s https://equityterminal.app/activity`
 8. `curl -I -s https://equityterminal.app/ops/xstocks`
 9. `curl -I -s https://equityterminal.app/skill.md`

@@ -41,7 +41,7 @@ This program does not:
 
 ## Current / Live Truth
 
-1. On 2026-04-01 the canonical frontend host `https://equityterminal.app` serves `/`, `/onboarding`, `/workspace/comparison`, `/activate/ai-infra-autopilot`, `/activity`, and `/skill.md`, but `/ops/xstocks` returns `404`.
+1. On 2026-04-01 the canonical frontend host `https://equityterminal.app` serves `/`, `/onboarding`, `/workspace/comparison`, `/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`, `/activity`, and `/skill.md`, but `/ops/xstocks` returns `404`.
 2. On 2026-04-01 same-host `https://equityterminal.app/api/*` also returns `404`, so the canonical frontend is not serving the repo API surface directly.
 3. On 2026-04-01 the Railway API host `https://api-production-e70b.up.railway.app` serves `/health` and `/api/catalog`, but deployed parity lags local: `/api/public-agent-handoff` and `/api/runtime/autoresearch` both return `{"error":"Route not found."}`.
 4. The live frontend landing copy is ahead of local repo copy in [home-terminal.tsx](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/components/home-terminal.tsx): production says `Tokenized equities. Your wallet. Your rules.` while local still says `Tokenized equity portfolios you actually control.` and uses a different CTA.
@@ -161,7 +161,7 @@ Truth rules:
 2. `curl -I -s https://equityterminal.app`
 3. `curl -I -s https://equityterminal.app/onboarding`
 4. `curl -I -s https://equityterminal.app/workspace/comparison`
-5. `curl -I -s https://equityterminal.app/activate/ai-infra-autopilot`
+5. `curl -I -s https://equityterminal.app/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`
 6. `curl -I -s https://equityterminal.app/activity`
 7. `curl -I -s https://equityterminal.app/ops/xstocks`
 8. `curl -sS https://api-production-e70b.up.railway.app/health`

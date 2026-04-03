@@ -65,7 +65,7 @@ Commands:
 curl -sS https://equityterminal.app/skill.md
 curl -I -s https://equityterminal.app/onboarding
 curl -I -s https://equityterminal.app/workspace/comparison
-curl -I -s https://equityterminal.app/activate/ai-infra-autopilot
+curl -I -s https://equityterminal.app/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1
 node scripts/qualify.mjs --fixture broad-cautious
 node apps/api/src/index.js
 curl -sS "http://localhost:3001/api/activation-preview?slotId=onboarding.default_basket&userNotionalUsd=1000"
@@ -97,7 +97,7 @@ Expected artifacts:
 - 2026-04-01: Audited the requested public skill, internal skills, runbook, and the existing `XSL-016` owner artifacts.
 - 2026-04-01: Confirmed that the requested owner plan file was missing and that `docs/ISSUES.md` had no `XSL-016B` entry yet.
 - 2026-04-01: Confirmed that the public-safe helper already exists, so this slice should stay docs-first unless verification exposes a truly missing helper.
-- 2026-04-01: Confirmed the local skills and runbooks now align to one six-stage smoke matrix and that hosted `/onboarding`, `/workspace/comparison`, and `/activate/ai-infra-autopilot` all respond.
+- 2026-04-01: Confirmed the local skills and runbooks now align to one six-stage smoke matrix and that hosted `/onboarding`, `/workspace/comparison`, and `/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1` all respond.
 - 2026-04-01: Recorded the remaining proof blocker exactly: default-port local smoke on `localhost:3001` is contaminated by a pre-existing stale API process.
 
 ## 2026-04-01 Final Reconciliation Update
@@ -108,12 +108,12 @@ Exact proofs reached:
 1. local `apps/web/public/skill.md`, `skills/**`, and `docs/runbooks/**` now describe the same six-stage matrix,
 2. `node scripts/qualify.mjs --fixture broad-cautious` still qualifies into `onboarding.default_basket`,
 3. a clean local API instance on `PORT=3011` serves `GET /api/public-agent-handoff` with `state=stay_public_preview`, `surfaceTruth=preview`, and `executionState=wallet_required`,
-4. hosted `/onboarding`, `/workspace/comparison`, and `/activate/ai-infra-autopilot` all return `200`,
+4. hosted `/onboarding`, `/workspace/comparison`, and `/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1` all return `200`,
 5. hosted `https://equityterminal.app/skill.md` now serves the current public-safe copy and no longer carries the earlier Railway host reference or public CRE claim.
 
 Exact blockers keeping this lane open:
 1. the exact fixed-port local smoke command from the owner spec currently hits a pre-existing process on `localhost:3001`, so the default-port command is not a trustworthy current-repo proof on this machine.
 - 2026-04-01: Updated the public skill, internal skills, and runbooks to the same six-stage smoke matrix and added `docs/runbooks/xstocks-agent-smoke-matrix.md` as the concise operator runbook.
-- 2026-04-01: Verified hosted route reachability at `https://equityterminal.app/onboarding`, `https://equityterminal.app/workspace/comparison`, and `https://equityterminal.app/activate/ai-infra-autopilot`, and verified local qualification truth with `node scripts/qualify.mjs --fixture broad-cautious`.
+- 2026-04-01: Verified hosted route reachability at `https://equityterminal.app/onboarding`, `https://equityterminal.app/workspace/comparison`, and `https://equityterminal.app/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`, and verified local qualification truth with `node scripts/qualify.mjs --fixture broad-cautious`.
 - 2026-04-01: Verified the current workspace API on an isolated ephemeral port because `localhost:3001` was already occupied by a stale process; the current workspace instance served `GET /api/public-agent-handoff` and `GET /api/activation-preview` correctly.
 - 2026-04-01: Post-proof reconciliation removed the hosted public-skill blocker; the remaining exact blocker is the stale local process on `localhost:3001` that contaminates the default-port smoke command on this machine.

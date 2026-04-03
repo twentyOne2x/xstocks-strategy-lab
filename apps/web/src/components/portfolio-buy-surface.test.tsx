@@ -19,9 +19,9 @@ describe("PortfolioBuySurface", () => {
 
     const markup = renderToStaticMarkup(
       <PortfolioBuySurface
-        activationHref="/activate/ai-infra-autopilot"
+        activationHref="/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1"
         directionalPreviewOnly={false}
-        manifestTitle="AI Infra Autopilot"
+        manifestTitle="Autopilot: Mag 7 Core"
       />,
     );
 
@@ -29,7 +29,9 @@ describe("PortfolioBuySurface", () => {
     expect(markup).toContain("BUY PORTFOLIO");
     expect(markup).toContain("Wallet status");
     expect(markup).toContain("Connected");
-    expect(markup).toContain('href="/activate/ai-infra-autopilot"');
+    expect(markup).toContain(
+      'href="/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1"',
+    );
     expect(markup).toContain("Activation stays internal");
     expect(markup).toContain("Wallet connect button");
   });

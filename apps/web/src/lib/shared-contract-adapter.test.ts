@@ -13,7 +13,7 @@ import {
 
 describe("shared contract adapter", () => {
   it("maps a basket manifest into the shared activation contract shape", () => {
-    const manifest = getPromotedManifest("ai-infra-autopilot");
+    const manifest = getPromotedManifest("onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1");
 
     expect(manifest).toBeDefined();
 
@@ -26,7 +26,7 @@ describe("shared contract adapter", () => {
   });
 
   it("maps a directional manifest into a funding-aware payload", () => {
-    const manifest = getPromotedManifest("mstr-conviction-long");
+    const manifest = getPromotedManifest("advanced-default-directional--directional-preview-v1");
 
     expect(manifest).toBeDefined();
 
@@ -139,7 +139,7 @@ describe("shared contract adapter", () => {
     });
 
     expect(recommendedStrategy.slotId).toBe("onboarding.alt_basket_1");
-    expect(recommendedStrategy.manifestSlug).toBe("mag7-cash-balance");
+    expect(recommendedStrategy.manifestSlug).toBe("onboarding-alt-basket-1--basket-core-h5-p100-c2-cap22-a0-r275-v1");
   });
 
   it("throws when the target slot is missing instead of reusing the first strategy card", () => {
@@ -177,7 +177,7 @@ describe("shared contract adapter", () => {
           q_certainty: "medium",
         },
         expectedSlotId: "onboarding.alt_basket_2",
-        expectedManifestSlug: "spy-core-shield",
+        expectedManifestSlug: "onboarding-alt-basket-2--basket-starter-h6-p100-c1-cap17-a0-r275-v1",
       },
       {
         answers: {
@@ -191,7 +191,7 @@ describe("shared contract adapter", () => {
           q_certainty: "high",
         },
         expectedSlotId: "onboarding.alt_basket_1",
-        expectedManifestSlug: "mag7-cash-balance",
+        expectedManifestSlug: "onboarding-alt-basket-1--basket-core-h5-p100-c2-cap22-a0-r275-v1",
       },
       {
         answers: {
@@ -206,7 +206,7 @@ describe("shared contract adapter", () => {
           q_certainty: "high",
         },
         expectedSlotId: "onboarding.default_basket",
-        expectedManifestSlug: "ai-infra-autopilot",
+        expectedManifestSlug: "onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
       },
       {
         answers: {
@@ -220,7 +220,7 @@ describe("shared contract adapter", () => {
           q_certainty: "high",
         },
         expectedSlotId: "advanced.default_directional",
-        expectedManifestSlug: "mstr-conviction-long",
+        expectedManifestSlug: "advanced-default-directional--directional-preview-v1",
       },
     ];
 

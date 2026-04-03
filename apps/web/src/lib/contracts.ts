@@ -56,7 +56,6 @@ export interface ThemeSummary {
   stance: string;
   description: string;
   leadSymbols: string[];
-  manifestSlugs: string[];
 }
 
 export interface PublicStrategyCardData {
@@ -607,7 +606,6 @@ export interface OnboardingQuestionOption {
   label: string;
   helper?: string;
   description: string;
-  manifestSlugs: string[];
   qualification: QualificationPreference;
 }
 

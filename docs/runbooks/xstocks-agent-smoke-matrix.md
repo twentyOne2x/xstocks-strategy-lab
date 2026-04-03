@@ -23,7 +23,7 @@ Run these against the hosted public surface:
 curl -sS https://equityterminal.app/skill.md
 curl -I -s https://equityterminal.app/onboarding
 curl -I -s https://equityterminal.app/workspace/comparison
-curl -I -s https://equityterminal.app/activate/ai-infra-autopilot
+curl -I -s https://equityterminal.app/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1
 ```
 
 Interpretation:

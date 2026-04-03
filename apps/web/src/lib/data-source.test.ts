@@ -24,9 +24,9 @@ describe("data source", () => {
   });
 
   it("keeps the terminal chrome aligned to a promoted manifest", () => {
-    const chrome = getTerminalChrome("detail", "mstr-conviction-long");
+    const chrome = getTerminalChrome("detail", "advanced-default-directional--directional-preview-v1");
 
-    expect(chrome.selectedManifest.slug).toBe("mstr-conviction-long");
+    expect(chrome.selectedManifest.slug).toBe("advanced-default-directional--directional-preview-v1");
     expect(chrome.selectedManifest.mode).toBe("directional");
     expect(chrome.promotedWinners).toHaveLength(4);
   });
@@ -35,7 +35,7 @@ describe("data source", () => {
     const chrome = getTerminalChrome("comparison", "onboarding.alt_basket_2");
 
     expect(chrome.selectedManifest.slot_id).toBe("onboarding.alt_basket_2");
-    expect(chrome.selectedManifest.slug).toBe("spy-core-shield");
+    expect(chrome.selectedManifest.slug).toBe("onboarding-alt-basket-2--basket-starter-h6-p100-c1-cap17-a0-r275-v1");
   });
 
   it("throws when a detail route requests a non-promoted view", () => {

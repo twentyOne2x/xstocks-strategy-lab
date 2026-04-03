@@ -72,7 +72,7 @@ As of 2026-04-03 on `codex/xsl-009-verification-recovery` after the recovery fix
    - [https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1) returns `404`,
    - [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1) returns `404`,
    - [https://24-7.markets/api/runtime/autoresearch?limit=1](https://24-7.markets/api/runtime/autoresearch?limit=1) still reports `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`,
-   - and the onboarding HTML still contains stale manifest slugs such as `ai-infra-autopilot`.
+   - and the onboarding HTML still contains stale legacy showcase slug output.
 
 ## Current Local Implementation Audit
 
