@@ -2,8 +2,21 @@
 
 Date: 2026-04-01
 Owner: Codex
-Status: completed
+Status: superseded
 Canonical issue: `XSL-006A` under `XSL-006`
+
+## Supersession Note
+
+This document is preserved as a historical 2026-04-01 Railway proof record only.
+
+It cannot remain the active executor or canonical truth doc because current live truth on 2026-04-03 is:
+1. [https://24-7.markets/api/runtime/autoresearch?limit=1](https://24-7.markets/api/runtime/autoresearch?limit=1) returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`,
+2. local `railway whoami` is currently blocked with `invalid_grant`,
+3. and the repo still needs one active reconciliation lane deciding whether the prior Railway host proof should be re-proven or explicitly retired.
+
+Active execution now belongs to:
+1. [2026-04-03-xstocks-remaining-live-proof-and-operator-access-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-remaining-live-proof-and-operator-access-closure.md)
+2. [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md)
 
 ## Objective
 
