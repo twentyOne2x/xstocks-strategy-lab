@@ -13,9 +13,11 @@ function createJsonResponse(status: number, payload: unknown) {
 
 function createExecutionRequest({
   state = "requested",
+  adapterId = "enso_bundle",
   legs,
 }: {
   state?: string;
+  adapterId?: string;
   legs: ApiExecutionRequest["legs"];
 }): ApiExecutionRequest {
   return {
@@ -32,7 +34,7 @@ function createExecutionRequest({
     mode: "basket",
     runtimeOwner: "operator_manual",
     triggerSource: "operator_manual",
-    adapterId: "enso_bundle",
+    adapterId,
     activationManifestRef: {
       manifestId: "manifest_test",
       slotId: "onboarding.default_basket",
@@ -70,7 +72,88 @@ describe("runManualExecutionFlow", () => {
     global.fetch = originalFetch;
   });
 
-  it("creates and executes the Enso bundle path for portfolio buys", async () => {
+  it("keeps hosted 1inch as the default public buy route", async () => {
+    const createdRequest = createExecutionRequest({
+      adapterId: "oneinch_fusion",
+      legs: [],
+    });
+    const fetchMock = vi.fn();
+    fetchMock
+      .mockResolvedValueOnce(
+        createJsonResponse(200, {
+          data: {
+            activation: {
+              activationId: "activation_test",
+              manifestId: "manifest_test",
+              slotId: "onboarding.default_basket",
+              requestedNotionalUsd: 100,
+              surfaceTruth: "live",
+              status: "ready",
+              createdAt: "2026-04-02T00:00:00.000Z",
+              updatedAt: "2026-04-02T00:00:00.000Z",
+            },
+          },
+        }),
+      )
+      .mockResolvedValueOnce(
+        createJsonResponse(200, {
+          data: {
+            action: "create",
+            executionRequest: createdRequest,
+            activityEvents: [],
+          },
+        }),
+      )
+      .mockResolvedValueOnce(
+        createJsonResponse(200, {
+          data: {
+            items: [createdRequest],
+          },
+        }),
+      );
+    global.fetch = fetchMock as typeof fetch;
+
+    const statuses: string[] = [];
+    await runManualExecutionFlow({
+      manifest: {
+        manifest_id: "manifest_test",
+        slot_id: "onboarding.default_basket",
+      } as never,
+      requestedNotionalUsd: 100,
+      initiationAction: "create",
+      latestActivation: null,
+      existingExecutionRequest: null,
+      auth: {
+        accessToken: "access_test",
+        identityToken: "identity_test",
+      },
+      wallets: [],
+      activeWallet: null,
+      walletState: {
+        connected: true,
+        walletAddress: "0x1111111111111111111111111111111111111111",
+        embeddedWallet: {
+          status: "ready",
+          address: "0x1111111111111111111111111111111111111111",
+        },
+        smartAccount: {
+          status: "not-required",
+          address: null,
+        },
+      },
+      onStatus: (status) => {
+        statuses.push(status.message);
+      },
+    });
+
+    const createCallBody = JSON.parse(String(fetchMock.mock.calls[1][1]?.body));
+
+    expect(createCallBody.executionRouteId).toBe("1inch.ethereum");
+    expect(createCallBody.executionAdapterId).toBeUndefined();
+    expect(statuses).toContain("Creating the wallet-first 1inch execution request.");
+  });
+
+  it("executes the Enso bundle path when an Enso request already exists", async () => {
     const baseLeg = {
       legId: "activation_test:leg:1",
       sequence: 1,
@@ -271,6 +354,7 @@ describe("runManualExecutionFlow", () => {
       initiationAction: "create",
       latestActivation: null,
       existingExecutionRequest: null,
+      portfolioExecutionAdapterId: "enso_bundle",
       auth: {
         accessToken: "access_test",
         identityToken: "identity_test",

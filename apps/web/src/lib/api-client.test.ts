@@ -26,10 +26,40 @@ describe("resolveApiBase", () => {
     expect(resolveApiBase()).toBe("http://localhost:3001");
   });
 
-  it("throws in production without explicit URL", () => {
+  it("uses NEXT_PUBLIC_SITE_URL in production when the API URL is unset", () => {
     vi.stubEnv("NEXT_PUBLIC_API_URL", "");
     vi.stubEnv("NODE_ENV", "production");
-    expect(() => resolveApiBase()).toThrow("NEXT_PUBLIC_API_URL is not set");
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://24-7.markets/");
+    expect(resolveApiBase()).toBe("https://24-7.markets");
+  });
+
+  it("uses VERCEL_URL in production when no explicit public URL is set", () => {
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_URL", "xstocks-strategy-lab.vercel.app");
+    expect(resolveApiBase()).toBe("https://xstocks-strategy-lab.vercel.app");
+  });
+
+  it("uses the browser origin in production when running client-side", () => {
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+    vi.stubEnv("VERCEL_URL", "");
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubGlobal("window", {
+      location: {
+        origin: "https://24-7.markets",
+      },
+    });
+    expect(resolveApiBase()).toBe("https://24-7.markets");
+  });
+
+  it("throws in production when no deployment origin can be derived", () => {
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+    vi.stubEnv("VERCEL_URL", "");
+    vi.stubEnv("NODE_ENV", "production");
+    expect(() => resolveApiBase()).toThrow("API base URL is not set");
   });
 
   it("serializes live wallet state into activation preview requests", async () => {

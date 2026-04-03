@@ -17,14 +17,14 @@ const infraPartners = [
   { name: "Privy", role: "Smart wallets and authentication", href: "https://privy.io" },
   { name: "CoW Protocol", role: "MEV-protected swap execution", href: "https://cow.fi" },
   { name: "1inch", role: "DEX aggregation and Fusion swaps", href: "https://1inch.io" },
-  { name: "Chainlink CRE", role: "Automated rebalancing rails", href: "https://chain.link" },
+  { name: "Chainlink CRE", role: "Rebalance review and operator signals", href: "https://chain.link" },
 ];
 
 const faq = [
   { q: "What are tokenized equities?", a: "Real US stocks represented as tokens on Ethereum. Each xStocks token is backed 1:1 by the underlying equity." },
   { q: "How much do I need to start?", a: "Choose a USDC amount that fits you. No fixed platform minimum." },
   { q: "Who holds my assets?", a: "You do. Assets stay in the wallet you connect through Privy. 24-7 Markets never takes custody." },
-  { q: "How is the portfolio maintained?", a: "Chainlink CRE automation monitors drift and triggers rebalancing. CoW Protocol handles execution. Your assets stay in your wallet." },
+  { q: "How is the portfolio maintained?", a: "Autoresearch refreshes the promoted portfolio. Chainlink CRE and provider signals can open rebalance reviews, but execution still stays user-approved or operator-gated. Your assets stay in your wallet." },
   { q: "What if I want to stop?", a: "Pause or exit anytime. Your positions stay in your wallet." },
 ];
 
@@ -163,7 +163,7 @@ export function HomeTerminal() {
           </div>
           <div className="landing-stack-layer">
             <div className="landing-stack-label">Chainlink CRE</div>
-            <div className="landing-stack-detail">Monitors drift. Triggers rebalancing. Automation rails.</div>
+            <div className="landing-stack-detail">Surfaces rebalance reviews and operator signals. Execution still fails closed until a user or operator takes the next step.</div>
           </div>
           <div className="landing-stack-layer">
             <div className="landing-stack-label">CoW Protocol + 1inch</div>

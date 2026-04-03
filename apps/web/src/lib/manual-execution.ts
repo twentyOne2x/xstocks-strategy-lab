@@ -52,6 +52,7 @@ type ManualExecutionFlowArgs = {
   initiationAction: "create" | "execute_all";
   latestActivation: ApiActivationView | null;
   existingExecutionRequest: ApiExecutionRequest | null;
+  portfolioExecutionAdapterId?: string | null;
   rebalanceId?: string;
   auth?: ManualExecutionAuth;
   wallets: WalletWithProvider[];
@@ -94,7 +95,8 @@ type ApiEnsoBundleQuote = Extract<
 >;
 
 export const EXECUTION_REFRESH_EVENT = "xstocks:execution-refresh";
-const ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID = "enso_bundle";
+const ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID = "oneinch_fusion";
+const ACTIVE_PORTFOLIO_EXECUTION_ROUTE_ID = "1inch.ethereum";
 
 function isPortfolioQuoteAdapter(adapterId: string | null | undefined) {
   return (
@@ -560,12 +562,19 @@ async function ensureExecutionRequest(
   activation: ApiActivationView,
   args: ManualExecutionFlowArgs,
 ) {
+  const requestedPortfolioAdapterId =
+    typeof args.portfolioExecutionAdapterId === "string" &&
+    args.portfolioExecutionAdapterId.trim().length > 0
+      ? args.portfolioExecutionAdapterId.trim()
+      : null;
+  const expectedExecutionAdapterId =
+    requestedPortfolioAdapterId ?? ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID;
   const reusableExecutionRequest =
     args.existingExecutionRequest &&
     args.existingExecutionRequest.activationId === activation.activationId &&
     (args.initiationAction !== "create" ||
       args.existingExecutionRequest.adapterId ===
-        ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID) &&
+        expectedExecutionAdapterId) &&
     args.existingExecutionRequest.state !== "confirmed" &&
     args.existingExecutionRequest.state !== "failed"
       ? args.existingExecutionRequest
@@ -580,7 +589,7 @@ async function ensureExecutionRequest(
     message:
       args.initiationAction === "execute_all"
         ? "Staging the authenticated execute_all handoff."
-        : "Creating the Enso portfolio execution request.",
+        : "Creating the wallet-first 1inch execution request.",
   });
 
   const executionWrite = await postExecutionAction(
@@ -588,7 +597,9 @@ async function ensureExecutionRequest(
       action: args.initiationAction,
       activationId: activation.activationId,
       ...(args.initiationAction === "create"
-        ? { executionAdapterId: ACTIVE_PORTFOLIO_EXECUTION_ADAPTER_ID }
+        ? requestedPortfolioAdapterId
+          ? { executionAdapterId: requestedPortfolioAdapterId }
+          : { executionRouteId: ACTIVE_PORTFOLIO_EXECUTION_ROUTE_ID }
         : {}),
       ...(args.rebalanceId ? { rebalanceId: args.rebalanceId } : {}),
     },

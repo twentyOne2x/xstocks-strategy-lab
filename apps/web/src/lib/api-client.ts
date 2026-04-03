@@ -10,11 +10,11 @@ export const DEFAULT_MANUAL_NOTIONAL_USD = 100;
  * Resolves the API base URL.
  * - Uses NEXT_PUBLIC_API_URL if set.
  * - Falls back to localhost:3001 only in development/test.
- * - Throws in production if NEXT_PUBLIC_API_URL is missing.
+ * - Falls back to the current Vercel deployment or browser origin in production.
  */
 export function resolveApiBase(): string {
-  const explicit = process.env.NEXT_PUBLIC_API_URL;
-  if (explicit) return explicit;
+  const explicit = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, "");
 
   const isDev =
     process.env.NODE_ENV === "development" ||
@@ -22,9 +22,25 @@ export function resolveApiBase(): string {
 
   if (isDev) return "http://localhost:3001";
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    process.env.SITE_URL?.trim();
+  if (siteUrl) {
+    return siteUrl.replace(/\/$/, "");
+  }
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) {
+    return `https://${vercelUrl.replace(/\/$/, "")}`;
+  }
+
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin;
+  }
+
   throw new Error(
-    "NEXT_PUBLIC_API_URL is not set. " +
-      "In production, the API base URL must be configured explicitly. " +
+    "API base URL is not set. " +
+      "In production, set NEXT_PUBLIC_API_URL/NEXT_PUBLIC_SITE_URL or rely on VERCEL_URL/window origin. " +
       "Localhost fallback is only allowed in development.",
   );
 }

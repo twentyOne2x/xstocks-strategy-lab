@@ -44,16 +44,18 @@ The repo also carries a directional xStocks lane:
 
 Current execution hierarchy:
 1. `CoW` and `1inch` are the repo-owned Ethereum execution venues in the backend substrate,
-2. `1inch` is no longer quote-only; it persists quote, approval payload, signed submission attempt, and venue-status or exact blocker,
-3. `CoW` remains supported through the same execution-request contract,
-4. `Chainlink CRE` / provider-triggered review can now create execution staging through the landed `XSL-018B` handoff,
-5. execution still fails closed when readiness, quoteability, signer, or session blockers remain.
+2. the canonical public-default buy route is currently the hosted wallet-first `1inch` path,
+3. `1inch` proof on the promoted default basket persists quote, approval-payload, and signature-input artifacts for the six actionable core xStocks legs,
+4. `CoW` remains supported through the same execution-request contract,
+5. `Chainlink CRE` / provider-triggered review can create execution staging through the landed `XSL-018B` handoff,
+6. execution still fails closed when readiness, quoteability, signer, or session blockers remain.
 
 Current truthful posture:
 1. `Chainlink CRE` review + operator-triggered execution staging is real,
 2. full autonomous CRE/provider execution is not,
-3. whole-portfolio execution is the contract shape, and the promoted default `c5` basket is now executable under venue-routed `1inch` truth for its six core xStocks legs,
-4. exact remaining blocker is signer-owned `1inch Fusion` signature, submission, and receipt proof, while the `AUSD` yield-buffer leg remains deferred/manual.
+3. the strongest repo-owned `1inch` proof still stops at signer-owned `1inch Fusion` approval for the six quoted core xStocks legs; no repo-owned accepted submission or receipt proof exists yet,
+4. `Enso` remains an implementation candidate awaiting live proof and is not the canonical public-default route,
+5. the `AUSD` yield-buffer leg remains deferred/manual and is not included in the six-leg signer-owned `1inch` claim.
 
 ## Wallet And Auth Truth
 
@@ -71,27 +73,30 @@ Current wallet/auth posture:
 2. keep incumbent-vs-challenger comparisons,
 3. promote the current winner into the slot registry,
 4. expose that promoted manifest to the API and frontend,
-5. rerun the loop on the Railway `autoresearch-worker`.
+5. rerun the loop on the Railway `autoresearch-worker`,
+6. rehydrate the canonical Railway runtime receipt from the repo-owned proof seed on the API runtime surface.
 
 This does not mean portfolio execution is already fully autonomous.
 
 ## Current Repo Truth
 
-As of `2026-04-02`, the strongest repo-owned truth is:
+As of `2026-04-03`, the strongest repo-owned truth is:
 1. onboarding qualification, workspace/detail, activation preview, and authenticated activation surfaces exist,
-2. Railway-backed autoresearch is repo-owned and promotes manifests into the public slot registry,
+2. the repo now carries the canonical `XSL-006A` Railway cron proof seed and the API runtime surface rehydrates it locally,
 3. the backend owns a shared `ExecutionRequest` / `ExecutionRequestLeg` contract for venue-routed execution across `CoW` and `1inch`,
 4. accepted `Chainlink CRE` / provider-triggered review can now hand off into canonical execution staging through `execute_all` under landed `XSL-018B`,
 5. execution is still user-approved and signer-owned,
-6. landed `XSL-014B` makes the promoted default `c5` basket truthfully `ready` / `executable` on the promoted path under venue-routed `1inch.ethereum` truth,
-7. full autonomous rebalancing is not live.
+6. the canonical public-default buy route remains hosted `1inch` on Ethereum while Enso stays unproven,
+7. the rebalance right rail is visibly present in the onboarding preview shell and remains fail-closed,
+8. full autonomous rebalancing is not live.
 
 What is not true yet:
-1. the strongest exact execution claim for the promoted `c5` basket is still limited to the six core xStocks legs, with the `AUSD` yield-buffer leg intentionally deferred/manual,
+1. shared `1inch` submission and receipt proof is not closed; the strongest repo-owned blocker remains `missing_user_signature`,
 2. provider-triggered `CRE` does not autonomously execute end to end,
-3. hosted/session-backed signer proof is not closed as a durable production claim,
-4. exact remaining execution blocker: signer-owned `1inch Fusion` EIP-712 signatures, submission, and receipt proof for the six quoted core legs,
-5. Privy smart-account-first execution remains an active `XSL-005` posture lane, not the current proven runtime branch.
+3. `LI.FI` is not the active atomic whole-basket execution lane,
+4. `Enso` is not live-proven on the canonical public route,
+5. direct public detail-route parity is not yet proven on the current prod host,
+6. Privy smart-account-first execution remains an active `XSL-005` posture lane, not the current proven runtime branch.
 
 ## Architecture
 
@@ -200,17 +205,18 @@ Start here:
 What is already strong:
 1. qualification and manifest selection,
 2. repo-owned promoted-manifest and slot-registry model,
-3. Railway-backed recurring autoresearch proof,
+3. Railway cron proof seed plus local API runtime rehydration,
 4. authenticated activation and activity surfaces,
 5. venue-routed manual execution substrate across `CoW` and `1inch`,
 6. provider review to execution staging handoff,
-7. promoted default `c5` basket execution readiness through six core `1inch` legs.
+7. promoted default `c5` basket execution readiness through six core hosted `1inch` legs.
 
 What is still active:
-1. signer-owned `1inch Fusion` signature, submission, and receipt proof for the six quoted core legs,
-2. right-rail rebalance control surface and truthful `Execute all` UI,
-3. hosted/session-backed signer proof,
-4. smart-account-first execution posture,
-5. policy-bounded automation and full autonomous CRE execution above the current operator-manual closure.
+1. signer-owned `1inch Fusion` signature plus first accepted submission or receipt proof for the six quoted core legs,
+2. direct detail-route right-rail prod parity after the web API-origin fix ships,
+3. `Enso` live proof on the promoted default basket,
+4. public deploy parity for the `XSL-006A` runtime surface,
+5. smart-account-first execution posture,
+6. policy-bounded automation and full autonomous CRE execution above the current operator-manual closure.
 
 This README should track current repo truth, not demo framing. If execution, wallet, or automation claims change, update the owning spec and [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md) first, then refresh this file.

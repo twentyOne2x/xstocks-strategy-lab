@@ -1,0 +1,36 @@
+{
+  "data": {
+    "version": "1",
+    "generatedAt": "2026-04-03T14:35:49.228Z",
+    "limit": 1,
+    "runtime": {
+      "runtimeId": "strategy_lab_regular_autoresearch_v1",
+      "runtimeOwner": "worker_strategy_lab",
+      "cadenceHours": 24,
+      "status": "idle",
+      "truthBoundary": "worker_runtime_only",
+      "repoOwnedRuntime": true,
+      "recurringAutonomousProven": false,
+      "supportedTriggerSources": [
+        "manual_cli",
+        "scheduled_cron"
+      ],
+      "notes": [
+        "Repo-owned worker runtime exists for regular basket autoresearch refresh.",
+        "Scheduled cron is a supported trigger shape, not proof of a deployed recurring host.",
+        "Promoted manifests remain the only public explanation boundary."
+      ],
+      "lastRequestedAt": null,
+      "lastStartedAt": null,
+      "lastCompletedAt": null,
+      "lastRunId": null,
+      "lastTriggerSource": null,
+      "nextDueAt": null,
+      "lastPromotionCount": 0,
+      "lastPromotedManifestIds": [],
+      "schedulerHost": null,
+      "proofUpdatedAt": null
+    },
+    "runs": []
+  }
+}
