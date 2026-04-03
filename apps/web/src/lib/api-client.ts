@@ -5,6 +5,8 @@
  */
 
 export const DEFAULT_MANUAL_NOTIONAL_USD = 100;
+export const SERVER_API_TIMEOUT_MS = 15000;
+export const CLIENT_API_TIMEOUT_MS = 5000;
 
 /**
  * Resolves the API base URL.
@@ -43,6 +45,12 @@ export function resolveApiBase(): string {
       "In production, set NEXT_PUBLIC_API_URL/NEXT_PUBLIC_SITE_URL or rely on VERCEL_URL/window origin. " +
       "Localhost fallback is only allowed in development.",
   );
+}
+
+export function getApiFetchTimeoutMs(): number {
+  return typeof window === "undefined"
+    ? SERVER_API_TIMEOUT_MS
+    : CLIENT_API_TIMEOUT_MS;
 }
 
 /* ── Raw Response Types ── */
@@ -929,7 +937,7 @@ async function apiFetch<T>(path: string): Promise<T | null> {
     const isServer = typeof window === "undefined";
     const res = await fetch(`${base}${path}`, {
       ...(isServer ? { next: { revalidate: 30 } } : {}),
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(getApiFetchTimeoutMs()),
     });
     if (!res.ok) return null;
     const json = await res.json();
@@ -1015,6 +1023,7 @@ async function apiFetchWithAuth<T>(
     const isServer = typeof window === "undefined";
     const res = await fetch(`${base}${path}`, {
       ...(isServer ? { next: { revalidate: 30 } } : {}),
+      signal: AbortSignal.timeout(getApiFetchTimeoutMs()),
       headers: {
         ...(auth?.accessToken ? { Authorization: `Bearer ${auth.accessToken}` } : {}),
         ...(auth?.identityToken

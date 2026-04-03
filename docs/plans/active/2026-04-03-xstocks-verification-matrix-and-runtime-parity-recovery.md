@@ -2,7 +2,7 @@
 
 Date: 2026-04-03
 Owner: `XSL-009`
-Status: active
+Status: completed
 
 ## Goal
 
@@ -27,15 +27,15 @@ This recovery tranche does not:
 
 ## Existing-Spec Inventory
 
-1. [2026-03-31-xstocks-gap-closure-and-readiness-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab-codex-final-closure-wave/docs/plans/active/2026-03-31-xstocks-gap-closure-and-readiness-spec.md)
+1. [2026-03-31-xstocks-gap-closure-and-readiness-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-gap-closure-and-readiness-spec.md)
    - Current relevance: high.
    - Decision: update indirectly through `XSL-009` issue truth, but do not reuse as the executor doc.
    - Why: it is the broader closeout program doc and now overstates green non-frontend status; it does not own the exact red root-matrix recovery runbook.
-2. [2026-04-03-xstocks-final-closure-wave-control-plane.md](/Users/user/PycharmProjects/xstocks-strategy-lab-codex-final-closure-wave/docs/plans/active/2026-04-03-xstocks-final-closure-wave-control-plane.md)
+2. [2026-04-03-xstocks-final-closure-wave-control-plane.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-final-closure-wave-control-plane.md)
    - Current relevance: high.
    - Decision: update indirectly after execution; do not reuse as the executor doc.
    - Why: it owns product-gap closure truth, not the repo-wide verification recovery sequence discovered after the merge.
-3. [2026-04-03-xstocks-repo-truth-sync-and-cleanup-closeout.md](/Users/user/PycharmProjects/xstocks-strategy-lab-codex-final-closure-wave/docs/plans/active/2026-04-03-xstocks-repo-truth-sync-and-cleanup-closeout.md)
+3. [2026-04-03-xstocks-repo-truth-sync-and-cleanup-closeout.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-repo-truth-sync-and-cleanup-closeout.md)
    - Current relevance: medium.
    - Decision: reuse as adjacent truth-sync evidence only.
    - Why: it covers cleanup and wording sync, but not the full failing matrix or workflow package build posture.
@@ -48,7 +48,7 @@ Create new alongside:
 
 ## Current Live Truth
 
-As of 2026-04-03 on `codex/xsl-009-verification-recovery` after the recovery fixes:
+As of 2026-04-03 after the recovery fixes and prod recheck:
 1. `pnpm lint` passes.
 2. `pnpm test` passes.
 3. `pnpm build` passes.
@@ -67,56 +67,57 @@ As of 2026-04-03 on `codex/xsl-009-verification-recovery` after the recovery fix
 16. `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:validate` passes.
 17. `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:generate` passes.
 18. `git diff --check` passes.
-19. Public-host truth is still stale:
-   - [https://24-7.markets/onboarding](https://24-7.markets/onboarding) returns `200`,
-   - [https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1) returns `404`,
-   - [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1) returns `404`,
+19. Public-host parity is now closed on deployment `dpl_4w35481YsNzPnkMSCMqAjD4CzxMc`:
+   - [https://24-7.markets/onboarding](https://24-7.markets/onboarding) returns `200` and no longer contains retired legacy showcase slugs,
+   - [https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1) returns `200`,
+   - [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1) returns `200`,
    - [https://24-7.markets/api/runtime/autoresearch?limit=1](https://24-7.markets/api/runtime/autoresearch?limit=1) still reports `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`,
-   - and the onboarding HTML still contains stale legacy showcase slug output.
+   - and that runtime response now matches repo truth rather than stale deploy lag.
 
 ## Current Local Implementation Audit
 
 ### Shipped
 
 1. API, shared contracts, web manual-execution path, and the hosted `1inch` public-default route are locally green.
-2. The worker rebalance runtime code path still exists and the issue tracker already treats it as a truthful manual-review shell.
-3. The workflow packages still exist in the workspace and are included in the root `turbo` build scope.
+2. The worker rebalance runtime code path still exists, the harness now matches the promoted-basket route truth, and the issue tracker still treats the lane as a truthful manual-review shell.
+3. The workflow packages still exist in the workspace, compile under the current baseline, and remain included in the root `turbo` build scope.
+4. Production deployment parity is closed on Vercel deployment `dpl_4w35481YsNzPnkMSCMqAjD4CzxMc`.
 
-### Partial
+### Closed In This Recovery
 
-1. Worker scheduled-review coverage is partial because the current harness no longer matches the promoted-basket execution-route truth.
-2. Workflow package build posture is partial because package-local configs and dependency expectations drifted away from the current workspace baseline.
-3. Production deployment parity is partial because the live site is still serving pre-recovery runtime and route behavior.
+1. Worker scheduled-review coverage no longer drifts from the promoted-basket execution-route truth.
+2. Workflow package build posture no longer drifts from the current workspace baseline.
+3. Production deployment parity no longer drifts from the merged repo after the manual Vercel redeploy plus server-side timeout fix.
 
 ### Spec-only Or Unproven
 
-1. Any claim that the repo root matrix is fully green.
-2. Any claim that the current public detail or activate deep-link routes are now live on `24-7.markets`.
-3. Any claim that `XSL-006A` deploy parity is closed on the public host.
+1. Any claim that the public runtime API proves a deployed recurring scheduler host beyond `worker_runtime_only`.
+2. Any claim that shared `1inch` submission is closed beyond the current `missing_user_signature` blocker.
+3. Any claim that Enso is live on the canonical public route.
 
 ## Symptom Contract
 
-Observed symptom:
+Observed symptom at recovery start:
 1. the merged repo is not actually green end to end,
 2. the issue and closeout docs still contain overclaimed “green non-frontend stack” language,
 3. and the live public host still serves stale runtime or route parity.
 
-Current suspected cause:
+Resolved root-cause map:
 1. worker regression: the test harness still models the older execution-route baseline and now fails against the promoted manifest’s `1inch.ethereum` route requirement.
-   - Status: likely and close to proven.
+   - Status: proven and fixed.
 2. workflow-client build failure: React and type packages are skewed against the current workspace React 19 posture.
-   - Status: likely.
+   - Status: proven and fixed.
 3. workflow-server build failure: the package extends a missing root TS base config and falls through into stale compiler and dependency posture.
-   - Status: proven.
-4. prod parity gap: the public host has not yet picked up the merged closure-wave state or is pinned to an older deploy.
-   - Status: proven.
+   - Status: proven and fixed.
+4. prod parity gap: the public host deep-link routes were timing out in SSR because server-rendered fetches used `AbortSignal.timeout(5000)` while live same-host `workspace` and `activation-preview` requests could take about 10 seconds.
+   - Status: proven and fixed.
 
-## Likely Culprits / Ranked Hypotheses
+## Resolved Root Causes
 
-1. Worker harness drift is the immediate root cause of the `@xstocks/worker` test failure.
-2. Missing or stale shared TypeScript baseline is the immediate root cause of the `@xstocks/workflow-server` compile failure.
-3. React 18 vs React 19 type skew is the immediate root cause of the `@xstocks/workflow-client` JSX compile failure.
-4. Production deploy lag or stale host configuration is the current cause of the `404` deep-link and stale autoresearch runtime surface.
+1. Worker harness drift was the immediate root cause of the `@xstocks/worker` test failure.
+2. Missing or stale shared TypeScript baseline was the immediate root cause of the `@xstocks/workflow-server` compile failure.
+3. React 18 vs React 19 type skew was the immediate root cause of the `@xstocks/workflow-client` JSX compile failure.
+4. Server-side API fetch timeout drift was the immediate root cause of the canonical deep-link `404` posture on prod.
 
 ## Non-Obvious Alternatives
 
@@ -129,7 +130,7 @@ Current suspected cause:
 1. If adding current route truth to the worker harness still leaves the tests failing, the runtime logic is actually regressed and must be fixed rather than the tests.
 2. If `workflow-client` still fails after aligning React and type versions, the issue is not only version skew.
 3. If `workflow-server` still fails after adding a correct root TS base config and required dependencies, source-level code drift remains.
-4. If the public host stays stale after the repo is green and a deploy is confirmed, the remaining issue is not just deploy lag.
+4. If the public host had stayed stale after the repo was green and a deploy was confirmed, the remaining issue would not have been just deploy lag.
 
 ## Goal-Vs-Repo-Truth Diff
 
@@ -279,6 +280,10 @@ Expected proof artifacts:
 6. 2026-04-03: restored `workflow-server` compile posture by adding the missing root `tsconfig.base.json`, declaring `better-sqlite3`, and tightening unsafe JSON parsing; `pnpm --filter @xstocks/workflow-server build` now passes.
 7. 2026-04-03: restored `workflow-client` compile posture by localizing Vite type inclusion and aligning the package with the workspace React 19 posture; `pnpm --filter @xstocks/workflow-client build` now passes.
 8. 2026-04-03: reran `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm check`, Prisma validation or generation with explicit `DATABASE_URL`, and `git diff --check`; all now pass locally.
-9. 2026-04-03: rechecked the public host after local recovery; onboarding still returns `200` with stale manifest slugs, detail and activate still return `404`, and the runtime API still reports `worker_runtime_only`.
-10. 2026-04-03: deployment closure is blocked from this environment because there is no `.vercel` project link, `vercel` CLI is unavailable, and `railway whoami` fails with `invalid_grant`.
-11. 2026-04-03: merged the recovery slice to `origin/main` as `c1436e79b8aaf20c41c7442e9ec58e7bea41a6f8` via PR `#7`, then immediately rechecked the public host; the stale runtime and `404` route parity remained unchanged after the merge.
+9. 2026-04-03: rechecked the public host after local recovery; onboarding still returned `200` with stale manifest slugs, detail and activate still returned `404`, and the runtime API still reported `worker_runtime_only`.
+10. 2026-04-03: audited deployment ownership and confirmed `24-7.markets` is attached to Vercel project `xstocks-strategy-lab-web-preview`.
+11. 2026-04-03: first manual production redeploy `dpl_9utpNwvSci8wfjDj64QSQNUwKAcL` removed stale onboarding slugs, but the canonical detail and activate routes still returned `404`.
+12. 2026-04-03: identified the exact route-parity root cause as server-side `AbortSignal.timeout(5000)` in `apps/web/src/lib/api-client.ts`; increased only the server-side timeout to 15000ms and kept the client timeout at 5000ms.
+13. 2026-04-03: reran targeted web tests and build after the timeout fix; they all passed.
+14. 2026-04-03: second manual production redeploy `dpl_4w35481YsNzPnkMSCMqAjD4CzxMc` closed public web-route parity. Onboarding no longer served retired slugs, and canonical detail plus activate routes both returned `200`.
+15. 2026-04-03: rechecked the public runtime API after the redeploy; it still returned `worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, which matches repo truth instead of stale deploy lag.

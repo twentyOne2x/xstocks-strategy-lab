@@ -1,0 +1,36 @@
+Fetching deployment "xstocks-strategy-lab-web-preview-n3xub9946.vercel.app" in billys-projects-8eb11ca4
+> Fetched deployment "xstocks-strategy-lab-web-preview-n3xub9946.vercel.app" in billys-projects-8eb11ca4 [389ms]
+
+  General
+
+    id		dpl_4w35481YsNzPnkMSCMqAjD4CzxMc
+    name	xstocks-strategy-lab-web-preview
+    target	production
+    status	● Ready
+    url		https://xstocks-strategy-lab-web-preview-n3xub9946.vercel.app
+    created	Fri Apr 03 2026 18:16:51 GMT+0200 (Central European Summer Time) [3m ago]
+
+
+  Aliases
+
+    ╶ https://24-7.markets
+    ╶ https://docs.24-7.markets
+    ╶ https://equityterminal.app
+    ╶ https://slides.24-7.markets
+    ╶ https://xstocks.24-7.markets
+    ╶ https://xstocks-strategy-lab-web-preview.vercel.app
+    ╶ https://xstocks-strategy-lab-web-preview-billys-projects-8eb11ca4.vercel.app
+    ╶ https://www.equityterminal.app
+    
+
+  Builds
+
+    ┌ .        [0ms]
+    ├── λ portfolio/[id] (3.11MB) [iad1]
+    ├── λ activate/[manifestSlug] (3.11MB) [iad1]
+    ├── λ activate/[manifestSlug].rsc (3.11MB) [iad1]
+    ├── λ activate (3.11MB) [iad1]
+    ├── λ activate.rsc (3.11MB) [iad1]
+    └── 30 output items hidden
+    
+

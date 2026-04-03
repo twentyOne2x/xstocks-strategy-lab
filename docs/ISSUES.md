@@ -10,14 +10,14 @@ Last updated: 2026-04-03
 | Privy smart accounts: partial or stale, not canonically proven live | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | reuse the existing Privy boundary sub-spec; do not open another owner lane |
 | Chainlink CRE ongoing implementation | `XSL-011B` | [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md) | keep as the only active CRE lane |
 | xStocks usage live baseline dependency, not a gap lane | `XSL-008` baseline only | [2026-03-31-xstocks-and-euler-adapter-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-and-euler-adapter-implementation.md) | tracked as dependency, not a new closure lane |
-| Autoresearch runtime: repo proof seed rehydrated locally, public API deploy parity still pending | `XSL-006` with `XSL-006A` | [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | `XSL-006A` is now a merge/deploy parity residual, not a runtime-logic reopen |
+| Autoresearch runtime: repo proof seed rehydrated and public API parity now matches current `worker_runtime_only` truth | `XSL-006` with `XSL-006A` | [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | deploy parity is closed; no deployed recurring scheduler-host proof exists yet |
 | Post-qualification autoresearch screen: partial | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | controlled on the canonical frontend via `XSL-004` |
 | Autoresearch explainability in app: partial or light on prod | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | coordinated with `XSL-004` and `XSL-006` |
 | Deposits via Mesh: no | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | explicit absence or proof only |
 | LI.FI portfolio deposit from one `USDC` into the promoted default basket: spec only, atomic claim not proven | `XSL-005` with `XSL-005A` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting LI.FI deposit lane stays under funding or deposit ownership; do not move to `XSL-014` |
 | Enso portfolio multi-deposit from one `USDC` into the promoted default basket: spec only, atomic bundle not yet repo-proven | `XSL-005` with `XSL-005B` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting Enso atomic-bundle lane stays under funding or deposit ownership; do not move to `XSL-014` |
 | Portfolio buy public-default route: hosted `1inch`; Enso implementation candidate still awaits live proof | `XSL-005` with `XSL-005C` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | `Buy portfolio` stays public, but route truth must remain explicit |
-| Frontend prod parity: onboarding shell live, direct detail-route parity still open | `XSL-004` | [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md) | includes route, copy, and deployment parity |
+| Frontend prod parity: onboarding, canonical detail, and canonical activate routes are live on prod | `XSL-004` | [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md) | includes route, copy, and deployment parity |
 | Agent and `skill.md` testability coverage | `XSL-016B` | [2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md) | public/private smoke ownership |
 
 ## Active
@@ -268,12 +268,12 @@ Last updated: 2026-04-03
 ### XSL-006A Deployed Recurring Autoresearch Scheduler Host
 
 - Type: runtime/deployment
-- Status: active
+- Status: completed
 - Canonical owner lane: `XSL-006`
 - Date opened: 2026-04-01
-- Context: the repo now has a canonical Railway cron proof seed and local API/runtime rehydration tests for recurring autoresearch, but the public host still served stale `worker_runtime_only` truth at the start of this pass.
-- Suspected cause: the cleanup and proof-seed rehydration slice existed only on a branch, so deployed parity lagged the strongest repo-owned runtime truth.
-- Fix intent: merge the cleanup slice, keep runtime logic closed, and recheck deploy parity rather than reopening scheduler-host implementation.
+- Context: the repo now has a canonical Railway cron proof seed and local API/runtime rehydration tests for recurring autoresearch, and the public host now serves the same `worker_runtime_only` truth after the cleanup merge and redeploy parity closure.
+- Suspected cause: the cleanup and proof-seed rehydration slice initially existed only on a branch, so deployed parity lagged the strongest repo-owned runtime truth until the cleanup merge and prod recheck landed.
+- Fix intent: merge the cleanup slice, keep runtime logic closed, and close deploy parity rather than reopening scheduler-host implementation.
 - Acceptance criteria:
   1. The repo carries the canonical Railway cron proof seed and local runtime surface rehydrates it.
   2. The branch-only cleanup slice is merged or explicitly superseded.
@@ -295,7 +295,8 @@ Last updated: 2026-04-03
   - [ ] visual/screenshot verification not applicable because this lane is worker/deploy/runtime only
 - Resolution note:
   - This pass cherry-picked the branch-only cleanup into local commit `66fbeba7` and verified the runtime surface locally through `node --test apps/api/test/api.test.js`, `node --test apps/api/test/provider-rebalance-api.test.js`, and `pnpm --filter @xstocks/api test`.
-  - The public host still returned stale runtime truth at audit time, so the remaining residual is merge/deploy parity rather than scheduler-host logic.
+  - Public parity is now closed. `GET https://24-7.markets/api/runtime/autoresearch?limit=1` returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, which matches the repo-owned runtime proof instead of stale deploy lag.
+  - This lane closes as cleanup and deploy-parity completion only. It does not claim a deployed recurring scheduler host or retire `worker_runtime_only`.
 
 ### XSL-007 Manifest-To-Execution API Boundary
 
@@ -351,12 +352,12 @@ Last updated: 2026-04-03
 ### XSL-009 Gap Closure And Readiness
 
 - Type: program/integration
-- Status: active
-- Context: The closeout control docs now exist, and the local root matrix has been recovered on 2026-04-03, but public deploy parity is still not closed. Fresh repo-wide verification on the recovery branch now shows `pnpm lint`, `pnpm test`, `pnpm build`, and `pnpm check` all passing again, while the public host still serves stale `XSL-006A` runtime truth plus `404` detail and activate routes.
+- Status: completed
+- Context: The closeout control docs now exist, the local root matrix was recovered on 2026-04-03, and public web-route parity is now closed on the current Vercel production deployment. Fresh repo-wide verification plus live-host rechecks now show the root matrix green, canonical detail and activate routes returning `200`, and the runtime API serving the same fail-closed `worker_runtime_only` truth as the repo.
 - Suspected cause: the final closure-wave pass corrected public buy-route and repo-truth wording, but it did not re-run the full root matrix before merge, so three different classes of residual were left behind:
   1. a stale worker test harness that no longer matches the promoted-basket route truth,
   2. stale workflow-package workspace config and dependency posture,
-  3. production deploy parity still lagging behind merged repo truth and this environment does not currently have usable deploy credentials or tooling to close that last gap directly.
+  3. production SSR requests still used a 5 second timeout, which was shorter than live `workspace` and `activation-preview` API responses on the canonical host and caused the deep-link pages to fall into `notFound()`.
 - Fix intent: Recover one truthful green baseline by updating the canonical `XSL-009` owner lane, fixing the worker and workflow regressions, rerunning the full root verification matrix, and rechecking the canonical public routes and runtime surface after the code path is green again.
 - Acceptance criteria:
   1. The repo has one execution-grade recovery spec linked from this owner lane that freezes the exact red verification surface and deploy-parity gap.
@@ -400,12 +401,12 @@ Last updated: 2026-04-03
   - [x] context added
   - [x] fix applied
   - [x] tests run
-  - [ ] visual/screenshot verification
+  - [x] visual/screenshot verification
 - Recovery resolution note:
   - 2026-04-03: local repo truth is green again. `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm check`, `pnpm --filter @xstocks/worker test`, `pnpm --filter @xstocks/workflow-client build`, `pnpm --filter @xstocks/workflow-server build`, `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:validate`, `DATABASE_URL='postgresql://postgres:postgres@localhost:5432/xstocks_strategy_lab' pnpm prisma:generate`, and `git diff --check` all pass on `codex/xsl-009-verification-recovery`.
-  - 2026-04-03: live-host parity is still not closed. `https://24-7.markets/onboarding` returns `200` but still serves stale onboarding content with old manifest slugs; the canonical detail and activate routes still return `404`; and `GET https://24-7.markets/api/runtime/autoresearch?limit=1` still returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`.
-  - 2026-04-03: the recovery slice is merged on `origin/main` as `c1436e79b8aaf20c41c7442e9ec58e7bea41a6f8` via PR `#7`, and an immediate post-merge host recheck still shows the same stale runtime and `404` route posture.
-  - 2026-04-03: the remaining blocker is deployment access, not repo code. This workspace has no `.vercel` link, `vercel` CLI is not installed, and `railway whoami` fails with `invalid_grant`, so this pass cannot truthfully claim public deploy closure from the current environment.
+  - 2026-04-03: the exact public-route root cause was server-side `AbortSignal.timeout(5000)` in `apps/web/src/lib/api-client.ts`. Live `workspace` and `activation-preview` API requests on `24-7.markets` could take around 10 seconds, so SSR route loaders aborted and returned `notFound()`.
+  - 2026-04-03: web-route parity is now closed on Vercel deployment `dpl_4w35481YsNzPnkMSCMqAjD4CzxMc` (`xstocks-strategy-lab-web-preview-n3xub9946.vercel.app`). `https://24-7.markets/onboarding` returns `200` without retired showcase slugs, and the canonical detail and activate routes both return `200`.
+  - 2026-04-03: `GET https://24-7.markets/api/runtime/autoresearch?limit=1` still returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, which is now repo-consistent runtime truth rather than a deploy-lag symptom.
   - 2026-04-03: repo-tracked web fallbacks, tests, route examples, and active closeout docs no longer name the retired showcase aliases. Canonical public examples now use the current promoted slugs, and stale-slug discussions are recorded as legacy-showcase-path debt instead of preserving dead route names in repo truth.
 
 ### XSL-010 Portfolio Explainability And Autoresearch Interpretability
