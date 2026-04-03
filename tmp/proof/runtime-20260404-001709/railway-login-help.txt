@@ -1,0 +1,8 @@
+Login to your Railway account
+
+Usage: railway login [OPTIONS]
+
+Options:
+  -b, --browserless  Browserless login
+  -h, --help         Print help
+  -V, --version      Print version

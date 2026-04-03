@@ -1,0 +1,15 @@
+{
+  "liveProofUpdatedAt": "2026-04-03T17:06:30.902Z",
+  "repoProofUpdatedAt": "2026-04-01T17:05:42.921Z",
+  "sameHostIds": {
+    "projectId": true,
+    "environmentId": true,
+    "serviceId": true,
+    "serviceName": true,
+    "privateDomain": true
+  },
+  "liveLastRunId": "autoresearch_20260403T170630761z_7b2ae878",
+  "repoLastRunId": "autoresearch_20260401T170541978z_bd9d4900",
+  "liveNextDueAt": "2026-04-04T17:06:30.900Z",
+  "repoNextDueAt": "2026-04-02T17:05:42.918Z"
+}

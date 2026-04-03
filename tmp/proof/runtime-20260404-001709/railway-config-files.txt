@@ -1,0 +1,4 @@
+[/Users/user/.railway]
+/Users/user/.railway/config.json
+/Users/user/.railway/config.json.codex-backup
+/Users/user/.railway/notices.json
