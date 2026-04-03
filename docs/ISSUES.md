@@ -10,14 +10,14 @@ Last updated: 2026-04-03
 | Privy smart accounts: partial or stale, not canonically proven live | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | reuse the existing Privy boundary sub-spec; do not open another owner lane |
 | Chainlink CRE ongoing implementation | `XSL-011B` | [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md) | keep as the only active CRE lane |
 | xStocks usage live baseline dependency, not a gap lane | `XSL-008` baseline only | [2026-03-31-xstocks-and-euler-adapter-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-and-euler-adapter-implementation.md) | tracked as dependency, not a new closure lane |
-| Autoresearch runtime: public API truth is fail-closed, but the stale Railway host-proof story and blocked Railway CLI still need reconciliation | `XSL-006` with `XSL-006A` | [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | deploy parity is closed; the remaining gap is live host proof or explicit retirement of the stale Railway claim |
+| Autoresearch runtime: public and local default truth are now fail-closed, but the stale Railway host-proof story and blocked Railway CLI still need reconciliation | `XSL-006` with `XSL-006A` | [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | default API boot no longer auto-loads the historical Railway proof seed; the remaining gap is live host proof or explicit retirement of the stale Railway claim |
 | Post-qualification autoresearch screen: partial | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | controlled on the canonical frontend via `XSL-004` |
 | Autoresearch explainability in app: partial or light on prod | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | coordinated with `XSL-004` and `XSL-006` |
 | Deposits via Mesh: no | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | explicit absence or proof only |
 | LI.FI portfolio deposit from one `USDC` into the promoted default basket: spec only, atomic claim not proven | `XSL-005` with `XSL-005A` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | supporting LI.FI deposit lane stays under funding or deposit ownership; do not move to `XSL-014` |
-| Enso portfolio multi-deposit from one `USDC` into the promoted default basket: partial implementation exists, atomic bundle still not repo-proven | `XSL-005` with `XSL-005B` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | shared contracts, API quote path, and web handling exist; proof runner and live bundle proof do not |
+| Enso portfolio multi-deposit from one `USDC` into the promoted default basket: partial implementation exists, proof runner now exists, atomic bundle still not repo-proven | `XSL-005` with `XSL-005B` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | current exact blocker from this machine is missing `ENSO_API_KEY`; live bundle proof still does not exist |
 | Portfolio buy public-default route: hosted `1inch`; Enso implementation candidate still awaits live proof | `XSL-005` with `XSL-005C` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | `Buy portfolio` stays public, but route truth must remain explicit |
-| Shared `1inch` signer advance: quotes, approval payloads, and signature inputs exist, but no signed submission is yet proven | `XSL-014` with `XSL-014C` | [2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md) | next move is signer handoff plus one rerun, not a new funding/custody lane |
+| Shared `1inch` signer advance: strongest fresh-auth proof still stops at missing signatures, and the current local rerun now fails earlier on expired Privy auth | `XSL-014` with `XSL-014C` | [2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md) | runner now supports `XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH` and writes `signer-packet.json`; next move is fresh Privy auth plus one signer handoff rerun |
 | Frontend prod parity: onboarding, canonical detail, and canonical activate routes are live on prod | `XSL-004` | [2026-03-31-xstocks-terminal-frontend-experience-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-terminal-frontend-experience-spec.md) | includes route, copy, and deployment parity |
 | Agent and `skill.md` testability coverage | `XSL-016B` | [2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md) | public/private smoke ownership |
 
@@ -187,8 +187,8 @@ Last updated: 2026-04-03
 - Canonical owner lane: `XSL-005`
 - Date opened: 2026-04-02
 - Context: the same user intent now also names Enso as a candidate substrate for one-transaction multi-deposit from `USDC` into all assets of the promoted default portfolio. Current repo truth still proves only the explicit `1inch.ethereum` core-xStocks lane, but the repo now also carries partial Enso implementation across shared contracts, `apps/api`, and `apps/web` without any live proof bundle.
-- Suspected cause: implementation advanced faster than proof closure. The repo already has an Enso bundle contract shape, API quote path, and manual-execution handling, but no dedicated proof runner, no env-backed live artifact set, and no canonical browser proof for the promoted basket.
-- Fix intent: keep ownership under `XSL-005`, add the missing proof runner and artifact bundle, prove the exact promoted basket including the `AUSD` sleeve, and either advance Enso to a truthful live claim or freeze it explicitly as non-live.
+- Suspected cause: implementation advanced faster than proof closure. The repo already had an Enso bundle contract shape, API quote path, and manual-execution handling; the missing pieces were an executable proof harness plus operator env needed to hit the promoted basket for real.
+- Fix intent: keep ownership under `XSL-005`, use the new proof runner and artifact bundle, prove the exact promoted basket including the `AUSD` sleeve, and either advance Enso to a truthful live claim or freeze it explicitly as non-live.
 - Acceptance criteria:
   1. The repo explicitly keeps this lane under `XSL-005` and does not open it as a new `XSL-014` route-design sub-lane.
   2. The exact Enso atomic-bundle claim is frozen separately from the current live-repo claim.
@@ -210,13 +210,14 @@ Last updated: 2026-04-03
 - Checklist:
   - [x] report captured
   - [x] context added
-  - [ ] fix applied
-  - [ ] tests run
+  - [x] fix applied
+  - [x] tests run
   - [ ] visual/screenshot verification not applicable in this spec-only pass
 - Continuation note:
-  - Date: 2026-04-03 remaining-blockers audit
-  - Current repo truth is no longer “spec-only.” Enso bundle quote contracts exist in `packages/shared`, API quote logic exists in `apps/api`, and manual execution handling exists in `apps/web`, but there is still no `apps/api/scripts/enso-portfolio-multideposit-proof.js` runner and no env-backed promoted-basket proof bundle.
-  - The next honest move is not a route switch. It is one proof-runner tranche under `XSL-005B`, followed by one exact proof attempt against the full promoted basket including the `AUSD` sleeve.
+  - Date: 2026-04-03 remaining-gap closure pass
+  - Current repo truth is no longer “proof-runner missing.” The repo now includes [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js), which reuses the authenticated activation plus `quote_portfolio` path and writes approval, bundle, and wallet-packet artifacts for the promoted basket when env is present.
+  - The first exact blocker from this machine is now operator config, not missing code: [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T16-59-28.918Z/summary.json) stopped with `code=missing_environment_input` and `message="ENSO_API_KEY is required for the Enso proof runner."`
+  - The next honest move is still not a route switch. It is one env-backed proof attempt under `XSL-005B` against the full promoted basket including the `AUSD` sleeve.
 
 ### XSL-005C Portfolio Buy Surface Closure
 
@@ -280,13 +281,13 @@ Last updated: 2026-04-03
 - Date opened: 2026-04-01
 - Context: the repo now has a canonical Railway cron proof seed, Railway cron code, and tests for recurring autoresearch, but the live public API still truthfully reports `worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, while the local Railway CLI is blocked with `invalid_grant`.
 - Suspected cause: the earlier Railway host proof became stale or unreproducible, the issue was prematurely reframed as cleanup-only once web deploy parity closed, and the repo still carries both a positive historical Railway proof doc and a fail-closed live API without one current reconciliation owner.
-- Fix intent: reconcile the recurring-host claim against current live truth by restoring or bypassing Railway operator access, auditing whether `autoresearch-worker` still exists, and either re-proving the existing host with fresh receipts or explicitly retiring the stale Railway host claim while keeping `worker_runtime_only`.
+- Fix intent: reconcile the recurring-host claim against current live truth by keeping the default API path fail-closed, restoring or bypassing Railway operator access, auditing whether `autoresearch-worker` still exists, and either re-proving the existing host with fresh receipts or explicitly retiring the stale Railway host claim.
 - Acceptance criteria:
-  1. The repo carries the canonical Railway cron proof seed and local runtime surface rehydrates it.
+  1. The default API runtime surface stays `worker_runtime_only` unless a fresh host receipt is recorded or an explicit proof-path override is supplied.
   2. The repo records one current owner doc explaining whether the Railway host claim is live, stale, or retired.
   3. Railway operator access is restored or a deliberate non-CLI audit path is documented and exercised.
   4. The current public runtime API remains fail-closed unless a fresh live host receipt is captured.
-  5. If fresh host proof still cannot be produced, one exact blocker or retirement decision is recorded instead of preserving stale “completed” language.
+  5. If fresh host proof still cannot be produced, the stale local rehydration path is retired by default and one exact blocker or retirement decision is recorded instead of preserving stale “completed” language.
 - Complexity: medium
 - Plan links:
   - [2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-autoresearch-recurring-runtime-proof.md)
@@ -304,9 +305,9 @@ Last updated: 2026-04-03
   - [x] tests run
   - [ ] visual/screenshot verification not applicable because this lane is worker/deploy/runtime only
 - Resolution note:
-  - This pass cherry-picked the branch-only cleanup into local commit `66fbeba7` and verified the runtime surface locally through `node --test apps/api/test/api.test.js`, `node --test apps/api/test/provider-rebalance-api.test.js`, and `pnpm --filter @xstocks/api test`.
-  - Public parity is now closed. `GET https://24-7.markets/api/runtime/autoresearch?limit=1` returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, which matches the repo-owned runtime proof instead of stale deploy lag.
-  - Cleanup and deploy parity are closed, but the scheduler-host claim is not. This lane is reopened for host-proof reconciliation because current live truth, the checked-in proof seed, and the historical 2026-04-01 closure record no longer agree cleanly.
+  - [server.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/server.js) no longer auto-loads the checked-in Railway proof seed unless `AUTORESEARCH_PROOF_PATH` or `XSTOCKS_AUTORESEARCH_PROOF_PATH` is explicitly set, so local default truth now matches the fail-closed public runtime API.
+  - New regression coverage in [api.test.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/test/api.test.js) proves the default API boot remains `worker_runtime_only` even though [autoresearch-runtime-proof.json](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/data/autoresearch-runtime-proof.json) is still kept as a historical artifact.
+  - `GET https://24-7.markets/api/runtime/autoresearch?limit=1` still returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`, and `railway whoami` still fails with `invalid_grant`, so the scheduler-host claim remains unresolved even though default repo truth is now aligned with live truth.
 
 ### XSL-007 Manifest-To-Execution API Boundary
 
@@ -764,10 +765,11 @@ Last updated: 2026-04-03
   - The first exact remaining external blocker is now signer-owned approval: the rerun stopped with `code=missing_user_signature`, `stage=awaiting_signature`, and `message="Signer-owned 1inch Fusion EIP-712 signatures are still required for 6 quoted core legs before backend submission can be recorded."` No signed submission, venue order id, venue-status update beyond `quote_ready`, or receipt truth exists yet.
   - A fresh 2026-04-03 rerun wrote [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T14-22-58.811Z/summary.json), [approval-payloads.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T14-22-58.811Z/approval-payloads.json), and [signature-inputs.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T14-22-58.811Z/signature-inputs.json) after refreshing the Privy session.
   - That rerun still stopped at the same signer-owned approval boundary, and this pass did not find a repo-owned artifact proving the later `ORDER_SAVER_ERROR / NotEnoughBalanceOrAllowance` claim.
+  - A current rerun from the fresh closure worktree wrote [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T16-59-39.353Z/summary.json) and stopped earlier with `code=proof_request_failed`, `stage=environment_or_authentication`, and `message="Privy access token is expired."`
 - Continuation note:
-  - Date: 2026-04-03 remaining-blockers audit
-  - The current proof runner already accepts externally supplied signatures via `XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON`, so the shortest truthful next move is a signer handoff plus one rerun, not more backend substrate work.
-  - If operator ergonomics are too brittle for six signatures through one env var, the first bounded code change should be file-path input support for the signature map rather than a new API or executor surface.
+  - Date: 2026-04-03 remaining-gap closure pass
+  - The current proof runner now accepts externally supplied signatures via both `XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON` and `XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH`, and it writes a richer `signer-packet.json` artifact once the quote path is reached.
+  - The shortest truthful next move is now: refresh the Privy session material, reuse the generated signer packet for the six EIP-712 legs, and rerun once. The lane still must not be widened into a new funding/custody diagnosis until that rerun advances past the signer boundary again.
 
 ### XSL-014D Structured Execution Explorer Links And Blotter Truth
 

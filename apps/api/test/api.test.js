@@ -3287,6 +3287,40 @@ test("autoresearch runtime proof surface stays local-only until a host receipt i
   }
 });
 
+test("autoresearch runtime stays fail-closed by default even when a historical proof seed exists in repo", async () => {
+  const previousProofPath = process.env.AUTORESEARCH_PROOF_PATH;
+  const previousLegacyProofPath = process.env.XSTOCKS_AUTORESEARCH_PROOF_PATH;
+  delete process.env.AUTORESEARCH_PROOF_PATH;
+  delete process.env.XSTOCKS_AUTORESEARCH_PROOF_PATH;
+
+  const harness = await startServer();
+
+  try {
+    const response = await fetch(`${harness.baseUrl}/api/runtime/autoresearch?limit=3`);
+    const payload = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(payload.data.runtime.truthBoundary, "worker_runtime_only");
+    assert.equal(payload.data.runtime.recurringAutonomousProven, false);
+    assert.equal(payload.data.runtime.schedulerHost, null);
+    assert.deepEqual(payload.data.runs, []);
+  } finally {
+    await harness.close();
+
+    if (previousProofPath === undefined) {
+      delete process.env.AUTORESEARCH_PROOF_PATH;
+    } else {
+      process.env.AUTORESEARCH_PROOF_PATH = previousProofPath;
+    }
+
+    if (previousLegacyProofPath === undefined) {
+      delete process.env.XSTOCKS_AUTORESEARCH_PROOF_PATH;
+    } else {
+      process.env.XSTOCKS_AUTORESEARCH_PROOF_PATH = previousLegacyProofPath;
+    }
+  }
+});
+
 test("autoresearch runtime rehydrates and persists the canonical proof seed over a stale store", async () => {
   const storeDir = await mkdtemp(resolve(tmpdir(), "xstocks-api-proof-"));
   const storePath = resolve(storeDir, "runtime-store.json");

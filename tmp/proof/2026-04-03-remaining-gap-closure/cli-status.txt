@@ -1,0 +1,12 @@
+== railway whoami ==
+
+== vercel whoami ==
+contact-4459
+
+== gh auth status ==
+github.com
+  ✓ Logged in to github.com account twentyOne2x (keyring)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: gho_************************************
+  - Token scopes: 'admin:public_key', 'gist', 'read:org', 'repo', 'workflow'

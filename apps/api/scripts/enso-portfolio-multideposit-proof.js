@@ -21,8 +21,8 @@ const DEFAULT_SHARED_ENV_PATH =
   process.env.XSTOCKS_SHARED_ENV_PATH ??
   process.env.ATTN_SHARED_ENV_PATH ??
   resolve(process.env.HOME ?? "~", ".config/attn/shared.env");
-const DEFAULT_NOTIONAL_USD = 20;
-const MAX_NOTIONAL_USD = 25;
+const DEFAULT_NOTIONAL_USD = 1000;
+const MAX_NOTIONAL_USD = 5000;
 
 function parseEnvFile(raw) {
   const entries = {};
@@ -82,7 +82,7 @@ function requiredEnv(name) {
   const value = process.env[name];
 
   if (typeof value !== "string" || value.trim().length === 0) {
-    throw new Error(`${name} is required for the 1inch Fusion proof runner.`);
+    throw new Error(`${name} is required for the Enso proof runner.`);
   }
 
   return value.trim();
@@ -105,7 +105,7 @@ function requiredOneOf(...names) {
   }
 
   throw new Error(
-    `${names.join(" or ")} is required for the 1inch Fusion proof runner.`,
+    `${names.join(" or ")} is required for the Enso proof runner.`,
   );
 }
 
@@ -136,7 +136,7 @@ function normalizeNotionalUsd(value) {
 
   if (notional > MAX_NOTIONAL_USD) {
     throw new Error(
-      `XSTOCKS_NOTIONAL_USD must not exceed the approved cap of $${MAX_NOTIONAL_USD}.`,
+      `XSTOCKS_NOTIONAL_USD must not exceed the approved Enso proof cap of $${MAX_NOTIONAL_USD}.`,
     );
   }
 
@@ -276,37 +276,15 @@ function summarizeLeg(leg) {
     state: leg.state,
     quoteKind: leg.quote?.kind ?? null,
     quoteId: leg.quote?.quoteId ?? null,
-    orderHash:
-      leg.approval?.orderToSign?.orderHash ??
-      leg.quote?.orderHash ??
-      leg.approval?.venueOrderId ??
-      null,
     approvalStatus: leg.approval?.status ?? null,
     approvalTarget: leg.approval?.approvalTarget ?? null,
     signerAddress: redactAddress(leg.approval?.signerAddress ?? null),
-    receiverAddress: redactAddress(
-      leg.quote?.receiver ??
-        leg.approval?.orderToSign?.order?.receiver ??
-        null,
-    ),
-    venueOrderId: leg.approval?.venueOrderId ?? null,
+    venueOrderId: leg.venueStatus?.venueOrderId ?? null,
     venueStatus: leg.venueStatus?.status ?? null,
     txHash: leg.receipt?.txHash ?? null,
     receiptStatus: leg.receipt?.receiptStatus ?? null,
     blockers: leg.blockers ?? [],
     warnings: leg.warnings ?? [],
-  };
-}
-
-function buildApprovalPayloadArtifact(leg) {
-  return {
-    legId: leg.legId,
-    assetSymbol: leg.assetSymbol ?? null,
-    sleeve: leg.sleeve,
-    state: leg.state,
-    quote: leg.quote ?? null,
-    approval: leg.approval ?? null,
-    venueStatus: leg.venueStatus ?? null,
   };
 }
 
@@ -323,108 +301,10 @@ function summarizeExecutionRequest(executionRequest) {
     totalLegCount: executionRequest.legs.length,
     actionableLegCount: actionableLegs.length,
     deferredLegCount: deferredLegs.length,
+    warnings: executionRequest.warnings ?? [],
+    blockers: executionRequest.blockers ?? [],
     legs: actionableLegs.map(summarizeLeg),
     deferredLegs: deferredLegs.map(summarizeLeg),
-  };
-}
-
-function parseSignatureMap(rawValue, sourceLabel) {
-  if (typeof rawValue !== "string" || rawValue.trim().length === 0) {
-    return new Map();
-  }
-
-  const parsed = JSON.parse(rawValue);
-
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error(
-      `${sourceLabel} must be a JSON object keyed by legId or assetSymbol.`,
-    );
-  }
-
-  return new Map(
-    Object.entries(parsed)
-      .filter(([, value]) => typeof value === "string" && value.trim().length > 0)
-      .map(([key, value]) => [key, value.trim()]),
-  );
-}
-
-function loadSignatureMap({ rawJson, filePath }) {
-  const signatureMap = new Map();
-
-  if (typeof filePath === "string" && filePath.trim().length > 0) {
-    const resolvedPath = resolve(filePath.trim());
-    const fileMap = parseSignatureMap(
-      readFileSync(resolvedPath, "utf8"),
-      "XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH",
-    );
-
-    for (const [key, value] of fileMap.entries()) {
-      signatureMap.set(key, value);
-    }
-  }
-
-  const inlineMap = parseSignatureMap(
-    rawJson,
-    "XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON",
-  );
-
-  for (const [key, value] of inlineMap.entries()) {
-    signatureMap.set(key, value);
-  }
-
-  return signatureMap;
-}
-
-function resolveSignatureForLeg(leg, signatureMap, fallbackSignature = null) {
-  return (
-    signatureMap.get(leg.legId) ??
-    (leg.assetSymbol ? signatureMap.get(leg.assetSymbol) : null) ??
-    fallbackSignature
-  );
-}
-
-function buildSignatureInputArtifact(leg, signature = null) {
-  const orderToSign =
-    leg.approval?.orderToSign && typeof leg.approval.orderToSign === "object"
-      ? leg.approval.orderToSign
-      : {};
-  const typedData =
-    orderToSign.typedData && typeof orderToSign.typedData === "object"
-      ? orderToSign.typedData
-      : null;
-  const domain =
-    typedData?.domain && typeof typedData.domain === "object"
-      ? typedData.domain
-      : null;
-
-  return {
-    legId: leg.legId,
-    assetSymbol: leg.assetSymbol ?? null,
-    signerAddress: leg.approval?.signerAddress ?? null,
-    quoteId:
-      typeof orderToSign.quoteId === "string"
-        ? orderToSign.quoteId
-        : leg.quote?.quoteId ?? null,
-    orderHash:
-      typeof orderToSign.orderHash === "string"
-        ? orderToSign.orderHash
-        : leg.quote?.orderHash ?? null,
-    primaryType:
-      typedData && typeof typedData.primaryType === "string"
-        ? typedData.primaryType
-        : null,
-    domainName:
-      domain && typeof domain.name === "string" ? domain.name : null,
-    typedData,
-    order:
-      orderToSign.order && typeof orderToSign.order === "object"
-        ? orderToSign.order
-        : null,
-    extension:
-      orderToSign.extension && typeof orderToSign.extension === "object"
-        ? orderToSign.extension
-        : orderToSign.extension ?? null,
-    signature,
   };
 }
 
@@ -437,26 +317,26 @@ async function writeArtifact(outputDir, fileName, value) {
 }
 
 const proofTimestamp = new Date().toISOString().replaceAll(":", "-");
-const proofDir = resolve(REPO_ROOT, "tmp/proof", `oneinch-fusion-${proofTimestamp}`);
+const proofDir = resolve(REPO_ROOT, "tmp/proof", `enso-portfolio-${proofTimestamp}`);
 
 function resolveFailureStage(summary) {
   if (summary.executionRequest) {
-    return "submission_or_status";
+    return "quote_portfolio";
   }
 
   if (summary.executionRequestId) {
-    return "quote";
-  }
-
-  if (summary.activationId) {
     return "execution_create";
   }
 
-  if (summary.auth) {
+  if (summary.activationId) {
     return "activation_or_create";
   }
 
-  return "environment_or_authentication";
+  if (summary.auth) {
+    return "environment_or_authentication";
+  }
+
+  return "environment";
 }
 
 let server = null;
@@ -465,7 +345,8 @@ const summary = {
   generatedAt: new Date().toISOString(),
   manifestId: DEFAULT_MANIFEST_ID,
   requestedNotionalUsd: null,
-  executionRouteId: "1inch.ethereum",
+  executionAdapterId: "enso_bundle",
+  executionRouteId: "enso.ethereum",
   runtimeStorePath: null,
   auth: null,
   signerAddress: null,
@@ -475,8 +356,9 @@ const summary = {
   activationId: null,
   executionRequestId: null,
   executionRequest: null,
-  approvalPayloadCount: 0,
-  submissionResults: [],
+  bundleQuoteId: null,
+  approvalTransactionTo: null,
+  bundleTransactionTo: null,
 };
 
 try {
@@ -487,26 +369,17 @@ try {
   const notionalUsd = normalizeNotionalUsd(process.env.XSTOCKS_NOTIONAL_USD);
   const runtimeStorePath =
     optionalEnv("XSTOCKS_RUNTIME_STORE_PATH") ??
-    resolve(tmpdir(), `xstocks-oneinch-fusion-proof-${Date.now()}.json`);
+    resolve(tmpdir(), `xstocks-enso-proof-${Date.now()}.json`);
 
   summary.manifestId = manifestId;
   summary.requestedNotionalUsd = notionalUsd;
   summary.runtimeStorePath = runtimeStorePath;
 
-  requiredEnv("ONEINCH_API_KEY");
+  requiredEnv("ENSO_API_KEY");
 
   const appId = requiredOneOf("PRIVY_APP_ID", "NEXT_PUBLIC_PRIVY_APP_ID");
   const accessToken = requiredEnv("XSTOCKS_PRIVY_ACCESS_TOKEN");
   const identityToken = optionalEnv("XSTOCKS_PRIVY_IDENTITY_TOKEN");
-  const orderSignature =
-    optionalEnv("XSTOCKS_ONEINCH_ORDER_SIGNATURE") ??
-    optionalEnv("XSTOCKS_ONEINCH_SIGNATURE") ??
-    optionalEnv("XSTOCKS_ORDER_SIGNATURE") ??
-    optionalEnv("XSTOCKS_COW_ORDER_SIGNATURE");
-  const signatureMap = loadSignatureMap({
-    rawJson: optionalEnv("XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON"),
-    filePath: optionalEnv("XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH"),
-  });
   const authHeaders = createAuthHeaders(accessToken, identityToken);
   const privyAuthService = createPrivyAuthService({
     appId,
@@ -575,7 +448,7 @@ try {
     body: {
       action: "create",
       activationId: activation.activation.activationId,
-      executionRouteId: "1inch.ethereum",
+      executionAdapterId: "enso_bundle",
     },
   });
   summary.executionRequestId = executionCreation.executionRequest.executionRequestId;
@@ -585,174 +458,117 @@ try {
   );
   await writeArtifact(proofDir, "execution-create.json", executionCreation);
 
-  const actionableLegs = selectActionableLegs(executionCreation.executionRequest);
-
-  if (actionableLegs.length === 0) {
-    throw new Error(
-      "Execution request did not produce any actionable legs to quote.",
-    );
-  }
-
-  const quoteResults = [];
-  let latestExecutionRequest = executionCreation.executionRequest;
-
-  for (const leg of actionableLegs) {
-    const quoteResult = await requestJson(baseUrl, "/api/executions", {
-      headers: authHeaders,
-      body: {
-        action: "quote_leg",
-        executionRequestId: executionCreation.executionRequest.executionRequestId,
-        legId: leg.legId,
-      },
-    });
-
-    const quotedLeg =
-      quoteResult.executionRequest.legs.find(
-        (nextLeg) => nextLeg.legId === leg.legId,
-      ) ?? null;
-
-    if (!quotedLeg) {
-      throw new Error(
-        `Quoted execution leg ${leg.legId} could not be found after 1inch quoting.`,
-      );
-    }
-
-    quoteResults.push({
-      legId: leg.legId,
-      assetSymbol: leg.assetSymbol ?? null,
-      state: quotedLeg.state,
-      summary: summarizeLeg(quotedLeg),
-    });
-    latestExecutionRequest = quoteResult.executionRequest;
-  }
-  await writeArtifact(proofDir, "quotes.json", quoteResults);
+  const quotedPortfolio = await requestJson(baseUrl, "/api/executions", {
+    headers: authHeaders,
+    body: {
+      action: "quote_portfolio",
+      executionRequestId: executionCreation.executionRequest.executionRequestId,
+    },
+  });
+  const latestExecutionRequest = quotedPortfolio.executionRequest;
+  const actionableLegs = selectActionableLegs(latestExecutionRequest);
+  const blockedLegs = actionableLegs.filter(
+    (leg) => leg.state === "blocked" || (leg.blockers?.length ?? 0) > 0,
+  );
+  const approvalLegs = actionableLegs.filter(
+    (leg) => leg.state === "awaiting_approval" && leg.quote?.kind === "enso_bundle",
+  );
+  const primaryLeg = approvalLegs[0] ?? actionableLegs[0] ?? null;
+  const bundleQuote =
+    primaryLeg?.quote && typeof primaryLeg.quote === "object"
+      ? primaryLeg.quote
+      : null;
+  const approvalTransaction =
+    primaryLeg?.approval?.transactionRequest &&
+    typeof primaryLeg.approval.transactionRequest === "object"
+      ? primaryLeg.approval.transactionRequest
+      : null;
 
   summary.state = latestExecutionRequest.state;
   summary.executionRequest = summarizeExecutionRequest(latestExecutionRequest);
+  summary.bundleQuoteId =
+    typeof bundleQuote?.quoteId === "string" ? bundleQuote.quoteId : null;
+  summary.approvalTransactionTo =
+    typeof approvalTransaction?.to === "string" ? approvalTransaction.to : null;
+  summary.bundleTransactionTo =
+    typeof bundleQuote?.tx?.to === "string" ? bundleQuote.tx.to : null;
 
-  const blockedLegs = summary.executionRequest.legs.filter(
-    (leg) => leg.state === "blocked" || (leg.blockers?.length ?? 0) > 0,
-  );
-  const quotedLegs = summary.executionRequest.legs.filter(
-    (leg) => leg.state === "awaiting_approval" || leg.state === "quote_ready",
-  );
-  const approvalPayloads = latestExecutionRequest.legs
-    .filter((leg) => leg.state === "awaiting_approval" || leg.state === "quote_ready")
-    .map(buildApprovalPayloadArtifact);
+  await writeArtifact(proofDir, "portfolio-quote.json", quotedPortfolio);
 
-  summary.approvalPayloadCount = approvalPayloads.length;
-
-  if (approvalPayloads.length > 0) {
-    await writeArtifact(proofDir, "approval-payloads.json", approvalPayloads);
+  if (approvalTransaction) {
+    await writeArtifact(proofDir, "approval-transaction.json", approvalTransaction);
   }
 
-  if (blockedLegs.length > 0) {
+  if (bundleQuote) {
+    await writeArtifact(proofDir, "bundle-transaction.json", {
+      quoteId: bundleQuote.quoteId ?? null,
+      tx: bundleQuote.tx ?? {},
+      gas: bundleQuote.gas ?? null,
+      route: Array.isArray(bundleQuote.route) ? bundleQuote.route : [],
+      bundle: Array.isArray(bundleQuote.bundle) ? bundleQuote.bundle : [],
+      amountsOut:
+        bundleQuote.amountsOut && typeof bundleQuote.amountsOut === "object"
+          ? bundleQuote.amountsOut
+          : {},
+      selectedOutputTokenAddress: bundleQuote.selectedOutputTokenAddress ?? null,
+      selectedOutputAmount: bundleQuote.selectedOutputAmount ?? null,
+    });
+  }
+
+  await writeArtifact(proofDir, "wallet-packet.json", {
+    generatedAt: summary.generatedAt,
+    manifestId: summary.manifestId,
+    executionRequestId: summary.executionRequestId,
+    approvalModel:
+      "Approve the starting USDC if required, then send the Enso bundle transaction with the connected wallet.",
+    approvalTransaction,
+    bundleTransaction: bundleQuote?.tx ?? null,
+    route: Array.isArray(bundleQuote?.route) ? bundleQuote.route : [],
+    bundle: Array.isArray(bundleQuote?.bundle) ? bundleQuote.bundle : [],
+  });
+
+  if (actionableLegs.length === 0) {
+    summary.blocker = {
+      code: "no_actionable_bundle_legs",
+      stage: "quote_portfolio",
+      message:
+        "The Enso portfolio request did not produce any actionable legs on the promoted basket.",
+    };
+  } else if (blockedLegs.length > 0) {
     summary.blocker = {
       code: "basket_leg_blocked",
-      stage: "quote",
+      stage: "quote_portfolio",
       message:
-        "At least one actionable basket leg remained blocked after 1inch quote attempts.",
-      legs: blockedLegs,
+        "At least one promoted-basket leg remained blocked after the Enso portfolio quote attempt.",
+      legs: blockedLegs.map(summarizeLeg),
     };
-  } else if (quotedLegs.length === 0) {
+  } else if (approvalLegs.length === 0 || !bundleQuote) {
     summary.blocker = {
-      code: "no_quoteable_legs",
-      stage: "quote",
+      code: "missing_bundle_quote",
+      stage: "quote_portfolio",
       message:
-        "The basket did not produce any quoted 1inch legs after the authenticated multi-leg run.",
+        "Enso did not return a usable bundle quote for the promoted basket.",
+      executionRequest: summary.executionRequest,
     };
   } else {
-    const signaturesByLeg = quotedLegs.map((leg) => ({
-      leg,
-      signature: resolveSignatureForLeg(
-        leg,
-        signatureMap,
-        quotedLegs.length === 1 ? orderSignature : null,
-      ),
-    }));
-    const signatureInputs = signaturesByLeg.map(({ leg, signature }) =>
-      buildSignatureInputArtifact(leg, signature),
-    );
-    await writeArtifact(
-      proofDir,
-      "signature-inputs.json",
-      signatureInputs,
-    );
-    await writeArtifact(proofDir, "signer-packet.json", {
-      generatedAt: summary.generatedAt,
-      manifestId: summary.manifestId,
-      executionRequestId: summary.executionRequestId,
-      instructions:
-        "Collect one EIP-712 signature per leg using the typedData payloads below, then rerun this script with XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH or XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON.",
-      legs: signatureInputs,
-    });
-    const unsignedLegs = signaturesByLeg
-      .filter((entry) => !entry.signature)
-      .map((entry) => ({
-        legId: entry.leg.legId,
-        assetSymbol: entry.leg.assetSymbol,
-        quoteId: entry.leg.quoteId,
-        orderHash: entry.leg.orderHash,
-      }));
-
-    if (unsignedLegs.length > 0) {
-      summary.blocker = {
-        code: "missing_user_signature",
-        stage: "awaiting_signature",
-        message:
-          quotedLegs.length === 1
-            ? "A signer-owned 1inch Fusion EIP-712 signature is still required before backend submission can be recorded."
-            : `Signer-owned 1inch Fusion EIP-712 signatures are still required for ${unsignedLegs.length} quoted core legs before backend submission can be recorded.`,
-        legs: unsignedLegs,
-      };
-    } else {
-      let latestSubmissionRequest = latestExecutionRequest;
-
-      for (const { leg, signature } of signaturesByLeg) {
-        const submissionResult = await requestJson(baseUrl, "/api/executions", {
-          headers: authHeaders,
-          body: {
-            action: "record_submission",
-            executionRequestId: executionCreation.executionRequest.executionRequestId,
-            legId: leg.legId,
-            signature,
-          },
-        });
-
-        latestSubmissionRequest = submissionResult.executionRequest;
-        const submittedLeg =
-          submissionResult.executionRequest.legs.find(
-            (nextLeg) => nextLeg.legId === leg.legId,
-          ) ?? null;
-        summary.submissionResults.push({
-          legId: leg.legId,
-          assetSymbol: leg.assetSymbol,
-          executionRequestState: submissionResult.executionRequest.state,
-          signature,
-          leg: submittedLeg ? summarizeLeg(submittedLeg) : null,
-          venueStatus: submittedLeg?.venueStatus ?? null,
-          receipt: submittedLeg?.receipt ?? null,
-          activityEvents: submissionResult.activityEvents.map((event) => ({
-            eventType: event.eventType,
-            summary: event.summary,
-          })),
-        });
-      }
-
-      summary.state = latestSubmissionRequest.state;
-      summary.executionRequest = summarizeExecutionRequest(latestSubmissionRequest);
-      await writeArtifact(proofDir, "submissions.json", summary.submissionResults);
-    }
+    summary.blocker = {
+      code: "missing_user_wallet_submission",
+      stage: "awaiting_wallet_transaction",
+      message:
+        "Enso returned the approval and bundle transaction payloads, but a connected wallet still must approve the starting USDC and send the bundle transaction.",
+      approvalRequired: Boolean(approvalTransaction),
+      bundleQuoteId: summary.bundleQuoteId,
+    };
   }
-  await writeArtifact(proofDir, "summary.json", summary);
 
+  await writeArtifact(proofDir, "summary.json", summary);
   process.stdout.write(`${JSON.stringify({ proofDir, summary }, null, 2)}\n`);
 } catch (error) {
   summary.state = "blocked";
   summary.blocker = {
     code:
       error instanceof Error &&
-      error.message.includes("is required for the 1inch Fusion proof runner")
+      error.message.includes("is required for the Enso proof runner")
         ? "missing_environment_input"
         : "proof_request_failed",
     stage: resolveFailureStage(summary),
