@@ -35,5 +35,5 @@ State exactly where the rebalance right rail is live today and what still blocks
 1. Merge and deploy the web API-origin fix.
 2. Recheck:
    - [https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/workspace/detail/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1)
-   - [https://24-7.markets/workspace/detail/ai-infra-autopilot](https://24-7.markets/workspace/detail/ai-infra-autopilot)
+   - confirm no repo-tracked public proof still depends on a retired showcase alias.
 3. If the deep-link route renders the same fail-closed rail, close `XSL-018A`. Otherwise keep the onboarding preview shell as the strongest public proof.

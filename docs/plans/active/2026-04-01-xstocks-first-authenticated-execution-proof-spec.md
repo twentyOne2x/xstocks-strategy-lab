@@ -222,7 +222,7 @@ Minimum verification surface:
 3. `pnpm --dir packages/policy check`
 4. `pnpm --dir packages/shared check`
 5. `pnpm --dir packages/xstocks check`
-6. browser route proof for `/`, `/onboarding`, and `/activate/ai-infra-autopilot`
+6. browser route proof for `/`, `/onboarding`, and `/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`
 7. one real authenticated execution probe against the current hosted or candidate backend
 
 ## Measurement Contract

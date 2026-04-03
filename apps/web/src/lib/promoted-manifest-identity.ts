@@ -5,17 +5,6 @@ import type {
 
 export const DEFAULT_STRATEGY_SLOT_ID = "onboarding.default_basket";
 
-const LEGACY_MANIFEST_SLUG_BY_SLOT: Record<string, string> = {
-  "onboarding.default_basket": "ai-infra-autopilot",
-  "onboarding.alt_basket_1": "mag7-cash-balance",
-  "onboarding.alt_basket_2": "spy-core-shield",
-  "advanced.default_directional": "mstr-conviction-long",
-};
-
-const SLOT_ID_BY_LEGACY_MANIFEST_SLUG = Object.fromEntries(
-  Object.entries(LEGACY_MANIFEST_SLUG_BY_SLOT).map(([slotId, slug]) => [slug, slotId]),
-);
-
 const THEME_TITLE_BY_ID: Record<string, string> = {
   "ai-infra": "AI Infra",
   "us-tech-leaders": "US Tech Leaders",
@@ -75,10 +64,6 @@ export function buildPromotedManifestSlug(
   return `${slugify(slotId)}--${slugify(strategyVersion)}`;
 }
 
-export function resolveLegacyManifestSlotId(selector: string): string | null {
-  return SLOT_ID_BY_LEGACY_MANIFEST_SLUG[selector] ?? null;
-}
-
 export function resolveManifestSelector(
   manifests: PromotedManifest[],
   selector?: string | null,
@@ -94,10 +79,6 @@ export function resolveManifestSelector(
       (manifest) =>
         manifest.slug === normalizedSelector ||
         manifest.slot_id === normalizedSelector,
-    ) ??
-    manifests.find(
-      (manifest) =>
-        manifest.slot_id === resolveLegacyManifestSlotId(normalizedSelector),
     )
   );
 }
@@ -125,4 +106,3 @@ export function buildPublicStrategiesFromManifests(
 ): PublicStrategyCardData[] {
   return manifests.map((manifest) => buildPublicStrategyCard(manifest));
 }
-

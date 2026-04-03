@@ -124,7 +124,7 @@ Last updated: 2026-04-03
     - local activation route now renders the live bridge truth coherently for the real Privy session, including `policyAccountAddress = 0x00c6bf8ba9244eb50089410007f778868cc1ce39`, `automationReadiness = ready`, and no stale smart-account bootstrap blocker;
     - the local right-rail account card now reuses the same preview truth instead of the old public fallback copy;
     - the exact hosted `https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1` route now matches the same real-session bridge truth, does not reproduce the old `manualSignerAddress` crash, and showed only one `https://auth.privy.io/api/v1/users/me` resource hit in the verified browser load.
-    - a separate pre-existing hosted `ai-infra-autopilot` tab in the same Brave session still showed the generic client-side exception shell with five `users/me` resource hits, but that is outside this narrow `XSL-005` activation-slice proof.
+    - a separate pre-existing hosted legacy showcase activation tab in the same Brave session still showed the generic client-side exception shell with five `users/me` resource hits, but that is outside this narrow `XSL-005` activation-slice proof.
   - Fix intent for this tranche: guard hosted nested bridge reads, add the minimum Privy identity refresh dedupe/backoff needed to stop over-hitting `/users/me`, and make preview surfaces derive bridge truth from live wallet state when present or the saved activation/execution snapshot when live wallet state is absent.
   - Acceptance addendum:
     1. Hosted activation no longer crashes when preview payloads omit nested smart-account fields.
@@ -406,6 +406,7 @@ Last updated: 2026-04-03
   - 2026-04-03: live-host parity is still not closed. `https://24-7.markets/onboarding` returns `200` but still serves stale onboarding content with old manifest slugs; the canonical detail and activate routes still return `404`; and `GET https://24-7.markets/api/runtime/autoresearch?limit=1` still returns `truthBoundary=worker_runtime_only`, `recurringAutonomousProven=false`, and `schedulerHost=null`.
   - 2026-04-03: the recovery slice is merged on `origin/main` as `c1436e79b8aaf20c41c7442e9ec58e7bea41a6f8` via PR `#7`, and an immediate post-merge host recheck still shows the same stale runtime and `404` route posture.
   - 2026-04-03: the remaining blocker is deployment access, not repo code. This workspace has no `.vercel` link, `vercel` CLI is not installed, and `railway whoami` fails with `invalid_grant`, so this pass cannot truthfully claim public deploy closure from the current environment.
+  - 2026-04-03: repo-tracked web fallbacks, tests, route examples, and active closeout docs no longer name the retired showcase aliases. Canonical public examples now use the current promoted slugs, and stale-slug discussions are recorded as legacy-showcase-path debt instead of preserving dead route names in repo truth.
 
 ### XSL-010 Portfolio Explainability And Autoresearch Interpretability
 
@@ -426,7 +427,7 @@ Last updated: 2026-04-03
 - Continuation note:
   - Date: 2026-04-02
   - Scope freeze: investigate only the stale autoresearch/showcase freshness bug as a narrow `XSL-010` sub-lane coordinated with `XSL-004` and `XSL-006`. Do not open a duplicate owner lane and do not widen this pass into deployment-host closure beyond identifying an exact blocker if one exists.
-  - Proven starting truth on updated `origin/main`: the frontend repeatedly surfaces the same showcased portfolio identity because several public routes still anchor to the legacy slug `ai-infra-autopilot`, onboarding still seeds recommendation cards from static mock data, the web adapter rewrites live promoted slots back onto fixed legacy slugs, and recommendation fallback still collapses unresolved matches to the first mock card. The repeated surface is not a literal wallet-address repeat.
+  - Proven starting truth on updated `origin/main`: the frontend repeatedly surfaces the same showcased portfolio identity because several public routes still anchor to a retired showcase slug, onboarding still seeds recommendation cards from static mock data, the web adapter rewrites live promoted slots back onto fixed legacy slugs, and recommendation fallback still collapses unresolved matches to the first mock card. The repeated surface is not a literal wallet-address repeat.
   - Proven distinction to preserve during the fix:
     1. `apps/api` catalog ordering is already deterministic by `surface` then `slot.position`, so `always first item` is not the primary bug.
     2. The live promoted default slot in [slot-registry.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl010-fresh/packages/research/manifests/slot-registry.json) no longer matches the legacy showcased identity, so the bug is a frontend freshness and identity-mapping collapse.
@@ -441,6 +442,15 @@ Last updated: 2026-04-03
     1. The repeated showcase was the same stale frontend manifest identity, not the same wallet address.
     2. Live questionnaire fixtures now resolve four distinct slot outcomes, and public routes follow live catalog/slot truth instead of collapsing onto the old showcased slug.
     3. The activation-route `useWallets` warning was a real composition bug when `NEXT_PUBLIC_PRIVY_APP_ID` was unset locally: the app intentionally skipped the Privy provider but still rendered Privy hook consumers. The fix moved those reads behind an app-owned runtime context so unconfigured environments render a truthful disabled wallet state without invoking hooks outside provider boundaries.
+  - Continuation note:
+    - Date: 2026-04-03 legacy route cleanup
+    - User-stated desired outcome: `delete all paths around ai infra autopilot`
+    - Verified starting truth on current `origin/main`: the canonical web source no longer needed the retired showcase aliases for route resolution, but fallback fixtures, tests, and several active docs still named dead route paths directly.
+    - Fix intent for this tranche: remove remaining retired showcase path names from repo-tracked web source and active docs, keep current canonical promoted slugs for concrete examples, and describe stale-host behavior generically as legacy-showcase-path drift where historical diagnosis still matters.
+    - Acceptance addendum:
+      1. `apps/web/src/**` contains no retired showcase slug references.
+      2. Active owner docs and runbooks no longer direct operators to dead showcase paths.
+      3. Current canonical route examples use the promoted basket slugs now generated by repo truth.
   - Executor prompt:
     - Trace the exact fallback path from onboarding and public route defaults to the repeated showcased result.
     - Replace hard-coded showcase identity with live catalog-backed selection only where the cause is proven.

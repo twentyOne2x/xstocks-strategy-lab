@@ -19,7 +19,7 @@ describe("promoted manifest identity", () => {
     );
   });
 
-  it("resolves a legacy showcase slug onto the current manifest in that slot", () => {
+  it("resolves exact slugs or slot ids and drops deleted legacy showcase slugs", () => {
     const liveManifests = mockManifests.map((manifest, index) => ({
       ...manifest,
       strategy_version: `live-slot-${index + 1}`,
@@ -31,11 +31,14 @@ describe("promoted manifest identity", () => {
     );
 
     expect(currentDefaultManifest).toBeDefined();
-    expect(resolveManifestSelector(liveManifests, "ai-infra-autopilot")).toEqual(
-      currentDefaultManifest,
-    );
+    expect(
+      resolveManifestSelector(liveManifests, "legacy-showcase-default-basket"),
+    ).toBeUndefined();
     expect(
       resolveManifestSelector(liveManifests, currentDefaultManifest!.slug),
+    ).toEqual(currentDefaultManifest);
+    expect(
+      resolveManifestSelector(liveManifests, currentDefaultManifest!.slot_id),
     ).toEqual(currentDefaultManifest);
   });
 

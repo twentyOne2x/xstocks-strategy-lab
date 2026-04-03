@@ -547,7 +547,7 @@ export function getHomeTerminalData(): HomeTerminalProps {
       {
         title: "Directional xStocks preview",
         description: "Directional xStocks position with explicit funding and unwind controls. Preview-only.",
-        href: "/workspace/detail/mstr-conviction-long",
+        href: "/workspace/detail/advanced-default-directional--directional-preview-v1",
         stats: ["Preview-only", "Deposit gate explicit"],
       },
     ],

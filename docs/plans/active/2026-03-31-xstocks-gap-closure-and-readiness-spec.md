@@ -29,7 +29,7 @@ As of 2026-04-01, reconciled repo and hosted truth is:
 2. Root `pnpm run prisma:generate` passes, and `DATABASE_URL=... pnpm run prisma:validate` passes when a Postgres URL is supplied.
 3. Research, worker, policy, and API still keep directional fail-closed and preview-only.
 4. Recurring autoresearch is already proven as internal backend/runtime truth on Railway cron service `autoresearch-worker`; live repo truth is `truthBoundary=railway_cron_service`, `recurringAutonomousProven=true`, and receipt `autoresearch_20260401T170541978z_bd9d4900`.
-5. Hosted `/`, `/onboarding`, `/workspace/comparison`, `/activate/ai-infra-autopilot`, `/ops/xstocks`, Railway `/health`, and `GET /api/public-agent-handoff` all respond.
+5. Hosted `/`, `/onboarding`, `/workspace/comparison`, `/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`, `/ops/xstocks`, Railway `/health`, and `GET /api/public-agent-handoff` all respond.
 6. Hosted `https://equityterminal.app/skill.md` now matches the current repo-owned public-safe copy on the key public-safe points, and the default-basket Railway catalog now exports linked-wallet-first wallet metadata with `requiresSmartAccount=false` and `minFundingUsd=0`.
 7. Provider-triggered rebalance review ingress is now materially proven on the deployed API: a signed review-only event was accepted, persisted, and opened `awaiting_operator` only. The current caveat is signer provenance, not ingress capability: the accepted proof used a temporary proof signer plus seeded baseline activation context rather than a real external Chainlink signer.
 8. `apps/web` builds and checks cleanly, but canonical browser proof with screenshots and console evidence still does not exist.
@@ -668,14 +668,14 @@ This is the required browser-clickable proof path for end-to-end closure.
 
 This path does not need live activation. It exists to prove truthful preview-only behavior.
 
-1. Load `/workspace/detail/mstr-conviction-long` or reach the directional lane through onboarding answers that opt into a sharper path.
+1. Load `/workspace/detail/advanced-default-directional--directional-preview-v1` or reach the directional lane through onboarding answers that opt into a sharper path.
 2. Confirm the directional lane still renders in preview truth.
    Must be visible:
    1. preview or demo labeling,
    2. directional manifest slot or title,
    3. route and vault context,
    4. no language implying live directional execution.
-3. Open `/activate/mstr-conviction-long`.
+3. Open `/activate/advanced-default-directional--directional-preview-v1`.
    Must be visible:
    1. funding-required or preview-only style state,
    2. smart-account shell state,
@@ -837,7 +837,7 @@ The closeout proof pack must include these screenshots at minimum.
     4. `Promoted fallback`
 11. `11-directional-preview-only.png`
     Route:
-    1. `/activate/mstr-conviction-long` or `/workspace/detail/mstr-conviction-long`
+    1. `/activate/advanced-default-directional--directional-preview-v1` or `/workspace/detail/advanced-default-directional--directional-preview-v1`
     Click source:
     1. direct load or directional lane selection
     Must show:
