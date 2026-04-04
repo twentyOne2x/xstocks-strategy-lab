@@ -74,15 +74,22 @@ Create new alongside:
    - web/manual execution handling exists in [manual-execution.ts](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/web/src/lib/manual-execution.ts),
    - API tests already cover quoted Enso bundle creation,
    - and the repo now includes [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js) as the canonical proof runner.
-6. The old Enso env blocker and dead approval-endpoint bug are now closed. The strongest env-backed proof is [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T22-33-23.502Z/summary.json), which reaches `quote_portfolio` and records the current exact blocker instead of failing on local config.
-7. The live public buy route remains hosted `1inch` on:
+7. The old Enso env blocker and dead approval-endpoint bug are now closed. The strongest env-backed proof is [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T22-33-23.502Z/summary.json), which reaches `quote_portfolio` and records the current exact blocker instead of failing on local config.
+8. The repo now also carries a Privy-free direct Enso substrate diagnostic at [enso-direct-quoteability-diagnostic.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-direct-quoteability-diagnostic.js). The latest direct proof [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-direct-diagnostic-2026-04-04T08-54-34.041Z/summary.json) proves:
+   - `wallet/approve` still returns a real `USDC` approval transaction,
+   - `NVDAx` and `AMZNx` quote directly at the real promoted-basket notionals,
+   - `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx` still fail direct Enso routing at the exact notionals,
+   - receiver choice does not change those failures,
+   - and those four failing names still fail direct Enso routing when swept up through `$1000` each.
+9. The same direct diagnostic also re-proves the current `AUSD` package truth: the boundary repository intentionally surfaces `AUSD` as a bridge helper with `supportsAtomicSwaps=true` but `address=null` and `wrapperAddress=null`, so the Enso promoted-basket lane still lacks executable Ethereum token metadata for the yield-buffer sleeve.
+10. The live public buy route remains hosted `1inch` on:
    - [https://24-7.markets/onboarding](https://24-7.markets/onboarding)
    - [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1)
-8. The runtime lane is now split across two truthful surfaces:
+11. The runtime lane is now split across two truthful surfaces:
    - checked-in Railway cron code and config still exist in [autoresearch-railway-cron.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/src/autoresearch-railway-cron.js) and [railway.json](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/railway.json),
    - [server.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/server.js) still keeps local default boot fail-closed unless `AUTORESEARCH_PROOF_PATH` or `XSTOCKS_AUTORESEARCH_PROOF_PATH` is explicitly set,
    - and the live public API now returns `truthBoundary=railway_cron_service`, `recurringAutonomousProven=true`, and `schedulerHost.serviceName=autoresearch-worker`, with proof captured in [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/runtime-20260404-001709/summary.md).
-9. The operator CLI matrix is now:
+12. The operator CLI matrix is now:
    - `gh`: healthy,
    - `vercel`: healthy,
    - `railway`: blocked with `invalid_grant` on `railway whoami`.
@@ -93,7 +100,7 @@ Create new alongside:
 | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Shared `1inch` post-signature advance | 4 | very high | high | partial | `XSL-014C`, [2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md) | repeatedly described as the next real blocker | backend path and proof runner are implemented; fresh authenticated proof again stops at missing signer-owned Fusion signatures for six live quoted core legs | yes, hosted `1inch` is the canonical route | collect real signer signatures and rerun once |
 | 2 | Railway operator access reconciliation | 4 | very high | medium | public host proven, local operator CLI blocked | `XSL-006A`, [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | cleanup was claimed complete | code, tests, default local fail-closed behavior, and fresh public Railway proof all exist; only machine-local Railway operator access remains blocked | public runtime API is truthful and live-proven | restore or bypass Railway access without reopening runtime logic |
-| 3 | Enso live proof or truthful demotion | 3 | high | medium | partial implementation, proof-started | `XSL-005B`, `XSL-005C`, [2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md) | implementation candidate only | shared contracts, API path, web handling, proof runner, and approval endpoint are now in place; current exact blocker is upstream Enso quoteability on the promoted basket plus `AUSD` metadata | no, canonical public route is still hosted `1inch` | keep hosted `1inch` public-default and either resolve upstream Enso route coverage or freeze Enso as non-canonical |
+| 3 | Enso live proof or truthful demotion | 3 | high | medium | partial implementation, proof-started | `XSL-005B`, `XSL-005C`, [2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md) | implementation candidate only | shared contracts, API path, web handling, proof runner, approval endpoint, and direct substrate diagnostic are now in place; current exact blocker is direct Enso quoteability on `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx`, plus executable `AUSD` metadata | no, canonical public route is still hosted `1inch` | keep hosted `1inch` public-default and either resolve upstream Enso route coverage or freeze Enso as non-canonical |
 
 ## Goal-Vs-Repo-Truth Diff
 
@@ -103,7 +110,7 @@ Create new alongside:
    - and the runtime lane should keep public Railway-host proof, local fail-closed defaults, and machine operator access reconciled in one truthful story.
 2. Current repo truth:
    - hosted `1inch` is the live public route, and the latest fresh-auth proof again reaches the signer boundary and stops at missing user signatures,
-   - Enso has partial code plus a proof runner, and the approval endpoint bug is now fixed, but the promoted basket still fails upstream bundle generation because several core legs are not quoteable and `AUSD` remains metadata-blocked,
+   - Enso has partial code plus a proof runner, and the approval endpoint bug is now fixed, but the promoted basket still fails upstream bundle generation because `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx` are still not directly quoteable through Enso even after a direct sweep through `$1000`, while `AUSD` remains metadata-blocked,
    - live runtime API truth is now Railway-backed and proven, while local default boot remains fail-closed and machine-local Railway CLI access is still blocked.
 3. Honestly complete means:
    - shared `1inch`: a signature-fed rerun reaches a real landed tx, or else the lane stays open with the next exact blocker captured,
@@ -115,7 +122,7 @@ Create new alongside:
 | Workstream | Implementation | Proof | Prod / operator | Remaining delta |
 | --- | ---: | ---: | ---: | --- |
 | Shared `1inch` signer advance | 95% | 78% | 55% | collect signatures, rerun, capture venue artifacts, and still treat the lane as open until a landed tx exists |
-| Enso bundle lane | 82% | 45% | 0% | resolve upstream quoteability for `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx`, resolve `AUSD` metadata, then re-run the promoted basket and still require landed onchain proof before any live claim |
+| Enso bundle lane | 84% | 55% | 0% | resolve upstream quoteability for `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx`, resolve `AUSD` metadata, then re-run the promoted basket and still require landed onchain proof before any live claim |
 | Railway operator access | 100% | 100% | 15% | restore or bypass Railway access so the already-proven `autoresearch-worker` host can be operated from this machine without thread folklore |
 
 ## Closure, Endpoint, And Deployment Truth
@@ -123,7 +130,7 @@ Create new alongside:
 | Workstream | Earliest honest closure condition | Relevant surface | Local status | Deployed-host status | Production status | Proof command or artifact |
 | --- | --- | --- | --- | --- | --- | --- |
 | Shared `1inch` | one rerun with real signatures reaches a landed tx, or else records the next exact blocker without claiming closure | [oneinch-fusion-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/oneinch-fusion-proof.js), `POST /api/executions` | ready to accept external signatures | hosted/session-backed path again quoted six legs with fresh auth and stopped only at the signer boundary | public route is live but still pre-signature and not done execution | [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/oneinch-fusion-2026-04-03T23-13-29.688Z/summary.json) |
-| Enso | one exact promoted-basket run reaches a landed onchain bundle path, or else records the exact blocker without claiming closure | `quote_portfolio` in [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js), [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js) | partial implementation with proof harness and fixed approval endpoint | env-backed live status now reaches the exact upstream blocker: upstream Enso bundle `500` across the promoted basket, plus explicit `AUSD` metadata blockers | not on canonical public route and not done execution | [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-portfolio-2026-04-03T22-33-23.502Z/summary.json) |
+| Enso | one exact promoted-basket run reaches a landed onchain bundle path, or else records the exact blocker without claiming closure | `quote_portfolio` in [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js), [enso-portfolio-multideposit-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-portfolio-multideposit-proof.js), [enso-direct-quoteability-diagnostic.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/enso-direct-quoteability-diagnostic.js) | partial implementation with proof harness, direct substrate diagnostic, and fixed approval endpoint | env-backed live status reaches the bundle blocker, and the direct diagnostic narrows it to persistent direct quote failures on `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx`, plus explicit `AUSD` metadata blockers | not on canonical public route and not done execution | [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/enso-direct-diagnostic-2026-04-04T08-54-34.041Z/summary.json) |
 | Railway operator access | direct CLI inventory or a deliberate non-CLI operating path is documented and exercised | [https://24-7.markets/api/runtime/autoresearch?limit=1](https://24-7.markets/api/runtime/autoresearch?limit=1), [autoresearch-railway-cron.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/src/autoresearch-railway-cron.js), [railway.json](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/railway.json) | local default truth is fail-closed and public runtime proof is already live | Railway CLI remains blocked, but public host proof is current | public runtime is live-proven on Railway cron service | [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/runtime-20260404-001709/summary.md) |
 
 ## Delivery Posture
@@ -249,7 +256,7 @@ Expected proof artifacts:
    - route and bundle arrays,
    - expected per-target outputs,
    - and post-run blocker or tx hash.
-5. The current exact blocker is no longer missing env. The repo-owned approval path is fixed, but the promoted basket still fails because `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx` are not currently quoteable through Enso at the tested notionals and `AUSD` still lacks the required Ethereum/USDC metadata.
+5. The current exact blocker is no longer missing env. The repo-owned approval path is fixed, and the repo now includes a Privy-free direct diagnostic. The promoted basket still fails because `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx` are not currently directly quoteable through Enso at the tested notionals or at a direct sweep through `$1000`, and `AUSD` still lacks the required Ethereum/USDC metadata.
 
 ### Frontend Work Required
 
@@ -269,7 +276,8 @@ Required commands:
 1. `pnpm --filter @xstocks-strategy-lab/shared build`
 2. `node --test apps/api/test/api.test.js`
 3. `node apps/api/scripts/enso-portfolio-multideposit-proof.js`
-4. `git diff --check`
+4. `node apps/api/scripts/enso-direct-quoteability-diagnostic.js`
+5. `git diff --check`
 
 Expected proof artifacts:
 1. bundle request payload

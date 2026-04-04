@@ -1,0 +1,28 @@
+{
+  "assetSymbol": "AUSD",
+  "source": "stablecoin_bridge",
+  "chain": "ethereum",
+  "status": "active",
+  "priceUsd": 1,
+  "proofOfReserves": "repo_scaffolded",
+  "deployments": {
+    "Ethereum": {
+      "supportsAtomicSwaps": true,
+      "address": null,
+      "wrapperAddress": null,
+      "stablecoinSymbols": [
+        "AUSD"
+      ]
+    }
+  },
+  "executionRoutes": [],
+  "routeTruth": null,
+  "asset": null,
+  "priceData": null,
+  "proofOfReservesDetail": null,
+  "systemStatus": null,
+  "notes": [
+    "AUSD is surfaced here through a package-owned execution-boundary bridge helper.",
+    "This is not a claim that AUSD is an xStocks public asset."
+  ]
+}
