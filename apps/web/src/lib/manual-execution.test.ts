@@ -425,4 +425,76 @@ describe("runManualExecutionFlow", () => {
       ],
     });
   });
+
+  it("fails fast after activation save when the saved activation is already non-ready", async () => {
+    const fetchMock = vi.fn();
+    fetchMock.mockResolvedValueOnce(
+      createJsonResponse(200, {
+        data: {
+          activation: {
+            activationId: "activation_test",
+            manifestId: "manifest_test",
+            slotId: "onboarding.default_basket",
+            requestedNotionalUsd: 100,
+            surfaceTruth: "live",
+            status: "funding_required",
+            createdAt: "2026-04-02T00:00:00.000Z",
+            updatedAt: "2026-04-02T00:00:00.000Z",
+          },
+          executionPlan: {
+            executionState: "blocked",
+            executionEligibility: "non_executable",
+            blockers: ["Deposit USDC in your wallet before continuing."],
+          },
+        },
+      }),
+    );
+    global.fetch = fetchMock as typeof fetch;
+
+    const statuses: string[] = [];
+    const activations: Array<{ status: string | null }> = [];
+    const result = await runManualExecutionFlow({
+      manifest: {
+        manifest_id: "manifest_test",
+        slot_id: "onboarding.default_basket",
+      } as never,
+      requestedNotionalUsd: 100,
+      initiationAction: "create",
+      latestActivation: null,
+      existingExecutionRequest: null,
+      auth: {
+        accessToken: "access_test",
+        identityToken: "identity_test",
+      },
+      wallets: [],
+      activeWallet: null,
+      walletState: {
+        connected: true,
+        walletAddress: "0x1111111111111111111111111111111111111111",
+        embeddedWallet: {
+          status: "ready",
+          address: "0x1111111111111111111111111111111111111111",
+        },
+        smartAccount: {
+          status: "not-required",
+          address: null,
+        },
+      },
+      onStatus: (status) => {
+        statuses.push(status.message);
+      },
+      onActivation: (activation) => {
+        activations.push({ status: activation?.status ?? null });
+      },
+    });
+
+    expect(result.blocker).toBe("Deposit USDC in your wallet before continuing.");
+    expect(result.executionRequest).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(activations).toEqual([{ status: "funding_required" }]);
+    expect(statuses).toContain(
+      "Persisting activation truth with the current hosted wallet boundary.",
+    );
+    expect(statuses.at(-1)).toBe("Deposit USDC in your wallet before continuing.");
+  });
 });
