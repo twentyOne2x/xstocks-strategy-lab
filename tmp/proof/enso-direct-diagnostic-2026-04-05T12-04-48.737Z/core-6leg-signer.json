@@ -1,0 +1,76 @@
+{
+  "label": "core6:exact:signer",
+  "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+  "receiver": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+  "actions": [
+    {
+      "protocol": "enso",
+      "action": "route",
+      "args": {
+        "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "tokenOut": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+        "amountIn": "180000000",
+        "slippage": "100"
+      }
+    },
+    {
+      "protocol": "enso",
+      "action": "route",
+      "args": {
+        "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+        "amountIn": "164300000",
+        "slippage": "100"
+      }
+    },
+    {
+      "protocol": "enso",
+      "action": "route",
+      "args": {
+        "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+        "amountIn": "157400000",
+        "slippage": "100"
+      }
+    },
+    {
+      "protocol": "enso",
+      "action": "route",
+      "args": {
+        "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+        "amountIn": "154000000",
+        "slippage": "100"
+      }
+    },
+    {
+      "protocol": "enso",
+      "action": "route",
+      "args": {
+        "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "tokenOut": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+        "amountIn": "148900000",
+        "slippage": "100"
+      }
+    },
+    {
+      "protocol": "enso",
+      "action": "route",
+      "args": {
+        "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+        "amountIn": "145400000",
+        "slippage": "100"
+      }
+    }
+  ],
+  "ok": false,
+  "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"0724439c-9cd0-4913-9fbd-b2781f4e3ef7\"}",
+  "statusCode": 404,
+  "payload": {
+    "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+    "error": "Not Found",
+    "statusCode": 404,
+    "requestId": "0724439c-9cd0-4913-9fbd-b2781f4e3ef7"
+  }
+}

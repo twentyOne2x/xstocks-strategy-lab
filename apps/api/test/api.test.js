@@ -2683,6 +2683,18 @@ test("execution quote_portfolio returns one Enso bundle quote for the promoted b
       quotedLegs.every((leg) => leg.venueStatus.venueId === "enso.ethereum"),
       true,
     );
+    assert.equal(
+      /will quote against the Ethereum deployment\.address/i.test(
+        quotePayload.data.executionRequest.warnings.join(" "),
+      ),
+      true,
+    );
+    assert.equal(
+      /will quote against the Ethereum wrapperAddress/i.test(
+        quotePayload.data.executionRequest.warnings.join(" "),
+      ),
+      false,
+    );
     assert.equal(approvalLeg.approval.approvalType, "wallet_transaction");
     assert.equal(
       approvalLeg.approval.transactionRequest.to,

@@ -2253,13 +2253,14 @@ function createExecutionLeg({
         : routeSelection.requestAdapterId === COW_SWAP_EXECUTION_ADAPTER_ID
           ? `${allocation.assetSymbol} is pinned to the CoW Ethereum route for this execution request.`
           : null,
-      cowReceivingToken.source === "wrapperAddress" &&
-      routeSelection.requestAdapterId !== ONEINCH_EXECUTION_ADAPTER_ID
+      selectedReceivingToken.source === "wrapperAddress"
         ? `${allocation.assetSymbol} will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.`
         : null,
       oneInchReceivingToken.source === "deployment.address" &&
       routeSelection.requestAdapterId !== COW_SWAP_EXECUTION_ADAPTER_ID
-        ? `${allocation.assetSymbol} can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.`
+        ? selectedReceivingToken.source === "deployment.address"
+          ? `${allocation.assetSymbol} will quote against the Ethereum deployment.address surfaced by xStocks route metadata.`
+          : `${allocation.assetSymbol} can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.`
         : null,
     ]),
     quote: null,
