@@ -1,0 +1,32 @@
+{
+  "mode": "frontend-buy",
+  "artifactDir": "/Users/user/PycharmProjects/xstocks-strategy-lab-codex-wallet-harness-20260406/tmp/proof/operator-browser-harness-2026-04-05T22-35-10.519Z",
+  "blocker": "The user rejected the request.",
+  "browserVersion": {
+    "Browser": "Brave (launched by Playwright)",
+    "userAgent": "launchPersistentContext"
+  },
+  "walletUiCapable": true,
+  "steps": [
+    "Launched dedicated Brave operator profile from `/Applications/Brave Browser.app/Contents/MacOS/Brave Browser`.",
+    "Loaded canonical onboarding route `https://24-7.markets/onboarding`.",
+    "Loaded canonical activate route `https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1`.",
+    "Opened dedicated wallet route `chrome://wallet/crypto/onboarding/welcome`.",
+    "Started Brave wallet onboarding in the dedicated profile.",
+    "Accepted Brave wallet terms in the dedicated profile.",
+    "Accepted the default supported-network selection.",
+    "Created a dedicated Brave wallet password in the isolated profile.",
+    "Bootstrapped a dedicated Brave wallet profile and confirmed provider injection on the canonical route.",
+    "Clicked `connect_wallet` via /connect wallet/i.",
+    "Did not find a clickable `see_my_portfolio` button on the current surface.",
+    "Did not find a clickable `skip` button on the current surface.",
+    "Did not find a clickable `start_deposit` button on the current surface.",
+    "Clicked `continue_with_wallet` via /continue with a wallet/i.",
+    "Clicked `brave_wallet` via /brave wallet/i.",
+    "Direct eth_requestAccounts probe returned `rejected`."
+  ],
+  "loadedPaths": [
+    "/Users/user/.config/attn/shared.env"
+  ],
+  "walletPasswordSource": "XSTOCKS_BRAVE_WALLET_PASSWORD_COMMAND"
+}

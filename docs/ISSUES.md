@@ -927,6 +927,22 @@ Last updated: 2026-04-05
 - Complexity: high
 - Plan links:
   - [2026-04-01-xstocks-hermes-operator-and-agent-skill-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-hermes-operator-and-agent-skill-spec.md)
+  - [2026-04-06-xstocks-operator-browser-wallet-harness.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-06-xstocks-operator-browser-wallet-harness.md)
+- Continuation note:
+  - Date: 2026-04-06
+  - New operator gap at tranche start: the repo had proof runners and smoke runbooks, but it still lacked one canonical browser harness for the authenticated frontend and wallet boundary.
+  - Exact machine truth at audit start: `127.0.0.1:9224` was a Brave CDP endpoint, but it pointed at a headless Challenger automation profile rather than a clean wallet-UI-capable operator browser, and shared env did not yet carry the dedicated Brave wallet secret inputs.
+  - Fix intent for this tranche: add one repo-owned shared-env-driven Brave harness, one dedicated isolated profile path, and one runbook contract that makes wallet automation reproducible and fail-closed.
+  - Acceptance addendum:
+    1. The repo owns a canonical browser harness command surface for operator testing.
+    2. Wallet-password handling comes from shared env or a secret command, not repo files.
+    3. The harness can distinguish headless or wrong-browser surfaces from a real wallet-UI-capable Brave profile.
+    4. The harness writes proof artifacts for browser capability, canonical route state, wallet-panel state, and the exact blocker reached.
+  - Latest verification note:
+    1. `pnpm proof:browser:status` now self-launches a dedicated non-interference Brave profile and proves the harness can reach a real wallet-UI-capable browser.
+    2. `pnpm proof:browser:frontend` now bootstraps Brave Wallet into that isolated profile when `XSTOCKS_BRAVE_WALLET_PASSWORD_COMMAND` is configured, and the canonical activate route then exposes a real injected provider (`window.ethereum`, `isBraveWallet=true`, `chainId=0x1`).
+    3. The strongest current isolated-browser blocker is no longer missing provider or missing profile setup; it is the wallet approval boundary itself, currently `The user rejected the request.`
+    4. The repo-wide clean-worktree verification matrix now passes on `origin/main`: `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm check`, and `pnpm prisma:validate`.
 
 ### XSL-016B Agent Testability And Skill Surface
 

@@ -1,0 +1,14 @@
+{
+  "title": "Wallet",
+  "url": "chrome://wallet/crypto/onboarding/welcome",
+  "bodyTextSample": "Wallet\nBrowser-native. Self-custody. And multi-chain.\nTake control of your crypto and NFTs. Brave Wallet supports Ethereum, EVM chains, Solana, Filecoin, Bitcoin and more.\nNeed a new wallet?\n\nGet started with Brave Wallet in minutes.\n\nAlready have a wallet?\n\nAlready have a wallet?\n\n©2025 Brave Software Inc. Brave and the Brave logo are registered trademarks of Brave Software, Inc. Other product names and logos may be trademarks of their respective companies. All rights reserved.",
+  "buttons": [
+    "Need a new wallet?Get started with Brave Wallet in minutes.",
+    "Already have a wallet?Already have a wallet?",
+    "Meld's Terms of Use",
+    "Cancel",
+    "Continue"
+  ],
+  "inputs": [],
+  "checkboxLabels": []
+}

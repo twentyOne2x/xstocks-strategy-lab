@@ -1,0 +1,17 @@
+{
+  "title": "24-7 MARKETS — Tokenized equity portfolios powered by xStocks",
+  "url": "https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+  "bodyTextSample": "24-7\n24-7 MARKETS\nPowered by xStocks\nPREVIEW\nHOME\nONBOARDING\nCOMPARE\nDETAIL\nACTIVATION\nACTIVITY\nACTIVATE YOUR PORTFOLIO\nAutopilot: Mag 7 Core\n\nLong-only xStocks basket that keeps the onboarding lane simple while preserving concentrated mega-cap upside. It keeps 5% in AUSD as a yield buffer instead of forcing full equity exposure.\n\n1\nConnect wallet\n\nSign in with email or connect an existing wallet. Current manual execution stays wallet-first.\n\nCONNECT WALLET\n2\nSet USDC notional\n\nThis flow treats $100 USDC as the first-class manual buy path. The current repo-owned proof uses your requested notional as the funding truth carried into activation and venue routing.\n\nRequested notional\nUSDC\n\nManual routing target: $100.00 into the promoted basket weights below.\n\n3\nApprove USDC and send the portfolio bundle\n\nThe connected manual signer may approve the starting USDC once, then signs one Enso bundle transaction that routes into the promoted portfolio targets.\n\nACTIVATE $100.00 BUY\nEXECUTION TRUTH\nFunding asset\nUSDC\nRequested notional\n$100.00\nExecution state\nPreview only\nLatest activation\nNo saved activation yet\n\nCurrent live route stays wallet-first: approve the starting USDC if needed, then sign one Enso portfolio transaction before backend receipt tracking can continue.\n\nWALLET BOUNDARY\nEmbedded wallet\nNot ready\nManual signer\nNot ready\nPolicy account\nNot ready\nExecution destination\nNot ready\nAutomation readiness\nwallet required\nVenue signing\nwallet_signer_manual_only\nCurrent blocker\nConnect a wallet to start the hosted bootstrap path.\n\nCurrent bridge rule: manual signing stays wallet-first, `policyAccountAddress` resolves only when the Privy smart wallet is actually linked, and `executionDestinationAddress` stays on the current signer surface until that smart-wallet link exists. AA-native venue signing remains deferred.\n\nEXACT TARGET WEIGHTS\nNVDAx\n\nNVIDIA\n\n18.0% · $18.00\nMSFTx\n\nMicrosoft\n\n16.4% · $16.44\nAAPLx\n\nApple\n\n15.7% · $15.75\nMETAx\n\nMeta\n\n15.4% · $15.40\nAMZNx\n\nAmazon\n",
+  "hasEthereumProvider": true,
+  "selectedAddress": null,
+  "chainId": "0x1",
+  "walletLabels": [
+    "Connect wallet",
+    "Activate $100.00 buy",
+    "Execute all unavailable",
+    "Positions",
+    "History",
+    "Rebalancing",
+    "Activity"
+  ]
+}

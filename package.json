@@ -8,11 +8,15 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "check": "turbo run check",
+    "browser:launch:xstocks": "bash scripts/launch-xstocks-operator-brave.sh",
+    "proof:browser:status": "node scripts/xstocks-operator-browser-harness.mjs status",
+    "proof:browser:frontend": "node scripts/xstocks-operator-browser-harness.mjs frontend-buy",
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
     "prisma:validate": "prisma validate --schema prisma/schema.prisma"
   },
   "devDependencies": {
     "@prisma/client": "6.19.2",
+    "playwright": "^1.58.0",
     "prisma": "6.19.2",
     "turbo": "^2.5.0"
   },

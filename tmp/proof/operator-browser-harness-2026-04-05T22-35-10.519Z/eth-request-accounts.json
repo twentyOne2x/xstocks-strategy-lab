@@ -1,0 +1,5 @@
+{
+  "status": "rejected",
+  "code": 4001,
+  "message": "The user rejected the request."
+}
