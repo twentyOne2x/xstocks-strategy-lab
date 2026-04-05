@@ -1,0 +1,112 @@
+{
+  "steps": [
+    {
+      "ok": false,
+      "reason": "not-found",
+      "label": "SEE MY PORTFOLIO"
+    },
+    {
+      "ok": true,
+      "label": "^SKIP$",
+      "box": {
+        "text": "SKIP",
+        "disabled": false,
+        "x": 951.8515625,
+        "y": 543.390625,
+        "top": 516.390625,
+        "left": 898.609375,
+        "width": 106.484375,
+        "height": 54,
+        "visible": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "START DEPOSIT|BUY PORTFOLIO",
+      "box": {
+        "text": "START DEPOSIT",
+        "disabled": false,
+        "x": 1483.3671875,
+        "y": 37,
+        "top": 10,
+        "left": 1386.359375,
+        "width": 194.015625,
+        "height": 54,
+        "visible": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "Continue with a wallet",
+      "box": {
+        "text": "Continue with a wallet",
+        "disabled": false,
+        "x": 861.5,
+        "y": 538,
+        "top": 510,
+        "left": 708.5,
+        "width": 306,
+        "height": 56,
+        "visible": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "^Brave Wallet$",
+      "box": {
+        "text": "Brave Wallet",
+        "disabled": false,
+        "x": 859.5,
+        "y": 452,
+        "top": 424,
+        "left": 705.5,
+        "width": 308,
+        "height": 56,
+        "visible": true
+      }
+    }
+  ],
+  "state": {
+    "url": "https://24-7.markets/onboarding?p=OAB2BSHPCCARV67",
+    "text": "24-7\nMARKETS\nSIMULATION\nPreview. No money has moved.\nSTART DEPOSIT\nSTART OVER\nYOUR PORTFOLIO\nActive Leaders Basket\nSTART DEPOSIT\nSIMULATED VALUE\n$1,089\n+8.9%\n30-day simulated replay from $1,000\nMax drawdown: -4.1%\nSPYx\n48%\nMSFTx\n14%\nUSDC\n38%\nHOLDINGS\n3\nRISK\nMeasured\nREBALANCE\nweekly\nOPTIMISATION\nAutoresearch\nWHY THIS FITS YOU\nIndex-adjacent basket that keeps SPYx at the center and uses reserve posture to reduce churn.\nStay close to beta, keep route complexity simple, and surface a calmer activation path for first funding.\nMacro breadth stayed positive but narrower than AI infra.\nWHAT CHANGES NEXT\nHow it changes\nIt changes less often than the other baskets and only refreshes when the defensive posture or reserve thresholds move enough to matter.\nRebalance trigger\nA defensive-posture shift or reserve-threshold move is needed before the next rebalance review.\n\nReplay here is for reading the protective posture of the basket, not for promising a fixed downside profile.\n\nMARKET SIGNALS\nConstructive but late-cycle; preserve optionality.\nHorizon: 30 to 90 trading days\nDRIVERS\nMacro breadth\nVolatility posture\nRECENT CHANGES\nMacro breadth stayed positive but narrower than AI infra.\nDefensive overlay produced cleaner rebalance timing.\nHOLDINGS \u00b7 3 ASSETS\n\nThe portfolio stays anchored to SPYx, uses MSFTx as a lighter stability anchor, and leaves a large USDC cash reserve to keep the first funding path cleaner.\n\nASSET\tWEIGHT\tROLE\nSPYx\t48%\tCore index exposure: tracks the S&amp;P 500.\nMSFTx\t14%\tAdds quality tech exposure for growth alongside the index.\nUSDC\t38%\tCash reserve: flexibility for your first deposit.\nPORTFOLIO CONTROLS\n\nReview and trigger rebalancing when drift exceeds thresholds.\n\nBUY PORTFOLIO\nREBALANCE\nTRADE SUGGESTIONS\nMacro breadth stayed positive but narrower than AI infra.\nDefensive overlay produced cleaner rebalance timing.\nACTIVITY\nSIMULATION\nPOSITIONS\nSYMBOL\tVALUE\tWEIGHT\tSTATUS\nNVDAx\t$3,240\t48.8%\tACTIVE\nSPYx\t$1,980\t29.8%\tMONITORING\nMSTRx\t$1,420\t21.4%\tPAUSED\nEVENTS\nNow\nPAUSED\nOne position paused\n12m ago\nACTIVE\nPortfolio on track\n31m ago\nREADY TO VIEW\nOnboarding completed\nREBALANCE\nChainlink CRE\nCUSTODY\nPrivy smart wallet\nEXECUTION\n1inch route\n24-7\nMARKETS\nPOWERED BY XSTOCKS\nTokenized equity portfolios trading 24/7.\nPRODUCT\nFind my portfolio\nHow it works\nDocumentation\nFAQ\nINFRASTRUCTURE\nxStocks\nPrivy\nCoW Protocol\n1inch\nChainlink CRE\nOPEN SOURCE\nGitHub\nWaiting for Brave Wallet\n\nFor the best experience, connect only one wallet at a time.",
+    "selectedAddress": null,
+    "buttons": [
+      {
+        "i": 0,
+        "text": "START DEPOSIT",
+        "disabled": false,
+        "visible": true
+      },
+      {
+        "i": 1,
+        "text": "START OVER",
+        "disabled": false,
+        "visible": true
+      },
+      {
+        "i": 2,
+        "text": "START DEPOSIT",
+        "disabled": false,
+        "visible": true
+      },
+      {
+        "i": 3,
+        "text": "BUY PORTFOLIO",
+        "disabled": false,
+        "visible": false
+      },
+      {
+        "i": 4,
+        "text": "REBALANCE",
+        "disabled": false,
+        "visible": false
+      }
+    ],
+    "modals": [
+      {
+        "i": 0,
+        "text": "Waiting for Brave Wallet\n\nFor the best experience, connect only one wallet at a time."
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "url": "https://24-7.markets/onboarding?p=OAB2BSHPCCARV67",
+  "text": "Take a quick tour?\n\nWe will walk you through your portfolio, holdings, and market signals.\n\nSTART TOUR\nSKIP\n24-7\nMARKETS\nSIMULATION\nPreview. No money has moved.\nSTART DEPOSIT\nSTART OVER\nPORTFOLIO SUMMARY\nYour matched portfolio with simulated replay performance\nNEXT\nSKIP\nYOUR PORTFOLIO\nActive Leaders Basket\nSTART DEPOSIT\nSIMULATED VALUE\n$1,089\n+8.9%\n30-day simulated replay from $1,000\nMax drawdown: -4.1%\nSPYx\n48%\nMSFTx\n14%\nUSDC\n38%\nHOLDINGS\n3\nRISK\nMeasured\nREBALANCE\nweekly\nOPTIMISATION\nAutoresearch\nWHY THIS FITS YOU\nIndex-adjacent basket that keeps SPYx at the center and uses reserve posture to reduce churn.\nStay close to beta, keep route complexity simple, and surface a calmer activation path for first funding.\nMacro breadth stayed positive but narrower than AI infra.\nWHAT CHANGES NEXT\nHow it changes\nIt changes less often than the other baskets and only refreshes when the defensive posture or reserve thresholds move enough to matter.\nRebalance trigger\nA defensive-posture shift or reserve-threshold move is needed before the next rebalance review.\n\nReplay here is for reading the protective posture of the basket, not for promising a fixed downside profile.\n\nMARKET SIGNALS\nConstructive but late-cycle; preserve optionality.\nHorizon: 30 to 90 trading days\nDRIVERS\nMacro breadth\nVolatility posture\nRECENT CHANGES\nMacro breadth stayed positive but narrower than AI infra.\nDefensive overlay produced cleaner rebalance timing.\nHOLDINGS \u00b7 3 ASSETS\n\nThe portfolio stays anchored to SPYx, uses MSFTx as a lighter stability anchor, and leaves a large USDC cash reserve to keep the first funding path cleaner.\n\nASSET\tWEIGHT\tROLE\nSPYx\t48%\tCore index exposure: tracks the S&amp;P 500.\nMSFTx\t14%\tAdds quality tech exposure for growth alongside the index.\nUSDC\t38%\tCash reserve: flexibility for your first deposit.\nPORTFOLIO CONTROLS\n\nReview and trigger rebalancing when drift exceeds thresholds.\n\nBUY PORTFOLIO\nREBALANCE\nTRADE SUGGESTIONS\nMacro breadth stayed positive but narrower than AI infra.\nDefensive overlay produced cleaner rebalance timing.\nACTIVITY\nSIMULATION\nPOSITIONS\nSYMBOL\tVALUE\tWEIGHT\tSTATUS\nNVDAx\t$3,240\t48.8%\tACTIVE\nSPYx\t$1,980\t29.8%\tMONITORING\nMSTRx\t$1,420\t21.4%\tPAUSED\nEVENTS\nNow\nPAUSED\nOne position paused\n12m ago\nACTIVE\nPortfolio on track\n31m ago\nREADY TO VIEW\nOnboarding completed\nREBALANCE\nChainlink CRE\nCUSTODY\nPrivy smart wallet\nEXECUTION\n1inch route\n24-7\nMARKETS\nPOWERED BY XSTOCKS\nTokenized equity portfolios trading 24/7.\nPRODUCT\nFind my portfolio\nHow it works\nDocumentation\nFAQ\nINFRASTRUCTURE\nxStocks\nPrivy\nCoW Protocol\n1inch\nChainlink CRE\nOPEN SOURCE\nGitHub\nWaiting for Brave Wallet\n\nFor the best experience, connect only one wallet at a time.",
+  "selectedAddress": null,
+  "buttons": [
+    {
+      "i": 0,
+      "text": "START TOUR",
+      "disabled": false
+    },
+    {
+      "i": 1,
+      "text": "SKIP",
+      "disabled": false
+    },
+    {
+      "i": 2,
+      "text": "START DEPOSIT",
+      "disabled": false
+    },
+    {
+      "i": 3,
+      "text": "START OVER",
+      "disabled": false
+    },
+    {
+      "i": 4,
+      "text": "NEXT",
+      "disabled": false
+    },
+    {
+      "i": 5,
+      "text": "SKIP",
+      "disabled": false
+    },
+    {
+      "i": 6,
+      "text": "START DEPOSIT",
+      "disabled": false
+    },
+    {
+      "i": 7,
+      "text": "BUY PORTFOLIO",
+      "disabled": false
+    },
+    {
+      "i": 8,
+      "text": "REBALANCE",
+      "disabled": false
+    }
+  ],
+  "modals": [
+    {
+      "i": 0,
+      "text": "Take a quick tour?\n\nWe will walk you through your portfolio, holdings, and market signals.\n\nSTART TOUR\nSKIP"
+    },
+    {
+      "i": 1,
+      "text": "Waiting for Brave Wallet\n\nFor the best experience, connect only one wallet at a time."
+    }
+  ]
+}

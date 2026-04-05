@@ -1,0 +1,21 @@
+{
+  "url": "chrome://wallet-panel.top-chrome/crypto/unlock",
+  "title": "Wallet",
+  "text": "Unlock wallet\nEnter password to unlock wallet\nUnlock\nRestore",
+  "buttons": [
+    {
+      "i": 1,
+      "text": "Meld's Terms of Use",
+      "disabled": false
+    }
+  ],
+  "inputs": [
+    {
+      "i": 0,
+      "type": "password",
+      "name": "",
+      "placeholder": "Enter your password",
+      "value": ""
+    }
+  ]
+}
