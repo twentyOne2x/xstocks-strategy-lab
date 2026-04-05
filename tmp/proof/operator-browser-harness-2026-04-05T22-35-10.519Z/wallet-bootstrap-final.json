@@ -1,0 +1,12 @@
+{
+  "title": "Wallet",
+  "url": "chrome://wallet/crypto/onboarding/new/create-password",
+  "bodyTextSample": "Wallet\nCreating Wallet …",
+  "buttons": [
+    "Meld's Terms of Use",
+    "Cancel",
+    "Continue"
+  ],
+  "inputs": [],
+  "checkboxLabels": []
+}

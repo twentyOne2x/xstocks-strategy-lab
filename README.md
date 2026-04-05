@@ -177,6 +177,8 @@ Common local commands:
 pnpm dev
 pnpm --filter @xstocks-strategy-lab/web build
 pnpm --filter @xstocks-strategy-lab/web test
+pnpm proof:browser:status
+pnpm proof:browser:frontend
 node --test apps/api/test/api.test.js
 node --test apps/api/test/provider-rebalance-api.test.js
 node --test apps/api/test/rebalance-service.test.js
@@ -185,6 +187,25 @@ pnpm --filter @xstocks-strategy-lab/policy test
 ```
 
 Shared env is expected through `~/.config/attn/shared.env` or `XSTOCKS_SHARED_ENV_PATH`. Do not commit live access tokens or operator secrets.
+
+For repeatable frontend and wallet-gated operator testing, use the repo-owned browser harness under `XSL-016`:
+
+```bash
+pnpm proof:browser:status
+pnpm proof:browser:frontend
+```
+
+Recommended shared-env inputs for that harness:
+1. `XSTOCKS_BRAVE_WALLET_PASSWORD=<secret>` or `XSTOCKS_BRAVE_WALLET_PASSWORD_COMMAND='<secret retrieval command>'`
+2. optionally `XSTOCKS_BRAVE_USER_DATA_DIR="$HOME/Library/Application Support/xstocks-operator-brave"`
+3. optionally `XSTOCKS_BRAVE_CDP_URL=http://127.0.0.1:9225` if you deliberately attach to an already-running dedicated Brave instance
+
+The harness now self-launches the dedicated non-headless Brave operator profile by default. On a clean profile, `pnpm proof:browser:frontend` can bootstrap Brave Wallet into that isolated profile when a password secret source is configured. The recommended setup is still a dedicated operator profile, not a random personal browsing session and not the existing headless automation browser.
+
+Current strongest isolated-browser truth:
+1. the dedicated profile can self-bootstrap a Brave wallet and expose `window.ethereum`,
+2. the canonical activate route is reachable in that isolated profile,
+3. the current remaining frontend/browser blocker is the wallet approval boundary itself, currently `The user rejected the request.`
 
 ## Planning Surface
 

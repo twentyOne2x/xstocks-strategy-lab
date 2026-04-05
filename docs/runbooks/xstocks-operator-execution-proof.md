@@ -47,6 +47,27 @@ curl "http://localhost:3001/api/activation-preview?slotId=<slotId>&userNotionalU
 curl "http://localhost:3001/api/public-agent-handoff?slotId=<slotId>&userNotionalUsd=10"
 ```
 
+## Dedicated Operator Browser Environment
+
+Use a dedicated non-headless Brave profile for wallet-gated frontend proof. Do not depend on a random personal browser session, and do not rely on the current headless automation browser if wallet UI or unlock steps matter.
+
+Recommended setup:
+
+```bash
+pnpm proof:browser:status
+pnpm proof:browser:frontend
+```
+
+Recommended shared-env inputs:
+
+1. `XSTOCKS_BRAVE_WALLET_PASSWORD` or `XSTOCKS_BRAVE_WALLET_PASSWORD_COMMAND`
+2. optionally `XSTOCKS_BRAVE_USER_DATA_DIR`
+3. optionally `XSTOCKS_BRAVE_CDP_URL` if you deliberately attach to a pre-launched dedicated browser
+
+The harness writes proof bundles under `tmp/proof/operator-browser-harness-*/` and fails closed on the exact missing setup or first live blocker reached. On a clean dedicated profile, it now bootstraps Brave Wallet automatically when a password secret source is configured. The current strongest browser proof reaches a real injected provider on the canonical activate route and now stops at the wallet approval boundary itself (`The user rejected the request.`) instead of the old missing-provider boundary.
+
+`pnpm browser:launch:xstocks` remains optional for manual attach/debug flows, but it is no longer the primary required step for the repo-owned proof path.
+
 If `node apps/api/src/index.js` fails on a missing `packages/shared/dist/**` module, rebuild `packages/shared` first and then restart the API.
 
 If `localhost:3001` is already occupied or does not serve `GET /api/public-agent-handoff`, restart the repo API on a clean port and use that base URL instead of trusting a stale local server.
