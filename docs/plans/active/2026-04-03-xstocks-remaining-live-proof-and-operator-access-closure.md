@@ -86,11 +86,17 @@ Create new alongside:
 10. The live public buy route remains hosted `1inch` on:
    - [https://24-7.markets/onboarding](https://24-7.markets/onboarding)
    - [https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1](https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1)
-11. The runtime lane is now split across two truthful surfaces:
+11. The strongest canonical frontend proof for the public hosted `1inch` route is now the April 5 authenticated-Brave trusted-click run under [tmp/proof/2026-04-05-frontend-close-live](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/2026-04-05-frontend-close-live):
+   - onboarding `p=OAB2BSHPCCARV67` reached the public `Start deposit` surface,
+   - the real Privy modal opened,
+   - the real `Brave Wallet` option was selected with trusted CDP mouse events,
+   - and the live wallet handoff opened `chrome://wallet-panel.top-chrome/crypto/unlock`.
+12. The exact current frontend blocker on the canonical public route is no longer “activate page broken” or “frontend cannot reach wallet handoff.” It is the locked Brave wallet panel, which currently shows `Unlock wallet` and `Enter password to unlock wallet`.
+13. The runtime lane is now split across two truthful surfaces:
    - checked-in Railway cron code and config still exist in [autoresearch-railway-cron.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/src/autoresearch-railway-cron.js) and [railway.json](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/worker/railway.json),
    - [server.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/server.js) still keeps local default boot fail-closed unless `AUTORESEARCH_PROOF_PATH` or `XSTOCKS_AUTORESEARCH_PROOF_PATH` is explicitly set,
    - and the live public API now returns `truthBoundary=railway_cron_service`, `recurringAutonomousProven=true`, and `schedulerHost.serviceName=autoresearch-worker`, with proof captured in [summary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/tmp/proof/runtime-20260404-001709/summary.md).
-12. The operator CLI matrix is now:
+14. The operator CLI matrix is now:
    - `gh`: healthy,
    - `vercel`: healthy,
    - `railway`: blocked with `invalid_grant` on `railway whoami`.
@@ -99,7 +105,7 @@ Create new alongside:
 
 | Rank | Workstream | Recurrence in this thread | Value | Readiness | Current state | Issue / plan mapping | Thread-claimed status | Verified implementation / proof status | Verified canonical frontend status | Recommended next move |
 | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Shared `1inch` post-signature advance | 4 | very high | high | partial | `XSL-014C`, [2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md) | repeatedly described as the next real blocker | backend path and proof runner are implemented; fresh authenticated proof again stops at missing signer-owned Fusion signatures for six live quoted core legs | yes, hosted `1inch` is the canonical route | collect real signer signatures and rerun once |
+| 1 | Shared `1inch` post-signature advance | 4 | very high | high | partial | `XSL-014C`, [2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-shared-oneinch-submission-funding-and-custody-closure.md) | repeatedly described as the next real blocker | backend path and proof runner are implemented; fresh authenticated proof still stops at missing signer-owned Fusion signatures for six live quoted core legs, while the canonical frontend now reaches the real Brave wallet unlock panel | yes, hosted `1inch` is the canonical route and the live browser now reaches wallet handoff | unlock the wallet, collect real signatures, and rerun once |
 | 2 | Railway operator access reconciliation | 4 | very high | medium | public host proven, local operator CLI blocked | `XSL-006A`, [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | cleanup was claimed complete | code, tests, default local fail-closed behavior, and fresh public Railway proof all exist; only machine-local Railway operator access remains blocked | public runtime API is truthful and live-proven | restore or bypass Railway access without reopening runtime logic |
 | 3 | Enso live proof or truthful demotion | 3 | high | medium | partial implementation, proof-started | `XSL-005B`, `XSL-005C`, [2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-enso-portfolio-usdc-multideposit-lane-spec.md) | implementation candidate only | shared contracts, API path, web handling, proof runner, approval endpoint, and direct substrate diagnostic are now in place; Enso now proves a real smart-account `delegate` bundle for `NVDAx + AMZNx`, while the current exact blocker is persistent route coverage failure on `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx`, plus executable `AUSD` metadata | no, canonical public route is still hosted `1inch` | keep hosted `1inch` public-default and either resolve upstream Enso route coverage or freeze Enso as non-canonical |
 
@@ -110,7 +116,7 @@ Create new alongside:
    - Enso should either become live-proven on the exact promoted basket or stay explicitly non-live,
    - and the runtime lane should keep public Railway-host proof, local fail-closed defaults, and machine operator access reconciled in one truthful story.
 2. Current repo truth:
-   - hosted `1inch` is the live public route, and the latest fresh-auth proof again reaches the signer boundary and stops at missing user signatures,
+   - hosted `1inch` is the live public route, the latest fresh-auth backend proof again reaches the signer boundary and stops at missing user signatures, and the strongest canonical frontend proof now reaches the real Brave wallet unlock panel on the live buy flow,
    - Enso has partial code plus a proof runner, the approval endpoint bug is fixed, and the substrate now proves a real smart-account `delegate` bundle over the routeable pair `NVDAx + AMZNx`, but the promoted basket still fails upstream bundle generation because `MSFTx`, `AAPLx`, `METAx`, and `GOOGLx` are still not quoteable through Enso across `USDC`/`USDG` funding and deployment/wrapper output variants, while `AUSD` remains metadata-blocked,
    - live runtime API truth is now Railway-backed and proven, while local default boot remains fail-closed and machine-local Railway CLI access is still blocked.
 3. Honestly complete means:
@@ -177,7 +183,8 @@ Create new alongside:
 ### Frontend Work Required
 
 1. None by default.
-2. Only touch frontend if the hosted signer helper cannot actually collect the signatures the backend already knows how to submit.
+2. The strongest April 5 browser proof already shows the canonical surface can reach the real Privy modal and the real Brave wallet panel through trusted clicks.
+3. Only touch frontend if that live browser path regresses before wallet unlock or if the app stops surfacing the signer handoff at all.
 
 ### Outside-The-Box Fix Paths
 
@@ -201,6 +208,7 @@ Expected proof artifacts:
 2. signed `signature-inputs.json` or equivalent signature map
 3. `submissions.json` if venue submission occurs
 4. updated `summary.json` with the first post-signature blocker or venue artifact
+5. canonical frontend capture showing either the landed tx path or the wallet/signature boundary on the live hosted route
 
 ## Workstream B: Railway Operator Access Reconciliation
 
