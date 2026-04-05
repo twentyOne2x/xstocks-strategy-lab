@@ -3,7 +3,6 @@ import { mkdir, readdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { createXStocksBoundaryRepository } from "../../../packages/xstocks/dist/index.js";
 import { createEnsoExecutionClient } from "../src/services/enso-execution-client.js";
 
 const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -15,6 +14,9 @@ const DEFAULT_SHARED_ENV_PATH =
   resolve(process.env.HOME ?? "~", ".config/attn/shared.env");
 const DEFAULT_SWEEP_AMOUNTS_USD = [200, 250, 300, 400, 500, 750, 1000];
 const DEFAULT_SWEEP_SYMBOLS = ["MSFTx", "AAPLx", "METAx", "GOOGLx"];
+const XSTOCKS_PUBLIC_ASSET_API_BASE_URL =
+  "https://api.xstocks.fi/api/v2/public/assets";
+const EXACT_VARIANT_FUNDING_SYMBOLS = ["USDC", "USDG"];
 
 function parseEnvFile(raw) {
   const entries = {};
@@ -93,6 +95,24 @@ function buildRouteAction(leg, amountUsd = leg.targetNotionalUsd) {
       tokenOut: leg.receivingTokenAddress,
       amountIn: toAtomicUsdcAmount(amountUsd),
       slippage: "100",
+    },
+  };
+}
+
+function buildRouteActionArgs({
+  tokenIn,
+  tokenOut,
+  amountIn,
+  slippage = "100",
+}) {
+  return {
+    protocol: "enso",
+    action: "route",
+    args: {
+      tokenIn,
+      tokenOut,
+      amountIn,
+      slippage,
     },
   };
 }
@@ -192,12 +212,70 @@ async function captureApproval({ client, fromAddress, tokenAddress, amount }) {
   }
 }
 
+async function fetchJson(url, init = {}) {
+  const response = await fetch(url, {
+    ...init,
+    headers: {
+      accept: "application/json",
+      "user-agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+      ...(init.headers ?? {}),
+    },
+  });
+  const rawBody = await response.text();
+  const body = rawBody.trim().length > 0 ? JSON.parse(rawBody) : {};
+
+  if (!response.ok) {
+    throw new Error(
+      `Request to ${url} failed with status ${response.status}: ${rawBody}`,
+    );
+  }
+
+  return body;
+}
+
+async function fetchLiveAsset(symbol) {
+  return await fetchJson(`${XSTOCKS_PUBLIC_ASSET_API_BASE_URL}/${symbol}`);
+}
+
+function findStablecoinAddress(liveAsset, symbol) {
+  const deployment =
+    liveAsset?.deployments?.find((item) => item.network === "Ethereum") ?? null;
+
+  return (
+    deployment?.stablecoins?.find(
+      (item) => item.network === "Ethereum" && item.symbol === symbol,
+    )?.address ?? null
+  );
+}
+
+function createAusdBridgeSnapshot() {
+  return {
+    assetSymbol: "AUSD",
+    source: "stablecoin_bridge",
+    deployments: {
+      Ethereum: {
+        supportsAtomicSwaps: true,
+        address: null,
+        wrapperAddress: null,
+        stablecoinSymbols: ["AUSD"],
+      },
+    },
+    notes: [
+      "AUSD is surfaced here through a package-owned execution-boundary bridge helper.",
+      "This is not a claim that AUSD is an xStocks public asset.",
+    ],
+  };
+}
+
 async function captureBundle({
   client,
   label,
   actions,
   fromAddress,
   receiver,
+  routingStrategy = "router",
+  spender = fromAddress,
 }) {
   try {
     const response = await client.requestBundle({
@@ -205,12 +283,14 @@ async function captureBundle({
       chainId: 1,
       fromAddress,
       receiver,
-      routingStrategy: "router",
+      routingStrategy,
+      spender,
     });
 
     return {
       label,
       ok: true,
+      fromAddress,
       receiver,
       actions,
       response,
@@ -218,6 +298,7 @@ async function captureBundle({
   } catch (error) {
     return {
       label,
+      fromAddress,
       receiver,
       actions,
       ...parseEnsoError(error),
@@ -244,6 +325,7 @@ function summarizeCase(caseResult) {
     label: caseResult.label,
     ok: true,
     receiver: caseResult.receiver,
+    fromAddress: caseResult.fromAddress ?? null,
     txTo:
       typeof caseResult.response?.tx?.to === "string"
         ? caseResult.response.tx.to
@@ -277,6 +359,9 @@ const summary = {
   receiverSensitivity: null,
   coreSixLegBundle: null,
   amountSweep: {},
+  exactVariantMatrix: {},
+  partialRouteableBundle: null,
+  liveAssetMetadata: {},
   ausdBridgeSnapshot: null,
   blocker: null,
 };
@@ -291,13 +376,22 @@ try {
     apiKey: requiredEnv("ENSO_API_KEY"),
     requestTimeoutMs: 30_000,
   });
-  const boundaryRepository = createXStocksBoundaryRepository({});
   const executionRequest = executionCreate.executionRequest;
   const fromAddress = executionRequest.manualSignerAddress;
+  const smartAccountAddress =
+    executionRequest.policyAccountAddress ??
+    executionRequest.executionDestinationAddress ??
+    executionRequest.settlementAddress ??
+    null;
   const settlementAddress =
     executionRequest.executionDestinationAddress ??
     executionRequest.settlementAddress;
   const coreLegs = executionRequest.legs.filter((leg) => leg.state !== "blocked");
+  const liveAssets = Object.fromEntries(
+    await Promise.all(
+      coreLegs.map(async (leg) => [leg.assetSymbol, await fetchLiveAsset(leg.assetSymbol)]),
+    ),
+  );
 
   summary.inputArtifactPath = inputArtifactPath;
   summary.ensoApiBaseUrl = client.baseUrl;
@@ -309,6 +403,29 @@ try {
     paymentTokenAddress: leg.paymentTokenAddress,
     receivingTokenAddress: leg.receivingTokenAddress,
   }));
+  summary.liveAssetMetadata = Object.fromEntries(
+    coreLegs.map((leg) => {
+      const deployment =
+        liveAssets[leg.assetSymbol]?.deployments?.find(
+          (item) => item.network === "Ethereum",
+        ) ?? null;
+
+      return [
+        leg.assetSymbol,
+        {
+          deploymentAddress: deployment?.address ?? null,
+          wrapperAddress: deployment?.wrapperAddress ?? null,
+          supportsAtomicSwaps: deployment?.supportsAtomicSwaps ?? null,
+          fundingTokens: Object.fromEntries(
+            EXACT_VARIANT_FUNDING_SYMBOLS.map((symbol) => [
+              symbol,
+              findStablecoinAddress(liveAssets[leg.assetSymbol], symbol),
+            ]),
+          ),
+        },
+      ];
+    }),
+  );
 
   const approval = await captureApproval({
     client,
@@ -348,6 +465,7 @@ try {
   }
 
   const sweepCases = [];
+  const exactVariantCases = [];
 
   for (const amountUsd of DEFAULT_SWEEP_AMOUNTS_USD) {
     for (const leg of coreLegs.filter((item) =>
@@ -365,6 +483,43 @@ try {
     }
   }
 
+  for (const leg of coreLegs) {
+    const liveMetadata = summary.liveAssetMetadata[leg.assetSymbol];
+    const outputVariants = [
+      ["deployment", liveMetadata?.deploymentAddress ?? leg.receivingTokenAddress],
+      ["wrapper", liveMetadata?.wrapperAddress ?? null],
+    ].filter(([, address]) => address);
+
+    for (const fundingSymbol of EXACT_VARIANT_FUNDING_SYMBOLS) {
+      const paymentTokenAddress =
+        fundingSymbol === "USDC"
+          ? leg.paymentTokenAddress
+          : liveMetadata?.fundingTokens?.[fundingSymbol] ?? null;
+
+      if (!paymentTokenAddress) {
+        continue;
+      }
+
+      for (const [outputKind, tokenOut] of outputVariants) {
+        exactVariantCases.push(
+          await captureBundle({
+            client,
+            label: `${leg.assetSymbol}:${fundingSymbol}:${outputKind}:signer`,
+            actions: [
+              buildRouteActionArgs({
+                tokenIn: paymentTokenAddress,
+                tokenOut,
+                amountIn: toAtomicUsdcAmount(leg.targetNotionalUsd),
+              }),
+            ],
+            fromAddress,
+            receiver: fromAddress,
+          }),
+        );
+      }
+    }
+  }
+
   const sixLegSettlement = await captureBundle({
     client,
     label: "core6:exact:settlement",
@@ -379,7 +534,31 @@ try {
     fromAddress,
     receiver: fromAddress,
   });
-  const ausdBridgeSnapshot = await boundaryRepository.fetchAssetSnapshot("AUSD");
+  const routeableBundleLegs = coreLegs.filter((leg) =>
+    ["NVDAx", "AMZNx"].includes(leg.assetSymbol),
+  );
+  const partialRouteableBundle =
+    routeableBundleLegs.length === 0 || !smartAccountAddress
+      ? {
+          label: "core2:routeable:delegate",
+          ok: false,
+          message:
+            routeableBundleLegs.length === 0
+              ? "No routeable core legs were available for the partial Enso bundle probe."
+              : "A smart-account settlement address was required for the delegate bundle probe.",
+          statusCode: null,
+          payload: null,
+        }
+      : await captureBundle({
+          client,
+          label: "core2:routeable:delegate",
+          actions: routeableBundleLegs.map((leg) => buildRouteAction(leg)),
+          fromAddress: smartAccountAddress,
+          receiver: smartAccountAddress,
+          routingStrategy: "delegate",
+          spender: smartAccountAddress,
+        });
+  const ausdBridgeSnapshot = createAusdBridgeSnapshot();
 
   summary.receiverSensitivity = Object.fromEntries(
     coreLegs.map((leg) => [
@@ -408,6 +587,32 @@ try {
         .map((item) => summarizeCase(item)),
     ]),
   );
+  summary.exactVariantMatrix = Object.fromEntries(
+    coreLegs.map((leg) => [
+      leg.assetSymbol,
+      Object.fromEntries(
+        EXACT_VARIANT_FUNDING_SYMBOLS.map((fundingSymbol) => [
+          fundingSymbol,
+          Object.fromEntries(
+            ["deployment", "wrapper"].map((outputKind) => {
+              const match = exactVariantCases.find(
+                (item) =>
+                  item.label ===
+                  `${leg.assetSymbol}:${fundingSymbol}:${outputKind}:signer`,
+              );
+
+              return [outputKind, match ? summarizeCase(match) : null];
+            }),
+          ),
+        ]),
+      ),
+    ]),
+  );
+  summary.partialRouteableBundle = {
+    requestedSymbols: routeableBundleLegs.map((leg) => leg.assetSymbol),
+    smartAccountAddress,
+    result: summarizeCase(partialRouteableBundle),
+  };
   summary.ausdBridgeSnapshot = {
     source: ausdBridgeSnapshot.source,
     supportsAtomicSwaps:
@@ -427,23 +632,39 @@ try {
     }))
     .filter((item) => !item.settlement.ok && !item.signer.ok)
     .map((item) => item.assetSymbol);
+  const variantFailures = coreLegs
+    .map((leg) => ({
+      assetSymbol: leg.assetSymbol,
+      coverage: summary.exactVariantMatrix[leg.assetSymbol],
+    }))
+    .filter(({ coverage }) =>
+      EXACT_VARIANT_FUNDING_SYMBOLS.every((fundingSymbol) =>
+        ["deployment", "wrapper"].every(
+          (outputKind) => coverage?.[fundingSymbol]?.[outputKind]?.ok !== true,
+        ),
+      ),
+    )
+    .map((item) => item.assetSymbol);
 
   summary.state = "completed";
   summary.blocker = {
     code: "direct_quoteability_matrix",
     stage: "upstream_enso_probe",
     message:
-      exactFailures.length === 0
-        ? "All direct core-leg Enso probes succeeded; remaining closure would depend on wallet signing and onchain submission."
-        : `The direct Enso probe proves the remaining failing core legs are ${exactFailures.join(", ")}. Receiver choice does not change the failures, and the sweep still fails on those names through $1000.`,
+      variantFailures.length === 0
+        ? "All exact Enso route-coverage probes succeeded; remaining closure would depend on wallet signing and onchain submission."
+        : `Enso returns a real smart-account delegate bundle for ${routeableBundleLegs.map((leg) => leg.assetSymbol).join(", ")}, but ${variantFailures.join(", ")} still fail across USDC/USDG funding and deployment/wrapper output variants. Receiver choice does not change those failures, the sweep still fails on those names through $1000, and AUSD still lacks executable Ethereum token metadata on the repo-owned boundary.`,
     failingCoreLegs: exactFailures,
+    variantFailureLegs: variantFailures,
   };
 
   await writeArtifact(proofDir, "execution-create-input.json", executionCreate);
   await writeArtifact(proofDir, "direct-core-cases.json", directCases);
   await writeArtifact(proofDir, "direct-sweep-cases.json", sweepCases);
+  await writeArtifact(proofDir, "direct-exact-variant-cases.json", exactVariantCases);
   await writeArtifact(proofDir, "core-6leg-settlement.json", sixLegSettlement);
   await writeArtifact(proofDir, "core-6leg-signer.json", sixLegSigner);
+  await writeArtifact(proofDir, "partial-routeable-bundle.json", partialRouteableBundle);
   await writeArtifact(proofDir, "ausd-bridge-snapshot.json", ausdBridgeSnapshot);
   await writeArtifact(proofDir, "summary.json", summary);
   process.stdout.write(`${JSON.stringify({ proofDir, summary }, null, 2)}\n`);

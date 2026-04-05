@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "response": {
+    "token": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    "amount": "1000000000",
+    "spender": "0xF75584eF6673aD213a685a1B58Cc0330B8eA22Cf",
+    "gas": "56361",
+    "tx": {
+      "data": "0x095ea7b3000000000000000000000000f75584ef6673ad213a685a1b58cc0330b8ea22cf000000000000000000000000000000000000000000000000000000003b9aca00",
+      "to": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "from": "0xA28DED32f0bDE74C42739B5B3fdc79BCA0C571b2"
+    }
+  }
+}

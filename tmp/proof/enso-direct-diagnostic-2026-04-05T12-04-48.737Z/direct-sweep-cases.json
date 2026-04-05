@@ -1,0 +1,730 @@
+[
+  {
+    "label": "MSFTx:sweep:200:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "amountIn": "200000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"c3acd45f-742d-4e19-8bf1-cd22e5260ac5\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "c3acd45f-742d-4e19-8bf1-cd22e5260ac5"
+    }
+  },
+  {
+    "label": "AAPLx:sweep:200:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "amountIn": "200000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"c06377e9-9c1b-46f7-a84e-59ffce9aa1ae\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "c06377e9-9c1b-46f7-a84e-59ffce9aa1ae"
+    }
+  },
+  {
+    "label": "METAx:sweep:200:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "amountIn": "200000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"2fcd5019-9556-4315-9ec1-735e00f07dec\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "2fcd5019-9556-4315-9ec1-735e00f07dec"
+    }
+  },
+  {
+    "label": "GOOGLx:sweep:200:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "amountIn": "200000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"55d595c9-df55-4642-9836-467e9874d70e\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "55d595c9-df55-4642-9836-467e9874d70e"
+    }
+  },
+  {
+    "label": "MSFTx:sweep:250:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "amountIn": "250000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"8e2fcc07-f16f-4a32-a74f-9d5314aa84f1\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "8e2fcc07-f16f-4a32-a74f-9d5314aa84f1"
+    }
+  },
+  {
+    "label": "AAPLx:sweep:250:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "amountIn": "250000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"4f4f951a-1f7c-4485-9c16-a121be972cb3\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "4f4f951a-1f7c-4485-9c16-a121be972cb3"
+    }
+  },
+  {
+    "label": "METAx:sweep:250:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "amountIn": "250000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"68ddab36-9a7f-498c-b164-887780faf555\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "68ddab36-9a7f-498c-b164-887780faf555"
+    }
+  },
+  {
+    "label": "GOOGLx:sweep:250:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "amountIn": "250000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"c00cf3d9-1b0e-48d1-8688-729617c022e6\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "c00cf3d9-1b0e-48d1-8688-729617c022e6"
+    }
+  },
+  {
+    "label": "MSFTx:sweep:300:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "amountIn": "300000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"fad67390-caae-4753-961b-6bd563079655\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "fad67390-caae-4753-961b-6bd563079655"
+    }
+  },
+  {
+    "label": "AAPLx:sweep:300:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "amountIn": "300000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"dbdea690-71a0-4388-8e42-bb0eb3f53292\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "dbdea690-71a0-4388-8e42-bb0eb3f53292"
+    }
+  },
+  {
+    "label": "METAx:sweep:300:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "amountIn": "300000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"8207208b-0486-494a-9134-8bdfb079b1dd\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "8207208b-0486-494a-9134-8bdfb079b1dd"
+    }
+  },
+  {
+    "label": "GOOGLx:sweep:300:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "amountIn": "300000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"e820cfb6-5824-495a-8b59-4eaad36e7663\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "e820cfb6-5824-495a-8b59-4eaad36e7663"
+    }
+  },
+  {
+    "label": "MSFTx:sweep:400:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "amountIn": "400000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"20b3d5bf-f722-4e98-8a21-67e708cdb017\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "20b3d5bf-f722-4e98-8a21-67e708cdb017"
+    }
+  },
+  {
+    "label": "AAPLx:sweep:400:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "amountIn": "400000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"12ad2842-de3f-47a8-8702-0b1fc1b4dece\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "12ad2842-de3f-47a8-8702-0b1fc1b4dece"
+    }
+  },
+  {
+    "label": "METAx:sweep:400:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "amountIn": "400000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"8ebe38bb-3978-40e8-89c7-b732d9745b8b\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "8ebe38bb-3978-40e8-89c7-b732d9745b8b"
+    }
+  },
+  {
+    "label": "GOOGLx:sweep:400:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "amountIn": "400000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"2d811f07-d554-4619-912c-e0039483c689\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "2d811f07-d554-4619-912c-e0039483c689"
+    }
+  },
+  {
+    "label": "MSFTx:sweep:500:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "amountIn": "500000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"910c7c2c-9d20-43f5-bfb1-494b78d725fe\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "910c7c2c-9d20-43f5-bfb1-494b78d725fe"
+    }
+  },
+  {
+    "label": "AAPLx:sweep:500:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "amountIn": "500000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"0d1ee187-1b8c-4386-a573-e32ae1330f1a\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "0d1ee187-1b8c-4386-a573-e32ae1330f1a"
+    }
+  },
+  {
+    "label": "METAx:sweep:500:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "amountIn": "500000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"3bda6eda-7648-4317-a4c6-34d2777b380c\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "3bda6eda-7648-4317-a4c6-34d2777b380c"
+    }
+  },
+  {
+    "label": "GOOGLx:sweep:500:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "amountIn": "500000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"c33f07ff-8539-4f7d-ae26-5b413f00b198\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "c33f07ff-8539-4f7d-ae26-5b413f00b198"
+    }
+  },
+  {
+    "label": "MSFTx:sweep:750:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "amountIn": "750000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"728b6329-9dd2-4cf0-ad85-3994e411de2b\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "728b6329-9dd2-4cf0-ad85-3994e411de2b"
+    }
+  },
+  {
+    "label": "AAPLx:sweep:750:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "amountIn": "750000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"a084b389-6dd2-4a16-b8c4-ec551c1de101\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "a084b389-6dd2-4a16-b8c4-ec551c1de101"
+    }
+  },
+  {
+    "label": "METAx:sweep:750:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "amountIn": "750000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"76ddc0dd-7556-4421-b683-279a7515a8db\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "76ddc0dd-7556-4421-b683-279a7515a8db"
+    }
+  },
+  {
+    "label": "GOOGLx:sweep:750:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "amountIn": "750000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"d978199d-a8eb-44d4-a651-3fdca9938a02\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "d978199d-a8eb-44d4-a651-3fdca9938a02"
+    }
+  },
+  {
+    "label": "MSFTx:sweep:1000:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "amountIn": "1000000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"dd5dcc1f-974f-42ee-817c-6e414ad982c5\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "dd5dcc1f-974f-42ee-817c-6e414ad982c5"
+    }
+  },
+  {
+    "label": "AAPLx:sweep:1000:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "amountIn": "1000000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"72826a2a-2773-46df-a7bd-0d510263681a\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "72826a2a-2773-46df-a7bd-0d510263681a"
+    }
+  },
+  {
+    "label": "METAx:sweep:1000:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "amountIn": "1000000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"31f842c1-382a-43fa-a571-612e940a2ac0\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "31f842c1-382a-43fa-a571-612e940a2ac0"
+    }
+  },
+  {
+    "label": "GOOGLx:sweep:1000:settlement",
+    "fromAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+    "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39",
+    "actions": [
+      {
+        "protocol": "enso",
+        "action": "route",
+        "args": {
+          "tokenIn": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "tokenOut": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "amountIn": "1000000000",
+          "slippage": "100"
+        }
+      }
+    ],
+    "ok": false,
+    "message": "Enso bundle request failed with status 404: {\"message\":\"Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range\",\"error\":\"Not Found\",\"statusCode\":404,\"requestId\":\"5a4d2906-4fae-40cf-828b-0b3aaf5b391c\"}",
+    "statusCode": 404,
+    "payload": {
+      "message": "Swap not found for a required underlying of defi route, please make sure your amountIn is within an acceptable range",
+      "error": "Not Found",
+      "statusCode": 404,
+      "requestId": "5a4d2906-4fae-40cf-828b-0b3aaf5b391c"
+    }
+  }
+]
