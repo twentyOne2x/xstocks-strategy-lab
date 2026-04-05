@@ -73,6 +73,11 @@ type ActivationSaveResponse = {
   version: string;
   generatedAt: string;
   activation: ApiActivationView;
+  executionPlan?: {
+    executionState?: string;
+    executionEligibility?: string;
+    blockers?: string[];
+  } | null;
 };
 
 type SignatureInput = {
@@ -209,6 +214,11 @@ async function postActivationSave(
     ok: true as const,
     error: null,
     activation: (payload.data as ActivationSaveResponse).activation,
+    activationBlocker:
+      Array.isArray((payload.data as ActivationSaveResponse).executionPlan?.blockers) &&
+      typeof (payload.data as ActivationSaveResponse).executionPlan?.blockers?.[0] === "string"
+        ? ((payload.data as ActivationSaveResponse).executionPlan?.blockers?.[0] as string)
+        : null,
   };
 }
 
@@ -555,6 +565,14 @@ async function ensureActivation(
   }
 
   args.onActivation?.(savedActivation.activation);
+
+  if (savedActivation.activation.status !== "ready") {
+    throw new Error(
+      savedActivation.activationBlocker ??
+        "Portfolio activation is not ready yet. Check wallet or funding status and try again.",
+    );
+  }
+
   return savedActivation.activation;
 }
 

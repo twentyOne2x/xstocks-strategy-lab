@@ -796,7 +796,10 @@ function SimulatedWorkspace({
           .replace(/hosted browser helper/gi, "buy flow")
           .replace(/XSL-\d+/g, "")
           .replace(/hosted execution/gi, "execution")
-          .replace(/saved activation snapshot is not in a ready\/executable state/gi, "Portfolio activation is still being prepared. Try again in a moment.")
+          .replace(
+            /saved activation snapshot is not in a ready\/executable state/gi,
+            "Portfolio activation is not ready yet. Check wallet or funding status and try again.",
+          )
           .trim();
         setBuyStatus(cleanBlocker);
       } else {

@@ -244,6 +244,7 @@ Last updated: 2026-04-05
 - Plan links:
   - [2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-portfolio-buy-multiquote-implementation.md)
   - [2026-04-03-xstocks-portfolio-buy-and-deposit-closure.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-03-xstocks-portfolio-buy-and-deposit-closure.md)
+  - [2026-04-05-xstocks-canonical-buy-activation-preparing-lag-fix.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-05-xstocks-canonical-buy-activation-preparing-lag-fix.md)
 - Executor prompt:
   - Keep ownership under `XSL-005`.
   - Touch only the narrow web and doc surfaces needed to keep the public-default route truthful.
@@ -262,6 +263,20 @@ Last updated: 2026-04-05
   - Public copy now matches the active approval model: wallet-first hosted `1inch`, per-trade user approval, no hidden autonomous execution.
   - The strongest April 5 canonical frontend proof now goes further than route and copy truth: trusted CDP clicks on the real Brave session reached the live `Start deposit` modal, the real Privy wallet chooser, and the real Brave wallet panel at `chrome://wallet-panel.top-chrome/crypto/unlock`. The exact current blocker is external wallet state, not a broken frontend surface.
   - The canonical frontend path is therefore: onboarding recommendation -> `Start deposit` -> `Continue with a wallet` -> `Brave Wallet` -> wallet unlock. Under `XSL-005D`, that is still not execution-complete because no landed onchain transaction exists yet.
+- Continuation note:
+  - Date: 2026-04-05
+  - New user-facing bug: when the canonical buy path saves a non-ready activation snapshot, the frontend can spend time creating and reloading a doomed execution request and then flatten the blocker into `Portfolio activation is still being prepared. Try again in a moment.`
+  - Suspected cause: the buy flow does not fail fast after `POST /api/activations` returns a non-`ready` execution plan, and the frontend cleanup step rewrites the backend blocker into one generic message even when the activation save already knows the exact prerequisite.
+  - Fix intent for this tranche: fail fast on non-ready activation saves, surface the exact activation blocker from the save response, and reserve the generic “still being prepared” copy for genuine transient-preparation states only if one still exists after the fail-fast guard.
+  - Acceptance addendum:
+    1. The canonical `Buy portfolio` flow does not create a new execution request after an activation save already proves the snapshot is non-ready.
+    2. The first blocker shown to the user after a non-ready activation save comes from the activation plan truth, not the later generic execution-leg blocker.
+    3. The exact string `Portfolio activation is still being prepared. Try again in a moment.` no longer appears for known wallet/funding/readiness blockers on the canonical buy route.
+    4. The narrow manual-execution tests cover the new fail-fast path.
+  - Verification note:
+    - The buy flow now fails fast after a non-ready activation save and surfaces the saved execution-plan blocker instead of continuing into execution-request creation.
+    - The onboarding cleanup fallback now says `Portfolio activation is not ready yet. Check wallet or funding status and try again.` instead of implying that progress is still being made.
+    - Verified locally with `pnpm --filter @xstocks-strategy-lab/web test`, `pnpm exec vitest run src/lib/manual-execution.test.ts`, `pnpm --filter @xstocks-strategy-lab/web build`, and `git diff --check`.
 
 ### XSL-005D Onchain Closure Proof Standard
 
