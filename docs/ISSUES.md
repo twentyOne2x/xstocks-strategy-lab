@@ -1,6 +1,6 @@
 # Issues
 
-Last updated: 2026-04-01
+Last updated: 2026-04-02
 
 ## Active
 
@@ -788,11 +788,63 @@ Last updated: 2026-04-01
   - [ ] tests run
   - [ ] proof artifacts captured
 
+### XSL-018C Policy-Bounded Automatic Execution Gate
+
+- Type: backend/runtime/policy
+- Status: active
+- Canonical owner lane: `XSL-018`
+- Date opened: 2026-04-02
+- Context: `XSL-014A` and the manual execution substrate now reserve
+  `policy_bounded_automation` as a future execution owner, and `XSL-018B` is the
+  next handoff lane from provider review into execution staging. The repo still does
+  not freeze what can ever move from staged execution into automatic execution, which
+  trigger classes remain review-only, or what signer and risk boundaries would be
+  required before any autonomous claim becomes truthful.
+- Suspected cause: the shared contracts were widened first so later work would have
+  room for `execute_all`, `provider_staging`, and `policy_bounded_automation`, but
+  no narrow owner slice yet states the exact policy gate between "staged" and
+  "automatic".
+- Fix intent: create the narrow post-`XSL-018B` owner slice that keeps provider and
+  policy events review-only, allows only one future repo-owned scheduled path to
+  become auto-executable, and freezes the signer model, size, asset, venue, and
+  risk caps, hard stops, and rollback boundaries without implementing runtime
+  autonomy yet.
+- Acceptance criteria:
+  1. One dedicated owner spec exists for the post-`XSL-018B` automatic-execution
+     gate.
+  2. The spec defines exact review-only versus auto-executable trigger classes using
+     the current rebalance and execution contract names.
+  3. The spec defines the exact staged-to-auto policy gate, signer requirements,
+     phase-1 size, asset, venue, and risk caps, and hard-stop or rollback rules.
+  4. The spec explicitly states that current runtime truth remains
+     `autonomousExecutionProven=false` until separate proof lands.
+- Complexity: medium
+- Plan:
+  - [2026-04-02-xstocks-policy-bounded-automatic-execution-gate.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-policy-bounded-automatic-execution-gate.md)
+- Executor prompt:
+  - Update docs only; do not implement autonomous execution in runtime yet.
+  - Reuse the existing contract names in `packages/shared/src/contracts/execution.ts`,
+    `packages/shared/src/rebalance.js`, `packages/policy/src/rebalance-policy.js`,
+    and `packages/policy/src/rebalance-orchestration.js`.
+  - Keep `scheduled_cron` as the only future auto-submit candidate unless repo truth
+    proves a narrower or broader path later.
+  - Keep `provider_triggered`, `policy_event`, `provider_staging`, and manual
+    `execute_all` explicitly bounded to review-only or manual-only behavior in this
+    slice.
+  - Verify with `git diff --check`.
+- Checklist:
+  - [ ] report captured
+  - [ ] context added
+  - [ ] fix applied
+  - [ ] tests run
+  - [ ] proof artifacts captured
+
 ## 2026-04-01 Final Residual Backlog
 
 1. `XSL-018A`: add the canonical right-rail event-triggered rebalance surface plus one truthful top-level `Execute all` control.
 2. `XSL-018B`: hand accepted provider review into the same execution path instead of stopping forever at `awaiting_operator`.
-3. `XSL-017`: inventory which wallet, venue, provider-review, and asset surfaces are actually meaningful on testnet; freeze one faucet-funded proof path; and keep mainnet xStocks issuer or liquidity truth explicitly separate from any testnet success.
-4. `XSL-015`: configure hosted `XSTOCKS_REPORTING_TOKEN` and `XSTOCKS_OPS_DASHBOARD_TOKEN`, then reverify `/api/reporting/xstocks` and `/ops/xstocks`; keep `funding_required` explicitly lower-bound until the repo owns a pre-save funding event.
-5. `XSL-016`: run the Hermes remote smoke plus authenticated/funded proof path with a real user token, or capture the exact blocker if auth, funding, or operator access still prevents closure.
+3. `XSL-018C`: freeze the exact post-handoff policy gate between staged execution and future automatic execution, including trigger classes, signer requirements, phase-1 caps, and hard stops.
+4. `XSL-017`: inventory which wallet, venue, provider-review, and asset surfaces are actually meaningful on testnet; freeze one faucet-funded proof path; and keep mainnet xStocks issuer or liquidity truth explicitly separate from any testnet success.
+5. `XSL-015`: configure hosted `XSTOCKS_REPORTING_TOKEN` and `XSTOCKS_OPS_DASHBOARD_TOKEN`, then reverify `/api/reporting/xstocks` and `/ops/xstocks`; keep `funding_required` explicitly lower-bound until the repo owns a pre-save funding event.
+6. `XSL-016`: run the Hermes remote smoke plus authenticated/funded proof path with a real user token, or capture the exact blocker if auth, funding, or operator access still prevents closure.
 7. `XSL-009`: capture one browser proof pack for onboarding -> workspace -> activation and remove served `Chainlink CRE` or `Status live` copy that currently outruns the production API truth.
