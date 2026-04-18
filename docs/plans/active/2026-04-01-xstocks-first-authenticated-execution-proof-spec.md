@@ -8,9 +8,9 @@ Status: active
 
 Close the first truthful activation lane from homepage through user-approved CoW execution on Ethereum by:
 1. upgrading `/` into a real homepage,
-2. replacing stubbed Privy connect with real frontend truth,
-3. verifying authenticated Privy sessions on the backend,
-4. requiring a real EIP-712 user signature for CoW submission,
+2. using the now-real frontend Privy connect path with truthful hosted activation state,
+3. keeping backend Privy verification config separate from live operator proof inputs,
+4. requiring a real EIP-712 user signature for the furthest truthful submission boundary,
 5. and adding enough operator visibility that the lane can be called deployable only when the proof exists.
 
 ## Non-goals
@@ -78,10 +78,37 @@ Exact proofs reached:
 5. Hosted quote-boundary proof plus the bounded live quote sweep show no all-leg executable floor through `25`, `50`, `100`, `250`, or `500` USD gross; the current promoted basket is structurally incompatible with present CoW venue truth across five core legs in the tested band.
 
 Still open:
-1. no truthful signed-submission path exists for the current promoted basket because five core legs remain structurally blocked on present CoW venue truth across the tested `25` to `500` USD gross band,
-2. served frontend copy parity with the current production activation and automation truth,
-3. browser-proof closure for the hosted homepage and activation journey,
-4. hosted operator visibility configuration beyond token-missing fail-closed screens.
+1. no truthful signer-backed submission proof exists yet for the current promoted basket,
+2. the remaining proof blocker is no longer backend Privy verification config; it is live session or signer input plus the exact venue boundary reached after that input is present,
+3. served frontend copy parity with the current production activation and automation truth,
+4. browser-proof closure for the hosted homepage and activation journey,
+5. hosted operator visibility configuration beyond token-missing fail-closed screens.
+
+## Backend Privy Verification Config Contract
+
+Backend Privy verification config is app-level runtime config, not operator proof input.
+
+Required backend verification inputs:
+1. `PRIVY_APP_ID` or `NEXT_PUBLIC_PRIVY_APP_ID`
+2. `PRIVY_APP_SECRET`
+3. `PRIVY_JWKS_URL`
+4. optional `PRIVY_API_BASE_URL`
+
+Current repo truth:
+1. [privy-auth.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/privy-auth.js) already verifies Privy JWT or JWKS-backed access and identity tokens.
+2. [server.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/server.js) already wires those backend config inputs into the API runtime.
+3. This config is already real and should not be described as the remaining open blocker for live proof.
+
+## Operator Proof Input Contract
+
+`XSTOCKS_PRIVY_ACCESS_TOKEN` is a live proof-runner session input, not app-level Privy config.
+
+Rules:
+1. it is a current Privy user-session access token captured from a real authenticated session,
+2. proof runners such as [privy-cow-proof.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/scripts/privy-cow-proof.js) require it to reproduce the authenticated boundary,
+3. optional `XSTOCKS_PRIVY_IDENTITY_TOKEN` may accompany it when linked-account parity is needed,
+4. optional signer artifacts such as `XSTOCKS_COW_ORDER_SIGNATURE` remain separate proof outputs or inputs and are not backend startup config,
+5. these operator proof inputs expire and must not be framed as static infra secrets.
 
 ## Codebase Fit And Iteration-Speed Contract
 
@@ -137,8 +164,8 @@ intended file/package boundaries:
 
 Observed problem:
 1. hosted landing quality is still underpowered,
-2. Privy looks present in code but is not real in the click path,
-3. backend CoW rails look strong in code but still do not prove real authenticated execution,
+2. frontend Privy connect is real in code and in the click path, but hosted truth and proof artifacts remain incomplete,
+3. backend CoW rails and backend Privy verification config are real, but the lane still does not prove live session-backed or signer-backed execution,
 4. and the lane still lacks the ops proof required for a truthful prod claim.
 
 Likely culprit:
@@ -150,7 +177,7 @@ Non-obvious alternatives:
 3. Hermes testing might reveal that frontend truth is good enough and auth is the only real blocker.
 
 Falsifiers:
-1. if a real Privy session and signed CoW order can be proven immediately after frontend connect lands, the remaining gap collapses mostly to visibility,
+1. if a real current Privy session plus signer-backed submission can be proven immediately after the existing hosted connect flow, the remaining gap collapses mostly to visibility,
 2. if frontend balance/funding truth cannot be derived without backend changes, frontend-only closure was too optimistic,
 3. if operator visibility already exists through Railway/Vercel and repo-hosted dashboards, the ops gap shrinks.
 
@@ -244,10 +271,10 @@ Minimum verification surface:
 | Metric | Current baseline | Target | Proof |
 | --- | --- | --- | --- |
 | Homepage quality | live but too intermediary | accepted large-form homepage | screenshots plus live verification |
-| Frontend Privy connect | stubbed | real click path | browser proof |
-| Backend Privy verification | absent | verified | tests and request proof |
-| Signed CoW execution | absent | one truthful submission or exact blocker | proof bundle |
-| Operator visibility | absent/unproven | enough for truthful prod claim | dashboard/log/alert proof |
+| Frontend Privy connect | real click path shipped, hosted truth still partial | hosted truth-aligned click path with browser proof | browser proof |
+| Backend Privy verification | verified in backend runtime | verified and carried through hosted proof | tests and request proof |
+| Signed execution proof | authenticated session reaches quote boundary only | one truthful signer-backed submission or exact blocker | proof bundle |
+| Operator visibility | partial and operator-gated | enough for truthful prod claim | dashboard/log/alert proof |
 
 ## Hosted / Deployed / Production Boundary Contract
 
@@ -265,11 +292,11 @@ Minimum verification surface:
 | Area | Weight | Current score | Provenance |
 | --- | --- | --- | --- |
 | Homepage quality | 15 | 6 | hosted deploy exists, design still underpowered |
-| Frontend connect truth | 20 | 4 | provider exists, connect flow not real |
-| Backend auth truth | 20 | 0 | no Privy verification found |
-| CoW signed execution proof | 30 | 12 | code boundary exists, no real signed proof |
-| Ops visibility | 15 | 0 | no verified alert/dashboard proof |
-| Total | 100 | 22 | not production-closure ready |
+| Frontend connect truth | 20 | 16 | real Privy hooks ship; hosted proof and served-copy parity still partial |
+| Backend auth truth | 20 | 18 | Privy JWT or JWKS verification is real in the backend runtime |
+| Signed execution proof | 30 | 12 | authenticated quote boundary exists, but no signer-backed submission proof yet |
+| Ops visibility | 15 | 6 | reporting and ops surfaces exist, but hosted operator proof remains partial |
+| Total | 100 | 58 | still not production-closure ready |
 
 ## Economic-Budget Contract
 
@@ -308,7 +335,7 @@ Date: 2026-04-01
 
 1. continue only in `apps/api`, `packages/shared`, `packages/policy`, `packages/xstocks`, and `apps/worker` only if runtime truth strictly requires it.
 2. do not touch `apps/web`.
-3. do not reopen homepage/frontend work, auth verification, or any 1inch, Bridge, CRE, Chainlink, issuer, or Hermes lanes unless quoteability work proves a direct remaining mismatch in this lane.
+3. do not reopen backend Privy verification config or the completed `XSL-014A` substrate; the remaining open proof boundary is the live operator session or signer input, plus any exact venue blocker reached after that.
 
 ### Current Verified Starting Point
 
@@ -319,6 +346,7 @@ Date: 2026-04-01
 5. execution request creation works.
 6. live CoW quote attempts reach the real external venue boundary.
 7. no real user-approved signed CoW submission, `orderUid`, or `txHash` exists yet.
+8. `XSL-014A` is already complete as the venue-routed execution substrate up to the live session or signer boundary.
 
 ### Resolved Routing Finding
 

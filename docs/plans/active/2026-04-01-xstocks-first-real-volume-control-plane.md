@@ -71,11 +71,7 @@ Owner-lane snapshot:
 5. `XSL-016A`: closed. The public-safe handoff bridge exists.
 6. `XSL-016B`: partial. Local docs align, hosted `skill.md` parity is now closed on key public-safe points, and the remaining blocker is default-port local smoke contamination from a pre-existing `localhost:3001` process on this machine.
 
-Ordered residual backlog from this control plane:
-1. fix served UI truth and capture browser proof,
-2. keep `XSL-014` partial only until basket or venue truth changes, because the current promoted basket is structurally incompatible with present CoW venue truth for five core legs in the tested `25` to `500` USD gross band,
-3. configure hosted reporting tokens and reverify `/ops/xstocks` plus `/api/reporting/xstocks`,
-4. run the Hermes remote smoke plus real user-token-backed authenticated/funded proof path.
+Canonical ordered residual backlog now lives only in [docs/ISSUES.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/ISSUES.md). This control plane inherits that ordering and does not restate a second ordered backlog here.
 
 ## Existing-Spec Inventory
 
