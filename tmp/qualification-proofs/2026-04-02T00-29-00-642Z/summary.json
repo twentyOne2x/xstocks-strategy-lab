@@ -1,0 +1,50 @@
+[
+  {
+    "scenarioId": "broad-cautious",
+    "label": "Broad / cautious basket",
+    "selectedSlotId": "onboarding.default_basket",
+    "selectedMode": "basket",
+    "recommendationId": "rec_onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "explanationSurface": "recommendation.explanationBundle",
+    "executionState": "funding_required",
+    "activationReady": false,
+    "directionalPreviewOnly": false
+  },
+  {
+    "scenarioId": "theme-tilt",
+    "label": "Theme tilt basket",
+    "selectedSlotId": "onboarding.alt_basket_1",
+    "selectedMode": "basket",
+    "recommendationId": "rec_onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1:promoted",
+    "manifestId": "onboarding.alt_basket_1:basket-core-h5-p100-c2-cap22-a0-r275-v1:promoted",
+    "explanationSurface": "recommendation.explanationBundle",
+    "executionState": "blocked",
+    "activationReady": false,
+    "directionalPreviewOnly": false
+  },
+  {
+    "scenarioId": "active-leaders",
+    "label": "Active leaders basket",
+    "selectedSlotId": "onboarding.alt_basket_2",
+    "selectedMode": "basket",
+    "recommendationId": "rec_onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+    "manifestId": "onboarding.alt_basket_2:basket-starter-h6-p100-c1-cap17-a0-r275-v1:promoted",
+    "explanationSurface": "recommendation.explanationBundle",
+    "executionState": "blocked",
+    "activationReady": false,
+    "directionalPreviewOnly": false
+  },
+  {
+    "scenarioId": "directional-opt-in",
+    "label": "Directional opt-in",
+    "selectedSlotId": "advanced.default_directional",
+    "selectedMode": "directional",
+    "recommendationId": "rec_advanced.default_directional:directional-preview-v1:promoted",
+    "manifestId": "advanced.default_directional:directional-preview-v1:promoted",
+    "explanationSurface": "recommendation.explanationBundle",
+    "executionState": "blocked",
+    "activationReady": false,
+    "directionalPreviewOnly": true
+  }
+]
