@@ -29,6 +29,7 @@
     "check": "pnpm run lint && pnpm run test"
   },
   "dependencies": {
+    "@1inch/fusion-sdk": "2.4.7",
     "@xstocks-strategy-lab/shared": "workspace:*"
   },
   "devDependencies": {

@@ -319,6 +319,7 @@ Last updated: 2026-04-01
 - Continuation note:
   - Date: 2026-04-01
   - Scope freeze: continue only in `apps/api/**`, `packages/shared/**`, `packages/policy/**`, `packages/xstocks/**`, and `apps/worker/**` only if runtime truth strictly requires it. Do not touch `apps/web`, do not reopen homepage/frontend/auth lanes unless quoteability work proves a remaining auth/readiness mismatch, and do not reopen 1inch, Bridge, CRE, Chainlink, issuer, or Hermes lanes.
+  - Sub-lane closure note: `XSL-014A` now closes the backend 1inch manual execution substrate as a venue-routed extension of the existing execution-request contract. `XSL-014` remains open for frontend, hosted auth, and operator-visibility closure.
   - Verified starting truth from the latest handoff: backend Privy auth verification is real, authenticated owner binding is real, readiness for the current Ethereum basket CoW lane was aligned away from the stale manifest `minFundingUsd: 1000` plus mandatory smart-account default, activation can reach `ready`, execution request creation works, and live CoW quote attempts reach the external venue boundary.
   - Newly verified continuation finding: the current execution leg builder selects the generic Ethereum `deployment.address` as the CoW buy token, but the xStocks execution-route surface also exposes a `wrapperAddress`. Live probing for the promoted basket shows NVDAx fails with `NoLiquidity` at the current `$4.50` leg when using `deployment.address`, while the corresponding `wrapperAddress` quotes successfully at the same ticket size. This lane must resolve route-token selection and exact quote diagnostics before declaring the `$25` basket structurally unquoteable.
   - Acceptance addendum: treat the current basket as structurally unquoteable only if the promoted basket still cannot reach the next truthful user-approved execution boundary after route-correct token selection and fail-closed per-leg venue diagnostics.
@@ -333,6 +334,40 @@ Last updated: 2026-04-01
   - [ ] fix applied
   - [ ] tests run
   - [ ] visual/screenshot verification not applicable unless a hosted auth/readiness mismatch is rediscovered
+
+### XSL-014A 1inch Manual Execution For xStocks
+
+- Type: backend/integration
+- Status: completed
+- Canonical owner lane: `XSL-014`
+- Date opened: 2026-04-01
+- Context: `origin/main` already owns a truthful authenticated manual execution request state machine in `apps/api` and `packages/shared`, and repo route truth already surfaces `1inch.ethereum` as a verified Ethereum execution route. The missing tranche is a repo-owned manual 1inch Fusion lane for xStocks that can quote, emit signer-owned approval payloads, attempt signed submission, and persist receipt or blocker truth without widening into frontend, CRE, on-ramp, or autonomous execution work.
+- Suspected cause: the current authenticated execution path was implemented directly against CoW first, so quote/build/submission/status logic, stored quote normalization, and runtime wiring are still CoW-shaped even though the surrounding execution-request contract is already mostly venue-neutral.
+- Fix intent: keep the existing operator-manual and user-approved execution state machine, make the execution venue boundary explicit, and wire 1inch Fusion into the backend manual path for quote, signer-owned EIP-712 approval payload generation, signed submission attempt, and exact receipt or blocker persistence.
+- Acceptance criteria:
+  1. The owner lane is documented under `XSL-014` with a scope freeze that excludes frontend redesign, CRE, and on-ramp work.
+  2. The narrowest reusable execution-request contract is identified and reused instead of creating a second manual execution state machine.
+  3. `apps/api`, `packages/shared`, and `packages/xstocks` can create a manual 1inch execution request, capture a live quote, persist a signer-owned approval payload, record a signed submission attempt, and persist venue status plus receipt or exact blocker truth.
+  4. No autonomous execution, hidden custody, or backend-held signing path is added.
+  5. Verification ends at one tiny real mainnet proof if signer material is truly available; otherwise it stops at the exact signer or submission blocker with a complete proof artifact.
+- Complexity: medium
+- Executor prompt:
+  - Work only in `apps/api/**`, `packages/xstocks/**`, `packages/shared/**`, `packages/policy/**`, and docs unless a narrower supporting change is unavoidable.
+  - Do not touch `apps/web/**`.
+  - Keep CoW as the default existing path and reopen it only where the manual execution boundary becomes explicitly venue-routed.
+  - Use official 1inch docs only for current API behavior.
+  - Keep every path user-approved and signer-owned.
+- Plan: [2026-04-01-xstocks-oneinch-manual-execution-substrate.md](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl-014a/docs/plans/completed/2026-04-01-xstocks-oneinch-manual-execution-substrate.md)
+- Checklist:
+  - [x] report captured
+  - [x] context added
+  - [x] fix applied
+  - [x] tests run
+  - [x] manual mainnet proof captured or exact blocker artifact recorded
+- Resolution note:
+  - The repo now owns a venue-routed manual execution substrate with CoW preserved as the default path and 1inch Fusion added as a signer-owned backend lane for quote, approval payload creation, signed submission attempt, and venue-status or receipt persistence.
+  - The exact phase-1 canonical contract remains `executionRequest` plus `executionRequestLeg`; `XSL-018B` can call the same contract later and vary only venue routing, trigger source, and caller orchestration above it.
+  - The strongest truthful live-proof artifact from this environment is a fail-closed blocker bundle at [summary.json](/Users/user/PycharmProjects/xstocks-strategy-lab-xsl-014a/tmp/proof/oneinch-fusion-2026-04-01T21-16-45.343Z/summary.json): authenticated proof could not start because `XSTOCKS_PRIVY_ACCESS_TOKEN` is not present in the current shared env, so no signer-owned submission could be truthfully attempted from this machine.
 
 ### XSL-015 Partner Tracking And xStocks Reporting Dashboard
 

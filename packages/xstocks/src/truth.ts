@@ -74,7 +74,10 @@ export function canActivateRouteTruth(truth: RouteTruth): boolean {
 
 export function pickMostReadyTruth(truths: readonly RouteTruth[], fallback: RouteTruth = ROUTE_TRUTH.BLOCKED): RouteTruth {
   let bestTruth = fallback;
-  let bestScore = ROUTE_TRUTH_READINESS[fallback] ?? ROUTE_TRUTH_READINESS[ROUTE_TRUTH.BLOCKED];
+  let bestScore =
+    ROUTE_TRUTH_READINESS[fallback] ??
+    ROUTE_TRUTH_READINESS[ROUTE_TRUTH.BLOCKED] ??
+    0;
 
   for (const truth of truths) {
     const score = ROUTE_TRUTH_READINESS[truth] ?? ROUTE_TRUTH_READINESS[fallback] ?? 0;
@@ -94,7 +97,9 @@ export function pickMostConservativeTruth(
 ): RouteTruth {
   let strictestTruth = fallback;
   let strictestScore =
-    ROUTE_TRUTH_CONSERVATISM[fallback] ?? ROUTE_TRUTH_CONSERVATISM[ROUTE_TRUTH.BLOCKED];
+    ROUTE_TRUTH_CONSERVATISM[fallback] ??
+    ROUTE_TRUTH_CONSERVATISM[ROUTE_TRUTH.BLOCKED] ??
+    0;
 
   for (const truth of truths) {
     const score = ROUTE_TRUTH_CONSERVATISM[truth] ?? ROUTE_TRUTH_CONSERVATISM[fallback] ?? 0;

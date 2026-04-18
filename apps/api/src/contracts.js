@@ -689,6 +689,7 @@ export const API_ENDPOINT_CONTRACTS = Object.freeze({
       "action",
       "activationId?",
       "executionRequestId?",
+      "executionRouteId?",
       "legId?",
       "signature?",
       "txHash?",

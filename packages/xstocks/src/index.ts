@@ -11,6 +11,7 @@ export * from "./adapters/proof-of-reserves.js";
 export * from "./adapters/system-status.js";
 export * from "./adapters/xchange.js";
 export * from "./adapters/cow.js";
+export * from "./adapters/oneinch.js";
 
 export * from "./fixtures/index.js";
 export * from "./payloads/state-strip.js";

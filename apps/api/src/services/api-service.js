@@ -49,7 +49,28 @@ const EXECUTION_ACTIONS = new Set([
   "record_submission",
   "poll_receipt",
 ]);
-const OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "cow_swap";
+const DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID = "cow_swap";
+const DEFAULT_OPERATOR_MANUAL_EXECUTION_ROUTE_ID = "cow_swap.ethereum";
+const ONEINCH_MANUAL_EXECUTION_ADAPTER_ID = "oneinch";
+const ONEINCH_MANUAL_EXECUTION_ROUTE_ID = "1inch.ethereum";
+const MANUAL_EXECUTION_VENUES = Object.freeze({
+  [DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID]: {
+    adapterId: DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+    routeId: DEFAULT_OPERATOR_MANUAL_EXECUTION_ROUTE_ID,
+    venueId: DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+    label: "CoW",
+    quoteReadyStatus: "quote_ready",
+    approvalTarget: "cow_order",
+  },
+  [ONEINCH_MANUAL_EXECUTION_ADAPTER_ID]: {
+    adapterId: ONEINCH_MANUAL_EXECUTION_ADAPTER_ID,
+    routeId: ONEINCH_MANUAL_EXECUTION_ROUTE_ID,
+    venueId: ONEINCH_MANUAL_EXECUTION_ADAPTER_ID,
+    label: "1inch Fusion",
+    quoteReadyStatus: "quote_ready",
+    approvalTarget: "oneinch_fusion_order",
+  },
+});
 const YIELD_BUFFER_DEFERRED_WARNING =
   "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve.";
 const COW_ORDER_UID_PATTERN = /^0x([A-Fa-f0-9]{112})$/u;
@@ -1185,6 +1206,79 @@ function resolveCowReceivingToken(deployment) {
   };
 }
 
+function resolveOneInchReceivingToken(deployment) {
+  if (!deployment) {
+    return {
+      address: null,
+      source: "missing",
+    };
+  }
+
+  if (deployment.address) {
+    return {
+      address: deployment.address,
+      source: "deployment.address",
+    };
+  }
+
+  if (deployment.wrapperAddress) {
+    return {
+      address: deployment.wrapperAddress,
+      source: "wrapperAddress",
+    };
+  }
+
+  return {
+    address: null,
+    source: "missing",
+  };
+}
+
+function resolveManualExecutionVenue({
+  requestedRouteId,
+  requestedAdapterId,
+} = {}) {
+  const normalizedRouteId =
+    typeof requestedRouteId === "string" && requestedRouteId.trim().length > 0
+      ? requestedRouteId.trim()
+      : null;
+  const normalizedAdapterId =
+    typeof requestedAdapterId === "string" && requestedAdapterId.trim().length > 0
+      ? requestedAdapterId.trim().toLowerCase()
+      : null;
+
+  if (
+    normalizedRouteId === ONEINCH_MANUAL_EXECUTION_ROUTE_ID ||
+    normalizedAdapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID ||
+    normalizedAdapterId === "1inch"
+  ) {
+    return MANUAL_EXECUTION_VENUES[ONEINCH_MANUAL_EXECUTION_ADAPTER_ID];
+  }
+
+  if (normalizedRouteId === null && normalizedAdapterId === null) {
+    return MANUAL_EXECUTION_VENUES[DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID];
+  }
+
+  if (
+    normalizedRouteId === DEFAULT_OPERATOR_MANUAL_EXECUTION_ROUTE_ID ||
+    normalizedAdapterId === DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID
+  ) {
+    return MANUAL_EXECUTION_VENUES[DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID];
+  }
+
+  throw new HttpError(
+    400,
+    `executionRouteId must be one of ${DEFAULT_OPERATOR_MANUAL_EXECUTION_ROUTE_ID} or ${ONEINCH_MANUAL_EXECUTION_ROUTE_ID}.`,
+  );
+}
+
+function resolveManualExecutionVenueFromLeg(leg, executionRequest) {
+  return resolveManualExecutionVenue({
+    requestedRouteId: leg.requiredRouteId,
+    requestedAdapterId: leg.adapterId ?? executionRequest?.adapterId,
+  });
+}
+
 function formatUsdAmount(value) {
   return Number(normalizeUsd(value, 0)).toFixed(2);
 }
@@ -1208,6 +1302,26 @@ function buildCowQuoteAttemptContext({
   };
 }
 
+function buildOneInchQuoteAttemptContext({
+  leg,
+  signerAddress,
+  settlementAddress,
+}) {
+  return {
+    fromTokenAddress: leg.paymentTokenAddress,
+    toTokenAddress: leg.receivingTokenAddress,
+    amount: toAtomicAmount(
+      leg.targetNotionalUsd,
+      leg.paymentTokenDecimals ?? 6,
+    ),
+    walletAddress: signerAddress,
+    receiver: settlementAddress,
+    enableEstimate: true,
+    source: "xstocks-strategy-lab",
+    targetNotionalUsd: Number(formatUsdAmount(leg.targetNotionalUsd)),
+  };
+}
+
 function parseCowErrorPayload(rawBody) {
   if (typeof rawBody !== "string" || rawBody.trim().length === 0) {
     return null;
@@ -1223,6 +1337,31 @@ function parseCowErrorPayload(rawBody) {
     return {
       errorType:
         typeof parsed.errorType === "string" ? parsed.errorType : null,
+      description:
+        typeof parsed.description === "string" &&
+        parsed.description.trim().length > 0
+          ? parsed.description.trim()
+          : null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function parseOneInchErrorPayload(rawBody) {
+  if (typeof rawBody !== "string" || rawBody.trim().length === 0) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(rawBody);
+
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return null;
+    }
+
+    return {
+      code: typeof parsed.code === "string" ? parsed.code : null,
       description:
         typeof parsed.description === "string" &&
         parsed.description.trim().length > 0
@@ -1279,6 +1418,47 @@ function normalizeCowQuoteFailure(error) {
   };
 }
 
+function deriveOneInchQuoteBlockerClass({ statusCode, code }) {
+  if (code === "PATHFINDER_UNKNOWN") {
+    return "oneinch_pathfinder_unknown";
+  }
+
+  if (Number.isInteger(statusCode) && statusCode > 0) {
+    return `oneinch_quote_http_${statusCode}`;
+  }
+
+  return "oneinch_quote_error";
+}
+
+function normalizeOneInchQuoteFailure(error) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const statusMatch = errorMessage.match(
+    /^1inch Fusion quote request failed with status (?<status>\d+):\s*(?<body>.*)$/su,
+  );
+  const statusCode = statusMatch?.groups?.status
+    ? Number.parseInt(statusMatch.groups.status, 10)
+    : null;
+  const rawBody =
+    statusMatch?.groups?.body && statusMatch.groups.body.trim().length > 0
+      ? statusMatch.groups.body.trim()
+      : null;
+  const parsedPayload = parseOneInchErrorPayload(rawBody);
+  const code = parsedPayload?.code ?? null;
+  const errorDescription = parsedPayload?.description ?? null;
+
+  return {
+    message: errorMessage,
+    statusCode,
+    rawBody,
+    code,
+    errorDescription,
+    blockerClass: deriveOneInchQuoteBlockerClass({
+      statusCode,
+      code,
+    }),
+  };
+}
+
 function buildCowQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
   const parts = [
     `CoW quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
@@ -1303,11 +1483,38 @@ function buildCowQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
   return parts.join(" ");
 }
 
+function buildOneInchQuoteFailureMessage({ leg, quoteAttempt, quoteFailure }) {
+  const parts = [
+    `1inch Fusion quote request failed for ${leg.assetSymbol ?? leg.legId}.`,
+    `fromTokenAddress=${quoteAttempt.fromTokenAddress ?? "missing"}`,
+    `toTokenAddress=${quoteAttempt.toTokenAddress ?? "missing"}`,
+    `amount=${quoteAttempt.amount ?? "missing"}`,
+    `targetNotionalUsd=${formatUsdAmount(leg.targetNotionalUsd)}`,
+    `walletAddress=${quoteAttempt.walletAddress ?? "missing"}`,
+    `receiver=${quoteAttempt.receiver ?? "missing"}`,
+    `blockerClass=${quoteFailure.blockerClass}`,
+  ];
+
+  if (quoteFailure.code) {
+    parts.push(`venueErrorCode=${quoteFailure.code}`);
+  }
+
+  if (quoteFailure.errorDescription) {
+    parts.push(`venueErrorDescription=${quoteFailure.errorDescription}`);
+  }
+
+  parts.push(`reason=${quoteFailure.message}`);
+
+  return parts.join(" ");
+}
+
 function stripExecutionQuoteBlockers(messages = []) {
   return messages.filter(
     (message) =>
       !String(message).startsWith("CoW quote request failed") &&
-      !String(message).startsWith("CoW order submission failed"),
+      !String(message).startsWith("CoW order submission failed") &&
+      !String(message).startsWith("1inch Fusion quote request failed") &&
+      !String(message).startsWith("1inch Fusion order submission failed"),
   );
 }
 
@@ -1321,6 +1528,7 @@ function createExecutionLeg({
   fetchedAsset,
   manifest,
   activation,
+  executionVenue,
 }) {
   const targetNotionalUsd = roundUsd(
     (requestedNotionalUsd * allocation.targetWeightPct) / 100,
@@ -1356,30 +1564,35 @@ function createExecutionLeg({
 
   const deployment = findEthereumDeployment(fetchedAsset);
   const fundingStablecoin = findFundingStablecoin(deployment, fundingAssetSymbol);
-  const receivingToken = resolveCowReceivingToken(deployment);
+  const receivingToken =
+    executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID
+      ? resolveOneInchReceivingToken(deployment)
+      : resolveCowReceivingToken(deployment);
   const blockers = [];
 
   if (!receivingToken.address) {
     blockers.push(
-      `Ethereum CoW buy-token metadata is missing for ${allocation.assetSymbol}; neither wrapperAddress nor deployment.address is available.`,
+      executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID
+        ? `Ethereum 1inch token metadata is missing for ${allocation.assetSymbol}; neither deployment.address nor wrapperAddress is available.`
+        : `Ethereum CoW buy-token metadata is missing for ${allocation.assetSymbol}; neither wrapperAddress nor deployment.address is available.`,
     );
   }
 
   if (!fundingStablecoin?.address) {
     blockers.push(
-      `${allocation.assetSymbol} does not expose ${fundingAssetSymbol} as an Ethereum payment asset in the live xstocks metadata required for CoW.`,
+      `${allocation.assetSymbol} does not expose ${fundingAssetSymbol} as an Ethereum payment asset in the live xstocks metadata required for ${executionVenue.label}.`,
     );
   }
 
   if (!signerAddress) {
     blockers.push(
-      "A verified signer wallet is required before the user-approved CoW lane can quote or submit this leg.",
+      "A verified signer wallet is required before the user-approved manual execution lane can quote or submit this leg.",
     );
   }
 
   if (!settlementAddress) {
     blockers.push(
-      "A settlement wallet or smart-wallet destination is required before the user-approved CoW lane can quote or submit this leg.",
+      "A settlement wallet or smart-wallet destination is required before the user-approved manual execution lane can quote or submit this leg.",
     );
   }
 
@@ -1397,9 +1610,9 @@ function createExecutionLeg({
     sequence,
     sleeve: allocation.sleeve,
     assetSymbol: allocation.assetSymbol,
-    venueId: allocation.venueId,
-    adapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
-    requiredRouteId: findManifestRouteId(manifest, allocation.sleeve),
+    venueId: executionVenue.venueId,
+    adapterId: executionVenue.adapterId,
+    requiredRouteId: executionVenue.routeId,
     targetWeightPct: allocation.targetWeightPct,
     targetNotionalUsd,
     paymentAssetSymbol: fundingAssetSymbol,
@@ -1411,7 +1624,14 @@ function createExecutionLeg({
     state: blockers.length > 0 ? "blocked" : "pending",
     blockers,
     warnings: uniqueStrings([
-      "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+      executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID
+        ? "1inch Fusion execution stays user-approved: the order must be signed before the backend can submit it."
+        : "CoW execution stays user-approved: the order must be signed before the backend can submit it.",
+      executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID &&
+      receivingToken.source === "deployment.address"
+        ? `${allocation.assetSymbol} will quote against the Ethereum deployment.address surfaced by xStocks asset metadata for the manual 1inch lane.`
+        : null,
+      executionVenue.adapterId !== ONEINCH_MANUAL_EXECUTION_ADAPTER_ID &&
       receivingToken.source === "wrapperAddress"
         ? `${allocation.assetSymbol} will quote against the Ethereum wrapperAddress surfaced by xStocks route metadata.`
         : null,
@@ -1480,7 +1700,15 @@ function updateExecutionRequestState(request) {
   };
 }
 
-function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
+function createExecutionRequest({
+  activation,
+  manifest,
+  fetchedAssets,
+  now,
+  executionVenue,
+  runtimeOwner = "operator_manual",
+  triggerSource = "operator_manual",
+}) {
   const requestedNotionalUsd = activation.requestedNotionalUsd;
   const fundingAssetSymbol =
     manifest.activationTemplate.fundingAssetSymbol ?? "USDC";
@@ -1498,9 +1726,9 @@ function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
     slotId: manifest.slotId,
     chain: manifest.chain,
     mode: manifest.mode,
-    runtimeOwner: "operator_manual",
-    triggerSource: "operator_manual",
-    adapterId: OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+    runtimeOwner,
+    triggerSource,
+    adapterId: executionVenue.adapterId,
     activationManifestRef: activation.activationManifestRef,
     requestedNotionalUsd,
     fundingAssetSymbol,
@@ -1530,6 +1758,7 @@ function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
           : null,
         manifest,
         activation,
+        executionVenue,
       }),
     ),
     createdAt: now(),
@@ -1550,6 +1779,24 @@ function createExecutionRequest({ activation, manifest, fetchedAssets, now }) {
 }
 
 function toStoredExecutionQuote(quote, quotedAt) {
+  if (quote.quoteId && quote.orderHash && quote.fromTokenAmount) {
+    return {
+      kind: "oneinch_fusion",
+      quoteId: quote.quoteId,
+      quotedAt,
+      fromTokenAddress: quote.fromTokenAddress,
+      toTokenAddress: quote.toTokenAddress,
+      fromTokenAmount: quote.fromTokenAmount,
+      toTokenAmount: quote.toTokenAmount,
+      settlementAddress: quote.settlementAddress,
+      recommendedPreset: quote.recommendedPreset,
+      orderHash: quote.orderHash,
+      signerAddress: quote.signerAddress,
+      receiver: quote.receiver,
+      priceImpactPercent: quote.priceImpactPercent ?? null,
+    };
+  }
+
   return {
     kind: "cow_swap",
     quoteId: String(quote.id),
@@ -1579,7 +1826,36 @@ function toStoredExecutionQuote(quote, quotedAt) {
   };
 }
 
-function createApprovalFromQuote(storedQuote) {
+function createApprovalFromQuote(storedQuote, preparedOrder = null) {
+  if (storedQuote.kind === "oneinch_fusion") {
+    if (!preparedOrder) {
+      throw new Error(
+        "1inch Fusion approval payloads require a prepared order artifact.",
+      );
+    }
+
+    return {
+      approvalType: "eip712_signature",
+      status: "awaiting_user",
+      signerAddress: storedQuote.signerAddress,
+      approvalTarget: "oneinch_fusion_order",
+      orderToSign: {
+        quoteId: preparedOrder.quoteId,
+        orderHash: preparedOrder.orderHash,
+        order: preparedOrder.order,
+        extension: preparedOrder.extension,
+        typedData: preparedOrder.typedData,
+      },
+      signature: null,
+      approvedAt: null,
+      submittedAt: null,
+      venueOrderId: null,
+      notes: [
+        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission.",
+      ],
+    };
+  }
+
   return {
     approvalType: "eip712_signature",
     status: "awaiting_user",
@@ -1609,6 +1885,10 @@ function buildExecutionActivityEvents({
   const events = [];
   const txHash = leg.receipt?.txHash ?? null;
   const venueOrderId = leg.venueStatus?.venueOrderId ?? null;
+  const executionVenue = resolveManualExecutionVenueFromLeg(
+    leg,
+    executionRequest,
+  );
 
   if (
     leg.state === "awaiting_approval" &&
@@ -1618,7 +1898,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_ready",
-        summary: `CoW quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `${executionVenue.label} quote prepared and awaiting user approval for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1638,7 +1918,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_submitted",
-        summary: `Recorded user-approved CoW submission for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `Recorded user-approved ${executionVenue.label} submission for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1656,7 +1936,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_succeeded",
-        summary: `CoW execution confirmed for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `${executionVenue.label} execution confirmed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1672,7 +1952,7 @@ function buildExecutionActivityEvents({
       createActivityEvent({
         activation,
         eventType: "activation_failed",
-        summary: `CoW execution failed for ${leg.assetSymbol ?? leg.sleeve}.`,
+        summary: `${executionVenue.label} execution failed for ${leg.assetSymbol ?? leg.sleeve}.`,
         now,
         payload: {
           executionRequestId: executionRequest.executionRequestId,
@@ -1707,6 +1987,7 @@ export function createApiService({
   liveStateRepository,
   runtimeStore,
   cowExecutionClient = null,
+  oneInchExecutionClient = null,
   ethereumRpcClient = null,
   privyAuthService = null,
   providerRebalanceAuthService = null,
@@ -2346,16 +2627,20 @@ export function createApiService({
       },
       venueStatus: {
         ...(leg.venueStatus ?? {
-          venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+          venueId:
+            leg.venueId ??
+            leg.adapterId ??
+            DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
           venueOrderId: leg.approval?.venueOrderId ?? null,
           settlementTxHash: leg.receipt.txHash,
         }),
         status:
-          receiptStatus === "confirmed"
+          leg.venueStatus?.status ??
+          (receiptStatus === "confirmed"
             ? "confirmed"
             : receiptStatus === "reverted"
               ? "failed"
-              : "submitted",
+              : "submitted"),
         settlementTxHash: leg.receipt.txHash,
         lastCheckedAt: now(),
         updatedAt: now(),
@@ -2410,7 +2695,10 @@ export function createApiService({
             ? leg.state
             : nextState,
         venueStatus: {
-          venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+          venueId:
+            leg.venueId ??
+            leg.adapterId ??
+            DEFAULT_OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
           venueOrderId: venueStatus.uid,
           status: venueStatus.status,
           settlementTxHash,
@@ -2437,6 +2725,107 @@ export function createApiService({
     } catch {
       return leg;
     }
+  }
+
+  function mapOneInchVenueState(status) {
+    const normalizedStatus = String(status ?? "pending").toLowerCase();
+
+    if (normalizedStatus === "filled") {
+      return "confirmed";
+    }
+
+    if (
+      [
+        "false-predicate",
+        "not-enough-balance-or-allowance",
+        "expired",
+        "wrong-permit",
+        "cancelled",
+        "invalid-signature",
+      ].includes(normalizedStatus)
+    ) {
+      return "failed";
+    }
+
+    return "submitted";
+  }
+
+  async function refreshOneInchVenueStatus(leg) {
+    if (!oneInchExecutionClient || !leg.approval?.venueOrderId) {
+      return leg;
+    }
+
+    try {
+      const venueStatus = await oneInchExecutionClient.getOrderStatus(
+        leg.approval.venueOrderId,
+      );
+
+      if (!venueStatus) {
+        return leg;
+      }
+
+      const nextState = mapOneInchVenueState(venueStatus.status);
+      const settlementTxHash =
+        nextState === "confirmed"
+          ? normalizeTxHash(venueStatus.settlementTxHash) ??
+            leg.venueStatus?.settlementTxHash ??
+            null
+          : leg.venueStatus?.settlementTxHash ?? null;
+
+      return {
+        ...leg,
+        state:
+          leg.receipt?.txHash && leg.state !== "failed"
+            ? leg.state
+            : nextState,
+        warnings:
+          String(venueStatus.status).toLowerCase() === "partially-filled"
+            ? uniqueStrings([
+                ...leg.warnings,
+                "1inch Fusion order is partially filled; final settlement remains pending.",
+              ])
+            : leg.warnings,
+        venueStatus: {
+          venueId:
+            leg.venueId ??
+            leg.adapterId ??
+            ONEINCH_MANUAL_EXECUTION_ADAPTER_ID,
+          venueOrderId: venueStatus.orderHash,
+          status: venueStatus.status,
+          settlementTxHash,
+          lastCheckedAt: now(),
+          updatedAt: now(),
+          rawStatus: venueStatus.raw ?? null,
+        },
+        receipt:
+          settlementTxHash && !leg.receipt
+            ? {
+                txHash: settlementTxHash,
+                submittedAt: leg.approval.submittedAt ?? now(),
+                lastCheckedAt: null,
+                receiptStatus: "pending",
+                confirmedAt: null,
+                revertedAt: null,
+                blockNumber: null,
+                transactionIndex: null,
+                rpcUrl: ethereumRpcClient?.rpcUrl ?? null,
+                rawReceipt: null,
+              }
+            : leg.receipt,
+      };
+    } catch {
+      return leg;
+    }
+  }
+
+  async function refreshVenueStatusForLeg(leg, executionRequest = null) {
+    const executionVenue = resolveManualExecutionVenueFromLeg(leg, executionRequest);
+
+    if (executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID) {
+      return await refreshOneInchVenueStatus(leg);
+    }
+
+    return await refreshCowVenueStatus(leg);
   }
 
   return {
@@ -3027,6 +3416,18 @@ export function createApiService({
 
       if (action === "create") {
         const activationId = firstDefined(body.activationId, body.activation_id);
+        const executionVenue = resolveManualExecutionVenue({
+          requestedRouteId: firstDefined(
+            body.executionRouteId,
+            body.execution_route_id,
+          ),
+          requestedAdapterId: firstDefined(
+            body.executionAdapterId,
+            body.execution_adapter_id,
+            body.adapterId,
+            body.adapter_id,
+          ),
+        });
 
         if (!activationId) {
           throw new HttpError(
@@ -3058,6 +3459,7 @@ export function createApiService({
           manifest: record.manifest,
           fetchedAssets,
           now,
+          executionVenue,
         });
         const persisted = await persistExecutionRequest({
           executionRequest,
@@ -3098,7 +3500,7 @@ export function createApiService({
         if (!legId) {
           throw new HttpError(
             400,
-            "legId is required to request a live CoW quote.",
+            "legId is required to request a live manual execution quote.",
           );
         }
 
@@ -3133,6 +3535,142 @@ export function createApiService({
           ...executionRequest,
           blockers: stripExecutionQuoteBlockers(executionRequest.blockers),
         };
+        const executionVenue = resolveManualExecutionVenueFromLeg(
+          leg,
+          executionRequest,
+        );
+        const signerAddress = resolveExecutionSignerAddress(activation.walletState);
+
+        if (executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID) {
+          if (!oneInchExecutionClient) {
+            const blockedLeg = {
+              ...nextLegBase,
+              state: "blocked",
+              blockers: uniqueStrings([
+                ...nextLegBase.blockers,
+                "1inch Fusion client is not configured for this runtime.",
+              ]),
+            };
+            const persisted = await persistExecutionRequest({
+              executionRequest: replaceExecutionLeg(nextRequestBase, blockedLeg),
+              activation,
+            });
+
+            return parseApiResponse("execution_write", {
+              version: DEFAULT_RESPONSE_VERSION,
+              generatedAt: now(),
+              action,
+              ...persisted,
+            });
+          }
+
+          try {
+            const quoteAttempt = buildOneInchQuoteAttemptContext({
+              leg,
+              signerAddress,
+              settlementAddress: executionRequest.settlementAddress,
+            });
+            const preparedOrder = await oneInchExecutionClient.prepareOrder(
+              quoteAttempt,
+            );
+            const storedQuote = toStoredExecutionQuote(
+              {
+                ...preparedOrder.quote,
+                orderHash: preparedOrder.orderHash,
+                signerAddress: preparedOrder.signerAddress,
+                receiver: preparedOrder.receiver,
+              },
+              now(),
+            );
+            const quotedLeg = {
+              ...nextLegBase,
+              state: "awaiting_approval",
+              quote: storedQuote,
+              approval: createApprovalFromQuote(storedQuote, preparedOrder),
+              venueStatus: {
+                venueId: executionVenue.venueId,
+                venueOrderId: null,
+                status: executionVenue.quoteReadyStatus,
+                settlementTxHash: null,
+                lastCheckedAt: null,
+                updatedAt: now(),
+                rawStatus: {
+                  ...quoteAttempt,
+                  quoteId: preparedOrder.quoteId,
+                  orderHash: preparedOrder.orderHash,
+                  recommendedPreset: preparedOrder.quote.recommendedPreset,
+                  settlementAddress: preparedOrder.quote.settlementAddress,
+                },
+              },
+            };
+            const nextRequest = replaceExecutionLeg(nextRequestBase, quotedLeg);
+            const persisted = await persistExecutionRequest({
+              executionRequest: nextRequest,
+              activation,
+              activityEvents: buildExecutionActivityEvents({
+                activation,
+                executionRequest: updateExecutionRequestState(nextRequest),
+                previousLeg: leg,
+                leg: quotedLeg,
+                now,
+              }),
+            });
+
+            return parseApiResponse("execution_write", {
+              version: DEFAULT_RESPONSE_VERSION,
+              generatedAt: now(),
+              action,
+              ...persisted,
+            });
+          } catch (error) {
+            const quoteAttempt = buildOneInchQuoteAttemptContext({
+              leg,
+              signerAddress,
+              settlementAddress: executionRequest.settlementAddress,
+            });
+            const quoteFailure = normalizeOneInchQuoteFailure(error);
+            const blockedLeg = {
+              ...nextLegBase,
+              state: "blocked",
+              blockers: uniqueStrings([
+                ...nextLegBase.blockers,
+                buildOneInchQuoteFailureMessage({
+                  leg,
+                  quoteAttempt,
+                  quoteFailure,
+                }),
+              ]),
+              venueStatus: {
+                venueId: executionVenue.venueId,
+                venueOrderId: null,
+                status: "quote_failed",
+                settlementTxHash: null,
+                lastCheckedAt: null,
+                updatedAt: now(),
+                rawStatus: {
+                  ...quoteAttempt,
+                  error: quoteFailure.message,
+                  errorStatusCode: quoteFailure.statusCode,
+                  errorCode: quoteFailure.code,
+                  errorDescription: quoteFailure.errorDescription,
+                  errorBody: quoteFailure.rawBody,
+                  blockerClass: quoteFailure.blockerClass,
+                },
+              },
+            };
+            const persisted = await persistExecutionRequest({
+              executionRequest: replaceExecutionLeg(nextRequestBase, blockedLeg),
+              activation,
+            });
+
+            return parseApiResponse("execution_write", {
+              version: DEFAULT_RESPONSE_VERSION,
+              generatedAt: now(),
+              action,
+              ...persisted,
+            });
+          }
+        }
 
         if (!cowExecutionClient) {
           const blockedLeg = {
@@ -3157,7 +3695,6 @@ export function createApiService({
         }
 
         try {
-          const signerAddress = resolveExecutionSignerAddress(activation.walletState);
           const quoteAttempt = buildCowQuoteAttemptContext({
             leg,
             signerAddress,
@@ -3171,9 +3708,9 @@ export function createApiService({
             quote: storedQuote,
             approval: createApprovalFromQuote(storedQuote),
             venueStatus: {
-              venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+              venueId: executionVenue.venueId,
               venueOrderId: null,
-              status: "quote_ready",
+              status: executionVenue.quoteReadyStatus,
               settlementTxHash: null,
               lastCheckedAt: null,
               updatedAt: now(),
@@ -3205,9 +3742,7 @@ export function createApiService({
         } catch (error) {
           const quoteAttempt = buildCowQuoteAttemptContext({
             leg,
-            signerAddress: resolveExecutionSignerAddress(
-              activation.walletState,
-            ),
+            signerAddress,
             settlementAddress: executionRequest.settlementAddress,
           });
           const quoteFailure = normalizeCowQuoteFailure(error);
@@ -3223,7 +3758,7 @@ export function createApiService({
               }),
             ]),
             venueStatus: {
-              venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+              venueId: executionVenue.venueId,
               venueOrderId: null,
               status: "quote_failed",
               settlementTxHash: null,
@@ -3280,6 +3815,11 @@ export function createApiService({
         );
       }
 
+      const executionVenue = resolveManualExecutionVenueFromLeg(
+        leg,
+        executionRequest,
+      );
+
       if (action === "record_submission") {
         const signature = normalizeSignature(
           firstDefined(body.signature, body.orderSignature, body.order_signature),
@@ -3296,14 +3836,7 @@ export function createApiService({
         if (!leg.quote || !leg.approval?.orderToSign) {
           throw new HttpError(
             409,
-            "A live CoW quote and approval payload must be captured before submission can be recorded.",
-          );
-        }
-
-        if (!cowExecutionClient) {
-          throw new HttpError(
-            503,
-            "CoW client is not configured for signed order submission.",
+            "A live manual execution quote and approval payload must be captured before submission can be recorded.",
           );
         }
 
@@ -3318,19 +3851,68 @@ export function createApiService({
         ) {
           throw new HttpError(
             403,
-            "The CoW signer address is not linked to the authenticated Privy user.",
+            executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID
+              ? "The 1inch Fusion signer address is not linked to the authenticated Privy user."
+              : "The CoW signer address is not linked to the authenticated Privy user.",
           );
         }
 
         try {
-          const rawVenueOrderId = await cowExecutionClient.submitOrder({
-            ...leg.approval.orderToSign,
-            signature,
-          });
-          const venueOrderId = normalizeOrderUid(rawVenueOrderId);
+          let venueOrderId;
+          let submissionRawStatus = null;
 
-          if (!venueOrderId) {
-            throw new Error("CoW returned an invalid order uid.");
+          if (executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID) {
+            if (!oneInchExecutionClient) {
+              throw new HttpError(
+                503,
+                "1inch Fusion client is not configured for signed order submission.",
+              );
+            }
+
+            const orderToSign = leg.approval.orderToSign ?? {};
+
+            if (
+              !orderToSign.order ||
+              !orderToSign.quoteId ||
+              !orderToSign.extension ||
+              !orderToSign.orderHash
+            ) {
+              throw new HttpError(
+                409,
+                "A prepared 1inch Fusion order payload is required before signed submission can be recorded.",
+              );
+            }
+
+            const submission = await oneInchExecutionClient.submitOrder({
+              order: orderToSign.order,
+              signature,
+              quoteId: orderToSign.quoteId,
+              extension: orderToSign.extension,
+              orderHash: orderToSign.orderHash,
+            });
+            venueOrderId = normalizeTxHash(submission.orderHash);
+            submissionRawStatus = submission.raw ?? null;
+
+            if (!venueOrderId) {
+              throw new Error("1inch Fusion returned an invalid order hash.");
+            }
+          } else {
+            if (!cowExecutionClient) {
+              throw new HttpError(
+                503,
+                "CoW client is not configured for signed order submission.",
+              );
+            }
+
+            const rawVenueOrderId = await cowExecutionClient.submitOrder({
+              ...leg.approval.orderToSign,
+              signature,
+            });
+            venueOrderId = normalizeOrderUid(rawVenueOrderId);
+
+            if (!venueOrderId) {
+              throw new Error("CoW returned an invalid order uid.");
+            }
           }
 
           let nextLeg = {
@@ -3345,13 +3927,13 @@ export function createApiService({
               venueOrderId,
             },
             venueStatus: {
-              venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+              venueId: executionVenue.venueId,
               venueOrderId,
               status: "submitted",
               settlementTxHash: txHash,
               lastCheckedAt: null,
               updatedAt: now(),
-              rawStatus: leg.venueStatus?.rawStatus ?? null,
+              rawStatus: submissionRawStatus ?? leg.venueStatus?.rawStatus ?? null,
             },
             receipt: txHash
               ? {
@@ -3369,7 +3951,7 @@ export function createApiService({
               : leg.receipt,
           };
 
-          nextLeg = await refreshCowVenueStatus(nextLeg);
+          nextLeg = await refreshVenueStatusForLeg(nextLeg, executionRequest);
           nextLeg = await refreshReceiptForLeg(nextLeg);
           const nextRequest = replaceExecutionLeg(executionRequest, nextLeg);
           const persisted = await persistExecutionRequest({
@@ -3402,7 +3984,11 @@ export function createApiService({
               : null,
             blockers: uniqueStrings([
               ...leg.blockers,
-              `CoW order submission failed: ${
+              `${
+                executionVenue.adapterId === ONEINCH_MANUAL_EXECUTION_ADAPTER_ID
+                  ? "1inch Fusion"
+                  : "CoW"
+              } order submission failed: ${
                 error instanceof Error ? error.message : String(error)
               }`,
             ]),
@@ -3447,7 +4033,7 @@ export function createApiService({
               },
               venueStatus: {
                 ...(leg.venueStatus ?? {
-                  venueId: leg.venueId ?? OPERATOR_MANUAL_EXECUTION_ADAPTER_ID,
+                  venueId: executionVenue.venueId,
                   venueOrderId: leg.approval?.venueOrderId ?? null,
                   status: "submitted",
                 }),
@@ -3459,14 +4045,17 @@ export function createApiService({
             }
           : leg;
 
-      refreshedLeg = await refreshCowVenueStatus(refreshedLeg);
+      refreshedLeg = await refreshVenueStatusForLeg(
+        refreshedLeg,
+        executionRequest,
+      );
 
       if (!refreshedLeg.receipt?.txHash) {
         const nextLeg = {
           ...refreshedLeg,
           warnings: uniqueStrings([
             ...refreshedLeg.warnings,
-            "Settlement transaction hash is not available yet; CoW order remains submitted.",
+            `Settlement transaction hash is not available yet; ${executionVenue.label} order remains submitted.`,
           ]),
         };
         const nextRequest = replaceExecutionLeg(executionRequest, nextLeg);

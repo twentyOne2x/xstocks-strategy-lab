@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-04-01T21:16:45.343Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "requestedNotionalUsd": 20,
+  "executionRouteId": "1inch.ethereum",
+  "runtimeStorePath": "/var/folders/_g/r34b0jm95m71gc_tmqjxnkl80000gn/T/xstocks-oneinch-fusion-proof-1775078205346.json",
+  "auth": null,
+  "signerAddress": null,
+  "smartAccountAddress": null,
+  "state": "blocked",
+  "blocker": {
+    "code": "missing_environment_input",
+    "stage": "environment_or_authentication",
+    "message": "XSTOCKS_PRIVY_ACCESS_TOKEN is required for the 1inch Fusion proof runner.",
+    "statusCode": null,
+    "payload": null
+  },
+  "activationId": null,
+  "executionRequestId": null,
+  "leg": null
+}

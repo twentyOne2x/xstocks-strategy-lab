@@ -438,6 +438,38 @@ function normalizeExecutionQuote(quote) {
     return null;
   }
 
+  if (quote.kind === "oneinch_fusion") {
+    return {
+      kind: "oneinch_fusion",
+      quoteId: String(quote.quoteId ?? quote.quote_id ?? quote.id),
+      quotedAt:
+        quote.quotedAt ??
+        quote.quoted_at ??
+        quote.requestedAt ??
+        quote.requested_at ??
+        quote.createdAt,
+      fromTokenAddress:
+        quote.fromTokenAddress ?? quote.from_token_address ?? null,
+      toTokenAddress:
+        quote.toTokenAddress ?? quote.to_token_address ?? null,
+      fromTokenAmount:
+        quote.fromTokenAmount ?? quote.from_token_amount ?? null,
+      toTokenAmount: quote.toTokenAmount ?? quote.to_token_amount ?? null,
+      settlementAddress:
+        quote.settlementAddress ?? quote.settlement_address ?? null,
+      recommendedPreset:
+        quote.recommendedPreset ?? quote.recommended_preset ?? null,
+      orderHash: quote.orderHash ?? quote.order_hash ?? null,
+      signerAddress: quote.signerAddress ?? quote.signer_address ?? null,
+      receiver: quote.receiver ?? null,
+      priceImpactPercent: firstDefined(
+        quote.priceImpactPercent,
+        quote.price_impact_percent,
+        null,
+      ),
+    };
+  }
+
   if (
     quote.kind === "cow_swap" ||
     Object.hasOwn(quote, "order") ||

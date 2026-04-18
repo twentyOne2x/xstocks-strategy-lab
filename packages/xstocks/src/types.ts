@@ -427,6 +427,77 @@ export interface CowSwapOrderStatus {
   readonly raw?: Record<string, unknown> | null;
 }
 
+export interface OneInchFusionQuoteRequest {
+  readonly fromTokenAddress: string;
+  readonly toTokenAddress: string;
+  readonly amount: string;
+  readonly walletAddress?: string;
+  readonly enableEstimate?: boolean;
+  readonly source?: string;
+  readonly permit?: string;
+  readonly isPermit2?: boolean;
+  readonly slippage?: number;
+}
+
+export interface OneInchFusionQuoteResponse {
+  readonly quoteId: string;
+  readonly fromTokenAddress: string;
+  readonly toTokenAddress: string;
+  readonly fromTokenAmount: string;
+  readonly toTokenAmount: string;
+  readonly settlementAddress: string;
+  readonly recommendedPreset: string;
+  readonly priceImpactPercent?: number | string | null;
+  readonly whitelist: readonly string[];
+}
+
+export interface OneInchFusionPrepareOrderRequest
+  extends OneInchFusionQuoteRequest {
+  readonly walletAddress: string;
+  readonly receiver?: string;
+  readonly preset?: string;
+}
+
+export interface OneInchFusionPreparedOrder {
+  readonly quote: OneInchFusionQuoteResponse;
+  readonly quoteId: string;
+  readonly orderHash: string;
+  readonly order: Record<string, unknown>;
+  readonly extension: string;
+  readonly typedData: Record<string, unknown>;
+  readonly signerAddress: string;
+  readonly receiver: string;
+}
+
+export interface OneInchFusionOrderSubmission {
+  readonly order: Record<string, unknown>;
+  readonly signature: string;
+  readonly quoteId: string;
+  readonly extension: string;
+  readonly orderHash?: string;
+}
+
+export interface OneInchFusionOrderSubmissionResult {
+  readonly orderHash: string;
+  readonly raw?: Record<string, unknown> | null;
+}
+
+export interface OneInchFusionOrderFill {
+  readonly txHash: string;
+  readonly filledMakerAmount: string;
+  readonly filledAuctionTakerAmount: string;
+  readonly takerFeeAmount: string | null;
+}
+
+export interface OneInchFusionOrderStatus {
+  readonly orderHash: string;
+  readonly status: string;
+  readonly cancelTxHash: string | null;
+  readonly settlementTxHash: string | null;
+  readonly fills: readonly OneInchFusionOrderFill[];
+  readonly raw?: Record<string, unknown> | null;
+}
+
 export interface XStocksExecutionRoute {
   readonly id: XStocksExecutionRailId;
   readonly label: string;
