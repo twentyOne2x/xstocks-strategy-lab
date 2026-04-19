@@ -8,7 +8,8 @@ Last updated: 2026-04-02
 | --- | --- | --- | --- |
 | CoWswap execution: repo yes, prod not fully closed | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | `XSL-014` remains the downstream hosted proof lane |
 | Privy smart accounts: partial or stale, not canonically proven live | `XSL-005` | [2026-03-31-xstocks-execution-funding-and-rails-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-execution-funding-and-rails-spec.md) | reuse the existing Privy boundary sub-spec; do not open another owner lane |
-| Chainlink CRE ongoing implementation | `XSL-011B` | [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md) | keep as the only active CRE lane |
+| Chainlink CRE/provider review ingress | `XSL-011B` | [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md) | keep as the review-only intake lane |
+| Autonomous CRE/provider execution: no, review or staging only | `XSL-011D` | [2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md) | depends on landed `XSL-018B`, completed `XSL-014B`, and merged `XSL-005` automation signer posture |
 | xStocks usage live baseline dependency, not a gap lane | `XSL-008` baseline only | [2026-03-31-xstocks-and-euler-adapter-implementation.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-and-euler-adapter-implementation.md) | tracked as dependency, not a new closure lane |
 | Autoresearch runtime: repo yes, deployed recurring no | `XSL-006` with `XSL-006A` | [2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-strategy-lab-autoresearch-operating-model-spec.md) | `XSL-006A` remains the narrow runtime-host sub-lane |
 | Post-qualification autoresearch screen: partial | `XSL-010` | [2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-portfolio-interpretability-and-autoresearch-explanation-spec.md) | controlled on the canonical frontend via `XSL-004` |
@@ -233,19 +234,22 @@ Last updated: 2026-04-02
 
 - Type: runtime/integration
 - Status: active
-- Context: The repo now truthfully proves more of this lane than the original owner entry said: manual/operator CoW rebalance staging and settlement bookkeeping exist, scheduled worker review exists as a review-only shell, and the current `provider_triggered` / Chainlink CRE surface exists only as a fail-closed classification boundary. What is still missing is the first real provider-triggered lane: there is still no repo-owned provider adapter, signed-event validation path, deployed provider host, or proof artifact that would let the repo claim live CRE-triggered rebalance review.
-- Suspected cause: the original owner lane mixed three different questions into one bucket: what already ships in the manual and scheduled runtime, what remains fail-closed by design, and what exact work is required to turn the first CRE path into a provable backend/runtime lane.
-- Fix intent: Keep `XSL-011` as the umbrella control lane, preserve the completed truthful manual boundary under `XSL-011A`, and open one new executor-grade sub-lane under `XSL-011B` that defines the phase-1 CRE/provider-triggered review path, signed-event authenticity model, deployed receiver, and proof contract.
+- Context: The repo now truthfully proves more of this lane than the original owner entry said: manual/operator CoW rebalance staging and settlement bookkeeping exist, scheduled worker review exists as a review-only shell, `XSL-011B` proves signed provider-triggered review ingress, `XSL-018B` has landed the provider-to-execution staging substrate in shared contracts plus rebalance-service helpers, and `XSL-014B` has closed the truthful `$20` venue-routed readiness baseline for the promoted default basket on `1inch.ethereum`. What is still missing is the policy-bounded autonomous decision boundary above those landed pieces, and `XSL-011C` is already occupied by the completed manual proof-bundle tranche.
+- Suspected cause: the owner lane originally mixed four different questions into one bucket: what already ships in the manual and scheduled runtime, what `XSL-011B` proves for review-only CRE ingress, what `XSL-018B` and `XSL-014B` already provide for staging and venue readiness, and what exact dependency gates still separate provider staging from truthful autonomous execution.
+- Fix intent: Keep `XSL-011` as the umbrella control lane, preserve the completed truthful baselines under `XSL-011A` and the existing `XSL-011C`, keep `XSL-011B` as the review-only intake owner, and open one new executor-grade sub-lane under `XSL-011D` for policy-bounded autonomous CRE/provider-triggered execution because `XSL-011C` is already used by the completed manual proof bundle.
 - Acceptance criteria:
   1. The `XSL-011` umbrella spec reflects current repo truth instead of the older generic-unproven framing.
   2. `XSL-011A` remains the completed truthful baseline for manual CoW execution and scheduled review.
-  3. `XSL-011B` exists and explicitly answers whether phase 1 CRE is review-only or execution-capable, what event authenticity model is required, what deployed receiver is required, and what proof changes repo truth from fail-closed to proven.
-  4. No repo-tracked artifact claims live CRE automation beyond what the proof contract actually supports.
-  5. Exact blocker taxonomy remains explicit until the phase-1 proof pack exists.
+  3. The existing completed `XSL-011C` remains the historical manual proof-bundle baseline and is not reopened or renumbered silently.
+  4. `XSL-011B` remains the review-only provider-ingress proof owner and explicitly stops at `awaiting_operator`.
+  5. `XSL-011D` exists and explicitly defines when provider-triggered CRE may advance from accepted review or provider staging into autonomous execution while reusing the canonical execution-request path.
+  6. `XSL-011D` treats landed `XSL-018B`, completed `XSL-014B`, and merged `XSL-005` automation signer posture as dependencies rather than assuming autonomous execution is already proven.
+  7. No repo-tracked artifact claims live autonomous CRE/provider execution beyond what the hosted proof contract actually supports.
 - Complexity: high
 - Plan links:
   - [2026-03-31-xstocks-rebalance-automation-and-execution-orchestration-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-03-31-xstocks-rebalance-automation-and-execution-orchestration-spec.md)
   - [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md)
+  - [2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md)
   - [2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md)
 
 ### XSL-011A Truthful CoW Manual Rebalance Boundary
@@ -350,6 +354,30 @@ Last updated: 2026-04-02
 - Verification note:
   - Local implementation now exists for the phase-1 review-only CRE lane in `packages/shared`, `packages/policy`, and `apps/api`: signed provider-event validation, dedupe/replay protection, receipt persistence, and `awaiting_operator` handoff are implemented and covered by repo tests.
   - Deployed proof is still missing, so repo truth may not yet claim `CRE-triggered rebalance review is live`; the remaining blocker set is deployed host/config proof plus one real accepted-event proof bundle.
+
+### XSL-011D Policy-Bounded Autonomous CRE / Provider-Triggered Execution
+
+- Type: runtime/integration/policy
+- Status: active
+- Canonical owner lane: `XSL-011`
+- Date opened: 2026-04-02
+- Context: `XSL-011B` proves review-only provider ingress, `XSL-018B` has landed the provider-to-execution staging substrate in shared contracts plus `apps/api/src/rebalance-service.js`, and `XSL-014B` closed the truthful venue-routed readiness baseline for the promoted default basket at `$20` gross on `1inch.ethereum`. What the repo still does not own is the exact policy boundary above those landed pieces: when a real CRE/provider event may advance from accepted review or provider staging into autonomous execution, with no shadow executor and no silent assumption that smart-account-first automation is already proven.
+- Suspected cause: provider authenticity, staging linkage, venue readiness, and automation signer posture were decomposed correctly into separate lanes, but no single sub-spec yet owned the final autonomous decision boundary or the exact hosted proof bar needed before the repo may say `autonomous CRE/provider execution works`.
+- Fix intent: create one execution-grade spec that defines the first policy-bounded autonomous CRE/provider-triggered execution lane on top of landed `XSL-018B` and completed `XSL-014B`, reuses the canonical execution-request path, keeps the merged `XSL-005` automation signer posture as an explicit dependency, and freezes the exact fail-closed proof contract for any future live claim.
+- Acceptance criteria:
+  1. An execution-grade autonomous CRE/provider execution spec exists in `docs/plans/active/`.
+  2. The spec defines allowed trigger classes, signer model, venue allowlist, asset allowlist, notional caps, rollback rules, hard-stop rules, and readiness plus quoteability prerequisites.
+  3. The spec makes landed `XSL-018B`, completed `XSL-014B`, and merged `XSL-005` automation signer posture explicit dependencies rather than implied closure.
+  4. The spec requires reuse of the canonical execution-request path and forbids any shadow executor or direct provider-to-venue shortcut.
+  5. The spec defines the exact hosted proof bundle needed before the repo may claim autonomous CRE/provider-triggered execution.
+  6. This pass remains docs-only and does not implement or relabel runtime behavior.
+- Complexity: high
+- Plan: [2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md)
+- Executor prompt:
+  - Reuse the existing provider receipt, rebalance, execution-request, and per-leg linkage surfaces instead of introducing a second executor.
+  - Treat `XSL-011B` as review-only ingress, `XSL-018B` as staging substrate, `XSL-014B` as the current venue and asset proof baseline, and `XSL-005` as the automation signer dependency owner.
+  - Keep smart-account-first automation as a dependency gate, not a pre-proven claim.
+  - Do not implement runtime behavior from this issue until the hosted proof contract and dependency gates in the spec are satisfied.
 
 ### XSL-012 Social Connect, Incentive, And Agent Wallet
 

@@ -9,18 +9,20 @@ Canonical issue: `XSL-011`
 
 Keep one truthful umbrella for rebalance automation by:
 1. preserving the completed manual CoW and scheduled-review baselines,
-2. keeping `XSL-011B` as the only active CRE/provider-triggered implementation lane,
-3. preventing duplicate generic automation specs,
-4. and making the claim boundary from `manual review proven` to `provider-triggered review proven` explicit.
+2. keeping `XSL-011B` as the review-only CRE/provider-triggered intake lane,
+3. opening one separate autonomous executor spec above the landed staging and venue-readiness dependencies,
+4. preventing duplicate generic automation specs,
+5. and making the claim boundary from `manual review proven` to `provider-triggered review proven` to `policy-bounded autonomous execution proven` explicit.
 
 ## Non-goals
 
 This umbrella does not:
 1. reopen frontend parity or execution-rail ownership,
 2. relabel manual CoW execution as autonomous,
-3. create a second active provider-trigger workstream beside `XSL-011B`,
-4. claim autonomous submission from CRE,
-5. hide current blocker taxonomy behind vague automation language.
+3. reopen `XSL-011C`, which already names the completed manual proof bundle,
+4. claim autonomous submission from CRE before the new proof bar exists,
+5. hide current blocker taxonomy behind vague automation language,
+6. authorize a shadow executor outside the canonical execution-request path.
 
 ## Existing-Spec Inventory
 
@@ -30,6 +32,7 @@ This umbrella does not:
 | [2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-rebalance-cow-manual-and-chainlink-boundary.md) | completed manual and scheduled baseline | reuse |
 | [2026-04-01-xstocks-first-manual-cow-rebalance-proof-bundle.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/completed/2026-04-01-xstocks-first-manual-cow-rebalance-proof-bundle.md) | completed manual proof bundle | reuse |
 | [2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-chainlink-cre-provider-triggered-rebalance-spec.md) | active CRE executor spec | update and keep as the only active provider-trigger lane |
+| [2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-02-xstocks-policy-bounded-autonomous-cre-provider-execution-spec.md) | active autonomous executor spec | create new alongside because no existing doc owns the final autonomous decision boundary |
 | [2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md](/Users/user/PycharmProjects/xstocks-strategy-lab/docs/plans/active/2026-04-01-xstocks-agent-testability-and-skill-surface-spec.md) | smoke owner | support from this umbrella |
 
 ## Current / Live Truth
@@ -37,8 +40,9 @@ This umbrella does not:
 1. The repo already owns a truthful manual/operator CoW rebalance lane.
 2. The repo already owns a scheduled worker review shell that can open or queue manual review only.
 3. A local phase-1 `provider_triggered` implementation now exists in `packages/shared`, `packages/policy`, and `apps/api`: signed-event validation, dedupe/replay protection, receipt persistence, and review-only `awaiting_operator` opening are implemented.
-4. Repo truth is still not allowed to claim `CRE provider-triggered review live` because no deployed accepted-event proof bundle exists yet.
-5. The only active provider-triggered implementation lane is `XSL-011B`; that is the correct ongoing CRE workstream and should not be duplicated.
+4. `XSL-018B` has landed the provider-staging substrate in shared contracts plus `apps/api/src/rebalance-service.js`, but canonical API exposure on `origin/main` still needs reconciliation before that staging truth can be treated as fully closed.
+5. `XSL-014B` completed the truthful venue-routed readiness baseline for the promoted default basket at `$20` gross on `1inch.ethereum`.
+6. Repo truth is still not allowed to claim live autonomous CRE/provider execution because the automation signer model remains a dependency and no hosted autonomous proof bundle exists yet.
 
 ## Current Local Implementation Audit
 
@@ -47,6 +51,7 @@ This umbrella does not:
 | manual CoW | rebalance state, quote, approval, submission, settlement bookkeeping | hosted proof still bounded by venue quoteability | none for the local baseline |
 | scheduled review | worker evaluation and review-only path | prod-facing visibility refinement | autonomous submission is intentionally absent |
 | provider-triggered review | request schema, ETH-JWT validation, dedupe, replay protection, receipt persistence, review-only route | deployed host/config proof and real accepted-event evidence | deployed proof bundle only |
+| autonomous provider execution | staging substrate, venue-readiness baseline, future contract enums | canonical API staging exposure, automation signer branch, hosted proof | actual autonomous execution and rollback proof |
 
 ## Product Outcome Contract
 
@@ -63,12 +68,13 @@ When this umbrella closes for the current tranche:
 | manual review and execution | proven | operator-manual CoW review and execution path exists |
 | scheduled review shell | proven | worker may open or queue manual review only |
 | CRE phase 1 | local implementation complete, deployed proof open | validated provider events may open review only after deployed proof exists |
-| autonomous provider execution | out of scope and unproven | forbidden claim |
+| autonomous provider execution | spec opened, proof absent | forbidden claim until `XSL-011D` dependencies and hosted proof close |
 
 Truth rules:
 1. `XSL-011A` and `XSL-011C` remain completed baselines.
-2. `XSL-011B` remains the only active implementation lane for provider-triggered rebalance review.
-3. No provider-triggered path may create or submit CoW orders autonomously in phase 1.
+2. `XSL-011B` remains the provider-review intake owner.
+3. `XSL-011D` is the only allowed owner for policy-bounded autonomous CRE/provider execution planning.
+4. No provider-triggered path may claim autonomous execution until `XSL-011D` hosted proof requirements are satisfied.
 
 ## Proof / Measurement Contract
 
@@ -77,15 +83,16 @@ Truth rules:
 | manual CoW baseline | tests plus proof bundle | closed |
 | scheduled review shell | tests plus truthful review-only state transitions | closed |
 | CRE provider-triggered review | deployed signed provider event opens `awaiting_operator` and persists receipt | local complete, deployed proof open |
-| autonomous provider execution | separate future spec and proof | not opened |
+| autonomous provider execution | dedicated spec, dependency closure, and hosted proof bundle | spec opened, proof not started |
 
 ## Acceptance Criteria
 
 1. `XSL-011` remains the only umbrella owner for rebalance automation.
 2. `XSL-011A` and `XSL-011C` stay completed and are not reopened as active work.
-3. `XSL-011B` remains the only active CRE/provider-triggered lane.
-4. No repo-tracked artifact claims live CRE automation beyond review-open proof.
-5. Agent surfaces describe CRE as target-state or internal-only until proof exists.
+3. `XSL-011B` remains the review-only CRE/provider-triggered lane.
+4. `XSL-011D` exists as the only autonomous CRE/provider-execution owner spec.
+5. No repo-tracked artifact claims live autonomous CRE/provider execution beyond the proof contract in `XSL-011D`.
+6. Agent surfaces describe autonomous CRE as unproven until that proof exists.
 
 ## Blocker Taxonomy
 
