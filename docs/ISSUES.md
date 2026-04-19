@@ -437,7 +437,11 @@ Last updated: 2026-04-02
   - [ ] visual/screenshot verification not applicable because this lane is backend/runtime only
 - Verification note:
   - Local implementation now exists for the phase-1 review-only CRE lane in `packages/shared`, `packages/policy`, and `apps/api`: signed provider-event validation, dedupe/replay protection, receipt persistence, and `awaiting_operator` handoff are implemented and covered by repo tests.
-  - Deployed proof is still missing, so repo truth may not yet claim `CRE-triggered rebalance review is live`; the remaining blocker set is deployed host/config proof plus one real accepted-event proof bundle.
+  - Re-audit on 2026-04-02 from a clean `origin/main` worktree first confirmed that the then-live Railway `api` service still exposed only the stale synthetic signer path and had zero activations, rebalances, and provider receipts for `onboarding.default_basket`. That blocker audit remains at `tmp/proof/xsl-011b-2026-04-02-blocker-audit/`.
+  - The same pass then established a repo-owned hot signer `0xa4165fa28eeb20a87ac3f85ad36155542665ad24` plus Railway `CHAINLINK_CRE_*` config on the current-main receiver, bootstrapped a live hot-treasury baseline activation `act_hot_treasury_provider_baseline_20260402`, and captured accepted receipt `provider_evt_rcpt_3727bf90-eae4-4a35-886a-8adc834c67a0` from `POST /api/internal/rebalances/provider-triggered-review`. The proof bundle is `tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/`.
+  - The accepted live proof bound `slotId=onboarding.default_basket`, `targetManifestId=onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted`, `baselineManifestId=onboarding.default_basket:basket-baseline-v1`, and `chain=ethereum` correctly, then opened `awaiting_operator` only with `automationTruth.providerTriggeredProven=true`.
+  - Runtime proof after acceptance stayed review-only: `executionRequestCount=0`, `executionRelatedActivityEventCount=0`, `executionRequestId=null`, and no provider path created, quoted, signed, submitted, or settled a CoW order.
+  - Residual truth caveat: the accepted deployed proof now uses a repo-owned hot provider signer plus a repo-owned hot-treasury historical baseline inserted by the deployed backend, not an externally operated Chainlink signer or a user-authenticated activation saved through the normal activation flow. Under that stricter provenance bar, `XSL-011B` is still not fully complete.
 
 ### XSL-012 Social Connect, Incentive, And Agent Wallet
 

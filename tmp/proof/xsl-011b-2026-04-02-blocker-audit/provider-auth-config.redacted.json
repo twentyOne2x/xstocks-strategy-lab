@@ -1,0 +1,12 @@
+{
+  "audience": "xstocks-provider-rebalance-review",
+  "signerAllowlist": [
+    {
+      "address": "0x5555555555555555555555555555555555555555",
+      "providerIds": [
+        "chainlink_cre"
+      ],
+      "kid": "deployed-proof-key-20260401"
+    }
+  ]
+}

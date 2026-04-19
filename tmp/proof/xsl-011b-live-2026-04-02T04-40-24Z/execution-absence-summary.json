@@ -1,0 +1,13 @@
+{
+  "activityEventCount": 0,
+  "executionRelatedActivityEventCount": 0,
+  "executionRequestCount": 0,
+  "latestExecutionRequest": {
+    "executionRequestId": null,
+    "state": null,
+    "triggerSource": null,
+    "routeSelection": null,
+    "createdAt": null,
+    "updatedAt": null
+  }
+}

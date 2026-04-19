@@ -1,0 +1,95 @@
+{
+  "status": 200,
+  "ok": true,
+  "body": {
+    "data": {
+      "version": "1",
+      "generatedAt": "2026-04-02T05:13:17.820Z",
+      "receipt": {
+        "receiptId": "provider_evt_rcpt_3727bf90-eae4-4a35-886a-8adc834c67a0",
+        "receivedAt": "2026-04-02T05:13:17.818Z",
+        "providerId": "chainlink_cre",
+        "providerEventId": "evt_20260402T051313301Z",
+        "workflowId": "xsl011b-provider-review-hot-20260402",
+        "workflowExecutionId": "exec_20260402T051313301Z",
+        "slotId": "onboarding.default_basket",
+        "chain": "ethereum",
+        "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "dedupeKey": "chainlink_cre:xsl011b-provider-review-hot-20260402:exec_20260402T051313301Z:onboarding.default_basket:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:ethereum",
+        "digest": "0x405241070c39bb1cd42e7760763b29abdfa4195320ee48bc8d9dd2bc560ad916",
+        "signerAddress": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24",
+        "issuer": "chainlink-cre.xstocks.live",
+        "jti": "jti_exec_20260402T051313301Z",
+        "tokenIssuedAt": "2026-04-02T05:13:13.000Z",
+        "tokenExpiresAt": "2026-04-02T05:17:13.000Z",
+        "decision": "accepted",
+        "errorCode": null,
+        "reason": "Validated Chainlink CRE event opened operator review for the current promoted manifest.",
+        "duplicateOfReceiptId": null
+      },
+      "rebalanceOrchestration": {
+        "rebalanceId": "rebalance_onboarding_default_basket",
+        "slotId": "onboarding.default_basket",
+        "chain": "ethereum",
+        "activationManifestRef": {
+          "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+          "slotId": "onboarding.default_basket",
+          "mode": "basket",
+          "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+        },
+        "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "baselineActivationId": "act_hot_treasury_provider_baseline_20260402",
+        "baselineManifestId": "onboarding.default_basket:basket-baseline-v1",
+        "baselineManifestMatchesTarget": false,
+        "state": "awaiting_operator",
+        "runtimeOwner": "operator_manual",
+        "triggerSource": "provider_triggered",
+        "summary": "Rebalance is awaiting operator confirmation.",
+        "rationale": "Execution remains manual-first and requires an explicit operator confirmation step before it can begin.",
+        "scheduledFor": null,
+        "allowedTransitions": [
+          "scheduled",
+          "executing",
+          "paused",
+          "failed"
+        ],
+        "recommendationState": "full_rebalance",
+        "executionState": "ready",
+        "executionEligibility": "executable",
+        "surfaceTruth": "live",
+        "providerReceiptId": null,
+        "executionRequestId": null,
+        "executionTriggerSource": null,
+        "executionRequestState": null,
+        "blockers": [],
+        "warnings": [
+          "Automation remains fail-closed until the Privy smart wallet is ready."
+        ],
+        "automationTruth": {
+          "operatorManualRequired": true,
+          "autonomousExecutionProven": false,
+          "providerTriggeredProven": true,
+          "supportedTriggerSources": [
+            "operator_manual",
+            "scheduled_cron",
+            "provider_triggered"
+          ],
+          "notes": [
+            "Operator confirmation remains required before any rebalance execution claim.",
+            "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+            "Validated provider-triggered review is proven for this runtime, but operator approval remains mandatory before execution staging.",
+            "Chainlink-oriented provider review is proven only for authenticated review opening; no autonomous execution claim exists."
+          ]
+        },
+        "nextAction": {
+          "title": "Approve or reject manual rebalance",
+          "detail": "The worker shell will not submit execution without an explicit operator-driven state transition.",
+          "status": "pending"
+        },
+        "createdAt": "2026-04-02T05:13:17.816Z",
+        "updatedAt": "2026-04-02T05:13:17.816Z"
+      }
+    }
+  },
+  "rawText": null
+}

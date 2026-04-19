@@ -6,6 +6,7 @@
     "dev": "node ./src/index.js",
     "build": "node ./scripts/lint.js",
     "lint": "node ./scripts/lint.js",
+    "proof:provider-baseline": "node ./scripts/bootstrap-provider-rebalance-baseline.js",
     "proof:cow": "node ./scripts/privy-cow-proof.js",
     "proof:oneinch": "node ./scripts/oneinch-fusion-proof.js",
     "test": "node --test",

@@ -1,0 +1,15 @@
+[
+  {
+    "address": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24",
+    "providerIds": [
+      "chainlink_cre"
+    ],
+    "kid": "xsl011b-provider-hot-20260402",
+    "jwk": {
+      "kty": "EC",
+      "crv": "secp256k1",
+      "x": "LZThY98iypmIHAD7zQBuiGw53Mg5BG5_1zsR-ats0q4",
+      "y": "O4VcSLRYk-yKnYp1kcPNEj8ZiA7xGaTF_sz4w1H4zBs"
+    }
+  }
+]

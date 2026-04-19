@@ -1,0 +1,20 @@
+{
+  "projectId": "80528e32-e909-4b21-8dbd-906b9d54db2e",
+  "projectName": "xstocks-strategy-lab-preview",
+  "workspace": "twentyone2x's Projects",
+  "apiService": {
+    "serviceId": "f7f47c56-bdb3-4f38-a235-d72d93196420",
+    "serviceName": "api",
+    "publicDomain": "api-production-e70b.up.railway.app",
+    "activeDeployment": {
+      "id": "196b801d-2e31-4494-8f60-846e3027e8ab",
+      "status": "SUCCESS",
+      "createdAt": "2026-04-02T03:56:36.372Z"
+    },
+    "latestDeployment": {
+      "id": "e9a3e984-16c2-47cf-96ad-58e609d54e2f",
+      "status": "FAILED",
+      "createdAt": "2026-04-02T04:03:49.438Z"
+    }
+  }
+}

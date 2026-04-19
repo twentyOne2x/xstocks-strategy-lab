@@ -1,0 +1,99 @@
+{
+  "activationCount": 1,
+  "rebalanceCount": 1,
+  "receiptCount": 1,
+  "executionRequestCount": 0,
+  "latestActivation": {
+    "activationId": "act_hot_treasury_provider_baseline_20260402",
+    "manifestId": "onboarding.default_basket:basket-baseline-v1",
+    "slotId": "onboarding.default_basket",
+    "status": "ready",
+    "owner": {
+      "providerId": "hot_treasury",
+      "appId": "xstocks-internal",
+      "userId": "did:xstocks:hot_treasury_xsl011b",
+      "sessionId": null,
+      "issuer": "internal://xsl011b/hot-treasury",
+      "authenticatedAt": "2026-04-02T05:12:08.000Z"
+    },
+    "walletState": {
+      "walletConnected": true,
+      "walletAddress": "0x188c00f138cda59cdabcc3eac1144837742281dd",
+      "fundedNotionalUsd": 1250,
+      "smartAccount": {
+        "status": "not_required",
+        "address": "0x188c00f138cda59cdabcc3eac1144837742281dd"
+      }
+    },
+    "createdAt": "2026-04-02T05:12:08.000Z",
+    "updatedAt": "2026-04-02T05:12:08.000Z"
+  },
+  "latestRebalance": {
+    "rebalanceId": "rebalance_onboarding_default_basket",
+    "state": "awaiting_operator",
+    "triggerSource": "provider_triggered",
+    "runtimeOwner": "operator_manual",
+    "baselineActivationId": "act_hot_treasury_provider_baseline_20260402",
+    "baselineManifestId": "onboarding.default_basket:basket-baseline-v1",
+    "baselineManifestMatchesTarget": false,
+    "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "executionRequestId": null,
+    "executionTriggerSource": null,
+    "executionRequestState": null,
+    "providerReceiptId": null,
+    "blockers": [],
+    "warnings": [
+      "Automation remains fail-closed until the Privy smart wallet is ready."
+    ],
+    "automationTruth": {
+      "operatorManualRequired": true,
+      "autonomousExecutionProven": false,
+      "providerTriggeredProven": true,
+      "supportedTriggerSources": [
+        "operator_manual",
+        "scheduled_cron",
+        "provider_triggered"
+      ],
+      "notes": [
+        "Operator confirmation remains required before any rebalance execution claim.",
+        "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+        "Validated provider-triggered review is proven for this runtime, but operator approval remains mandatory before execution staging.",
+        "Chainlink-oriented provider review is proven only for authenticated review opening; no autonomous execution claim exists."
+      ]
+    },
+    "nextAction": {
+      "title": "Approve or reject manual rebalance",
+      "detail": "The worker shell will not submit execution without an explicit operator-driven state transition.",
+      "status": "pending"
+    },
+    "createdAt": "2026-04-02T05:13:17.816Z",
+    "updatedAt": "2026-04-02T05:13:17.816Z"
+  },
+  "latestReceipt": {
+    "receiptId": "provider_evt_rcpt_3727bf90-eae4-4a35-886a-8adc834c67a0",
+    "decision": "accepted",
+    "providerEventId": "evt_20260402T051313301Z",
+    "workflowId": "xsl011b-provider-review-hot-20260402",
+    "workflowExecutionId": "exec_20260402T051313301Z",
+    "slotId": "onboarding.default_basket",
+    "chain": "ethereum",
+    "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "dedupeKey": "chainlink_cre:xsl011b-provider-review-hot-20260402:exec_20260402T051313301Z:onboarding.default_basket:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:ethereum",
+    "digest": "0x405241070c39bb1cd42e7760763b29abdfa4195320ee48bc8d9dd2bc560ad916",
+    "signerAddress": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24",
+    "issuer": "chainlink-cre.xstocks.live",
+    "jti": "jti_exec_20260402T051313301Z",
+    "reason": "Validated Chainlink CRE event opened operator review for the current promoted manifest.",
+    "errorCode": null,
+    "duplicateOfReceiptId": null,
+    "receivedAt": "2026-04-02T05:13:17.818Z"
+  },
+  "latestExecutionRequest": {
+    "executionRequestId": null,
+    "state": null,
+    "triggerSource": null,
+    "routeSelection": null,
+    "createdAt": null,
+    "updatedAt": null
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "apiBaseUrl": "https://api-production-e70b.up.railway.app",
+  "route": "/api/internal/rebalances/provider-triggered-review",
+  "signerAddress": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24",
+  "workflowId": "xsl011b-provider-review-hot-20260402",
+  "workflowExecutionId": "exec_20260402T051313301Z",
+  "providerEventId": "evt_20260402T051313301Z",
+  "hotTreasuryWalletAddress": "0x188c00f138cda59cdabcc3eac1144837742281dd",
+  "body": {
+    "version": "1",
+    "providerId": "chainlink_cre",
+    "providerEventId": "evt_20260402T051313301Z",
+    "workflowId": "xsl011b-provider-review-hot-20260402",
+    "workflowExecutionId": "exec_20260402T051313301Z",
+    "triggerType": "cron",
+    "triggeredAt": "2026-04-02T05:13:13.301Z",
+    "slotId": "onboarding.default_basket",
+    "chain": "ethereum",
+    "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "baselineManifestId": "onboarding.default_basket:basket-baseline-v1",
+    "reviewReason": {
+      "kind": "manifest_drift",
+      "observedDriftBps": 425,
+      "thresholdBps": 300
+    },
+    "reviewIntent": {
+      "requestedState": "awaiting_operator",
+      "executionMode": "review_only"
+    }
+  }
+}

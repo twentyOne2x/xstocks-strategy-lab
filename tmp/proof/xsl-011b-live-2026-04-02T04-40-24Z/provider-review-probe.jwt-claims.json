@@ -1,0 +1,13 @@
+{
+  "digest": "0x405241070c39bb1cd42e7760763b29abdfa4195320ee48bc8d9dd2bc560ad916",
+  "iss": "chainlink-cre.xstocks.live",
+  "iat": 1775106793,
+  "exp": 1775107033,
+  "jti": "jti_exec_20260402T051313301Z",
+  "providerId": "chainlink_cre",
+  "workflowId": "xsl011b-provider-review-hot-20260402",
+  "workflowExecutionId": "exec_20260402T051313301Z",
+  "slotId": "onboarding.default_basket",
+  "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "chain": "ethereum"
+}

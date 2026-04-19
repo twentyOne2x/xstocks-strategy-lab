@@ -1,0 +1,44 @@
+{
+  "activationCount": 1,
+  "rebalanceCount": 0,
+  "receiptCount": 0,
+  "executionRequestCount": 0,
+  "latestActivation": {
+    "activationId": "act_hot_treasury_provider_baseline_20260402",
+    "manifestId": "onboarding.default_basket:basket-baseline-v1",
+    "slotId": "onboarding.default_basket",
+    "status": "ready",
+    "owner": {
+      "providerId": "hot_treasury",
+      "appId": "xstocks-internal",
+      "userId": "did:xstocks:hot_treasury_xsl011b",
+      "sessionId": null,
+      "issuer": "internal://xsl011b/hot-treasury",
+      "authenticatedAt": "2026-04-02T05:12:08.000Z"
+    },
+    "walletState": {
+      "walletConnected": true,
+      "walletAddress": "0x188c00f138cda59cdabcc3eac1144837742281dd",
+      "fundedNotionalUsd": 1250,
+      "smartAccount": {
+        "status": "not_required",
+        "address": "0x188c00f138cda59cdabcc3eac1144837742281dd"
+      }
+    },
+    "createdAt": "2026-04-02T05:12:08.000Z",
+    "updatedAt": "2026-04-02T05:12:08.000Z"
+  },
+  "latestRebalance": {
+    "rebalanceId": null,
+    "state": null,
+    "triggerSource": null,
+    "baselineActivationId": null,
+    "baselineManifestId": null,
+    "targetManifestId": null,
+    "executionRequestId": null,
+    "executionTriggerSource": null,
+    "executionRequestState": null,
+    "automationTruth": null,
+    "updatedAt": null
+  }
+}

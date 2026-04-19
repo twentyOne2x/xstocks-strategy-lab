@@ -68,25 +68,27 @@ Expected artifacts:
 - 2026-04-01T19:40:00+02:00: Opened `XSL-011B` as the narrow provider-triggered review ingress tranche and froze scope to shared, policy, and API only.
 - 2026-04-01T21:21:03+02:00: Configured production audience plus signer allowlist, redeployed Railway `api`, and captured accepted receipt `provider_receipt_c3a08c54-28ba-4fbe-91ee-13d729cefb0f` from a signed review-only probe. The live rebalance state opened `awaiting_operator` only and did not create, quote, sign, submit, or settle any CoW order.
 - 2026-04-01T21:25:00+02:00: Removed the seeded proof-only activations and synthetic `awaiting_operator` rebalance record from the live runtime store after the accepted-path proof completed, leaving the accepted receipt as the audit artifact.
+- 2026-04-02T04:22:49Z: Re-audited the deployed Railway `api` service from a clean `origin/main` worktree. Production still exposes only the synthetic signer allowlist entry `0x5555555555555555555555555555555555555555` / `kid=deployed-proof-key-20260401`, and the active runtime store now has zero activations, rebalances, and provider receipts for `onboarding.default_basket`. Stopped before sending any new live provider event and captured the blocker audit at `tmp/proof/xsl-011b-2026-04-02-blocker-audit/`.
+- 2026-04-02T05:13:17Z: Added `.railwayignore` to exclude `tmp/` from Railway snapshots, refreshed the live receiver onto the current-main `CHAINLINK_CRE_*` auth path, bootstrapped repo-owned hot-treasury baseline activation `act_hot_treasury_provider_baseline_20260402`, and captured accepted receipt `provider_evt_rcpt_3727bf90-eae4-4a35-886a-8adc834c67a0` from `POST /api/internal/rebalances/provider-triggered-review`. The live runtime bound the correct slot/manifest/chain and opened `awaiting_operator` only with zero execution requests and zero execution-related activity events. Proof bundle: `tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/`.
 
-## 2026-04-01 Final Reconciliation Update
+## 2026-04-02 Final Reconciliation Update
 
 This section supersedes stale implementation-plan assumptions elsewhere in this doc.
 
 Exact proofs reached:
-1. the deployed receiver at `POST /api/internal/rebalances/provider-events` now validates ES256K JWTs, signer allowlist entries, request digests, duplicate deliveries, replayed `jti` values, and replayed digests before any state transition,
+1. the deployed receiver at `POST /api/internal/rebalances/provider-triggered-review` now validates Chainlink-CRE `ETH_PERSONAL_SIGN` tokens, signer allowlist entries, workflow allowlist entries, request digests, duplicate deliveries, replayed `jti` values, and replayed dedupe keys before any state transition,
 2. local verification is green across shared, policy, and API ingress coverage,
-3. production first rejected the signed probe truthfully while auth config was absent,
-4. after production audience plus allowlist config were set and Railway redeployed, the live receiver accepted a signed review-only event and persisted accepted receipt `provider_receipt_c3a08c54-28ba-4fbe-91ee-13d729cefb0f`,
-5. the accepted live proof opened `awaiting_operator` only with `triggerSource=provider_triggered`, `baselineManifestId=onboarding.default_basket:basket-baseline-v1`, and `targetManifestId=onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted`,
-6. no provider path created, quoted, signed, submitted, or confirmed a CoW order.
+3. after the stale-signer/empty-runtime re-audit, Railway current-main receiver config was refreshed to use repo-owned hot signer `0xa4165fa28eeb20a87ac3f85ad36155542665ad24` plus workflow allowlist `xsl011b-provider-review-hot-20260402`,
+4. the live runtime now contains baseline activation `act_hot_treasury_provider_baseline_20260402` for `onboarding.default_basket` with `manifestId=onboarding.default_basket:basket-baseline-v1`, `status=ready`, `surfaceTruth=live`, and funded hot-treasury wallet `0x188c00f138cda59cdabcc3eac1144837742281dd`,
+5. the live receiver accepted signed review-only event `providerEventId=evt_20260402T051313301Z` and persisted accepted receipt `provider_evt_rcpt_3727bf90-eae4-4a35-886a-8adc834c67a0`,
+6. the accepted live proof bound `slotId=onboarding.default_basket`, `targetManifestId=onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted`, `baselineManifestId=onboarding.default_basket:basket-baseline-v1`, and `chain=ethereum` correctly, then opened `awaiting_operator` only with `triggerSource=provider_triggered` and `automationTruth.providerTriggeredProven=true`,
+7. runtime proof after acceptance retained `activationCount=1`, `rebalanceCount=1`, `receiptCount=1`, `executionRequestCount=0`, `executionRelatedActivityEventCount=0`, `executionRequestId=null`, and `executionTriggerSource=null`, so no provider path created, quoted, signed, submitted, or confirmed a CoW order.
 
 Exact residual caveat:
-1. the accepted-path proof currently relies on a temporary proof signer allowlist entry rather than a real external Chainlink or CRE signer,
-2. the accepted-path proof required a seeded baseline activation runtime context so the receiver had a real rebalance delta to evaluate,
-3. those proof-only activations and the synthetic live rebalance record were removed from production runtime state immediately after proof capture, but the accepted receipt remains in the live runtime store as the audit artifact.
+1. the accepted-path proof now uses a repo-owned hot provider signer configured on Railway, not an externally operated Chainlink or CRE signer,
+2. the accepted-path proof uses a repo-owned hot-treasury historical baseline bootstrapped by the deployed backend into the live runtime store, not a user-authenticated activation saved through the standard activation flow,
+3. downstream execution remains manual and user-approved only; there is still no autonomous execution proof or claim.
 
 Exact remaining closeout work:
-1. replace the temporary proof signer allowlist entry with the real provider signer,
-2. rerun the accepted-path proof against a real provider-owned activation baseline rather than a seeded proof activation,
-3. keep downstream execution on the existing manual, user-approved CoW boundary.
+1. decide whether the repo-owned hot signer plus deployed hot-treasury bootstrap satisfies the canonical `XSL-011B` closure bar; if not, replace it with an externally operated provider signer and a normal authenticated activation baseline,
+2. keep downstream execution on the existing manual, user-approved CoW boundary.

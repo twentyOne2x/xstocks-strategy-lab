@@ -1,0 +1,32 @@
+{
+  "capturedAt": "2026-04-02T05:13:17.820Z",
+  "apiBaseUrl": "https://api-production-e70b.up.railway.app",
+  "receiverPath": "/api/internal/rebalances/provider-triggered-review",
+  "proofBundlePath": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z",
+  "signerAddress": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24",
+  "workflowId": "xsl011b-provider-review-hot-20260402",
+  "providerEventId": "evt_20260402T051313301Z",
+  "workflowExecutionId": "exec_20260402T051313301Z",
+  "receiptId": "provider_evt_rcpt_3727bf90-eae4-4a35-886a-8adc834c67a0",
+  "slotId": "onboarding.default_basket",
+  "chain": "ethereum",
+  "baselineActivationId": "act_hot_treasury_provider_baseline_20260402",
+  "baselineManifestId": "onboarding.default_basket:basket-baseline-v1",
+  "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "rebalanceState": "awaiting_operator",
+  "triggerSource": "provider_triggered",
+  "providerTriggeredProven": true,
+  "executionRequestCount": 0,
+  "executionRelatedActivityEventCount": 0,
+  "artifacts": {
+    "baselineBootstrap": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/baseline-bootstrap.remote-output.json",
+    "runtimeAfterBaseline": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/runtime-after-baseline.json",
+    "probeRequest": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/provider-review-probe.request.json",
+    "probeJwtHeader": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/provider-review-probe.jwt-header.json",
+    "probeJwtClaims": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/provider-review-probe.jwt-claims.json",
+    "probeResponse": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/provider-review-probe.response.json",
+    "runtimeAfterProbe": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/runtime-after-provider-probe.json",
+    "executionAbsence": "tmp/proof/xsl-011b-live-2026-04-02T04-40-24Z/execution-absence-summary.json"
+  },
+  "residualCaveat": "Accepted deployed proof uses a repo-owned hot signer and a repo-owned hot-treasury historical baseline bootstrapped by the deployed backend, not an externally operated provider signer or a user-authenticated activation saved through the normal activation flow."
+}

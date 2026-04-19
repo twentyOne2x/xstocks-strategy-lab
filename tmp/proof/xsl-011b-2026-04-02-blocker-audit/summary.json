@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-04-02T04:22:49Z",
+  "lane": "XSL-011B",
+  "status": "blocked",
+  "probeSent": false,
+  "realProviderSignerUsed": false,
+  "realActivationBaselineUsed": false,
+  "firstBlocker": {
+    "code": "real_provider_signer_missing",
+    "detail": "The deployed Railway api service still exposes only the synthetic proof signer allowlist entry for provider-triggered rebalance auth."
+  },
+  "secondaryObservation": {
+    "code": "real_activation_baseline_missing",
+    "detail": "The active Railway api runtime store currently has zero activations, rebalances, and provider receipts for onboarding.default_basket, so no real activation baseline exists for a new accepted-path proof."
+  },
+  "artifacts": {
+    "providerAuthConfig": "./provider-auth-config.redacted.json",
+    "runtimeStoreSummary": "./runtime-store-summary.json",
+    "railwayStatusSummary": "./railway-status-summary.json"
+  }
+}
