@@ -1,0 +1,38 @@
+[
+  {
+    "legId": "act_8efaf005-f5cc-4fd7-bd3a-9918cecf5a06:leg:1",
+    "assetSymbol": "NVDAx",
+    "orderHash": null,
+    "signature": null
+  },
+  {
+    "legId": "act_8efaf005-f5cc-4fd7-bd3a-9918cecf5a06:leg:2",
+    "assetSymbol": "MSFTx",
+    "orderHash": null,
+    "signature": null
+  },
+  {
+    "legId": "act_8efaf005-f5cc-4fd7-bd3a-9918cecf5a06:leg:3",
+    "assetSymbol": "AAPLx",
+    "orderHash": null,
+    "signature": null
+  },
+  {
+    "legId": "act_8efaf005-f5cc-4fd7-bd3a-9918cecf5a06:leg:4",
+    "assetSymbol": "METAx",
+    "orderHash": null,
+    "signature": null
+  },
+  {
+    "legId": "act_8efaf005-f5cc-4fd7-bd3a-9918cecf5a06:leg:5",
+    "assetSymbol": "AMZNx",
+    "orderHash": null,
+    "signature": null
+  },
+  {
+    "legId": "act_8efaf005-f5cc-4fd7-bd3a-9918cecf5a06:leg:6",
+    "assetSymbol": "GOOGLx",
+    "orderHash": null,
+    "signature": null
+  }
+]

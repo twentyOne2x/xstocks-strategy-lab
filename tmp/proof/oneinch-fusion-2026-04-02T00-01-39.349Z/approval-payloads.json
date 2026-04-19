@@ -1,0 +1,1010 @@
+[
+  {
+    "legId": "act_e038ae4f-7268-4d6c-9f26-336407574ed1:leg:1",
+    "assetSymbol": "NVDAx",
+    "sleeve": "core_xstocks",
+    "state": "awaiting_approval",
+    "quote": {
+      "kind": "oneinch_fusion",
+      "quoteId": "d9f44bc9-08b1-45f3-80d0-da14bce141b8",
+      "quotedAt": "2026-04-02T00:02:08.688Z",
+      "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "toTokenAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+      "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fromTokenAmount": "3600000",
+      "toTokenAmount": "20349429091114229",
+      "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+      "recommendedPreset": "fast",
+      "priceImpactPercent": 0.93,
+      "orderHash": "0x6b900f73665f50ac9d061c95e6a5d77af4ed297a71b174de900d3d39a1989d5f",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "receiver": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fee": {
+        "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+        "bps": 0,
+        "whitelistDiscountPercent": 0
+      },
+      "submissionSupported": true
+    },
+    "approval": {
+      "approvalType": "eip712_signature",
+      "status": "awaiting_user",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "approvalTarget": "oneinch_fusion_order",
+      "orderToSign": {
+        "quoteId": "d9f44bc9-08b1-45f3-80d0-da14bce141b8",
+        "orderHash": "0x6b900f73665f50ac9d061c95e6a5d77af4ed297a71b174de900d3d39a1989d5f",
+        "order": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+          "makerTraits": "62419173104490761595518734107671385149908428569159026896657162594463214731264",
+          "salt": "63580912223008582790523902944101226816671842203857877315817764183390402848505",
+          "makingAmount": "3600000",
+          "takingAmount": "17854199256591617",
+          "receiver": "0x0000000000000000000000000000000000000000"
+        },
+        "extension": "[object Object]",
+        "typedData": {
+          "primaryType": "Order",
+          "types": {
+            "EIP712Domain": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "version",
+                "type": "string"
+              },
+              {
+                "name": "chainId",
+                "type": "uint256"
+              },
+              {
+                "name": "verifyingContract",
+                "type": "address"
+              }
+            ],
+            "Order": [
+              {
+                "name": "salt",
+                "type": "uint256"
+              },
+              {
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "name": "receiver",
+                "type": "address"
+              },
+              {
+                "name": "makerAsset",
+                "type": "address"
+              },
+              {
+                "name": "takerAsset",
+                "type": "address"
+              },
+              {
+                "name": "makingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "takingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "makerTraits",
+                "type": "uint256"
+              }
+            ]
+          },
+          "domain": {
+            "name": "1inch Aggregation Router",
+            "version": "6",
+            "chainId": 1,
+            "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+          },
+          "message": {
+            "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "takerAsset": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+            "makerTraits": "62419173104490761595518734107671385149908428569159026896657162594463214731264",
+            "salt": "63580912223008582790523902944101226816671842203857877315817764183390402848505",
+            "makingAmount": "3600000",
+            "takingAmount": "17854199256591617",
+            "receiver": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "signature": null,
+      "approvedAt": null,
+      "submittedAt": null,
+      "venueOrderId": null,
+      "notes": [
+        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission."
+      ]
+    },
+    "venueStatus": {
+      "venueId": "1inch.ethereum",
+      "venueOrderId": null,
+      "status": "quote_ready",
+      "settlementTxHash": null,
+      "lastCheckedAt": null,
+      "updatedAt": "2026-04-02T00:02:08.689Z",
+      "rawStatus": {
+        "selectedVenueId": "1inch.ethereum",
+        "selectedAdapterId": "oneinch_fusion",
+        "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+        "submissionSupported": true,
+        "quoteAttempts": {
+          "cow_swap": {
+            "status": "skipped",
+            "venueId": "cow_swap.ethereum",
+            "reason": "Execution request is pinned to 1inch Fusion."
+          },
+          "oneinch_fusion": {
+            "status": "quoted",
+            "venueId": "1inch.ethereum",
+            "submissionSupported": true,
+            "quoteId": "d9f44bc9-08b1-45f3-80d0-da14bce141b8",
+            "orderHash": "0x6b900f73665f50ac9d061c95e6a5d77af4ed297a71b174de900d3d39a1989d5f",
+            "buyAmount": "20349429091114229",
+            "sellAmount": "3600000",
+            "recommendedPreset": "fast",
+            "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+            "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "toTokenAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+            "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "amount": "3600000",
+            "enableEstimate": true,
+            "source": "xstocks-strategy-lab",
+            "targetNotionalUsd": 3.6
+          }
+        }
+      }
+    }
+  },
+  {
+    "legId": "act_e038ae4f-7268-4d6c-9f26-336407574ed1:leg:2",
+    "assetSymbol": "MSFTx",
+    "sleeve": "core_xstocks",
+    "state": "awaiting_approval",
+    "quote": {
+      "kind": "oneinch_fusion",
+      "quoteId": "e9b66c1e-49e3-48be-8cbc-5024fb674416",
+      "quotedAt": "2026-04-02T00:02:10.557Z",
+      "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "toTokenAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+      "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fromTokenAmount": "3290000",
+      "toTokenAmount": "8869610949747695",
+      "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+      "recommendedPreset": "fast",
+      "priceImpactPercent": 0.68,
+      "orderHash": "0x0eb5c2f9bd4528207f038af51086696cce51f9d876cba4c5a8325ba3e51d3585",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "receiver": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fee": {
+        "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+        "bps": 0,
+        "whitelistDiscountPercent": 0
+      },
+      "submissionSupported": true
+    },
+    "approval": {
+      "approvalType": "eip712_signature",
+      "status": "awaiting_user",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "approvalTarget": "oneinch_fusion_order",
+      "orderToSign": {
+        "quoteId": "e9b66c1e-49e3-48be-8cbc-5024fb674416",
+        "orderHash": "0x0eb5c2f9bd4528207f038af51086696cce51f9d876cba4c5a8325ba3e51d3585",
+        "order": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "makerTraits": "62419173104490761595518734106978292757224009215184729185194069790200466243584",
+          "salt": "63580912210589720629341197331869602790303957668642452153326885402144273498664",
+          "makingAmount": "3290000",
+          "takingAmount": "7727341831992460",
+          "receiver": "0x0000000000000000000000000000000000000000"
+        },
+        "extension": "[object Object]",
+        "typedData": {
+          "primaryType": "Order",
+          "types": {
+            "EIP712Domain": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "version",
+                "type": "string"
+              },
+              {
+                "name": "chainId",
+                "type": "uint256"
+              },
+              {
+                "name": "verifyingContract",
+                "type": "address"
+              }
+            ],
+            "Order": [
+              {
+                "name": "salt",
+                "type": "uint256"
+              },
+              {
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "name": "receiver",
+                "type": "address"
+              },
+              {
+                "name": "makerAsset",
+                "type": "address"
+              },
+              {
+                "name": "takerAsset",
+                "type": "address"
+              },
+              {
+                "name": "makingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "takingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "makerTraits",
+                "type": "uint256"
+              }
+            ]
+          },
+          "domain": {
+            "name": "1inch Aggregation Router",
+            "version": "6",
+            "chainId": 1,
+            "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+          },
+          "message": {
+            "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "takerAsset": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+            "makerTraits": "62419173104490761595518734106978292757224009215184729185194069790200466243584",
+            "salt": "63580912210589720629341197331869602790303957668642452153326885402144273498664",
+            "makingAmount": "3290000",
+            "takingAmount": "7727341831992460",
+            "receiver": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "signature": null,
+      "approvedAt": null,
+      "submittedAt": null,
+      "venueOrderId": null,
+      "notes": [
+        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission."
+      ]
+    },
+    "venueStatus": {
+      "venueId": "1inch.ethereum",
+      "venueOrderId": null,
+      "status": "quote_ready",
+      "settlementTxHash": null,
+      "lastCheckedAt": null,
+      "updatedAt": "2026-04-02T00:02:10.557Z",
+      "rawStatus": {
+        "selectedVenueId": "1inch.ethereum",
+        "selectedAdapterId": "oneinch_fusion",
+        "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+        "submissionSupported": true,
+        "quoteAttempts": {
+          "cow_swap": {
+            "status": "skipped",
+            "venueId": "cow_swap.ethereum",
+            "reason": "Execution request is pinned to 1inch Fusion."
+          },
+          "oneinch_fusion": {
+            "status": "quoted",
+            "venueId": "1inch.ethereum",
+            "submissionSupported": true,
+            "quoteId": "e9b66c1e-49e3-48be-8cbc-5024fb674416",
+            "orderHash": "0x0eb5c2f9bd4528207f038af51086696cce51f9d876cba4c5a8325ba3e51d3585",
+            "buyAmount": "8869610949747695",
+            "sellAmount": "3290000",
+            "recommendedPreset": "fast",
+            "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+            "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "toTokenAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+            "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "amount": "3290000",
+            "enableEstimate": true,
+            "source": "xstocks-strategy-lab",
+            "targetNotionalUsd": 3.29
+          }
+        }
+      }
+    }
+  },
+  {
+    "legId": "act_e038ae4f-7268-4d6c-9f26-336407574ed1:leg:3",
+    "assetSymbol": "AAPLx",
+    "sleeve": "core_xstocks",
+    "state": "awaiting_approval",
+    "quote": {
+      "kind": "oneinch_fusion",
+      "quoteId": "a1b7b435-65ce-43f8-af91-d48ea9396bc2",
+      "quotedAt": "2026-04-02T00:02:13.570Z",
+      "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "toTokenAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+      "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fromTokenAmount": "3150000",
+      "toTokenAmount": "12287082414727648",
+      "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+      "recommendedPreset": "fast",
+      "priceImpactPercent": 1.03,
+      "orderHash": "0xec4cbe73d6d84e331350cae9a0260a0ef34ee724ed8207576bdce8c3f71a6d0a",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "receiver": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fee": {
+        "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+        "bps": 0,
+        "whitelistDiscountPercent": 0
+      },
+      "submissionSupported": true
+    },
+    "approval": {
+      "approvalType": "eip712_signature",
+      "status": "awaiting_user",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "approvalTarget": "oneinch_fusion_order",
+      "orderToSign": {
+        "quoteId": "a1b7b435-65ce-43f8-af91-d48ea9396bc2",
+        "orderHash": "0xec4cbe73d6d84e331350cae9a0260a0ef34ee724ed8207576bdce8c3f71a6d0a",
+        "order": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "makerTraits": "62419173104490761595518734106597463820712926347934951912566109242778921730048",
+          "salt": "63580912212861826150364270128360000437691975753342055411435521810828962099522",
+          "makingAmount": "3150000",
+          "takingAmount": "10660844886181884",
+          "receiver": "0x0000000000000000000000000000000000000000"
+        },
+        "extension": "[object Object]",
+        "typedData": {
+          "primaryType": "Order",
+          "types": {
+            "EIP712Domain": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "version",
+                "type": "string"
+              },
+              {
+                "name": "chainId",
+                "type": "uint256"
+              },
+              {
+                "name": "verifyingContract",
+                "type": "address"
+              }
+            ],
+            "Order": [
+              {
+                "name": "salt",
+                "type": "uint256"
+              },
+              {
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "name": "receiver",
+                "type": "address"
+              },
+              {
+                "name": "makerAsset",
+                "type": "address"
+              },
+              {
+                "name": "takerAsset",
+                "type": "address"
+              },
+              {
+                "name": "makingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "takingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "makerTraits",
+                "type": "uint256"
+              }
+            ]
+          },
+          "domain": {
+            "name": "1inch Aggregation Router",
+            "version": "6",
+            "chainId": 1,
+            "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+          },
+          "message": {
+            "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "takerAsset": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+            "makerTraits": "62419173104490761595518734106597463820712926347934951912566109242778921730048",
+            "salt": "63580912212861826150364270128360000437691975753342055411435521810828962099522",
+            "makingAmount": "3150000",
+            "takingAmount": "10660844886181884",
+            "receiver": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "signature": null,
+      "approvedAt": null,
+      "submittedAt": null,
+      "venueOrderId": null,
+      "notes": [
+        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission."
+      ]
+    },
+    "venueStatus": {
+      "venueId": "1inch.ethereum",
+      "venueOrderId": null,
+      "status": "quote_ready",
+      "settlementTxHash": null,
+      "lastCheckedAt": null,
+      "updatedAt": "2026-04-02T00:02:13.570Z",
+      "rawStatus": {
+        "selectedVenueId": "1inch.ethereum",
+        "selectedAdapterId": "oneinch_fusion",
+        "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+        "submissionSupported": true,
+        "quoteAttempts": {
+          "cow_swap": {
+            "status": "skipped",
+            "venueId": "cow_swap.ethereum",
+            "reason": "Execution request is pinned to 1inch Fusion."
+          },
+          "oneinch_fusion": {
+            "status": "quoted",
+            "venueId": "1inch.ethereum",
+            "submissionSupported": true,
+            "quoteId": "a1b7b435-65ce-43f8-af91-d48ea9396bc2",
+            "orderHash": "0xec4cbe73d6d84e331350cae9a0260a0ef34ee724ed8207576bdce8c3f71a6d0a",
+            "buyAmount": "12287082414727648",
+            "sellAmount": "3150000",
+            "recommendedPreset": "fast",
+            "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+            "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "toTokenAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+            "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "amount": "3150000",
+            "enableEstimate": true,
+            "source": "xstocks-strategy-lab",
+            "targetNotionalUsd": 3.15
+          }
+        }
+      }
+    }
+  },
+  {
+    "legId": "act_e038ae4f-7268-4d6c-9f26-336407574ed1:leg:4",
+    "assetSymbol": "METAx",
+    "sleeve": "core_xstocks",
+    "state": "awaiting_approval",
+    "quote": {
+      "kind": "oneinch_fusion",
+      "quoteId": "1a1ed7ba-7b4c-4f90-8ac6-88908cd47d46",
+      "quotedAt": "2026-04-02T00:02:16.616Z",
+      "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "toTokenAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+      "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fromTokenAmount": "3080000",
+      "toTokenAmount": "5303422398343293",
+      "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+      "recommendedPreset": "fast",
+      "priceImpactPercent": 0.73,
+      "orderHash": "0x8a3cc41a60b86ab8f488bb4c5a6e688d6307b3c50c1706404aa3c7dc59db023d",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "receiver": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fee": {
+        "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+        "bps": 0,
+        "whitelistDiscountPercent": 0
+      },
+      "submissionSupported": true
+    },
+    "approval": {
+      "approvalType": "eip712_signature",
+      "status": "awaiting_user",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "approvalTarget": "oneinch_fusion_order",
+      "orderToSign": {
+        "quoteId": "1a1ed7ba-7b4c-4f90-8ac6-88908cd47d46",
+        "orderHash": "0x8a3cc41a60b86ab8f488bb4c5a6e688d6307b3c50c1706404aa3c7dc59db023d",
+        "order": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "makerTraits": "62419173104490761595518734107306084486141739407673944070855057857846855073792",
+          "salt": "63580912202969861047917852422824294298554115128074614685462914836718833481635",
+          "makingAmount": "3080000",
+          "takingAmount": "4593443693108779",
+          "receiver": "0x0000000000000000000000000000000000000000"
+        },
+        "extension": "[object Object]",
+        "typedData": {
+          "primaryType": "Order",
+          "types": {
+            "EIP712Domain": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "version",
+                "type": "string"
+              },
+              {
+                "name": "chainId",
+                "type": "uint256"
+              },
+              {
+                "name": "verifyingContract",
+                "type": "address"
+              }
+            ],
+            "Order": [
+              {
+                "name": "salt",
+                "type": "uint256"
+              },
+              {
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "name": "receiver",
+                "type": "address"
+              },
+              {
+                "name": "makerAsset",
+                "type": "address"
+              },
+              {
+                "name": "takerAsset",
+                "type": "address"
+              },
+              {
+                "name": "makingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "takingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "makerTraits",
+                "type": "uint256"
+              }
+            ]
+          },
+          "domain": {
+            "name": "1inch Aggregation Router",
+            "version": "6",
+            "chainId": 1,
+            "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+          },
+          "message": {
+            "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "takerAsset": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+            "makerTraits": "62419173104490761595518734107306084486141739407673944070855057857846855073792",
+            "salt": "63580912202969861047917852422824294298554115128074614685462914836718833481635",
+            "makingAmount": "3080000",
+            "takingAmount": "4593443693108779",
+            "receiver": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "signature": null,
+      "approvedAt": null,
+      "submittedAt": null,
+      "venueOrderId": null,
+      "notes": [
+        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission."
+      ]
+    },
+    "venueStatus": {
+      "venueId": "1inch.ethereum",
+      "venueOrderId": null,
+      "status": "quote_ready",
+      "settlementTxHash": null,
+      "lastCheckedAt": null,
+      "updatedAt": "2026-04-02T00:02:16.616Z",
+      "rawStatus": {
+        "selectedVenueId": "1inch.ethereum",
+        "selectedAdapterId": "oneinch_fusion",
+        "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+        "submissionSupported": true,
+        "quoteAttempts": {
+          "cow_swap": {
+            "status": "skipped",
+            "venueId": "cow_swap.ethereum",
+            "reason": "Execution request is pinned to 1inch Fusion."
+          },
+          "oneinch_fusion": {
+            "status": "quoted",
+            "venueId": "1inch.ethereum",
+            "submissionSupported": true,
+            "quoteId": "1a1ed7ba-7b4c-4f90-8ac6-88908cd47d46",
+            "orderHash": "0x8a3cc41a60b86ab8f488bb4c5a6e688d6307b3c50c1706404aa3c7dc59db023d",
+            "buyAmount": "5303422398343293",
+            "sellAmount": "3080000",
+            "recommendedPreset": "fast",
+            "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+            "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "toTokenAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+            "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "amount": "3080000",
+            "enableEstimate": true,
+            "source": "xstocks-strategy-lab",
+            "targetNotionalUsd": 3.08
+          }
+        }
+      }
+    }
+  },
+  {
+    "legId": "act_e038ae4f-7268-4d6c-9f26-336407574ed1:leg:5",
+    "assetSymbol": "AMZNx",
+    "sleeve": "core_xstocks",
+    "state": "awaiting_approval",
+    "quote": {
+      "kind": "oneinch_fusion",
+      "quoteId": "7268eea0-3681-447a-8de4-10e864c0d408",
+      "quotedAt": "2026-04-02T00:02:19.667Z",
+      "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "toTokenAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+      "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fromTokenAmount": "2980000",
+      "toTokenAmount": "14111744750549339",
+      "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+      "recommendedPreset": "fast",
+      "priceImpactPercent": 0.91,
+      "orderHash": "0x2284f0c9df6ed368bc9a908fa1419d95a558e0c40710640da2fd8abded09003c",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "receiver": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fee": {
+        "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+        "bps": 0,
+        "whitelistDiscountPercent": 0
+      },
+      "submissionSupported": true
+    },
+    "approval": {
+      "approvalType": "eip712_signature",
+      "status": "awaiting_user",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "approvalTarget": "oneinch_fusion_order",
+      "orderToSign": {
+        "quoteId": "7268eea0-3681-447a-8de4-10e864c0d408",
+        "orderHash": "0x2284f0c9df6ed368bc9a908fa1419d95a558e0c40710640da2fd8abded09003c",
+        "order": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+          "makerTraits": "62419173104490761595518734106503269049735522401663924652490454143375387918336",
+          "salt": "63580912225121206632887516226179542494573580821780412411002681561646108641306",
+          "makingAmount": "2980000",
+          "takingAmount": "12194733166242338",
+          "receiver": "0x0000000000000000000000000000000000000000"
+        },
+        "extension": "[object Object]",
+        "typedData": {
+          "primaryType": "Order",
+          "types": {
+            "EIP712Domain": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "version",
+                "type": "string"
+              },
+              {
+                "name": "chainId",
+                "type": "uint256"
+              },
+              {
+                "name": "verifyingContract",
+                "type": "address"
+              }
+            ],
+            "Order": [
+              {
+                "name": "salt",
+                "type": "uint256"
+              },
+              {
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "name": "receiver",
+                "type": "address"
+              },
+              {
+                "name": "makerAsset",
+                "type": "address"
+              },
+              {
+                "name": "takerAsset",
+                "type": "address"
+              },
+              {
+                "name": "makingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "takingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "makerTraits",
+                "type": "uint256"
+              }
+            ]
+          },
+          "domain": {
+            "name": "1inch Aggregation Router",
+            "version": "6",
+            "chainId": 1,
+            "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+          },
+          "message": {
+            "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "takerAsset": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+            "makerTraits": "62419173104490761595518734106503269049735522401663924652490454143375387918336",
+            "salt": "63580912225121206632887516226179542494573580821780412411002681561646108641306",
+            "makingAmount": "2980000",
+            "takingAmount": "12194733166242338",
+            "receiver": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "signature": null,
+      "approvedAt": null,
+      "submittedAt": null,
+      "venueOrderId": null,
+      "notes": [
+        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission."
+      ]
+    },
+    "venueStatus": {
+      "venueId": "1inch.ethereum",
+      "venueOrderId": null,
+      "status": "quote_ready",
+      "settlementTxHash": null,
+      "lastCheckedAt": null,
+      "updatedAt": "2026-04-02T00:02:19.667Z",
+      "rawStatus": {
+        "selectedVenueId": "1inch.ethereum",
+        "selectedAdapterId": "oneinch_fusion",
+        "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+        "submissionSupported": true,
+        "quoteAttempts": {
+          "cow_swap": {
+            "status": "skipped",
+            "venueId": "cow_swap.ethereum",
+            "reason": "Execution request is pinned to 1inch Fusion."
+          },
+          "oneinch_fusion": {
+            "status": "quoted",
+            "venueId": "1inch.ethereum",
+            "submissionSupported": true,
+            "quoteId": "7268eea0-3681-447a-8de4-10e864c0d408",
+            "orderHash": "0x2284f0c9df6ed368bc9a908fa1419d95a558e0c40710640da2fd8abded09003c",
+            "buyAmount": "14111744750549339",
+            "sellAmount": "2980000",
+            "recommendedPreset": "fast",
+            "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+            "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "toTokenAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+            "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "amount": "2980000",
+            "enableEstimate": true,
+            "source": "xstocks-strategy-lab",
+            "targetNotionalUsd": 2.98
+          }
+        }
+      }
+    }
+  },
+  {
+    "legId": "act_e038ae4f-7268-4d6c-9f26-336407574ed1:leg:6",
+    "assetSymbol": "GOOGLx",
+    "sleeve": "core_xstocks",
+    "state": "awaiting_approval",
+    "quote": {
+      "kind": "oneinch_fusion",
+      "quoteId": "3e83c084-6459-493f-b213-93bd9df35521",
+      "quotedAt": "2026-04-02T00:02:42.840Z",
+      "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "toTokenAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+      "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fromTokenAmount": "2910000",
+      "toTokenAmount": "9721539041901236",
+      "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+      "recommendedPreset": "fast",
+      "priceImpactPercent": 0.87,
+      "orderHash": "0xc3f3e65af959bf1a3b7840d3c35ffa9c605b5933d3b69972eefb53d2d7d75466",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "receiver": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "fee": {
+        "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+        "bps": 0,
+        "whitelistDiscountPercent": 0
+      },
+      "submissionSupported": true
+    },
+    "approval": {
+      "approvalType": "eip712_signature",
+      "status": "awaiting_user",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "approvalTarget": "oneinch_fusion_order",
+      "orderToSign": {
+        "quoteId": "3e83c084-6459-493f-b213-93bd9df35521",
+        "orderHash": "0xc3f3e65af959bf1a3b7840d3c35ffa9c605b5933d3b69972eefb53d2d7d75466",
+        "order": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "makerTraits": "62419173104490761595518734107569889323643681954297385620461765425018005618688",
+          "salt": "63580912222914057492961295123210252703053096194725771576726866778770312375721",
+          "makingAmount": "2910000",
+          "takingAmount": "8346621370272907",
+          "receiver": "0x0000000000000000000000000000000000000000"
+        },
+        "extension": "[object Object]",
+        "typedData": {
+          "primaryType": "Order",
+          "types": {
+            "EIP712Domain": [
+              {
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "name": "version",
+                "type": "string"
+              },
+              {
+                "name": "chainId",
+                "type": "uint256"
+              },
+              {
+                "name": "verifyingContract",
+                "type": "address"
+              }
+            ],
+            "Order": [
+              {
+                "name": "salt",
+                "type": "uint256"
+              },
+              {
+                "name": "maker",
+                "type": "address"
+              },
+              {
+                "name": "receiver",
+                "type": "address"
+              },
+              {
+                "name": "makerAsset",
+                "type": "address"
+              },
+              {
+                "name": "takerAsset",
+                "type": "address"
+              },
+              {
+                "name": "makingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "takingAmount",
+                "type": "uint256"
+              },
+              {
+                "name": "makerTraits",
+                "type": "uint256"
+              }
+            ]
+          },
+          "domain": {
+            "name": "1inch Aggregation Router",
+            "version": "6",
+            "chainId": 1,
+            "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+          },
+          "message": {
+            "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "takerAsset": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+            "makerTraits": "62419173104490761595518734107569889323643681954297385620461765425018005618688",
+            "salt": "63580912222914057492961295123210252703053096194725771576726866778770312375721",
+            "makingAmount": "2910000",
+            "takingAmount": "8346621370272907",
+            "receiver": "0x0000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "signature": null,
+      "approvedAt": null,
+      "submittedAt": null,
+      "venueOrderId": null,
+      "notes": [
+        "The user must sign this 1inch Fusion EIP-712 typed-data order before backend submission."
+      ]
+    },
+    "venueStatus": {
+      "venueId": "1inch.ethereum",
+      "venueOrderId": null,
+      "status": "quote_ready",
+      "settlementTxHash": null,
+      "lastCheckedAt": null,
+      "updatedAt": "2026-04-02T00:02:42.840Z",
+      "rawStatus": {
+        "selectedVenueId": "1inch.ethereum",
+        "selectedAdapterId": "oneinch_fusion",
+        "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+        "submissionSupported": true,
+        "quoteAttempts": {
+          "cow_swap": {
+            "status": "skipped",
+            "venueId": "cow_swap.ethereum",
+            "reason": "Execution request is pinned to 1inch Fusion."
+          },
+          "oneinch_fusion": {
+            "status": "quoted",
+            "venueId": "1inch.ethereum",
+            "submissionSupported": true,
+            "quoteId": "3e83c084-6459-493f-b213-93bd9df35521",
+            "orderHash": "0xc3f3e65af959bf1a3b7840d3c35ffa9c605b5933d3b69972eefb53d2d7d75466",
+            "buyAmount": "9721539041901236",
+            "sellAmount": "2910000",
+            "recommendedPreset": "fast",
+            "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+            "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "toTokenAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+            "walletAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+            "amount": "2910000",
+            "enableEstimate": true,
+            "source": "xstocks-strategy-lab",
+            "targetNotionalUsd": 2.91
+          }
+        }
+      }
+    }
+  }
+]
