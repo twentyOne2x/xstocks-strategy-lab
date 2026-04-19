@@ -1,0 +1,11 @@
+{
+  "hasAutonomousEnabled": "true",
+  "autonomousOwnerProviderId": "repo_owned_hot_signer",
+  "autonomousOwnerUserId": "did:privy:user_chainlink_cre_autonomous",
+  "autonomousOwnerIssuer": "privy.io",
+  "autonomousRouteId": "1inch.ethereum",
+  "hasOneInchApiKey": true,
+  "ethRpcUrl": "https://eth.llamarpc.com",
+  "signerAllowlist": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24,0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+  "workflowAllowlist": "xsl011b-provider-review-hot-20260402,xsl018b-provider-autonomous-hot-20260402"
+}

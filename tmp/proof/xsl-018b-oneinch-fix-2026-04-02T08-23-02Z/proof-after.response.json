@@ -1,0 +1,39 @@
+{
+  "data": {
+    "version": "1",
+    "generatedAt": "2026-04-02T08:23:39.151Z",
+    "slotId": "onboarding.default_basket",
+    "ownerUserId": "did:privy:user_chainlink_cre_autonomous",
+    "latestActivation": null,
+    "latestRebalance": null,
+    "executionRequest": null,
+    "providerReceipts": [
+      {
+        "receiptId": "provider_evt_rcpt_2c1d227c-9f94-4d2e-9a94-852ded29cb29",
+        "receivedAt": "2026-04-02T08:23:34.807Z",
+        "providerId": "chainlink_cre",
+        "deliveryId": null,
+        "eventId": null,
+        "providerEventId": "evt_xsl018b_oneinch_fix_20260402T082334266Z",
+        "workflowId": "xsl018b-provider-autonomous-hot-20260402",
+        "workflowExecutionId": "exec_xsl018b_oneinch_fix_20260402T082334266Z",
+        "slotId": "onboarding.default_basket",
+        "chain": "ethereum",
+        "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "dedupeKey": "chainlink_cre:xsl018b-provider-autonomous-hot-20260402:exec_xsl018b_oneinch_fix_20260402T082334266Z:onboarding.default_basket:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:ethereum",
+        "digest": "0xf576cf21ac8728dbf10c416b82eaa33255a234f2d6e104af2d228d304dc06e7e",
+        "signerAddress": null,
+        "issuer": "0x4819Ff831EC95cE04FCcdcAEF46cE1b7d9a5540d",
+        "jti": "jti_xsl018b_oneinch_fix_20260402T082334266Z",
+        "tokenIssuedAt": "2026-04-02T08:23:34.000Z",
+        "tokenExpiresAt": "2026-04-02T09:23:34.000Z",
+        "decision": "rejected",
+        "errorCode": "token_window_too_large",
+        "rebalanceId": null,
+        "reason": "Chainlink CRE token validity window exceeds five minutes.",
+        "duplicateOfReceiptId": null
+      }
+    ],
+    "activityEvents": []
+  }
+}

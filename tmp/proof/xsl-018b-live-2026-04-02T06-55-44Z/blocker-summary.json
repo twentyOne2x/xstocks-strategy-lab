@@ -1,0 +1,28 @@
+{
+  "result": "blocked",
+  "blockerClass": "deploy_platform",
+  "codeRolledOut": false,
+  "prodEnvChanged": true,
+  "latestDeploymentId": "30272572-3205-4dbb-baac-c6e6aea774df",
+  "latestDeploymentStatus": "FAILED",
+  "deploymentCreatedAt": "2026-04-02T07:13:27.822Z",
+  "deploymentUpdatedAt": "2026-04-02T07:13:38.914Z",
+  "deploymentCliMessage": "codex-xsl018b-provider-autonomous-20260402T071313Z",
+  "deploymentConfigErrors": [
+    "Failed to create code snapshot. Please review your last commit, or try again.",
+    "If this error persists, please reach out to the Railway team."
+  ],
+  "proofRouteStatusCode": "404",
+  "proofRouteInterpretation": "404 after env mutation confirms the new code path did not roll out on the live receiver.",
+  "envVerification": {
+    "hasAutonomousEnabled": "true",
+    "autonomousOwnerProviderId": "repo_owned_hot_signer",
+    "autonomousOwnerUserId": "did:privy:user_chainlink_cre_autonomous",
+    "autonomousOwnerIssuer": "privy.io",
+    "autonomousRouteId": "1inch.ethereum",
+    "hasOneInchApiKey": true,
+    "ethRpcUrl": "https://eth.llamarpc.com",
+    "signerAllowlist": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24,0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+    "workflowAllowlist": "xsl011b-provider-review-hot-20260402,xsl018b-provider-autonomous-hot-20260402"
+  }
+}

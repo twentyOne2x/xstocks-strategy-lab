@@ -1,0 +1,10 @@
+{
+  "signerAddress": "0x4819Ff831EC95cE04FCcdcAEF46cE1b7d9a5540d",
+  "algorithm": "ETH_PERSONAL_SIGN",
+  "workflowId": "xsl018b-provider-autonomous-hot-20260402",
+  "workflowExecutionId": "exec_xsl018b_oneinch_fix_20260402T082334266Z",
+  "providerEventId": "evt_xsl018b_oneinch_fix_20260402T082334266Z",
+  "jti": "jti_xsl018b_oneinch_fix_20260402T082334266Z",
+  "digest": "0xf576cf21ac8728dbf10c416b82eaa33255a234f2d6e104af2d228d304dc06e7e",
+  "audience": "xstocks-provider-rebalance-review"
+}

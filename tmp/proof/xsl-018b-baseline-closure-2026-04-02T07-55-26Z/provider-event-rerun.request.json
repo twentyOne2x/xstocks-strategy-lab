@@ -1,0 +1,22 @@
+{
+  "version": "1",
+  "providerId": "chainlink_cre",
+  "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z",
+  "workflowId": "xsl018b-provider-autonomous-hot-20260402",
+  "workflowExecutionId": "exec_xsl018b_rerun_20260402T080310568Z",
+  "triggerType": "cron",
+  "triggeredAt": "2026-04-02T08:03:10.568Z",
+  "slotId": "onboarding.default_basket",
+  "chain": "ethereum",
+  "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+  "reviewReason": {
+    "kind": "manifest_drift",
+    "observedDriftBps": 425,
+    "thresholdBps": 300
+  },
+  "reviewIntent": {
+    "requestedState": "awaiting_operator",
+    "executionMode": "canonical_execution"
+  }
+}

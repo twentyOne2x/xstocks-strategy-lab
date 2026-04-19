@@ -1,0 +1,1941 @@
+{
+  "activationManifestIds": [
+    "onboarding.default_basket:basket-baseline-v1:promoted",
+    "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted"
+  ],
+  "latestActivation": {
+    "activationId": "act_chainlink_cre_autonomous_baseline_v1_20260402",
+    "owner": {
+      "providerId": "repo_owned_hot_signer",
+      "appId": "cmnfzikzk02ey0ckyx8m14qv2",
+      "userId": "did:privy:user_chainlink_cre_autonomous",
+      "sessionId": "chainlink_cre_autonomous_session",
+      "issuer": "privy.io",
+      "authenticatedAt": "2026-04-02T07:32:04.814Z"
+    },
+    "chain": "ethereum",
+    "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+    "slotId": "onboarding.default_basket",
+    "recommendationId": "rec_onboarding.default_basket:basket-baseline-v1:promoted",
+    "activationManifestRef": {
+      "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "strategyVersion": "basket-baseline-v1"
+    },
+    "requestedNotionalUsd": 20,
+    "surfaceTruth": "live",
+    "status": "ready",
+    "createdAt": "2026-04-02T08:01:51.242Z",
+    "updatedAt": "2026-04-02T08:01:51.242Z",
+    "walletState": {
+      "walletConnected": true,
+      "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+      "fundedNotionalUsd": 20,
+      "fundingSource": null,
+      "embeddedWallet": {
+        "providerId": "privy_embedded_wallet",
+        "status": "ready",
+        "address": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d"
+      },
+      "smartAccount": {
+        "providerId": "privy_embedded",
+        "status": "not_created",
+        "address": null,
+        "implementation": "privy_smart_wallet",
+        "chain": "ethereum"
+      }
+    },
+    "routeTruthLabels": [
+      {
+        "routeId": "1inch.ethereum",
+        "label": "1inch on Ethereum",
+        "routeKind": "execution",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "truthState": "live",
+        "availability": "available",
+        "requiredFor": "core_xstocks",
+        "reason": "Publicly verified rail is available."
+      },
+      {
+        "routeId": "flowdesk.ausd-rwa-strategy",
+        "label": "Flowdesk AUSD RWA Strategy",
+        "routeKind": "yield_vault",
+        "chain": "ethereum",
+        "verificationTier": "public_verified",
+        "truthState": "live",
+        "availability": "available",
+        "requiredFor": "yield_buffer",
+        "reason": "Publicly verified rail is available."
+      }
+    ],
+    "executionPlanSnapshot": {
+      "executionPlanId": "exec_chainlink_cre_autonomous_baseline_v1_20260402",
+      "generatedAt": "2026-04-02T08:01:51.242Z",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-baseline-v1"
+      },
+      "surfaceTruth": "live",
+      "executionState": "ready",
+      "executionEligibility": "executable",
+      "requestedNotionalUsd": 20,
+      "walletConnectionLate": true,
+      "routeTruthLabels": [
+        {
+          "routeId": "1inch.ethereum",
+          "label": "1inch on Ethereum",
+          "routeKind": "execution",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "core_xstocks",
+          "reason": "Publicly verified rail is available."
+        },
+        {
+          "routeId": "flowdesk.ausd-rwa-strategy",
+          "label": "Flowdesk AUSD RWA Strategy",
+          "routeKind": "yield_vault",
+          "chain": "ethereum",
+          "verificationTier": "public_verified",
+          "truthState": "live",
+          "availability": "available",
+          "requiredFor": "yield_buffer",
+          "reason": "Publicly verified rail is available."
+        }
+      ],
+      "assetChecks": [
+        {
+          "assetSymbol": "NVDAx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 171.755315
+        },
+        {
+          "assetSymbol": "MSFTx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 365.826335
+        },
+        {
+          "assetSymbol": "AAPLx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 253.64048
+        },
+        {
+          "assetSymbol": "METAx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 566.96243
+        },
+        {
+          "assetSymbol": "AMZNx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 206.695375
+        },
+        {
+          "assetSymbol": "GOOGLx",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 291.685165
+        },
+        {
+          "assetSymbol": "AUSD",
+          "truthState": "live",
+          "status": "active",
+          "reason": "Asset is active in live xStocks state.",
+          "chain": "ethereum",
+          "priceUsd": 1
+        }
+      ],
+      "fundingPath": {
+        "provider": "privy",
+        "minRequiredUsd": 20,
+        "fundedNotionalUsd": 20,
+        "fundingGapUsd": 0,
+        "topUpAsset": "USDC",
+        "destinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "destinationKind": "embedded_wallet",
+        "readiness": "funded",
+        "status": "funded",
+        "recommendedMethodId": null,
+        "surfaces": [
+          {
+            "methodId": "privy_wallet",
+            "providerId": "privy",
+            "kind": "wallet",
+            "status": "available",
+            "destinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Canonical self-serve path: transfer from your external wallet into the revealed same-chain destination address.",
+              "This wallet-funded path does not introduce a new app-level KYC/KYB step."
+            ]
+          },
+          {
+            "methodId": "manual_transfer",
+            "providerId": "manual",
+            "kind": "manual_transfer",
+            "status": "available",
+            "destinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Canonical strict self-serve fallback: complete a manual same-chain transfer from your external wallet into the revealed destination address.",
+              "Use this fail-closed path when hosted convenience rails are unavailable or not desired."
+            ]
+          },
+          {
+            "methodId": "privy_card",
+            "providerId": "privy",
+            "kind": "card",
+            "status": "available",
+            "destinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Optional hosted convenience rail for card top-up on mainnet.",
+              "A regulated on-ramp may require identity verification before funding completes."
+            ]
+          },
+          {
+            "methodId": "privy_exchange",
+            "providerId": "privy",
+            "kind": "exchange",
+            "status": "available",
+            "destinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+            "assetSymbol": "USDC",
+            "notes": [
+              "Optional hosted convenience rail for exchange-linked funding into the current destination on mainnet.",
+              "A regulated exchange or on-ramp partner may require identity verification before funding completes."
+            ]
+          }
+        ]
+      },
+      "smartAccount": {
+        "readiness": "not_required",
+        "automationReadiness": "smart_account_required",
+        "providerId": "privy",
+        "status": "not_required",
+        "address": null,
+        "manualSigningMode": "wallet_first",
+        "automationAccountMode": "smart_account_required",
+        "venueSigningMode": "wallet_signer_manual_only",
+        "bridgeState": {
+          "manualSignerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "manualSignerKind": "embedded_wallet",
+          "policyAccountAddress": null,
+          "executionDestinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "executionDestinationKind": "embedded_wallet",
+          "supportsSeparateExecutionDestination": true,
+          "manualSigningMode": "wallet_first",
+          "automationAccountMode": "smart_account_required",
+          "venueSigningMode": "wallet_signer_manual_only",
+          "notes": [
+            "Manual venue signing stays wallet-first until AA-native venue signing is separately proven.",
+            "Automation remains fail-closed until the Privy smart account is ready.",
+            "The current venue path supports a separate execution destination, but it still falls back to the manual signer until the smart account is ready."
+          ]
+        },
+        "bootstrap": {
+          "state": "ready",
+          "chain": "ethereum",
+          "implementation": "privy_smart_wallet",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "embeddedWalletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "smartAccountAddress": null,
+          "destinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "approvalMode": "user_approved_only",
+          "paymasterReady": false,
+          "notes": [
+            "Current manual venue signing remains wallet-first for this manifest.",
+            "Automation remains fail-closed until the Privy smart wallet is ready."
+          ]
+        },
+        "reviewArtifact": {
+          "providerId": "privy",
+          "providerName": "Privy smart wallet",
+          "supportedChains": [
+            "ethereum"
+          ],
+          "permissions": [
+            "activate_promoted_manifest_only",
+            "pause_strategy",
+            "turn_off_strategy"
+          ],
+          "approvalMode": "user_approved_only",
+          "bootstrapBoundary": "Privy bootstrap is modeled as embedded wallet first, then smart wallet on Ethereum.",
+          "fundingBoundary": "Funding remains provider-agnostic and should target the current manual signer or smart-wallet destination address through Privy-supported methods.",
+          "walletConnectionLate": true,
+          "notes": [
+            "Smart-account review is scoped to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted.",
+            "Manual execution remains wallet-first while automation still requires the Privy smart wallet.",
+            "Funding readiness follows the user-requested notional for the current venue-routed lane.",
+            "Manual signing mode remains wallet_first.",
+            "Automation account mode remains smart_account_required.",
+            "Venue signing mode remains wallet_signer_manual_only.",
+            "Operator and user approvals stay explicit; no autonomous execution is implied."
+          ]
+        }
+      },
+      "automationExecution": {
+        "accountMode": "smart_account_required",
+        "readiness": "smart_account_required",
+        "status": "blocked",
+        "manualSigningMode": "wallet_first",
+        "venueSigningMode": "wallet_signer_manual_only",
+        "policyAccountAddress": null,
+        "executionDestinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "blockers": [
+          "Automation remains fail-closed until the Privy smart account is ready."
+        ],
+        "notes": [
+          "Current manual execution remains wallet-first.",
+          "No verified smart-account policy surface is available yet.",
+          "AA-native CoW or 1inch signing remains deferred."
+        ]
+      },
+      "steps": [
+        {
+          "stepId": "review_promoted_manifest",
+          "title": "Review promoted manifest",
+          "status": "complete",
+          "detail": "Execution stays bound to promoted manifest onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted."
+        },
+        {
+          "stepId": "connect_wallet",
+          "title": "Connect wallet late in flow",
+          "status": "complete",
+          "detail": "Wallet connection is only required at activation time."
+        },
+        {
+          "stepId": "fund_wallet",
+          "title": "Fund wallet",
+          "status": "complete",
+          "detail": "Wallet funding meets the current requested notional."
+        },
+        {
+          "stepId": "prepare_smart_account",
+          "title": "Smart wallet architecture",
+          "status": "complete",
+          "detail": "Manual venue signing stays wallet-first. Automation remains fail-closed until the Privy smart wallet is ready."
+        },
+        {
+          "stepId": "request_cow_quote",
+          "title": "Request 1inch quote",
+          "status": "pending",
+          "detail": "All required rails, wallet, and funding checks are satisfied for 1inch quote preparation."
+        },
+        {
+          "stepId": "approve_cow_order",
+          "title": "Approve 1inch order",
+          "status": "pending",
+          "detail": "The user must sign and approve the 1inch Fusion order before submission."
+        }
+      ],
+      "allowedActions": [
+        "review_manifest",
+        "read_route_truth",
+        "request_cow_quote",
+        "approve_cow_order",
+        "pause_after_activation",
+        "turn_off_strategy"
+      ],
+      "blockers": [],
+      "warnings": [
+        "Automation remains fail-closed until the Privy smart wallet is ready."
+      ],
+      "liveStateSummary": {
+        "xstocksStateVersion": "2026-03-31.xstocks-live.package.v1",
+        "routeStateVersion": "2026-03-31.route-live.package.v1"
+      }
+    }
+  },
+  "latestRebalance": {
+    "rebalanceId": "rebalance_onboarding_default_basket",
+    "slotId": "onboarding.default_basket",
+    "chain": "ethereum",
+    "activationManifestRef": {
+      "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+    },
+    "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "baselineActivationId": "act_chainlink_cre_autonomous_baseline_v1_20260402",
+    "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+    "baselineManifestMatchesTarget": false,
+    "state": "blocked",
+    "runtimeOwner": "policy_bounded_automation",
+    "triggerSource": "provider_triggered",
+    "summary": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=6.",
+    "rationale": "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}",
+    "scheduledFor": null,
+    "allowedTransitions": [
+      "rebalance_deferred",
+      "rebalance_recommended",
+      "scheduled",
+      "paused"
+    ],
+    "recommendationState": "full_rebalance",
+    "executionState": "ready",
+    "executionEligibility": "blocked",
+    "surfaceTruth": "live",
+    "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+    "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+    "executionTriggerSource": "provider_staging",
+    "executionRequestState": "blocked",
+    "blockers": [
+      "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+    ],
+    "warnings": [
+      "Automation remains fail-closed until the Privy smart wallet is ready.",
+      "Repo-owned policy-bounded automation is authorized to quote, sign, submit, and settle this canonical execution request.",
+      "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+      "NVDAx is pinned to the 1inch Ethereum route for this execution request.",
+      "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "MSFTx is pinned to the 1inch Ethereum route for this execution request.",
+      "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AAPLx is pinned to the 1inch Ethereum route for this execution request.",
+      "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "METAx is pinned to the 1inch Ethereum route for this execution request.",
+      "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AMZNx is pinned to the 1inch Ethereum route for this execution request.",
+      "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "GOOGLx is pinned to the 1inch Ethereum route for this execution request.",
+      "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+    ],
+    "automationTruth": {
+      "operatorManualRequired": false,
+      "autonomousExecutionProven": false,
+      "providerTriggeredProven": true,
+      "supportedTriggerSources": [
+        "operator_manual",
+        "scheduled_cron",
+        "provider_triggered"
+      ],
+      "notes": [
+        "Operator confirmation remains required before any rebalance execution claim.",
+        "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+        "Validated provider-triggered review is proven for this runtime, but operator approval remains mandatory before execution staging.",
+        "Chainlink-oriented provider review is proven only for authenticated review opening; no autonomous execution claim exists.",
+        "Repo-owned policy-bounded automation may continue this provider-triggered canonical execution path.",
+        "Canonical autonomous execution proof is not complete until the live execution request reaches a truthful terminal state.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is requested. Actionable legs: pending=6.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is awaiting_approval. Actionable legs: awaiting_approval=1, pending=5.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=1, pending=5.",
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=1, awaiting_approval=1, pending=4.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=2, pending=4.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=2, awaiting_approval=1, pending=3.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=3, pending=3.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=3, awaiting_approval=1, pending=2.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=4, pending=2.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=4, awaiting_approval=1, pending=1.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=5, pending=1.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=5, awaiting_approval=1.",
+        "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=6."
+      ]
+    },
+    "nextAction": {
+      "title": "Inspect execution blocker",
+      "detail": "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}",
+      "status": "blocked"
+    },
+    "createdAt": "2026-04-02T08:03:13.019Z",
+    "updatedAt": "2026-04-02T08:03:39.894Z",
+    "history": [
+      {
+        "transitionId": "rtr_a111c96e-551e-497f-b932-4b2c3e077609",
+        "eventType": "execution_progress",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=6.",
+        "rationale": "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:39.894Z"
+      },
+      {
+        "transitionId": "rtr_ed674ba2-04f5-496f-bd74-04da22e46c93",
+        "eventType": "execution_submitted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution auto-signed and submitted a venue order.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=6.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:39.880Z"
+      },
+      {
+        "transitionId": "rtr_0adedbe7-d930-4432-9670-f5502fda579b",
+        "eventType": "execution_quoted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution refreshed live venue quote state.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=5, awaiting_approval=1.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:39.698Z"
+      },
+      {
+        "transitionId": "rtr_c61e5e05-694b-4c7c-807b-4460a1989c3f",
+        "eventType": "execution_submitted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution auto-signed and submitted a venue order.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=5, pending=1.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:36.759Z"
+      },
+      {
+        "transitionId": "rtr_81a03df8-81c0-4262-9dcb-181f2a7d3ac0",
+        "eventType": "execution_quoted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution refreshed live venue quote state.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=4, awaiting_approval=1, pending=1.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:36.581Z"
+      },
+      {
+        "transitionId": "rtr_3d0ddd51-38b3-40b0-87db-e1e62d961765",
+        "eventType": "execution_submitted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution auto-signed and submitted a venue order.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=4, pending=2.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:34.202Z"
+      },
+      {
+        "transitionId": "rtr_6fe149a8-9f05-447c-b50a-aea0fb978b8f",
+        "eventType": "execution_quoted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution refreshed live venue quote state.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=3, awaiting_approval=1, pending=2.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:34.005Z"
+      },
+      {
+        "transitionId": "rtr_4ec304ad-fbeb-4d52-951e-32951077f8c3",
+        "eventType": "execution_submitted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution auto-signed and submitted a venue order.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=3, pending=3.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:32.102Z"
+      },
+      {
+        "transitionId": "rtr_fd0bd5a4-a771-4f73-8300-0942426a20a1",
+        "eventType": "execution_quoted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution refreshed live venue quote state.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=2, awaiting_approval=1, pending=3.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:31.850Z"
+      },
+      {
+        "transitionId": "rtr_b31b49a5-04df-4f6e-b5d3-ac0a087b7892",
+        "eventType": "execution_submitted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution auto-signed and submitted a venue order.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=2, pending=4.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:30.230Z"
+      },
+      {
+        "transitionId": "rtr_7c9fcfee-d75c-427c-bc7b-2ac6c9e1e3ed",
+        "eventType": "execution_quoted",
+        "fromState": "blocked",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution refreshed live venue quote state.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=1, awaiting_approval=1, pending=4.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:30.019Z"
+      },
+      {
+        "transitionId": "rtr_2c60c17b-268f-4d56-8b48-865152f976f7",
+        "eventType": "execution_submitted",
+        "fromState": "executing",
+        "toState": "blocked",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution auto-signed and submitted a venue order.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is blocked. Actionable legs: blocked=1, pending=5.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:17.294Z"
+      },
+      {
+        "transitionId": "rtr_c9f3122f-6e49-4c0a-9b4e-2f322c1231ff",
+        "eventType": "execution_quoted",
+        "fromState": "executing",
+        "toState": "executing",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution refreshed live venue quote state.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is awaiting_approval. Actionable legs: awaiting_approval=1, pending=5.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:17.083Z"
+      },
+      {
+        "transitionId": "rtr_270d7b76-5414-4bdf-9c1f-0b771d727b3e",
+        "eventType": "execution_staged",
+        "fromState": "awaiting_operator",
+        "toState": "executing",
+        "triggerSource": "provider_triggered",
+        "summary": "Provider-triggered canonical execution staged on the repo-owned backend path.",
+        "rationale": "Canonical execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61 is requested. Actionable legs: pending=6.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:14.770Z"
+      },
+      {
+        "transitionId": "rtr_b0dfba42-0dae-431a-acc5-44e55d5eaa1c",
+        "eventType": "provider_triggered_review",
+        "fromState": null,
+        "toState": "awaiting_operator",
+        "triggerSource": "provider_triggered",
+        "summary": "Rebalance is awaiting operator confirmation.",
+        "rationale": "Execution remains manual-first and requires an explicit operator confirmation step before it can begin.",
+        "scheduledFor": null,
+        "occurredAt": "2026-04-02T08:03:13.019Z"
+      }
+    ]
+  },
+  "latestProviderReceipt": {
+    "receiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+    "receivedAt": "2026-04-02T08:03:13.034Z",
+    "providerId": "chainlink_cre",
+    "deliveryId": null,
+    "eventId": null,
+    "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z",
+    "workflowId": "xsl018b-provider-autonomous-hot-20260402",
+    "workflowExecutionId": "exec_xsl018b_rerun_20260402T080310568Z",
+    "slotId": "onboarding.default_basket",
+    "chain": "ethereum",
+    "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "dedupeKey": "chainlink_cre:xsl018b-provider-autonomous-hot-20260402:exec_xsl018b_rerun_20260402T080310568Z:onboarding.default_basket:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:ethereum",
+    "digest": "0x383f8a60f679f7c48d788241d2cf2a61f58cc3656aed7bb8c60eacc04e1b1459",
+    "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+    "issuer": "0x4819Ff831EC95cE04FCcdcAEF46cE1b7d9a5540d",
+    "jti": "jti_xsl018b_rerun_20260402T080310568Z",
+    "tokenIssuedAt": "2026-04-02T08:03:10.000Z",
+    "tokenExpiresAt": "2026-04-02T08:07:10.000Z",
+    "decision": "accepted",
+    "errorCode": null,
+    "rebalanceId": "rebalance_onboarding_default_basket",
+    "reason": "Validated Chainlink CRE event opened canonical provider-triggered execution for the current promoted manifest.",
+    "duplicateOfReceiptId": null
+  },
+  "executionRequest": {
+    "version": "1",
+    "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+    "owner": {
+      "providerId": "repo_owned_hot_signer",
+      "appId": "cmnfzikzk02ey0ckyx8m14qv2",
+      "userId": "did:privy:user_chainlink_cre_autonomous",
+      "sessionId": "chainlink_cre_autonomous_session",
+      "issuer": "privy.io",
+      "authenticatedAt": "2026-04-02T07:32:04.814Z"
+    },
+    "rebalanceId": "rebalance_onboarding_default_basket",
+    "activationId": "act_chainlink_cre_autonomous_baseline_v1_20260402",
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "slotId": "onboarding.default_basket",
+    "chain": "ethereum",
+    "mode": "basket",
+    "runtimeOwner": "policy_bounded_automation",
+    "triggerSource": "provider_staging",
+    "adapterId": "oneinch_fusion",
+    "activationManifestRef": {
+      "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "slotId": "onboarding.default_basket",
+      "mode": "basket",
+      "strategyVersion": "basket-baseline-v1"
+    },
+    "requestedNotionalUsd": 20,
+    "fundingAssetSymbol": "USDC",
+    "manualSignerAddress": "0x4819Ff831EC95cE04FCcdcAEF46cE1b7d9a5540d",
+    "policyAccountAddress": null,
+    "executionDestinationAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+    "manualSigningMode": "backend_repo_owned_signer",
+    "automationAccountMode": "repo_owned_hot_signer",
+    "automationReadiness": "ready",
+    "venueSigningMode": "backend_repo_owned_eip712",
+    "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+    "state": "blocked",
+    "blockers": [
+      "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+    ],
+    "warnings": [
+      "Repo-owned policy-bounded automation is authorized to quote, sign, submit, and settle this canonical execution request.",
+      "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+      "NVDAx is pinned to the 1inch Ethereum route for this execution request.",
+      "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "MSFTx is pinned to the 1inch Ethereum route for this execution request.",
+      "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AAPLx is pinned to the 1inch Ethereum route for this execution request.",
+      "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "METAx is pinned to the 1inch Ethereum route for this execution request.",
+      "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "AMZNx is pinned to the 1inch Ethereum route for this execution request.",
+      "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "GOOGLx is pinned to the 1inch Ethereum route for this execution request.",
+      "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+      "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+    ],
+    "legs": [
+      {
+        "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:1",
+        "sequence": 1,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "NVDAx",
+        "venueId": "1inch.ethereum",
+        "adapterId": "oneinch_fusion",
+        "requiredRouteId": "1inch.ethereum",
+        "targetWeightPct": 18,
+        "targetNotionalUsd": 3.6,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "state": "blocked",
+        "blockers": [
+          "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+        ],
+        "warnings": [
+          "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+          "NVDAx is pinned to the 1inch Ethereum route for this execution request.",
+          "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": {
+          "kind": "oneinch_fusion",
+          "quoteId": "3a596ad9-739a-498d-b4f6-778f7c1ef716",
+          "quotedAt": "2026-04-02T08:03:17.065Z",
+          "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "toTokenAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+          "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fromTokenAmount": "3600000",
+          "toTokenAmount": "20902431109506268",
+          "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+          "recommendedPreset": "fast",
+          "priceImpactPercent": 0.35,
+          "orderHash": "0x8e654829692fde685585aa0f1bf7b0f1b1f1617a06539bac374bc9399c4aca38",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "receiver": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fee": {
+            "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+            "bps": 0,
+            "whitelistDiscountPercent": 0
+          },
+          "submissionSupported": true
+        },
+        "approval": {
+          "approvalType": "eip712_signature",
+          "status": "failed",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "approvalTarget": "oneinch_fusion_order",
+          "orderToSign": {
+            "quoteId": "3a596ad9-739a-498d-b4f6-778f7c1ef716",
+            "orderHash": "0x8e654829692fde685585aa0f1bf7b0f1b1f1617a06539bac374bc9399c4aca38",
+            "order": {
+              "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+              "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "takerAsset": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+              "makerTraits": "62419173104490761595518734106942984770791244409650967671052582672335925936128",
+              "salt": "63580912201817063725142766295934429934039224226302143065606082614923208554379",
+              "makingAmount": "3600000",
+              "takingAmount": "18057534352367139",
+              "receiver": "0x0000000000000000000000000000000000000000"
+            },
+            "extension": "[object Object]",
+            "typedData": {
+              "primaryType": "Order",
+              "types": {
+                "EIP712Domain": [
+                  {
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "name": "version",
+                    "type": "string"
+                  },
+                  {
+                    "name": "chainId",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "verifyingContract",
+                    "type": "address"
+                  }
+                ],
+                "Order": [
+                  {
+                    "name": "salt",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "maker",
+                    "type": "address"
+                  },
+                  {
+                    "name": "receiver",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "takerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "takingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "makerTraits",
+                    "type": "uint256"
+                  }
+                ]
+              },
+              "domain": {
+                "name": "1inch Aggregation Router",
+                "version": "6",
+                "chainId": 1,
+                "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+              },
+              "message": {
+                "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "takerAsset": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                "makerTraits": "62419173104490761595518734106942984770791244409650967671052582672335925936128",
+                "salt": "63580912201817063725142766295934429934039224226302143065606082614923208554379",
+                "makingAmount": "3600000",
+                "takingAmount": "18057534352367139",
+                "receiver": "0x0000000000000000000000000000000000000000"
+              }
+            }
+          },
+          "signature": null,
+          "approvedAt": null,
+          "submittedAt": null,
+          "venueOrderId": null,
+          "notes": [
+            "Repo-owned backend signing will produce the 1inch Fusion EIP-712 approval before canonical submission."
+          ]
+        },
+        "venueStatus": {
+          "venueId": "1inch.ethereum",
+          "venueOrderId": null,
+          "status": "quote_ready",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-02T08:03:17.066Z",
+          "rawStatus": {
+            "selectedVenueId": "1inch.ethereum",
+            "selectedAdapterId": "oneinch_fusion",
+            "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+            "submissionSupported": true,
+            "quoteAttempts": {
+              "cow_swap": {
+                "status": "skipped",
+                "venueId": "cow_swap.ethereum",
+                "reason": "Execution request is pinned to 1inch Fusion."
+              },
+              "oneinch_fusion": {
+                "status": "quoted",
+                "venueId": "1inch.ethereum",
+                "submissionSupported": true,
+                "quoteId": "3a596ad9-739a-498d-b4f6-778f7c1ef716",
+                "orderHash": "0x8e654829692fde685585aa0f1bf7b0f1b1f1617a06539bac374bc9399c4aca38",
+                "buyAmount": "20902431109506268",
+                "sellAmount": "3600000",
+                "recommendedPreset": "fast",
+                "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+                "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "toTokenAddress": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+                "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "amount": "3600000",
+                "enableEstimate": true,
+                "source": "xstocks-strategy-lab",
+                "targetNotionalUsd": 3.6
+              }
+            }
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": {
+          "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+          "providerDeliveryId": null,
+          "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+        }
+      },
+      {
+        "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:2",
+        "sequence": 2,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "MSFTx",
+        "venueId": "1inch.ethereum",
+        "adapterId": "oneinch_fusion",
+        "requiredRouteId": "1inch.ethereum",
+        "targetWeightPct": 16.43,
+        "targetNotionalUsd": 3.29,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "state": "blocked",
+        "blockers": [
+          "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+        ],
+        "warnings": [
+          "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+          "MSFTx is pinned to the 1inch Ethereum route for this execution request.",
+          "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": {
+          "kind": "oneinch_fusion",
+          "quoteId": "65c49ca0-5e74-40e9-8ecc-f8dcacd3b6cd",
+          "quotedAt": "2026-04-02T08:03:30.001Z",
+          "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "toTokenAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fromTokenAmount": "3290000",
+          "toTokenAmount": "8966988286098863",
+          "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+          "recommendedPreset": "fast",
+          "priceImpactPercent": 0.45,
+          "orderHash": "0x1f3e650e6be8a0d248f0a1ad1210e74792351c5b68d6aaee0bf5d796f83cfe38",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "receiver": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fee": {
+            "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+            "bps": 0,
+            "whitelistDiscountPercent": 0
+          },
+          "submissionSupported": true
+        },
+        "approval": {
+          "approvalType": "eip712_signature",
+          "status": "failed",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "approvalTarget": "oneinch_fusion_order",
+          "orderToSign": {
+            "quoteId": "65c49ca0-5e74-40e9-8ecc-f8dcacd3b6cd",
+            "orderHash": "0x1f3e650e6be8a0d248f0a1ad1210e74792351c5b68d6aaee0bf5d796f83cfe38",
+            "order": {
+              "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+              "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "takerAsset": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+              "makerTraits": "62419173104490761595518734107384228794604487792107486760899665406422474031104",
+              "salt": "63580912215862880274162782583401452083311107792347374074904233696159918941521",
+              "makingAmount": "3290000",
+              "takingAmount": "7723161356641393",
+              "receiver": "0x0000000000000000000000000000000000000000"
+            },
+            "extension": "[object Object]",
+            "typedData": {
+              "primaryType": "Order",
+              "types": {
+                "EIP712Domain": [
+                  {
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "name": "version",
+                    "type": "string"
+                  },
+                  {
+                    "name": "chainId",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "verifyingContract",
+                    "type": "address"
+                  }
+                ],
+                "Order": [
+                  {
+                    "name": "salt",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "maker",
+                    "type": "address"
+                  },
+                  {
+                    "name": "receiver",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "takerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "takingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "makerTraits",
+                    "type": "uint256"
+                  }
+                ]
+              },
+              "domain": {
+                "name": "1inch Aggregation Router",
+                "version": "6",
+                "chainId": 1,
+                "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+              },
+              "message": {
+                "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "takerAsset": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                "makerTraits": "62419173104490761595518734107384228794604487792107486760899665406422474031104",
+                "salt": "63580912215862880274162782583401452083311107792347374074904233696159918941521",
+                "makingAmount": "3290000",
+                "takingAmount": "7723161356641393",
+                "receiver": "0x0000000000000000000000000000000000000000"
+              }
+            }
+          },
+          "signature": null,
+          "approvedAt": null,
+          "submittedAt": null,
+          "venueOrderId": null,
+          "notes": [
+            "Repo-owned backend signing will produce the 1inch Fusion EIP-712 approval before canonical submission."
+          ]
+        },
+        "venueStatus": {
+          "venueId": "1inch.ethereum",
+          "venueOrderId": null,
+          "status": "quote_ready",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-02T08:03:30.001Z",
+          "rawStatus": {
+            "selectedVenueId": "1inch.ethereum",
+            "selectedAdapterId": "oneinch_fusion",
+            "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+            "submissionSupported": true,
+            "quoteAttempts": {
+              "cow_swap": {
+                "status": "skipped",
+                "venueId": "cow_swap.ethereum",
+                "reason": "Execution request is pinned to 1inch Fusion."
+              },
+              "oneinch_fusion": {
+                "status": "quoted",
+                "venueId": "1inch.ethereum",
+                "submissionSupported": true,
+                "quoteId": "65c49ca0-5e74-40e9-8ecc-f8dcacd3b6cd",
+                "orderHash": "0x1f3e650e6be8a0d248f0a1ad1210e74792351c5b68d6aaee0bf5d796f83cfe38",
+                "buyAmount": "8966988286098863",
+                "sellAmount": "3290000",
+                "recommendedPreset": "fast",
+                "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+                "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "toTokenAddress": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+                "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "amount": "3290000",
+                "enableEstimate": true,
+                "source": "xstocks-strategy-lab",
+                "targetNotionalUsd": 3.29
+              }
+            }
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": {
+          "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+          "providerDeliveryId": null,
+          "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+        }
+      },
+      {
+        "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:3",
+        "sequence": 3,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "AAPLx",
+        "venueId": "1inch.ethereum",
+        "adapterId": "oneinch_fusion",
+        "requiredRouteId": "1inch.ethereum",
+        "targetWeightPct": 15.74,
+        "targetNotionalUsd": 3.15,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "state": "blocked",
+        "blockers": [
+          "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+        ],
+        "warnings": [
+          "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+          "AAPLx is pinned to the 1inch Ethereum route for this execution request.",
+          "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": {
+          "kind": "oneinch_fusion",
+          "quoteId": "d075cf81-ba29-4f06-8f61-c0facd5e906d",
+          "quotedAt": "2026-04-02T08:03:31.818Z",
+          "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "toTokenAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fromTokenAmount": "3150000",
+          "toTokenAmount": "12386476760822607",
+          "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+          "recommendedPreset": "fast",
+          "priceImpactPercent": 0.36,
+          "orderHash": "0x5c5d8c3121abed9015770d9bf97f47a42f7bf1d1847d7a9bcad66539e8eca0a8",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "receiver": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fee": {
+            "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+            "bps": 0,
+            "whitelistDiscountPercent": 0
+          },
+          "submissionSupported": true
+        },
+        "approval": {
+          "approvalType": "eip712_signature",
+          "status": "failed",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "approvalTarget": "oneinch_fusion_order",
+          "orderToSign": {
+            "quoteId": "d075cf81-ba29-4f06-8f61-c0facd5e906d",
+            "orderHash": "0x5c5d8c3121abed9015770d9bf97f47a42f7bf1d1847d7a9bcad66539e8eca0a8",
+            "order": {
+              "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+              "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "takerAsset": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+              "makerTraits": "62419173104490761595518734107309291321508643178311987998956041632255894880256",
+              "salt": "63580912222961558718279473418714880448950169956205821119477868363958072672662",
+              "makingAmount": "3150000",
+              "takingAmount": "10620653697326937",
+              "receiver": "0x0000000000000000000000000000000000000000"
+            },
+            "extension": "[object Object]",
+            "typedData": {
+              "primaryType": "Order",
+              "types": {
+                "EIP712Domain": [
+                  {
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "name": "version",
+                    "type": "string"
+                  },
+                  {
+                    "name": "chainId",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "verifyingContract",
+                    "type": "address"
+                  }
+                ],
+                "Order": [
+                  {
+                    "name": "salt",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "maker",
+                    "type": "address"
+                  },
+                  {
+                    "name": "receiver",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "takerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "takingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "makerTraits",
+                    "type": "uint256"
+                  }
+                ]
+              },
+              "domain": {
+                "name": "1inch Aggregation Router",
+                "version": "6",
+                "chainId": 1,
+                "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+              },
+              "message": {
+                "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "takerAsset": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                "makerTraits": "62419173104490761595518734107309291321508643178311987998956041632255894880256",
+                "salt": "63580912222961558718279473418714880448950169956205821119477868363958072672662",
+                "makingAmount": "3150000",
+                "takingAmount": "10620653697326937",
+                "receiver": "0x0000000000000000000000000000000000000000"
+              }
+            }
+          },
+          "signature": null,
+          "approvedAt": null,
+          "submittedAt": null,
+          "venueOrderId": null,
+          "notes": [
+            "Repo-owned backend signing will produce the 1inch Fusion EIP-712 approval before canonical submission."
+          ]
+        },
+        "venueStatus": {
+          "venueId": "1inch.ethereum",
+          "venueOrderId": null,
+          "status": "quote_ready",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-02T08:03:31.818Z",
+          "rawStatus": {
+            "selectedVenueId": "1inch.ethereum",
+            "selectedAdapterId": "oneinch_fusion",
+            "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+            "submissionSupported": true,
+            "quoteAttempts": {
+              "cow_swap": {
+                "status": "skipped",
+                "venueId": "cow_swap.ethereum",
+                "reason": "Execution request is pinned to 1inch Fusion."
+              },
+              "oneinch_fusion": {
+                "status": "quoted",
+                "venueId": "1inch.ethereum",
+                "submissionSupported": true,
+                "quoteId": "d075cf81-ba29-4f06-8f61-c0facd5e906d",
+                "orderHash": "0x5c5d8c3121abed9015770d9bf97f47a42f7bf1d1847d7a9bcad66539e8eca0a8",
+                "buyAmount": "12386476760822607",
+                "sellAmount": "3150000",
+                "recommendedPreset": "fast",
+                "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+                "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "toTokenAddress": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+                "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "amount": "3150000",
+                "enableEstimate": true,
+                "source": "xstocks-strategy-lab",
+                "targetNotionalUsd": 3.15
+              }
+            }
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": {
+          "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+          "providerDeliveryId": null,
+          "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+        }
+      },
+      {
+        "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:4",
+        "sequence": 4,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "METAx",
+        "venueId": "1inch.ethereum",
+        "adapterId": "oneinch_fusion",
+        "requiredRouteId": "1inch.ethereum",
+        "targetWeightPct": 15.4,
+        "targetNotionalUsd": 3.08,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "state": "blocked",
+        "blockers": [
+          "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+        ],
+        "warnings": [
+          "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+          "METAx is pinned to the 1inch Ethereum route for this execution request.",
+          "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": {
+          "kind": "oneinch_fusion",
+          "quoteId": "b41e16cd-7a0b-444c-9291-46d569c01a7a",
+          "quotedAt": "2026-04-02T08:03:33.994Z",
+          "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "toTokenAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fromTokenAmount": "3080000",
+          "toTokenAmount": "5389385688177640",
+          "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+          "recommendedPreset": "fast",
+          "priceImpactPercent": 0.47,
+          "orderHash": "0x7b8c8987b9536e3db10d46cf78b06e0ca36cb6b715830c1af4e2d676889619c3",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "receiver": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fee": {
+            "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+            "bps": 0,
+            "whitelistDiscountPercent": 0
+          },
+          "submissionSupported": true
+        },
+        "approval": {
+          "approvalType": "eip712_signature",
+          "status": "failed",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "approvalTarget": "oneinch_fusion_order",
+          "orderToSign": {
+            "quoteId": "b41e16cd-7a0b-444c-9291-46d569c01a7a",
+            "orderHash": "0x7b8c8987b9536e3db10d46cf78b06e0ca36cb6b715830c1af4e2d676889619c3",
+            "order": {
+              "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+              "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "takerAsset": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+              "makerTraits": "62419173104490761595518734106411501949351987117405796604235946503534653997056",
+              "salt": "63580912216950459672363144841876965589777636445920601662365160023150166689671",
+              "makingAmount": "3080000",
+              "takingAmount": "4608527584508357",
+              "receiver": "0x0000000000000000000000000000000000000000"
+            },
+            "extension": "[object Object]",
+            "typedData": {
+              "primaryType": "Order",
+              "types": {
+                "EIP712Domain": [
+                  {
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "name": "version",
+                    "type": "string"
+                  },
+                  {
+                    "name": "chainId",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "verifyingContract",
+                    "type": "address"
+                  }
+                ],
+                "Order": [
+                  {
+                    "name": "salt",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "maker",
+                    "type": "address"
+                  },
+                  {
+                    "name": "receiver",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "takerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "takingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "makerTraits",
+                    "type": "uint256"
+                  }
+                ]
+              },
+              "domain": {
+                "name": "1inch Aggregation Router",
+                "version": "6",
+                "chainId": 1,
+                "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+              },
+              "message": {
+                "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "takerAsset": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                "makerTraits": "62419173104490761595518734106411501949351987117405796604235946503534653997056",
+                "salt": "63580912216950459672363144841876965589777636445920601662365160023150166689671",
+                "makingAmount": "3080000",
+                "takingAmount": "4608527584508357",
+                "receiver": "0x0000000000000000000000000000000000000000"
+              }
+            }
+          },
+          "signature": null,
+          "approvedAt": null,
+          "submittedAt": null,
+          "venueOrderId": null,
+          "notes": [
+            "Repo-owned backend signing will produce the 1inch Fusion EIP-712 approval before canonical submission."
+          ]
+        },
+        "venueStatus": {
+          "venueId": "1inch.ethereum",
+          "venueOrderId": null,
+          "status": "quote_ready",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-02T08:03:33.994Z",
+          "rawStatus": {
+            "selectedVenueId": "1inch.ethereum",
+            "selectedAdapterId": "oneinch_fusion",
+            "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+            "submissionSupported": true,
+            "quoteAttempts": {
+              "cow_swap": {
+                "status": "skipped",
+                "venueId": "cow_swap.ethereum",
+                "reason": "Execution request is pinned to 1inch Fusion."
+              },
+              "oneinch_fusion": {
+                "status": "quoted",
+                "venueId": "1inch.ethereum",
+                "submissionSupported": true,
+                "quoteId": "b41e16cd-7a0b-444c-9291-46d569c01a7a",
+                "orderHash": "0x7b8c8987b9536e3db10d46cf78b06e0ca36cb6b715830c1af4e2d676889619c3",
+                "buyAmount": "5389385688177640",
+                "sellAmount": "3080000",
+                "recommendedPreset": "fast",
+                "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+                "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "toTokenAddress": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+                "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "amount": "3080000",
+                "enableEstimate": true,
+                "source": "xstocks-strategy-lab",
+                "targetNotionalUsd": 3.08
+              }
+            }
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": {
+          "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+          "providerDeliveryId": null,
+          "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+        }
+      },
+      {
+        "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:5",
+        "sequence": 5,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "AMZNx",
+        "venueId": "1inch.ethereum",
+        "adapterId": "oneinch_fusion",
+        "requiredRouteId": "1inch.ethereum",
+        "targetWeightPct": 14.89,
+        "targetNotionalUsd": 2.98,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "state": "blocked",
+        "blockers": [
+          "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+        ],
+        "warnings": [
+          "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+          "AMZNx is pinned to the 1inch Ethereum route for this execution request.",
+          "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": {
+          "kind": "oneinch_fusion",
+          "quoteId": "57483a22-32d6-49c0-beea-f123415945b8",
+          "quotedAt": "2026-04-02T08:03:36.564Z",
+          "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "toTokenAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+          "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fromTokenAmount": "2980000",
+          "toTokenAmount": "14331129332281761",
+          "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+          "recommendedPreset": "fast",
+          "priceImpactPercent": 0.48,
+          "orderHash": "0xef1955fbd15b598b3b5a6eedf204f7a2a14efd53b185da3b1a18e1360de27b72",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "receiver": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fee": {
+            "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+            "bps": 0,
+            "whitelistDiscountPercent": 0
+          },
+          "submissionSupported": true
+        },
+        "approval": {
+          "approvalType": "eip712_signature",
+          "status": "failed",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "approvalTarget": "oneinch_fusion_order",
+          "orderToSign": {
+            "quoteId": "57483a22-32d6-49c0-beea-f123415945b8",
+            "orderHash": "0xef1955fbd15b598b3b5a6eedf204f7a2a14efd53b185da3b1a18e1360de27b72",
+            "order": {
+              "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+              "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "takerAsset": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+              "makerTraits": "62419173104490761595518734107122996349230118852356716269579363039324338651136",
+              "salt": "63580912211132974705618073031095212095268349377956186849159942743412260002880",
+              "makingAmount": "2980000",
+              "takingAmount": "12217886748345617",
+              "receiver": "0x0000000000000000000000000000000000000000"
+            },
+            "extension": "[object Object]",
+            "typedData": {
+              "primaryType": "Order",
+              "types": {
+                "EIP712Domain": [
+                  {
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "name": "version",
+                    "type": "string"
+                  },
+                  {
+                    "name": "chainId",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "verifyingContract",
+                    "type": "address"
+                  }
+                ],
+                "Order": [
+                  {
+                    "name": "salt",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "maker",
+                    "type": "address"
+                  },
+                  {
+                    "name": "receiver",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "takerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "takingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "makerTraits",
+                    "type": "uint256"
+                  }
+                ]
+              },
+              "domain": {
+                "name": "1inch Aggregation Router",
+                "version": "6",
+                "chainId": 1,
+                "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+              },
+              "message": {
+                "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "takerAsset": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                "makerTraits": "62419173104490761595518734107122996349230118852356716269579363039324338651136",
+                "salt": "63580912211132974705618073031095212095268349377956186849159942743412260002880",
+                "makingAmount": "2980000",
+                "takingAmount": "12217886748345617",
+                "receiver": "0x0000000000000000000000000000000000000000"
+              }
+            }
+          },
+          "signature": null,
+          "approvedAt": null,
+          "submittedAt": null,
+          "venueOrderId": null,
+          "notes": [
+            "Repo-owned backend signing will produce the 1inch Fusion EIP-712 approval before canonical submission."
+          ]
+        },
+        "venueStatus": {
+          "venueId": "1inch.ethereum",
+          "venueOrderId": null,
+          "status": "quote_ready",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-02T08:03:36.564Z",
+          "rawStatus": {
+            "selectedVenueId": "1inch.ethereum",
+            "selectedAdapterId": "oneinch_fusion",
+            "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+            "submissionSupported": true,
+            "quoteAttempts": {
+              "cow_swap": {
+                "status": "skipped",
+                "venueId": "cow_swap.ethereum",
+                "reason": "Execution request is pinned to 1inch Fusion."
+              },
+              "oneinch_fusion": {
+                "status": "quoted",
+                "venueId": "1inch.ethereum",
+                "submissionSupported": true,
+                "quoteId": "57483a22-32d6-49c0-beea-f123415945b8",
+                "orderHash": "0xef1955fbd15b598b3b5a6eedf204f7a2a14efd53b185da3b1a18e1360de27b72",
+                "buyAmount": "14331129332281761",
+                "sellAmount": "2980000",
+                "recommendedPreset": "fast",
+                "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+                "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "toTokenAddress": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+                "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "amount": "2980000",
+                "enableEstimate": true,
+                "source": "xstocks-strategy-lab",
+                "targetNotionalUsd": 2.98
+              }
+            }
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": {
+          "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+          "providerDeliveryId": null,
+          "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+        }
+      },
+      {
+        "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:6",
+        "sequence": 6,
+        "sleeve": "core_xstocks",
+        "assetSymbol": "GOOGLx",
+        "venueId": "1inch.ethereum",
+        "adapterId": "oneinch_fusion",
+        "requiredRouteId": "1inch.ethereum",
+        "targetWeightPct": 14.54,
+        "targetNotionalUsd": 2.91,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "paymentTokenDecimals": 6,
+        "receivingTokenAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "state": "blocked",
+        "blockers": [
+          "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+        ],
+        "warnings": [
+          "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+          "GOOGLx is pinned to the 1inch Ethereum route for this execution request.",
+          "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata."
+        ],
+        "quote": {
+          "kind": "oneinch_fusion",
+          "quoteId": "2d742683-647c-4e5d-8c45-524ead477ac4",
+          "quotedAt": "2026-04-02T08:03:39.685Z",
+          "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "toTokenAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fromTokenAmount": "2910000",
+          "toTokenAmount": "9946713303421413",
+          "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+          "recommendedPreset": "fast",
+          "priceImpactPercent": 0.42,
+          "orderHash": "0x1879b5a0c1fdef933d6ce2023eac3f829b024b8dc61cc86097d9fecd85eea409",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "receiver": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "fee": {
+            "receiver": "0x90cbe4bdd538d6e9b379bff5fe72c3d67a521de5",
+            "bps": 0,
+            "whitelistDiscountPercent": 0
+          },
+          "submissionSupported": true
+        },
+        "approval": {
+          "approvalType": "eip712_signature",
+          "status": "failed",
+          "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+          "approvalTarget": "oneinch_fusion_order",
+          "orderToSign": {
+            "quoteId": "2d742683-647c-4e5d-8c45-524ead477ac4",
+            "orderHash": "0x1879b5a0c1fdef933d6ce2023eac3f829b024b8dc61cc86097d9fecd85eea409",
+            "order": {
+              "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+              "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+              "takerAsset": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+              "makerTraits": "62419173104490761595518734107616759918360563320434323034454936041445002313728",
+              "salt": "63580912221962405568354298189529966750685411595603014675788144548254654209493",
+              "makingAmount": "2910000",
+              "takingAmount": "8457861470964841",
+              "receiver": "0x0000000000000000000000000000000000000000"
+            },
+            "extension": "[object Object]",
+            "typedData": {
+              "primaryType": "Order",
+              "types": {
+                "EIP712Domain": [
+                  {
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "name": "version",
+                    "type": "string"
+                  },
+                  {
+                    "name": "chainId",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "verifyingContract",
+                    "type": "address"
+                  }
+                ],
+                "Order": [
+                  {
+                    "name": "salt",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "maker",
+                    "type": "address"
+                  },
+                  {
+                    "name": "receiver",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "takerAsset",
+                    "type": "address"
+                  },
+                  {
+                    "name": "makingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "takingAmount",
+                    "type": "uint256"
+                  },
+                  {
+                    "name": "makerTraits",
+                    "type": "uint256"
+                  }
+                ]
+              },
+              "domain": {
+                "name": "1inch Aggregation Router",
+                "version": "6",
+                "chainId": 1,
+                "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+              },
+              "message": {
+                "maker": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "takerAsset": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                "makerTraits": "62419173104490761595518734107616759918360563320434323034454936041445002313728",
+                "salt": "63580912221962405568354298189529966750685411595603014675788144548254654209493",
+                "makingAmount": "2910000",
+                "takingAmount": "8457861470964841",
+                "receiver": "0x0000000000000000000000000000000000000000"
+              }
+            }
+          },
+          "signature": null,
+          "approvedAt": null,
+          "submittedAt": null,
+          "venueOrderId": null,
+          "notes": [
+            "Repo-owned backend signing will produce the 1inch Fusion EIP-712 approval before canonical submission."
+          ]
+        },
+        "venueStatus": {
+          "venueId": "1inch.ethereum",
+          "venueOrderId": null,
+          "status": "quote_ready",
+          "settlementTxHash": null,
+          "lastCheckedAt": null,
+          "updatedAt": "2026-04-02T08:03:39.685Z",
+          "rawStatus": {
+            "selectedVenueId": "1inch.ethereum",
+            "selectedAdapterId": "oneinch_fusion",
+            "selectionReason": "1inch.ethereum was the only venue that returned a live quote.",
+            "submissionSupported": true,
+            "quoteAttempts": {
+              "cow_swap": {
+                "status": "skipped",
+                "venueId": "cow_swap.ethereum",
+                "reason": "Execution request is pinned to 1inch Fusion."
+              },
+              "oneinch_fusion": {
+                "status": "quoted",
+                "venueId": "1inch.ethereum",
+                "submissionSupported": true,
+                "quoteId": "2d742683-647c-4e5d-8c45-524ead477ac4",
+                "orderHash": "0x1879b5a0c1fdef933d6ce2023eac3f829b024b8dc61cc86097d9fecd85eea409",
+                "buyAmount": "9946713303421413",
+                "sellAmount": "2910000",
+                "recommendedPreset": "fast",
+                "settlementAddress": "0x399740157391a9f1bf4e9921a8834f9bc8f2678e",
+                "fromTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                "toTokenAddress": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+                "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+                "amount": "2910000",
+                "enableEstimate": true,
+                "source": "xstocks-strategy-lab",
+                "targetNotionalUsd": 2.91
+              }
+            }
+          }
+        },
+        "receipt": null,
+        "trade": null,
+        "linkage": {
+          "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+          "providerDeliveryId": null,
+          "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+        }
+      },
+      {
+        "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:7",
+        "sequence": 7,
+        "sleeve": "yield_buffer",
+        "assetSymbol": "AUSD",
+        "venueId": "flowdesk_ausd_rwa_strategy",
+        "adapterId": "flowdesk_ausd_rwa_strategy",
+        "requiredRouteId": "flowdesk.ausd-rwa-strategy",
+        "targetWeightPct": 5,
+        "targetNotionalUsd": 1,
+        "paymentAssetSymbol": "USDC",
+        "paymentTokenAddress": null,
+        "paymentTokenDecimals": null,
+        "receivingTokenAddress": null,
+        "receivingTokenDecimals": null,
+        "settlementAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+        "state": "deferred",
+        "blockers": [],
+        "warnings": [
+          "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+        ],
+        "quote": null,
+        "approval": null,
+        "venueStatus": null,
+        "receipt": null,
+        "trade": null,
+        "linkage": {
+          "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+          "rebalanceId": "rebalance_onboarding_default_basket",
+          "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+          "providerDeliveryId": null,
+          "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+        }
+      }
+    ],
+    "linkage": {
+      "rebalanceId": "rebalance_onboarding_default_basket",
+      "providerReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+      "providerDeliveryId": null,
+      "providerEventId": "evt_xsl018b_rerun_20260402T080310568Z"
+    },
+    "createdAt": "2026-04-02T08:03:14.749Z",
+    "updatedAt": "2026-04-02T08:03:39.870Z"
+  }
+}

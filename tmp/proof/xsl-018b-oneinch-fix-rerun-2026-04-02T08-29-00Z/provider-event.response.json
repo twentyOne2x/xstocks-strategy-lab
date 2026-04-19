@@ -1,0 +1,123 @@
+{
+  "data": {
+    "version": "1",
+    "generatedAt": "2026-04-02T08:29:49.872Z",
+    "receipt": {
+      "receiptId": "provider_evt_rcpt_c89001a3-7bb3-45a9-bbec-cc8d857a7bd8",
+      "receivedAt": "2026-04-02T08:29:35.104Z",
+      "providerId": "chainlink_cre",
+      "providerEventId": "evt_xsl018b_oneinch_fix_rerun_20260402T082932111Z",
+      "workflowId": "xsl018b-provider-autonomous-hot-20260402",
+      "workflowExecutionId": "exec_xsl018b_oneinch_fix_rerun_20260402T082932111Z",
+      "slotId": "onboarding.default_basket",
+      "chain": "ethereum",
+      "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "dedupeKey": "chainlink_cre:xsl018b-provider-autonomous-hot-20260402:exec_xsl018b_oneinch_fix_rerun_20260402T082932111Z:onboarding.default_basket:onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted:ethereum",
+      "digest": "0x4a5780e8ce2df0d422b0689febcc1cefa7a20427ee6d5a4b68f6b77ada8c4836",
+      "signerAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d",
+      "issuer": "0x4819Ff831EC95cE04FCcdcAEF46cE1b7d9a5540d",
+      "jti": "jti_xsl018b_oneinch_fix_rerun_20260402T082932111Z",
+      "tokenIssuedAt": "2026-04-02T08:29:32.000Z",
+      "tokenExpiresAt": "2026-04-02T08:33:32.000Z",
+      "decision": "accepted",
+      "errorCode": null,
+      "reason": "Validated Chainlink CRE event opened canonical provider-triggered execution for the current promoted manifest.",
+      "duplicateOfReceiptId": null
+    },
+    "rebalanceOrchestration": {
+      "rebalanceId": "rebalance_onboarding_default_basket",
+      "slotId": "onboarding.default_basket",
+      "chain": "ethereum",
+      "activationManifestRef": {
+        "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+        "slotId": "onboarding.default_basket",
+        "mode": "basket",
+        "strategyVersion": "basket-starter-h6-p100-c5-cap18-a0-r300-v1"
+      },
+      "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+      "baselineActivationId": "act_chainlink_cre_autonomous_baseline_v1_20260402",
+      "baselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+      "baselineManifestMatchesTarget": false,
+      "state": "blocked",
+      "runtimeOwner": "policy_bounded_automation",
+      "triggerSource": "provider_triggered",
+      "summary": "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=6.",
+      "rationale": "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}",
+      "scheduledFor": null,
+      "allowedTransitions": [
+        "rebalance_deferred",
+        "rebalance_recommended",
+        "scheduled",
+        "paused"
+      ],
+      "recommendationState": "full_rebalance",
+      "executionState": "ready",
+      "executionEligibility": "blocked",
+      "surfaceTruth": "live",
+      "providerReceiptId": "provider_evt_rcpt_c89001a3-7bb3-45a9-bbec-cc8d857a7bd8",
+      "executionRequestId": "execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7",
+      "executionTriggerSource": "provider_staging",
+      "executionRequestState": "blocked",
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}"
+      ],
+      "warnings": [
+        "Automation remains fail-closed until the Privy smart wallet is ready.",
+        "Repo-owned policy-bounded automation is authorized to quote, sign, submit, and settle this canonical execution request.",
+        "Venue-specific orders may be signed by the repo-owned backend on this policy-bounded automation path.",
+        "NVDAx is pinned to the 1inch Ethereum route for this execution request.",
+        "NVDAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "MSFTx is pinned to the 1inch Ethereum route for this execution request.",
+        "MSFTx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "AAPLx is pinned to the 1inch Ethereum route for this execution request.",
+        "AAPLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "METAx is pinned to the 1inch Ethereum route for this execution request.",
+        "METAx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "AMZNx is pinned to the 1inch Ethereum route for this execution request.",
+        "AMZNx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "GOOGLx is pinned to the 1inch Ethereum route for this execution request.",
+        "GOOGLx can also RFQ against the Ethereum deployment.address surfaced by xStocks route metadata.",
+        "Yield-buffer vault routing remains a manual follow-up. The first operator-manual lane only prepares and tracks the core xstocks sleeve."
+      ],
+      "automationTruth": {
+        "operatorManualRequired": false,
+        "autonomousExecutionProven": false,
+        "providerTriggeredProven": true,
+        "supportedTriggerSources": [
+          "operator_manual",
+          "scheduled_cron",
+          "provider_triggered"
+        ],
+        "notes": [
+          "Operator confirmation remains required before any rebalance execution claim.",
+          "Scheduled cron evaluation is supported as a shell trigger, but this repo does not prove a deployed cron host.",
+          "Validated provider-triggered review is proven for this runtime, but operator approval remains mandatory before execution staging.",
+          "Chainlink-oriented provider review is proven only for authenticated review opening; no autonomous execution claim exists.",
+          "Repo-owned policy-bounded automation may continue this provider-triggered canonical execution path.",
+          "Canonical autonomous execution proof is not complete until the live execution request reaches a truthful terminal state.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is requested. Actionable legs: pending=6.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is awaiting_approval. Actionable legs: awaiting_approval=1, pending=5.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=1, pending=5.",
+          "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=1, awaiting_approval=1, pending=4.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=2, pending=4.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=2, awaiting_approval=1, pending=3.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=3, pending=3.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=3, awaiting_approval=1, pending=2.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=4, pending=2.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=4, awaiting_approval=1, pending=1.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=5, pending=1.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=5, awaiting_approval=1.",
+          "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=6."
+        ]
+      },
+      "nextAction": {
+        "title": "Inspect execution blocker",
+        "detail": "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}",
+        "status": "blocked"
+      },
+      "createdAt": "2026-04-02T08:29:35.095Z",
+      "updatedAt": "2026-04-02T08:29:49.868Z"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "data": {
+    "version": "1",
+    "generatedAt": "2026-04-02T08:23:34.608Z",
+    "slotId": "onboarding.default_basket",
+    "ownerUserId": "did:privy:user_chainlink_cre_autonomous",
+    "latestActivation": null,
+    "latestRebalance": null,
+    "executionRequest": null,
+    "providerReceipts": [],
+    "activityEvents": []
+  }
+}

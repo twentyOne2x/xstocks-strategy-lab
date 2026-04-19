@@ -1,0 +1,122 @@
+{
+  "proofDir": "/Users/user/PycharmProjects/xstocks-strategy-lab-xsl-018b-autonomous/tmp/proof/xsl-018b-oneinch-fix-rerun-2026-04-02T08-29-00Z",
+  "deploymentAttemptId": "61b8133a-5fab-452f-be10-8d20af8c3c18",
+  "providerEventId": "evt_xsl018b_oneinch_fix_rerun_20260402T082932111Z",
+  "workflowExecutionId": "exec_xsl018b_oneinch_fix_rerun_20260402T082932111Z",
+  "latestActivationId": "act_chainlink_cre_autonomous_baseline_v1_20260402",
+  "latestActivationManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+  "latestReceiptId": "provider_evt_rcpt_c89001a3-7bb3-45a9-bbec-cc8d857a7bd8",
+  "latestReceiptDecision": "accepted",
+  "latestRebalanceId": "rebalance_onboarding_default_basket",
+  "latestRebalanceState": "blocked",
+  "latestRebalanceSummary": "Canonical execution request execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7 is blocked. Actionable legs: blocked=6.",
+  "latestExecutionRequestId": "execreq_03fefa2e-97ae-4aa9-b7fe-3de7bae9a5c7",
+  "latestExecutionRequestState": "blocked",
+  "latestExecutionRequestSummary": null,
+  "latestExecutionRequestRationale": null,
+  "executionLegs": [
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:1",
+      "assetSymbol": "NVDAx",
+      "state": "blocked",
+      "quoteId": "b41e888c-cc1d-41bd-8375-1c2761bc5059",
+      "orderHash": "0xd0d4eebb2e4e0463abd976f10e245e9a032c936542f61ec3da6f87db1b286e2b",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueOrderId": null,
+      "settlementTxHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}"
+      ],
+      "extension": "0x000001a1000000dc000000dc000000dc000000dc0000006e0000000000000000399740157391a9f1bf4e9921a8834f9bc8f2678e0b80480000008369ce292e0000b4150d1f010b804800b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e0b80480000008369ce292e0000b4150d1f010b804800b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e01000000000000000000000000000000000000000000000000000000000000000000000000000000004819ff831ec95ce04fccdcaef46ce1b7d9a5540d00000000006469ce28f206b09498030ae3416b66dc000074db31d09524fa87b1f700006ea9a11ae13b29f5c5550000d18bd45f0b94f54a968f0000c90ed87a54c23dc480b3000095770895ad27ad6b0d950000000000000000000000000000000000000000000000000000004a583df60d829c00"
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:2",
+      "assetSymbol": "MSFTx",
+      "state": "blocked",
+      "quoteId": "63a37571-7713-4edb-8625-a734cc9fc267",
+      "orderHash": "0x90903bda72ffc4b8f4b2a956b516f70be7f6307163084d98eaa9a9cdb540d426",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueOrderId": null,
+      "settlementTxHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}"
+      ],
+      "extension": "0x000001a1000000dc000000dc000000dc000000dc0000006e0000000000000000399740157391a9f1bf4e9921a8834f9bc8f2678e0caac50000008369ce29310000b41648fb010caac500b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e0caac50000008369ce29310000b41648fb010caac500b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e01000000000000000000000000000000000000000000000000000000000000000000000000000000004819ff831ec95ce04fccdcaef46ce1b7d9a5540d00000000006469ce28f506b09498030ae3416b66dc000074db31d09524fa87b1f700006ea9a11ae13b29f5c5550000d18bd45f0b94f54a968f0000c90ed87a54c23dc480b3000095770895ad27ad6b0d950000000000000000000000000000000000000000000000000000001fdf8d01021b3f00"
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:3",
+      "assetSymbol": "AAPLx",
+      "state": "blocked",
+      "quoteId": "11756936-b849-48a9-91de-3d3490c1a759",
+      "orderHash": "0xcb5ead1a54c509d21a0a653ffa4bbb24a2f1212b66b3f22e908b2b53dfe47f97",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueOrderId": null,
+      "settlementTxHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}"
+      ],
+      "extension": "0x000001a1000000dc000000dc000000dc000000dc0000006e0000000000000000399740157391a9f1bf4e9921a8834f9bc8f2678e0cf1750000007e69ce29330000b41693c8010cf17500b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e0cf1750000007e69ce29330000b41693c8010cf17500b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e01000000000000000000000000000000000000000000000000000000000000000000000000000000004819ff831ec95ce04fccdcaef46ce1b7d9a5540d00000000006469ce28f706b09498030ae3416b66dc000074db31d09524fa87b1f700006ea9a11ae13b29f5c5550000d18bd45f0b94f54a968f0000c90ed87a54c23dc480b3000095770895ad27ad6b0d950000000000000000000000000000000000000000000000000000002c0740ad9ac40500"
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:4",
+      "assetSymbol": "METAx",
+      "state": "blocked",
+      "quoteId": "6d74b46c-ae9d-403f-bbf6-1500751eccbb",
+      "orderHash": "0x0b2ec5ab0065904193019bbf2c48b5d8a7630d6dfd535132dfdba46ffe9ed063",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueOrderId": null,
+      "settlementTxHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}"
+      ],
+      "extension": "0x000001a1000000dc000000dc000000dc000000dc0000006e0000000000000000399740157391a9f1bf4e9921a8834f9bc8f2678e0d43fe0000007e69ce29350000b416eb1f010d43fe00b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e0d43fe0000007e69ce29350000b416eb1f010d43fe00b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e01000000000000000000000000000000000000000000000000000000000000000000000000000000004819ff831ec95ce04fccdcaef46ce1b7d9a5540d00000000006469ce28f906b09498030ae3416b66dc000074db31d09524fa87b1f700006ea9a11ae13b29f5c5550000d18bd45f0b94f54a968f0000c90ed87a54c23dc480b3000095770895ad27ad6b0d95000000000000000000000000000000000000000000000000000000133356727bd42f00"
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:5",
+      "assetSymbol": "AMZNx",
+      "state": "blocked",
+      "quoteId": "7f78b43f-8887-4e22-ae64-a1a94d8fac3e",
+      "orderHash": "0xd28a16bd9c0d6e81f4242ac65c264d5f51e2b5569841468b23a85a20bccddcfe",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueOrderId": null,
+      "settlementTxHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}"
+      ],
+      "extension": "0x000001a1000000dc000000dc000000dc000000dc0000006e0000000000000000399740157391a9f1bf4e9921a8834f9bc8f2678e0dc58c0000007e69ce29370000b4177437010dc58c00b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e0dc58c0000007e69ce29370000b4177437010dc58c00b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e01000000000000000000000000000000000000000000000000000000000000000000000000000000004819ff831ec95ce04fccdcaef46ce1b7d9a5540d00000000006469ce28fb06b09498030ae3416b66dc000074db31d09524fa87b1f700006ea9a11ae13b29f5c5550000d18bd45f0b94f54a968f0000c90ed87a54c23dc480b3000095770895ad27ad6b0d9500000000000000000000000000000000000000000000000000000032fd9aed57d30300"
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:6",
+      "assetSymbol": "GOOGLx",
+      "state": "blocked",
+      "quoteId": "877a3c3b-2962-4556-a8d7-1ab2edc0429b",
+      "orderHash": "0x8b6131106333bf4dbcd658b24327c4adad75ca27526cfe861c4a80cc521e941c",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueOrderId": null,
+      "settlementTxHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"NotEnoughBalanceOrAllowance\",\"statusCode\":400,\"code\":\"ORDER_SAVER_ERROR\",\"meta\":[],\"message\":\"NotEnoughBalanceOrAllowance\"}"
+      ],
+      "extension": "0x000001a1000000dc000000dc000000dc000000dc0000006e0000000000000000399740157391a9f1bf4e9921a8834f9bc8f2678e0e1bf80000007e69ce29390000b417cfab010e1bf800b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e0e1bf80000007e69ce29390000b417cfab010e1bf800b400000000006406b09498030ae3416b66dc74db31d09524fa87b1f76ea9a11ae13b29f5c555d18bd45f0b94f54a968fc90ed87a54c23dc480b395770895ad27ad6b0d95399740157391a9f1bf4e9921a8834f9bc8f2678e01000000000000000000000000000000000000000000000000000000000000000000000000000000004819ff831ec95ce04fccdcaef46ce1b7d9a5540d00000000006469ce28fd06b09498030ae3416b66dc000074db31d09524fa87b1f700006ea9a11ae13b29f5c5550000d18bd45f0b94f54a968f0000c90ed87a54c23dc480b3000095770895ad27ad6b0d95000000000000000000000000000000000000000000000000000000235f6a49690bc600"
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:7",
+      "assetSymbol": "AUSD",
+      "state": "deferred",
+      "quoteId": null,
+      "orderHash": null,
+      "approvalStatus": null,
+      "submissionStatus": null,
+      "venueOrderId": null,
+      "settlementTxHash": null,
+      "blockers": [],
+      "extension": null
+    }
+  ]
+}

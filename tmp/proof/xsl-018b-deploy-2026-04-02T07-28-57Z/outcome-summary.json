@@ -1,0 +1,30 @@
+{
+  "branch": "codex/xsl-018b-provider-autonomous",
+  "commitSha": "1f2aad33777cc8a6d0a08609afb1d218f1668319",
+  "committedAndPushed": true,
+  "codeReachedProd": true,
+  "deploymentId": "91a5adc2-56ba-406a-a521-509533cbe618",
+  "proofRouteStopped404ing": true,
+  "baselineBootstrap": {
+    "status": 200,
+    "activationId": "act_30baf2d4-7374-4418-a011-b7c5524b77ff",
+    "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+    "walletAddress": "0x4819ff831ec95ce04fccdcaef46ce1b7d9a5540d"
+  },
+  "priorManifestBaselineBootstrap": {
+    "status": 404,
+    "manifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+    "error": "Promoted manifest onboarding.default_basket:basket-baseline-v1:promoted was not found."
+  },
+  "providerEvent": {
+    "status": 409,
+    "providerEventId": "evt_xsl018b_20260402T073504869Z",
+    "workflowExecutionId": "exec_xsl018b_20260402T073504869Z",
+    "receiptId": "provider_evt_rcpt_973ecd0c-a594-4fa1-806b-6429dcf9e9da",
+    "errorCode": "rebalance_state_rebalance_deferred",
+    "error": "Provider-triggered review may only open awaiting_operator, but local runtime truth resolved to rebalance_deferred."
+  },
+  "furthestLivePoint": "provider receipt persisted, then canonical runtime stopped before awaiting_operator/execution because rebalance truth resolved to rebalance_deferred",
+  "exactBlocker": "A durable prior-manifest activation baseline for onboarding.default_basket is not available on prod. The live bootstrap route can create a baseline only on the current promoted manifest, and the requested historical promoted baseline onboarding.default_basket:basket-baseline-v1:promoted is not present. With targetManifestId equal to the only live baseline manifest, the canonical runtime truth defers rebalance instead of opening awaiting_operator or staging execution.",
+  "prodEnvRecommendation": "leave_staged"
+}

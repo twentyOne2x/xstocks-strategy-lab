@@ -1,0 +1,14 @@
+{
+  "hasAutonomousEnabled": false,
+  "hasAutonomousSigner": false,
+  "hasAutonomousOwnerProviderId": false,
+  "hasAutonomousOwnerAppId": false,
+  "hasAutonomousOwnerUserId": false,
+  "hasAutonomousOwnerSessionId": false,
+  "hasAutonomousOwnerIssuer": false,
+  "hasAutonomousRouteId": false,
+  "hasOneInchApiKey": false,
+  "hasEthRpcUrl": false,
+  "signerAllowlist": "0xa4165fa28eeb20a87ac3f85ad36155542665ad24",
+  "workflowAllowlist": "xsl011b-provider-review-hot-20260402"
+}

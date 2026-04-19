@@ -1,0 +1,7 @@
+{
+  "error": "Provider-triggered review may only open awaiting_operator, but local runtime truth resolved to rebalance_deferred.",
+  "details": {
+    "errorCode": "rebalance_state_rebalance_deferred",
+    "receiptId": "provider_evt_rcpt_973ecd0c-a594-4fa1-806b-6429dcf9e9da"
+  }
+}

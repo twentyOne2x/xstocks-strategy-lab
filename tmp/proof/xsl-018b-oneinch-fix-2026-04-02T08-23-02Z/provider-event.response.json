@@ -1,0 +1,6 @@
+{
+  "error": "Chainlink CRE token validity window exceeds five minutes.",
+  "details": {
+    "errorCode": "token_window_too_large"
+  }
+}

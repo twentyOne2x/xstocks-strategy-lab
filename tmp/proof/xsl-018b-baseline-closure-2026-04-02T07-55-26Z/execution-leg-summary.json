@@ -1,0 +1,98 @@
+{
+  "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+  "state": "blocked",
+  "blockers": [
+    "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+  ],
+  "legStates": [
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:1",
+      "assetSymbol": "NVDAx",
+      "state": "blocked",
+      "quoteId": "3a596ad9-739a-498d-b4f6-778f7c1ef716",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueStatus": "quote_ready",
+      "txHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+      ]
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:2",
+      "assetSymbol": "MSFTx",
+      "state": "blocked",
+      "quoteId": "65c49ca0-5e74-40e9-8ecc-f8dcacd3b6cd",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueStatus": "quote_ready",
+      "txHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+      ]
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:3",
+      "assetSymbol": "AAPLx",
+      "state": "blocked",
+      "quoteId": "d075cf81-ba29-4f06-8f61-c0facd5e906d",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueStatus": "quote_ready",
+      "txHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+      ]
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:4",
+      "assetSymbol": "METAx",
+      "state": "blocked",
+      "quoteId": "b41e16cd-7a0b-444c-9291-46d569c01a7a",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueStatus": "quote_ready",
+      "txHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+      ]
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:5",
+      "assetSymbol": "AMZNx",
+      "state": "blocked",
+      "quoteId": "57483a22-32d6-49c0-beea-f123415945b8",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueStatus": "quote_ready",
+      "txHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+      ]
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:6",
+      "assetSymbol": "GOOGLx",
+      "state": "blocked",
+      "quoteId": "2d742683-647c-4e5d-8c45-524ead477ac4",
+      "approvalStatus": "failed",
+      "submissionStatus": null,
+      "venueStatus": "quote_ready",
+      "txHash": null,
+      "blockers": [
+        "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}"
+      ]
+    },
+    {
+      "legId": "act_chainlink_cre_autonomous_baseline_v1_20260402:leg:7",
+      "assetSymbol": "AUSD",
+      "state": "deferred",
+      "quoteId": null,
+      "approvalStatus": null,
+      "submissionStatus": null,
+      "venueStatus": null,
+      "txHash": null,
+      "blockers": []
+    }
+  ]
+}

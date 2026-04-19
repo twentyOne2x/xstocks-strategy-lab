@@ -1,0 +1,19 @@
+{
+  "rebalanceDeferredCorrect": true,
+  "preRestoreBaselineManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "targetManifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "preRestoreReasonNoDelta": "The only persisted live activation for onboarding.default_basket already matched the current promoted manifest, so manifestDriftDetected was false and runtime truth correctly resolved to rebalance_deferred.",
+  "truthfulDivergentBaselineCreated": true,
+  "restoredBaselineActivationId": "act_chainlink_cre_autonomous_baseline_v1_20260402",
+  "restoredBaselineManifestId": "onboarding.default_basket:basket-baseline-v1:promoted",
+  "providerEventReceiptId": "provider_evt_rcpt_f0d0bf64-9787-4c5d-86aa-b8894ad120d6",
+  "executionRequestId": "execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61",
+  "furthestLivePoint": "exact blocker",
+  "exactBlocker": "1inch Fusion order submission failed: 1inch Fusion order submission failed with status 400: {\"error\":\"Bad Request\",\"description\":\"invalid bytes value\",\"statusCode\":400,\"code\":\"ORDER_VALIDATION_ERROR\"}",
+  "notes": [
+    "Provider-triggered flow went beyond awaiting_operator because the accepted event created execution request execreq_c969b644-3390-4d4d-ac1b-a0f34d7c7e61.",
+    "All six actionable core legs obtained live 1inch quote artifacts.",
+    "The canonical auto-sign/submit step then failed at 1inch Fusion submission with ORDER_VALIDATION_ERROR invalid bytes value.",
+    "No venue order ids, tx hashes, or settlement receipts were persisted."
+  ]
+}
