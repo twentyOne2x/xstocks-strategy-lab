@@ -32,6 +32,7 @@ This workstream does not:
 6. [api-service.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/api-service.js) already has CoW quote, approval, signed submission, venue-status, and receipt logic.
 7. [privy-auth.js](/Users/user/PycharmProjects/xstocks-strategy-lab/apps/api/src/services/privy-auth.js) now performs Privy JWT or JWKS verification, linked-account parsing, and authenticated owner binding.
 8. `/ops/xstocks` and `/api/reporting/xstocks` now exist as partial operator visibility surfaces, but hosted token configuration is still missing and no signed execution proof is visible there yet.
+9. `XSL-014A` now closes the venue-routed backend substrate, so this lane no longer owns execution-contract buildout; it owns the remaining hosted/session-backed signer proof and served-truth closure.
 
 ## Current Local Implementation Audit
 
@@ -43,17 +44,22 @@ This workstream does not:
 4. backend Privy auth verification and authenticated owner binding.
 5. CoW adapter and API submission boundary.
 6. smart-account and funding readiness contracts.
+7. completed `XSL-014A` venue-routed manual execution substrate.
 
 ### Partial
 
 1. homepage quality.
 2. served activation truth alignment.
 3. production visibility for the activation lane.
+4. durable hosted/session-backed signer proof inputs from a real user session.
 
 ### Spec-only or unproven
 
-1. real EIP-712 user signature in the live flow.
-2. first live user-approved CoW proof.
+1. real hosted/session-backed proof input set for the live flow:
+   - `XSTOCKS_PRIVY_ACCESS_TOKEN`
+   - optional `XSTOCKS_PRIVY_IDENTITY_TOKEN`
+   - venue-specific user signature input
+2. first live user-approved signer-backed execution proof or exact blocker against the already-configured backend.
 3. production alerting/visibility sufficient to call the lane prod-worthy.
 4. browser screenshot proof for the hosted homepage and activation surfaces.
 5. served-copy parity with the production activation truth boundary.
@@ -78,10 +84,35 @@ Exact proofs reached:
 5. Hosted quote-boundary proof plus the bounded live quote sweep show no all-leg executable floor through `25`, `50`, `100`, `250`, or `500` USD gross; the current promoted basket is structurally incompatible with present CoW venue truth across five core legs in the tested band.
 
 Still open:
-1. no truthful signed-submission path exists for the current promoted basket because five core legs remain structurally blocked on present CoW venue truth across the tested `25` to `500` USD gross band,
-2. served frontend copy parity with the current production activation and automation truth,
-3. browser-proof closure for the hosted homepage and activation journey,
-4. hosted operator visibility configuration beyond token-missing fail-closed screens.
+1. no durable hosted/session-backed signer proof can be reproduced from a clean environment until a real session contributes `XSTOCKS_PRIVY_ACCESS_TOKEN`, optional `XSTOCKS_PRIVY_IDENTITY_TOKEN`, and any needed signer-owned approval or order signature,
+2. the current promoted basket still has no truthful signed-submission path on CoW because five core legs remain structurally blocked on present venue truth across the tested `25` to `500` USD gross band,
+3. served frontend copy parity with the current production activation and automation truth,
+4. browser-proof closure for the hosted homepage and activation journey,
+5. hosted operator visibility configuration beyond token-missing fail-closed screens.
+
+## Privy Config Vs Live Session Proof Inputs
+
+### Backend Privy verification config
+
+This group is deploy or runtime configuration already owned by backend auth verification:
+1. `PRIVY_APP_ID` or `NEXT_PUBLIC_PRIVY_APP_ID`
+2. `PRIVY_APP_SECRET`
+3. `PRIVY_JWKS_URL`
+4. optional `PRIVY_API_BASE_URL`
+
+### Live user-session proof inputs
+
+This group is ephemeral proof material that must come from a real hosted or session-backed user run:
+1. `XSTOCKS_PRIVY_ACCESS_TOKEN`
+2. optional `XSTOCKS_PRIVY_IDENTITY_TOKEN`
+3. venue-specific signer input such as `XSTOCKS_COW_ORDER_SIGNATURE` or `XSTOCKS_ONEINCH_ORDER_SIGNATURE`
+4. signer wallet or smart-account address overrides only when linked-account data is insufficient
+
+### Rules
+
+1. Missing backend config means runtime auth verification is not deployed correctly.
+2. Missing access token, identity token, or signer input means the deployed backend may still be correct, but the proof run cannot truthfully start or complete.
+3. `XSL-014A` completion moved venue-routed backend substrate work out of this lane; this spec now owns only the residual hosted/session-backed proof and served-truth closure.
 
 ## Codebase Fit And Iteration-Speed Contract
 
@@ -221,7 +252,7 @@ Required artifacts:
 2. activation screenshots before and after wallet connect.
 3. build/test outputs for `apps/web`, `apps/api`, and the affected packages.
 4. one authenticated session verification proof.
-5. one live CoW order proof bundle:
+5. one live hosted/session-backed signer proof bundle:
    - quote id,
    - order uid if submitted,
    - tx hash if available,
@@ -244,10 +275,10 @@ Minimum verification surface:
 | Metric | Current baseline | Target | Proof |
 | --- | --- | --- | --- |
 | Homepage quality | live but too intermediary | accepted large-form homepage | screenshots plus live verification |
-| Frontend Privy connect | stubbed | real click path | browser proof |
-| Backend Privy verification | absent | verified | tests and request proof |
-| Signed CoW execution | absent | one truthful submission or exact blocker | proof bundle |
-| Operator visibility | absent/unproven | enough for truthful prod claim | dashboard/log/alert proof |
+| Frontend Privy connect | real hooks exist, hosted browser proof still incomplete | truthful hosted click path plus screenshots | browser proof |
+| Backend Privy verification | verified | remain verified in hosted/runtime proof | tests and request proof |
+| Hosted/session-backed signer proof | backend substrate exists, clean proof environments still miss live session inputs | one truthful signer-backed submission boundary or exact blocker | proof bundle |
+| Operator visibility | partial and token-gated | enough for truthful prod claim | dashboard/log/alert proof |
 
 ## Hosted / Deployed / Production Boundary Contract
 
@@ -256,7 +287,7 @@ Minimum verification surface:
 2. deployed-host verified
    - candidate or preview proof of homepage, activation, auth, and execution boundaries.
 3. production-host verified
-   - live homepage quality, live frontend connect, live backend auth, and one real production-lane CoW proof.
+   - live homepage quality, live frontend connect, live backend auth, and one real production-lane hosted/session-backed signer proof or exact blocker.
 4. still unproven
    - anything lacking hosted proof artifacts.
 
@@ -265,11 +296,11 @@ Minimum verification surface:
 | Area | Weight | Current score | Provenance |
 | --- | --- | --- | --- |
 | Homepage quality | 15 | 6 | hosted deploy exists, design still underpowered |
-| Frontend connect truth | 20 | 4 | provider exists, connect flow not real |
-| Backend auth truth | 20 | 0 | no Privy verification found |
-| CoW signed execution proof | 30 | 12 | code boundary exists, no real signed proof |
-| Ops visibility | 15 | 0 | no verified alert/dashboard proof |
-| Total | 100 | 22 | not production-closure ready |
+| Frontend connect truth | 20 | 14 | real hooks exist, hosted browser proof and served-copy parity still incomplete |
+| Backend auth truth | 20 | 20 | Privy verification and authenticated owner binding are real |
+| Hosted/session-backed signer proof | 30 | 12 | backend substrate exists, but clean proof environments still lack live session inputs and the CoW basket remains structurally blocked |
+| Ops visibility | 15 | 5 | dashboard and reporting surfaces exist, but hosted token configuration and proof visibility are still partial |
+| Total | 100 | 57 | not production-closure ready |
 
 ## Economic-Budget Contract
 
@@ -287,7 +318,7 @@ Minimum verification surface:
 ## Owners And Decision-Rights Contract
 
 1. frontend owner: homepage and activation UX.
-2. backend owner: auth verification, execution ownership, CoW submission.
+2. backend owner: auth verification, execution ownership, and signer-backed venue submission.
 3. ops owner: alerts, logs, dashboard visibility.
 4. product owner: approval of real funded test volume.
 
@@ -297,7 +328,7 @@ This workstream is complete enough only when:
 1. homepage quality is accepted,
 2. frontend connect is real,
 3. backend auth is real,
-4. one truthful signed CoW proof exists or the last remaining blocker is exact and external,
+4. one truthful hosted/session-backed signer proof exists or the last remaining blocker is exact and external,
 5. operator visibility is present enough to support a truthful prod claim.
 
 ## Continuation Update
@@ -308,7 +339,7 @@ Date: 2026-04-01
 
 1. continue only in `apps/api`, `packages/shared`, `packages/policy`, `packages/xstocks`, and `apps/worker` only if runtime truth strictly requires it.
 2. do not touch `apps/web`.
-3. do not reopen homepage/frontend work, auth verification, or any 1inch, Bridge, CRE, Chainlink, issuer, or Hermes lanes unless quoteability work proves a direct remaining mismatch in this lane.
+3. do not reopen homepage/frontend work, auth verification, or completed `XSL-014A` substrate logic unless fresh proof falsifies the current boundary; do not reopen Bridge, CRE, Chainlink, issuer, or Hermes lanes here.
 
 ### Current Verified Starting Point
 
@@ -329,8 +360,8 @@ Date: 2026-04-01
 
 ### Immediate Execution Contract
 
-1. patch the backend to select the route-correct CoW buy token surface and persist exact quote diagnostics fail-closed.
-2. rerun the authenticated proof with the existing Privy session if still available on this machine.
+1. reuse the already-correct backend route selection and completed `XSL-014A` substrate; do not reopen route-contract logic unless fresh proof falsifies current truth.
+2. rerun the authenticated proof with a live session-backed input set if it is still available on this machine.
 3. push only to the furthest truthful boundary reached after that rerun.
 4. submit only if auth, ownership, funding, quoteability, and explicit user signature all truly hold.
 

@@ -218,6 +218,29 @@ Funding flow:
 6. route into needed chain/token via LI.FI if required,
 7. activate strategy.
 
+## Privy Role Split
+
+### Backend Privy verification config
+
+This group is deploy or runtime configuration for backend auth verification:
+1. `PRIVY_APP_ID` or `NEXT_PUBLIC_PRIVY_APP_ID`
+2. `PRIVY_APP_SECRET`
+3. `PRIVY_JWKS_URL`
+4. optional `PRIVY_API_BASE_URL`
+
+### Live session-backed proof inputs
+
+This group is ephemeral proof material from a real authenticated session:
+1. `XSTOCKS_PRIVY_ACCESS_TOKEN`
+2. optional `XSTOCKS_PRIVY_IDENTITY_TOKEN`
+3. venue-specific signer input such as `XSTOCKS_COW_ORDER_SIGNATURE` or `XSTOCKS_ONEINCH_ORDER_SIGNATURE`
+
+### Rules
+
+1. Product and rail docs must not describe access-token or identity-token proof inputs as deploy configuration.
+2. Missing proof inputs does not mean Privy is misconfigured; it means the repo lacks a live authenticated session for proof.
+3. Funding and wallet docs own provider roles and canonical user funding paths, while execution-proof docs own live session-backed proof collection.
+
 ## Live-Proof Rules
 
 ### Truth labels
@@ -419,6 +442,7 @@ This workstream is complete only when:
 3. 2026-04-01: Mesh remains explicit absent/deferred truth until a real repo-owned UI and backend contract exist.
 4. 2026-04-01: strict self-serve deposit means no new KYC/KYB step introduced by this app; the canonical path is external wallet transfer / manual same-chain transfer only.
 5. 2026-04-01: `privy_card` and `privy_exchange` stay available only as optional hosted convenience rails and may require regulated on-ramp verification.
+6. 2026-04-01: backend Privy verification config and live session-backed proof inputs are separate contracts and must stay separate across funding, auth, and execution docs.
 
 ## Progress Log
 
@@ -427,3 +451,4 @@ This workstream is complete only when:
 3. 2026-04-01: captured a real hosted authenticated proof run for the promoted basket at `$25`; activation save and execution-request creation succeeded, `NVDAx` reached `awaiting_approval`, and the remaining core legs failed with exact CoW venue blockers instead of route-construction ambiguity.
 4. 2026-04-01: post-proof reconciliation confirms the remaining execution/funding gap is no longer catalog-wallet-metadata drift; it is the still-partial hosted execution boundary owned by `XSL-014`, plus the exact self-serve deposit truth that wallet-funded USDC transfer remains the only truthful no-KYC/no-KYB path.
 5. 2026-04-01: direct standalone CoW universe scanning across all repo-owned Ethereum xStocks now confirms only `NVDAx`, `TSLAx`, and `SPYx` quote directly; no product-usable CoW-only onboarding basket exists under current venue truth, so onboarding execution stays preview-only.
+6. 2026-04-01: post-`XSL-014A` reconciliation now separates backend Privy verification config from live session-backed proof inputs so later control-plane docs do not misclassify a missing access token as missing backend auth configuration.
