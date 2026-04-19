@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-04-03T23:13:29.655Z",
+  "profilePath": "/Users/user/Library/Application Support/BraveSoftware/Brave-Browser/Default",
+  "sourceFile": "/Users/user/Library/Application Support/BraveSoftware/Brave-Browser/Default/Local Storage/leveldb/047357.log",
+  "priorSummaryPath": "/Users/user/PycharmProjects/xstocks-strategy-lab-codex-orchestrator/tmp/proof/oneinch-fusion-2026-04-03T22-34-56.480Z/summary.json",
+  "tokenKeyIndex": 193,
+  "refreshKeyIndex": 190,
+  "refreshTokenLength": null,
+  "accessTokenMeta": {
+    "iat": 1775256150,
+    "exp": 1775259750,
+    "iatIso": "2026-04-03T22:42:30.000Z",
+    "expIso": "2026-04-03T23:42:30.000Z",
+    "aud": "cmnfzikzk02ey0ckyx8m14qv2",
+    "sub": "did:privy:cmng4u99003bf0ckye9oqgopk",
+    "sid": "cmnjdy8a5002x0bjrhgb6auem"
+  }
+}

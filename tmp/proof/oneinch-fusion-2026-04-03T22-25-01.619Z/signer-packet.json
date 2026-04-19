@@ -1,0 +1,572 @@
+{
+  "generatedAt": "2026-04-03T22:25:01.619Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "executionRequestId": "execreq_be1d2fa9-68d3-4428-9893-a22676f9263f",
+  "instructions": "Collect one EIP-712 signature per leg using the typedData payloads below, then rerun this script with XSTOCKS_ONEINCH_ORDER_SIGNATURES_PATH or XSTOCKS_ONEINCH_ORDER_SIGNATURES_JSON.",
+  "legs": [
+    {
+      "legId": "act_6921cea8-ce7f-4386-9d7c-9cfaa518a699:leg:1",
+      "assetSymbol": "NVDAx",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "quoteId": "f35bb33a-7888-4c6e-a2e3-10261573cff6",
+      "orderHash": "0x4e98829ede2ccc84689bc33cd3807bc516dd27ad453b78324636c130998a8f2f",
+      "primaryType": "Order",
+      "domainName": "1inch Aggregation Router",
+      "typedData": {
+        "primaryType": "Order",
+        "types": {
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "string"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address"
+            }
+          ],
+          "Order": [
+            {
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "name": "maker",
+              "type": "address"
+            },
+            {
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "name": "makerAsset",
+              "type": "address"
+            },
+            {
+              "name": "takerAsset",
+              "type": "address"
+            },
+            {
+              "name": "makingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "takingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "makerTraits",
+              "type": "uint256"
+            }
+          ]
+        },
+        "domain": {
+          "name": "1inch Aggregation Router",
+          "version": "6",
+          "chainId": 1,
+          "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+        },
+        "message": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+          "makerTraits": "62419173104490761595518734107350723131454704289065174655056149071383584833536",
+          "salt": "63580912221876932342862390321413578423378398711658906154384295116442582839997",
+          "makingAmount": "3600000",
+          "takingAmount": "18079488907344179",
+          "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+        }
+      },
+      "order": {
+        "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "takerAsset": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+        "makerTraits": "62419173104490761595518734107350723131454704289065174655056149071383584833536",
+        "salt": "63580912221876932342862390321413578423378398711658906154384295116442582839997",
+        "makingAmount": "3600000",
+        "takingAmount": "18079488907344179",
+        "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+      },
+      "extension": "[object Object]",
+      "signature": null
+    },
+    {
+      "legId": "act_6921cea8-ce7f-4386-9d7c-9cfaa518a699:leg:2",
+      "assetSymbol": "MSFTx",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "quoteId": "9a4f5c73-8324-4b74-a68f-3e57d54c15ec",
+      "orderHash": "0xdcba264fffda644e75471e87c91b71cb3685d52b7135f35a8f0310fdbaa00b71",
+      "primaryType": "Order",
+      "domainName": "1inch Aggregation Router",
+      "typedData": {
+        "primaryType": "Order",
+        "types": {
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "string"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address"
+            }
+          ],
+          "Order": [
+            {
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "name": "maker",
+              "type": "address"
+            },
+            {
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "name": "makerAsset",
+              "type": "address"
+            },
+            {
+              "name": "takerAsset",
+              "type": "address"
+            },
+            {
+              "name": "makingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "takingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "makerTraits",
+              "type": "uint256"
+            }
+          ]
+        },
+        "domain": {
+          "name": "1inch Aggregation Router",
+          "version": "6",
+          "chainId": 1,
+          "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+        },
+        "message": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+          "makerTraits": "62419173104490761595518734107284377725095609495338768947544538452613996216320",
+          "salt": "63580912225615033741326566435840981352436663194949479275628942246637417174308",
+          "makingAmount": "3290000",
+          "takingAmount": "7924925827369209",
+          "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+        }
+      },
+      "order": {
+        "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "takerAsset": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+        "makerTraits": "62419173104490761595518734107284377725095609495338768947544538452613996216320",
+        "salt": "63580912225615033741326566435840981352436663194949479275628942246637417174308",
+        "makingAmount": "3290000",
+        "takingAmount": "7924925827369209",
+        "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+      },
+      "extension": "[object Object]",
+      "signature": null
+    },
+    {
+      "legId": "act_6921cea8-ce7f-4386-9d7c-9cfaa518a699:leg:3",
+      "assetSymbol": "AAPLx",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "quoteId": "00029de3-8b7d-43df-b209-0b8337f2dd4c",
+      "orderHash": "0x7c1d09aee82b55f8c5396c7ec7f7ac54dbb612ea2fa1db507d89ed31c2acb0f8",
+      "primaryType": "Order",
+      "domainName": "1inch Aggregation Router",
+      "typedData": {
+        "primaryType": "Order",
+        "types": {
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "string"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address"
+            }
+          ],
+          "Order": [
+            {
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "name": "maker",
+              "type": "address"
+            },
+            {
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "name": "makerAsset",
+              "type": "address"
+            },
+            {
+              "name": "takerAsset",
+              "type": "address"
+            },
+            {
+              "name": "makingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "takingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "makerTraits",
+              "type": "uint256"
+            }
+          ]
+        },
+        "domain": {
+          "name": "1inch Aggregation Router",
+          "version": "6",
+          "chainId": 1,
+          "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+        },
+        "message": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+          "makerTraits": "62419173104490761595518734107653288809468398291617591229197894540444437577728",
+          "salt": "63580912203482899133672474802656772701197862322139376256194444508195597841730",
+          "makingAmount": "3150000",
+          "takingAmount": "10854220628275470",
+          "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+        }
+      },
+      "order": {
+        "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "takerAsset": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+        "makerTraits": "62419173104490761595518734107653288809468398291617591229197894540444437577728",
+        "salt": "63580912203482899133672474802656772701197862322139376256194444508195597841730",
+        "makingAmount": "3150000",
+        "takingAmount": "10854220628275470",
+        "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+      },
+      "extension": "[object Object]",
+      "signature": null
+    },
+    {
+      "legId": "act_6921cea8-ce7f-4386-9d7c-9cfaa518a699:leg:4",
+      "assetSymbol": "METAx",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "quoteId": "94c1d1c2-b0db-46a7-8d38-f7edc32cbf85",
+      "orderHash": "0xad39ef28fc72ef36ab90eb6a054725464e7a48cd1ce2f01e79871137e7184533",
+      "primaryType": "Order",
+      "domainName": "1inch Aggregation Router",
+      "typedData": {
+        "primaryType": "Order",
+        "types": {
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "string"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address"
+            }
+          ],
+          "Order": [
+            {
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "name": "maker",
+              "type": "address"
+            },
+            {
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "name": "makerAsset",
+              "type": "address"
+            },
+            {
+              "name": "takerAsset",
+              "type": "address"
+            },
+            {
+              "name": "makingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "takingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "makerTraits",
+              "type": "uint256"
+            }
+          ]
+        },
+        "domain": {
+          "name": "1inch Aggregation Router",
+          "version": "6",
+          "chainId": 1,
+          "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+        },
+        "message": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+          "makerTraits": "62419173104490761595518734106833360023381372180622955976329125342937545179136",
+          "salt": "63580912221262883138474485119648712359834565553350210650307063949944829601114",
+          "makingAmount": "3080000",
+          "takingAmount": "4677200809378046",
+          "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+        }
+      },
+      "order": {
+        "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "takerAsset": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+        "makerTraits": "62419173104490761595518734106833360023381372180622955976329125342937545179136",
+        "salt": "63580912221262883138474485119648712359834565553350210650307063949944829601114",
+        "makingAmount": "3080000",
+        "takingAmount": "4677200809378046",
+        "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+      },
+      "extension": "[object Object]",
+      "signature": null
+    },
+    {
+      "legId": "act_6921cea8-ce7f-4386-9d7c-9cfaa518a699:leg:5",
+      "assetSymbol": "AMZNx",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "quoteId": "9434ba21-aa76-4b18-93db-75cf328371d2",
+      "orderHash": "0x5d2cab66f72bbef263a458f340f0d0062ab16ec12e3906fd846d8cacfff66aa7",
+      "primaryType": "Order",
+      "domainName": "1inch Aggregation Router",
+      "typedData": {
+        "primaryType": "Order",
+        "types": {
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "string"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address"
+            }
+          ],
+          "Order": [
+            {
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "name": "maker",
+              "type": "address"
+            },
+            {
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "name": "makerAsset",
+              "type": "address"
+            },
+            {
+              "name": "takerAsset",
+              "type": "address"
+            },
+            {
+              "name": "makingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "takingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "makerTraits",
+              "type": "uint256"
+            }
+          ]
+        },
+        "domain": {
+          "name": "1inch Aggregation Router",
+          "version": "6",
+          "chainId": 1,
+          "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+        },
+        "message": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+          "makerTraits": "62419173104490761595518734107152752594839599502899656403692130266715774779392",
+          "salt": "63580912208069724428596323444527426950121148956693484629270191253756420334063",
+          "makingAmount": "2980000",
+          "takingAmount": "12223699573020823",
+          "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+        }
+      },
+      "order": {
+        "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "takerAsset": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+        "makerTraits": "62419173104490761595518734107152752594839599502899656403692130266715774779392",
+        "salt": "63580912208069724428596323444527426950121148956693484629270191253756420334063",
+        "makingAmount": "2980000",
+        "takingAmount": "12223699573020823",
+        "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+      },
+      "extension": "[object Object]",
+      "signature": null
+    },
+    {
+      "legId": "act_6921cea8-ce7f-4386-9d7c-9cfaa518a699:leg:6",
+      "assetSymbol": "GOOGLx",
+      "signerAddress": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+      "quoteId": "7b61c393-2e5c-4c92-9c03-f0e6fe5340a4",
+      "orderHash": "0x43e26a3fa32deb0db07651341b01545e5ef2de5fa95f0564d9906102eecfa4cf",
+      "primaryType": "Order",
+      "domainName": "1inch Aggregation Router",
+      "typedData": {
+        "primaryType": "Order",
+        "types": {
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "string"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address"
+            }
+          ],
+          "Order": [
+            {
+              "name": "salt",
+              "type": "uint256"
+            },
+            {
+              "name": "maker",
+              "type": "address"
+            },
+            {
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "name": "makerAsset",
+              "type": "address"
+            },
+            {
+              "name": "takerAsset",
+              "type": "address"
+            },
+            {
+              "name": "makingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "takingAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "makerTraits",
+              "type": "uint256"
+            }
+          ]
+        },
+        "domain": {
+          "name": "1inch Aggregation Router",
+          "version": "6",
+          "chainId": 1,
+          "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+        },
+        "message": {
+          "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+          "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "takerAsset": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+          "makerTraits": "62419173104490761595518734107013191813666243873381923379690273899321103482880",
+          "salt": "63580912222987842320669713354254297619843093773355749889135455888310535158173",
+          "makingAmount": "2910000",
+          "takingAmount": "8556186609449029",
+          "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+        }
+      },
+      "order": {
+        "maker": "0xa28ded32f0bde74c42739b5b3fdc79bca0c571b2",
+        "makerAsset": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "takerAsset": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+        "makerTraits": "62419173104490761595518734107013191813666243873381923379690273899321103482880",
+        "salt": "63580912222987842320669713354254297619843093773355749889135455888310535158173",
+        "makingAmount": "2910000",
+        "takingAmount": "8556186609449029",
+        "receiver": "0x00c6bf8ba9244eb50089410007f778868cc1ce39"
+      },
+      "extension": "[object Object]",
+      "signature": null
+    }
+  ]
+}

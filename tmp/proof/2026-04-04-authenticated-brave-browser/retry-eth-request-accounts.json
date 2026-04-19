@@ -1,0 +1,15 @@
+{
+  "attemptedAt": "2026-04-04T00:41:54+0200",
+  "surface": "live Brave onboarding tab",
+  "method": "eth_requestAccounts",
+  "result": {
+    "ok": false,
+    "error": "The user rejected the request.",
+    "code": 4001
+  },
+  "postCheck": {
+    "selectedAddress": null,
+    "chainId": "0x1",
+    "dialogText": ""
+  }
+}

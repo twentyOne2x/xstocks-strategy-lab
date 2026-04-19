@@ -1,0 +1,13 @@
+{
+  "status": 400,
+  "ok": false,
+  "keys": [
+    "error",
+    "code"
+  ],
+  "session_update_action": null,
+  "hasToken": false,
+  "hasPrivyAccessToken": false,
+  "hasIdentityToken": false,
+  "bodyPreview": "{\"error\":\"Missing access token\",\"code\":\"missing_or_invalid_token\"}"
+}

@@ -1,0 +1,14 @@
+{
+  "status": 400,
+  "ok": false,
+  "keys": [
+    "error"
+  ],
+  "session_update_action": null,
+  "hasToken": false,
+  "hasPrivyAccessToken": false,
+  "hasRefreshToken": false,
+  "bodyPreview": {
+    "error": "missing required parameters"
+  }
+}

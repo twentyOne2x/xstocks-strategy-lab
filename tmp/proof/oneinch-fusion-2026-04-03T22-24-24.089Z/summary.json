@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-04-03T22:24:24.090Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "requestedNotionalUsd": 20,
+  "executionRouteId": "1inch.ethereum",
+  "runtimeStorePath": "/var/folders/_g/r34b0jm95m71gc_tmqjxnkl80000gn/T/xstocks-oneinch-fusion-proof-1775255064091.json",
+  "auth": {
+    "providerId": "privy",
+    "userId": "did:privy:cmng4u99003bf0ckye9oqgopk",
+    "linkedAccountsSource": "privy_api",
+    "accessTokenVerified": true,
+    "identityTokenVerified": false
+  },
+  "signerAddress": "0xa28d...71b2",
+  "smartAccountAddress": "0x00c6...ce39",
+  "state": "blocked",
+  "blocker": {
+    "code": "proof_request_failed",
+    "stage": "activation_or_create",
+    "message": "Cannot find module '/Users/user/PycharmProjects/xstocks-strategy-lab-codex-orchestrator/packages/euler/dist/index.js' imported from /Users/user/PycharmProjects/xstocks-strategy-lab-codex-orchestrator/apps/api/src/repositories/live-state-repository.js",
+    "statusCode": null,
+    "payload": null
+  },
+  "activationId": null,
+  "executionRequestId": null,
+  "executionRequest": null,
+  "approvalPayloadCount": 0,
+  "submissionResults": []
+}

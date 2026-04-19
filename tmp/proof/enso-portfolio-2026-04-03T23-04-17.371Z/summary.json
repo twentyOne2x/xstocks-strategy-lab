@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-04-03T23:04:17.371Z",
+  "manifestId": "onboarding.default_basket:basket-starter-h6-p100-c5-cap18-a0-r300-v1:promoted",
+  "requestedNotionalUsd": 1000,
+  "executionAdapterId": "enso_bundle",
+  "executionRouteId": "enso.ethereum",
+  "runtimeStorePath": "/var/folders/_g/r34b0jm95m71gc_tmqjxnkl80000gn/T/xstocks-enso-proof-1775257457372.json",
+  "auth": null,
+  "signerAddress": null,
+  "smartAccountAddress": null,
+  "state": "blocked",
+  "blocker": {
+    "code": "missing_environment_input",
+    "stage": "environment",
+    "message": "ENSO_API_KEY is required for the Enso proof runner.",
+    "statusCode": null,
+    "payload": null
+  },
+  "activationId": null,
+  "executionRequestId": null,
+  "executionRequest": null,
+  "bundleQuoteId": null,
+  "approvalTransactionTo": null,
+  "bundleTransactionTo": null
+}

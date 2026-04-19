@@ -1,0 +1,30 @@
+{
+  "observedAtUtc": "2026-04-03T22:34:30Z",
+  "source": "real_brave_profile_and_live_brave_tabs",
+  "copiedProfileUsed": false,
+  "liveTabs": [
+    "https://24-7.markets/",
+    "https://24-7.markets/onboarding?p=OAB2BSHPCCARV67"
+  ],
+  "pageStorageState": {
+    "privyTokenPresent": false,
+    "privyRefreshTokenPresent": false,
+    "privyPatPresent": false,
+    "walletConnectionMetadataPresent": true
+  },
+  "uiBoundary": {
+    "route": "https://24-7.markets/onboarding?p=OAB2BSHPCCARV67",
+    "actionsTaken": [
+      "opened live onboarding result page",
+      "clicked SEE MY PORTFOLIO",
+      "clicked START DEPOSIT",
+      "selected Backpack in Privy modal"
+    ],
+    "result": "Privy modal fell through to a Backpack QR connect screen instead of reusing an already-authenticated Privy session."
+  },
+  "directRefreshAttempt": {
+    "endpoint": "https://auth.privy.io/api/v1/sessions",
+    "result": "400 missing_or_invalid_token",
+    "error": "Missing access token"
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "href": "https://24-7.markets/onboarding?p=OAB2BSHPCCARV67",
+  "title": "24-7 MARKETS \u2014 Tokenized equity portfolios powered by xStocks",
+  "readyState": "complete",
+  "text": "24-7\nMARKETS\nSIMULATION\nPreview. No money has moved.\nSTART DEPOSIT\nSTART OVER\nYOUR PORTFOLIO\nActive Leaders Basket\nSTART DEPOSIT\nSIMULATED VALUE\n$1,089\n+8.9%\n30-day simulated replay from $1,000\nMax drawdown: -4.1%\nSPYx\n48%\nMSFTx\n14%\nUSDC\n38%\nHOLDINGS\n3\nRISK\nMeasured\nREBALANCE\nweekly\nOPTIMISATION\nAutoresearch\nWHY THIS FITS YOU\nIndex-adjacent basket that keeps SPYx at the center and uses reserve posture to reduce churn.\nStay close to beta, keep route complexity simple, and surface a calmer activation path for first funding.\nMacro breadth stayed positive but narrower than AI infra.\nWHAT CHANGES NEXT\nHow it changes\nIt changes less often than the other baskets and only refreshes when the defensive posture or reserve thresholds move enough to matter.\nRebalance trigger\nA defensive-posture shift or reserve-threshold move is needed before the next rebalance review.\n\nReplay here is for reading the protective posture of the basket, not for promising a fixed downside profile.\n\nMARKET SIGNALS\nConstructive but late-cycle; preserve optionality.\nHorizon: 30 to 90 trading days\nDRIVERS\nMacro breadth\nVolatility posture\nRECENT CHANGES\nMacro breadth stayed positive but narrower than AI infra.\nDefensive overlay produced cleaner rebalance timing.\nHOLDINGS \u00b7 3 ASSETS\n\nThe portfolio stays anchored to SPYx, uses MSFTx as a lighter stability anchor, and leaves a large USDC cash reserve to keep the first funding path cleaner.\n\nASSET\tWEIGHT\tROLE\nSPYx\t48%\tCore index exposure: tracks the S&amp;P 500.\nMSFTx\t14%\tAdds quality tech exposure for growth alongside the index.\nUSDC\t38%\tCash reserve: flexibility for your first deposit.\nPORTFOLIO CONTROLS\n\nReview and trigger rebalancing when drift exceeds thresholds.\n\nBUY PORTFOLIO\nREBALANCE\nTRADE SUGGESTIONS\nMacro breadth stayed positive but narrower than AI infra.\nDefensive overlay produced cleaner rebalance timing.\nACTIVITY\nSIMULATION\nPOSITIONS\nSYMBOL\tVALUE\tWEIGHT\tSTATUS\nNVDAx\t$3,240\t48.8%\tACTIVE\nSPYx\t$1,980\t29.8%\tMONITORING\nMSTRx\t$1,420\t21.4%\tPAUSED\nEVENTS\nNow\nPAUSED\nOne position paused\n12m ago\nACTIVE\nPortfolio on track\n31m ago\nREADY TO VIEW\nOnboarding completed\nREBALANCE\nChainlink CRE\nCUSTODY\nPrivy smart wallet\nEXECUTION\n1inch route\n24-7\nMARKETS\nPOWERED BY XSTOCKS\nTokenized equity portfolios trading 24/7.\nPRODUCT\nFind my portfolio\nHow it works\nDocumentation\nFAQ\nINFRASTRUCTURE\nxStocks\nPrivy\nCoW Protocol\n1inch\nChainlink CRE\nOPEN SOURCE\nGitHub",
+  "buttons": [
+    {
+      "index": 0,
+      "tag": "A",
+      "text": "24-7\nMARKETS",
+      "aria": "",
+      "href": "https://24-7.markets/",
+      "disabled": false
+    },
+    {
+      "index": 1,
+      "tag": "BUTTON",
+      "text": "START DEPOSIT",
+      "aria": "",
+      "href": "",
+      "disabled": false
+    },
+    {
+      "index": 2,
+      "tag": "BUTTON",
+      "text": "START OVER",
+      "aria": "",
+      "href": "",
+      "disabled": false
+    },
+    {
+      "index": 3,
+      "tag": "BUTTON",
+      "text": "START DEPOSIT",
+      "aria": "",
+      "href": "",
+      "disabled": false
+    },
+    {
+      "index": 4,
+      "tag": "A",
+      "text": "SPYx",
+      "aria": "",
+      "href": "https://app.xstocks.fi/asset/SPYx",
+      "disabled": false
+    },
+    {
+      "index": 5,
+      "tag": "A",
+      "text": "MSFTx",
+      "aria": "",
+      "href": "https://app.xstocks.fi/asset/MSFTx",
+      "disabled": false
+    },
+    {
+      "index": 6,
+      "tag": "BUTTON",
+      "text": "BUY PORTFOLIO",
+      "aria": "",
+      "href": "",
+      "disabled": false
+    },
+    {
+      "index": 7,
+      "tag": "BUTTON",
+      "text": "REBALANCE",
+      "aria": "",
+      "href": "",
+      "disabled": false
+    },
+    {
+      "index": 8,
+      "tag": "A",
+      "text": "Find my portfolio",
+      "aria": "",
+      "href": "https://24-7.markets/onboarding",
+      "disabled": false
+    },
+    {
+      "index": 9,
+      "tag": "A",
+      "text": "How it works",
+      "aria": "",
+      "href": "https://24-7.markets/#how-it-works",
+      "disabled": false
+    },
+    {
+      "index": 10,
+      "tag": "A",
+      "text": "Documentation",
+      "aria": "",
+      "href": "https://24-7.markets/docs",
+      "disabled": false
+    },
+    {
+      "index": 11,
+      "tag": "A",
+      "text": "FAQ",
+      "aria": "",
+      "href": "https://24-7.markets/#faq",
+      "disabled": false
+    },
+    {
+      "index": 12,
+      "tag": "A",
+      "text": "xStocks",
+      "aria": "",
+      "href": "https://xstocks.fi/",
+      "disabled": false
+    },
+    {
+      "index": 13,
+      "tag": "A",
+      "text": "Privy",
+      "aria": "",
+      "href": "https://privy.io/",
+      "disabled": false
+    },
+    {
+      "index": 14,
+      "tag": "A",
+      "text": "CoW Protocol",
+      "aria": "",
+      "href": "https://cow.fi/",
+      "disabled": false
+    },
+    {
+      "index": 15,
+      "tag": "A",
+      "text": "1inch",
+      "aria": "",
+      "href": "https://1inch.io/",
+      "disabled": false
+    },
+    {
+      "index": 16,
+      "tag": "A",
+      "text": "Chainlink CRE",
+      "aria": "",
+      "href": "https://chain.link/",
+      "disabled": false
+    },
+    {
+      "index": 17,
+      "tag": "A",
+      "text": "GitHub",
+      "aria": "",
+      "href": "https://github.com/twentyOne2x/xstocks-strategy-lab",
+      "disabled": false
+    }
+  ],
+  "dialogs": [],
+  "privy": {
+    "caid": "\"9f922abb-7d26-4415-95d5-76fe6c9bd02a\"",
+    "accessPresent": false,
+    "refreshPresent": false
+  },
+  "ethereum": {
+    "isConnected": true,
+    "selectedAddress": null,
+    "chainId": "0x1",
+    "providers": [
+      {
+        "selectedAddress": null,
+        "isBraveWallet": true,
+        "isMetaMask": true,
+        "isCoinbaseWallet": false,
+        "isBackpack": false
+      }
+    ]
+  }
+}

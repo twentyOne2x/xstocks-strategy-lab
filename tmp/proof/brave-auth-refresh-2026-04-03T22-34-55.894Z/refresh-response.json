@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "ok": true,
+  "keys": [
+    "user",
+    "token",
+    "privy_access_token",
+    "refresh_token",
+    "session_update_action"
+  ],
+  "session_update_action": "set",
+  "hasToken": true,
+  "hasPrivyAccessToken": true,
+  "hasIdentityToken": false,
+  "bodyPreview": null
+}

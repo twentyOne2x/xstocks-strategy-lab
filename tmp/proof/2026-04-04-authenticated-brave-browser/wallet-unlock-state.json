@@ -1,0 +1,33 @@
+{
+  "href": "chrome://wallet-panel.top-chrome/crypto/unlock",
+  "title": "Wallet",
+  "readyState": "complete",
+  "text": "Unlock wallet\nEnter password to unlock wallet\nUnlock\nRestore",
+  "buttons": [
+    {
+      "index": 0,
+      "tag": "BUTTON",
+      "text": "",
+      "aria": "",
+      "href": "",
+      "disabled": false
+    },
+    {
+      "index": 1,
+      "tag": "BUTTON",
+      "text": "Meld's Terms of Use",
+      "aria": "",
+      "href": "",
+      "disabled": false
+    }
+  ],
+  "inputs": [
+    {
+      "index": 0,
+      "type": "password",
+      "placeholder": "Enter your password",
+      "valueLength": 0,
+      "aria": ""
+    }
+  ]
+}

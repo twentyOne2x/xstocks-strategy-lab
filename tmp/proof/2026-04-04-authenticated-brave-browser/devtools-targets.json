@@ -1,0 +1,62 @@
+[
+  {
+    "description": "",
+    "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@3aa79a60d59cf6245a2337869da759cdaecf230/inspector.html?ws=127.0.0.1:9224/devtools/page/ACFDB2DD372B2A596A505D93DB30FE0C",
+    "id": "ACFDB2DD372B2A596A505D93DB30FE0C",
+    "title": "Wallet",
+    "type": "page",
+    "url": "chrome://wallet-panel.top-chrome/crypto/unlock",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9224/devtools/page/ACFDB2DD372B2A596A505D93DB30FE0C"
+  },
+  {
+    "description": "",
+    "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@3aa79a60d59cf6245a2337869da759cdaecf230/inspector.html?ws=127.0.0.1:9224/devtools/page/33EA215E7A150364BA14C60083768DA8",
+    "faviconUrl": "https://24-7.markets/icon.svg",
+    "id": "33EA215E7A150364BA14C60083768DA8",
+    "parentId": "F5FC22F1B79E173B26884287334D4CE2",
+    "title": "https://auth.privy.io/apps/cmnfzikzk02ey0ckyx8m14qv2/embedded-wallets?caid=9f922abb-7d26-4415-95d5-76fe6c9bd02a",
+    "type": "iframe",
+    "url": "https://auth.privy.io/apps/cmnfzikzk02ey0ckyx8m14qv2/embedded-wallets?caid=9f922abb-7d26-4415-95d5-76fe6c9bd02a",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9224/devtools/page/33EA215E7A150364BA14C60083768DA8"
+  },
+  {
+    "description": "",
+    "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@3aa79a60d59cf6245a2337869da759cdaecf230/inspector.html?ws=127.0.0.1:9224/devtools/page/F5FC22F1B79E173B26884287334D4CE2",
+    "faviconUrl": "https://24-7.markets/icon.svg",
+    "id": "F5FC22F1B79E173B26884287334D4CE2",
+    "title": "24-7 MARKETS \u2014 Tokenized equity portfolios powered by xStocks",
+    "type": "page",
+    "url": "https://24-7.markets/onboarding?p=OAB2BSHPCCARV67",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9224/devtools/page/F5FC22F1B79E173B26884287334D4CE2"
+  },
+  {
+    "description": "",
+    "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@3aa79a60d59cf6245a2337869da759cdaecf230/inspector.html?ws=127.0.0.1:9224/devtools/page/40EC037836B5A88E84BBFF0F0C901373",
+    "faviconUrl": "https://24-7.markets/icon.svg",
+    "id": "40EC037836B5A88E84BBFF0F0C901373",
+    "parentId": "CECC03414F44BBE5EA67E9A7D6063BC6",
+    "title": "https://auth.privy.io/apps/cmnfzikzk02ey0ckyx8m14qv2/embedded-wallets?caid=9f922abb-7d26-4415-95d5-76fe6c9bd02a",
+    "type": "iframe",
+    "url": "https://auth.privy.io/apps/cmnfzikzk02ey0ckyx8m14qv2/embedded-wallets?caid=9f922abb-7d26-4415-95d5-76fe6c9bd02a",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9224/devtools/page/40EC037836B5A88E84BBFF0F0C901373"
+  },
+  {
+    "description": "",
+    "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@3aa79a60d59cf6245a2337869da759cdaecf230/inspector.html?ws=127.0.0.1:9224/devtools/page/CECC03414F44BBE5EA67E9A7D6063BC6",
+    "faviconUrl": "https://24-7.markets/icon.svg",
+    "id": "CECC03414F44BBE5EA67E9A7D6063BC6",
+    "title": "24-7 MARKETS \u2014 Tokenized equity portfolios powered by xStocks",
+    "type": "page",
+    "url": "https://24-7.markets/activate/onboarding-default-basket--basket-starter-h6-p100-c5-cap18-a0-r300-v1",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9224/devtools/page/CECC03414F44BBE5EA67E9A7D6063BC6"
+  },
+  {
+    "description": "",
+    "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@3aa79a60d59cf6245a2337869da759cdaecf230/inspector.html?ws=127.0.0.1:9224/devtools/page/42958D40EE9C9F1633C6C440D711D45B",
+    "id": "42958D40EE9C9F1633C6C440D711D45B",
+    "title": "OWS - Hackathon",
+    "type": "page",
+    "url": "https://hackathon.openwallet.sh/#tracks",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9224/devtools/page/42958D40EE9C9F1633C6C440D711D45B"
+  }
+]

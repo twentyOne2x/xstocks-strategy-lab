@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-04-03T23:07:31.434Z",
+  "profilePath": "/Users/user/Library/Application Support/BraveSoftware/Brave-Browser/Default",
+  "sourceFiles": [
+    "/Users/user/Library/Application Support/BraveSoftware/Brave-Browser/Default/Local Storage/leveldb/047357.log",
+    "/Users/user/Library/Application Support/BraveSoftware/Brave-Browser/Default/Local Storage/leveldb/047359.ldb"
+  ],
+  "priorSummaryPath": "/Users/user/PycharmProjects/xstocks-strategy-lab-codex-orchestrator/tmp/proof/oneinch-fusion-2026-04-03T22-34-56.480Z/summary.json",
+  "accessTokenMeta": {
+    "iat": 1775256150,
+    "exp": 1775259750,
+    "iatIso": "2026-04-03T22:42:30.000Z",
+    "expIso": "2026-04-03T23:42:30.000Z",
+    "aud": "https://auth.privy.io",
+    "sub": "did:privy:cmng4u99003bf0ckye9oqgopk"
+  },
+  "refreshTokenLength": 41
+}
